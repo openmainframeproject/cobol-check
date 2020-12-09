@@ -1,10 +1,11 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.ConfigFileNotFoundException;
 import com.neopragma.cobolcheck.exceptions.ExpectedConfigSettingNotFoundException;
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
@@ -21,8 +22,9 @@ public class Config {
     private String configFilePath;
 
     void load() {
-        configFilePath = "/%s/config.properties"
-                .formatted(this.getClass().getPackageName().replaceAll("\\.", Constants.FILE_SEPARATOR));
+//        configFilePath = "/%s/config.properties"
+//                .formatted(this.getClass().getPackageName().replaceAll("\\.", Constants.FILE_SEPARATOR));
+        configFilePath = "config.properties";
         load(configFilePath);
     }
 
@@ -30,11 +32,15 @@ public class Config {
         Log.info(messages.get("INF001", configResourceName));
         try {
             config = new Properties();
-            config.load(this.getClass().getResourceAsStream(configResourceName));
-        } catch (NullPointerException npe) {
-            throw new ConfigFileNotFoundException(String.format(configFileExceptionMessage, configResourceName));
+            config.load(new FileInputStream(configResourceName));
         } catch (IOException ioe) {
-            throw new IOExceptionProcessingConfigFile(String.format(configFileExceptionMessage, configResourceName));
+            throw new IOExceptionProcessingConfigFile(
+                    messages.get("ERR003", configResourceName), ioe);
+        } catch (NullPointerException npe) {
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR001",
+                            "configResourceName", "Config.load(configResourceName)"),
+                            npe);
         }
         setCopybookPathFileObject();
         setDefaultLocaleOverride();
