@@ -33,7 +33,8 @@ public class Generator {
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
         if (testSuite.getClass().getSimpleName().equals("EmptyTestSuite")) {
-            Log.info("TestSuite is empty on entry to Generator.runSuite() method; nothing to do here.");
+            Log.info(messages.get("INF003"));
+            Log.info("TestSuite is empty on entry to Generator.mergeTestSuite() method; nothing to do here.");
             return testSourceOut;
         }
         if (cobolSourceIn == null) {

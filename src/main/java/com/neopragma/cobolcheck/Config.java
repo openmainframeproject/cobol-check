@@ -27,7 +27,7 @@ public class Config {
     }
 
     void load(String configResourceName) {
-        Log.info(String.format("Attempting to load config from: %s", configResourceName));
+        Log.info(messages.get("INF001", configResourceName));
         try {
             config = new Properties();
             config.load(this.getClass().getResourceAsStream(configResourceName));
@@ -38,7 +38,7 @@ public class Config {
         }
         setCopybookPathFileObject();
         setDefaultLocaleOverride();
-        Log.info(String.format("Config successfully loaded from: %s", configResourceName));
+        Log.info(messages.get("INF002", configResourceName));
 
     }
 
