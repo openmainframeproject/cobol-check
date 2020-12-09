@@ -4,6 +4,8 @@ import com.neopragma.cobolcheck.exceptions.ConfigFileNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,7 +15,7 @@ public class ConfigTest {
 
     @BeforeEach
     public void commonSetup() {
-        config = new Config();
+        config = new Config(new Messages());
     }
 
     @Test
@@ -40,5 +42,11 @@ public class ConfigTest {
     public void it_can_find_the_copybooks_for_ZUTZCPC() {
         config.load();
         assertEquals("src/main/resources/copybooks", config.getCopybookDirectory().getPath());
+    }
+
+    @Test
+    public void it_gets_the_default_locale_override() {
+        config.load("/com/neopragma/cobolcheck/testconfig.properties");
+        assertEquals(Locale.JAPAN, config.getDefaultLocale());
     }
 }

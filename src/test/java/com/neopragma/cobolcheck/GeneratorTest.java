@@ -34,7 +34,7 @@ public class GeneratorTest {
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator();
+        generator = new Generator(new Messages());
     }
 
     @Test

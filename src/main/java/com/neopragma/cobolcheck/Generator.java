@@ -21,17 +21,24 @@ import java.io.Writer;
 public class Generator {
 
     private static final String isNullMessage = "%s is null on entry to Generator.runSuite() method.";
+    private Messages messages;
+
+    public Generator(Messages messages) {
+        this.messages = messages;
+    }
 
     Writer mergeTestSuite(TestSuite testSuite, Reader cobolSourceIn, Writer testSourceOut) {
         if (testSuite == null) {
-            throw new PossibleInternalLogicErrorException(String.format(isNullMessage, "testSuite"));
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
         if (testSuite.getClass().getSimpleName().equals("EmptyTestSuite")) {
             Log.info("TestSuite is empty on entry to Generator.runSuite() method; nothing to do here.");
             return testSourceOut;
         }
         if (cobolSourceIn == null) {
-            throw new PossibleInternalLogicErrorException(String.format(isNullMessage, "cobolSourceIn"));
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
         }
         BufferedReader reader = new BufferedReader(cobolSourceIn);
         String line;
