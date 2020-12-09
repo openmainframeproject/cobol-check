@@ -1,23 +1,32 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.NullSourceLinePassedToTokenExtractorException;
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StringTokenizerExtractorTest implements Constants {
 
-    private StringTokenizerExtractor extractor = new StringTokenizerExtractor();
+    private StringTokenizerExtractor extractor;
+
+    @BeforeEach
+    public void commonSetup() {
+        Locale.setDefault(new Locale("en", "US"));
+        extractor = new StringTokenizerExtractor(new Messages());
+    }
 
     @Test
     public void when_the_line_is_a_null_reference_it_throws__probable_internal_logic_error() {
-        Throwable ex = assertThrows(NullSourceLinePassedToTokenExtractorException.class, () -> {
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> {
             extractor.extractTokensFrom(null);
         });
-        assertEquals("Caller should not pass null reference in this context. Probable internal logic error.", ex.getMessage());
+        assertEquals("ERR001: sourceLine is null on entry to StringTokenizerExtractor.extractTokensFrom(sourceLine) method.", ex.getMessage());
     }
 
     @Test

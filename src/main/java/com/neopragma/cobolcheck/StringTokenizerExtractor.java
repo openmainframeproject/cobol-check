@@ -1,6 +1,6 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.NullSourceLinePassedToTokenExtractorException;
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.util.*;
 
@@ -12,6 +12,11 @@ import java.util.*;
  */
 public class StringTokenizerExtractor implements TokenExtractor, Constants {
 
+    public StringTokenizerExtractor(Messages messages) {
+        this.messages = messages;
+    }
+
+    private Messages messages;
     private static final String delimiters = String.format(" .%s", Constants.NEWLINE);
 
     // Couldn't use Map.of because it has a limitation of 10 entries. (Dec 2020)
@@ -44,7 +49,11 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
     @Override
     public List<String> extractTokensFrom(String sourceLine) {
         if (sourceLine == null) {
-            throw new NullSourceLinePassedToTokenExtractorException();
+            throw new PossibleInternalLogicErrorException(
+                 messages.get("ERR001",
+                         "sourceLine",
+                         "StringTokenizerExtractor.extractTokensFrom(sourceLine)")
+            );
         }
         List<String> tokens = new ArrayList();
         String expectedNext = EMPTY_STRING;
