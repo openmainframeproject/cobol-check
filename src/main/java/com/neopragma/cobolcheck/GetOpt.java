@@ -20,6 +20,8 @@ public class GetOpt implements Constants, StringHelper {
     private static final String LONG_OPT_KEYWORD = "--long";
     private static final char ARGUMENT_REQUIRED_INDICATOR = ':';
 
+    private Messages messages;
+
     /**
      * Parse command-line options using the optionsString to validate.
      *
@@ -27,8 +29,9 @@ public class GetOpt implements Constants, StringHelper {
      * @param optionsString - String - Bash-style options specification,
      *                      e.g. "abc:d: --long alpha,bravo,charlie:,delta:"
      */
-    public GetOpt(String[] args, String optionsString) {
+    public GetOpt(String[] args, String optionsString, Messages messages) {
         if (isEmptyArray(args)) return;
+        this.messages = messages;
         storeOptionSettings(optionsString);
         processCommandLineArgumentArray(args);
     }
@@ -48,7 +51,7 @@ public class GetOpt implements Constants, StringHelper {
      */
     private void storeOptionSettings(String optionsString) {
         if (isBlank(optionsString))
-            throw new PossibleInternalLogicErrorException("x");
+            throw new PossibleInternalLogicErrorException(messages.get("ERR005"));
 
         options = new HashMap();
 
@@ -92,14 +95,20 @@ public class GetOpt implements Constants, StringHelper {
     private void processCommandLineArgumentArray(String[] args) {
         boolean expectValueNext = false;
         OptionValue optionValue = new OptionValue();
+        String lastOption = EMPTY_STRING;
         for (String argValue : args) {
             if (isKey(argValue)) {
-                if (expectValueNext) throw new CommandLineArgumentException("x");
+                if (expectValueNext) throw new CommandLineArgumentException(
+                        messages.get("ERR004", lastOption, argValue)
+                );
                 optionValue = lookupOption(stripPrefix(argValue));
                 optionValue.isSet = true;
                 expectValueNext = optionValue.hasArgument;
+                lastOption = argValue;
             } else {
-                if (!expectValueNext) throw new CommandLineArgumentException("x");
+                if (!expectValueNext) throw new CommandLineArgumentException(
+                        messages.get("ERR006", argValue)
+                );
                 optionValue.argumentValue = argValue;
                 expectValueNext = false;
             }
