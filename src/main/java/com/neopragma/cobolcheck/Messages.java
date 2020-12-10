@@ -3,6 +3,12 @@ package com.neopragma.cobolcheck;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Loads and manages localized messages.
+ *
+ * @author Dave Nicolette (neopragma)
+ * @since 14
+ */
 public class Messages {
 
     private ResourceBundle messageBundle;

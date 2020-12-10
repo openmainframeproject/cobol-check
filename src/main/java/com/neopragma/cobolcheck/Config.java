@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
+/**
+ * Loads and manages configuration settings.
+ *
+ * @author Dave Nicolette (neopragma)
+ * @since 14
+ */
 public class Config {
 
     public Config(Messages messages) {

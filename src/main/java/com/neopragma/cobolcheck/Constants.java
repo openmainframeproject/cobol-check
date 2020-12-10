@@ -8,4 +8,5 @@ public interface Constants {
     String FILE_SEPARATOR = System.getProperty("file.separator");
     String PERIOD = ".";
     String COMMENT_INDICATOR = "*";
+    String COLON = ":";
 }

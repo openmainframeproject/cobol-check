@@ -8,7 +8,7 @@ import java.util.*;
  * This class uses StringTokenizer to find tokens in the Cobol source line.
  *
  * @author Dave Nicolette (neopragma)
- * @since 1.4
+ * @since 14
  */
 public class StringTokenizerExtractor implements TokenExtractor, Constants {
 
