@@ -9,4 +9,6 @@ public interface Constants {
     String PERIOD = ".";
     String COMMENT_INDICATOR = "*";
     String COLON = ":";
+    String SPACE = " ";
+    String COMMA = ",";
 }
