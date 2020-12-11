@@ -2,14 +2,22 @@ package com.neopragma.cobolcheck;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+@ExtendWith(MockitoExtension.class)
 public class GeneratorTestCodeInsertionTest implements Constants {
 
     private Generator generator;
     private Messages messages = new Messages();
+
+    @Mock
+    Reader mockTestSuite;
 
     private String[] simple1CobolSource = new String[] {
         " IDENTIFICATION DIVISION.",
@@ -41,7 +49,7 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     public void it_inserts_test_copybooks_in_the_right_places() {
         StringReader cobolSource = makeCobolSourceProgram(simple1CobolSource);
         StringWriter testWriter = new StringWriter();
-        generator.mergeTestSuite(new EmptyTestSuite(), cobolSource, testWriter);
+        generator.mergeTestSuite(mockTestSuite, cobolSource, testWriter);
 
         System.out.println("testWriter: ");
         System.out.println(testWriter.toString());

@@ -1,4 +1,4 @@
-package com.neopragma.cobolcheck;
+package com.neopragma.cobolcheck.structure;
 
 import com.neopragma.cobolcheck.structure.*;
 import org.junit.jupiter.params.ParameterizedTest;

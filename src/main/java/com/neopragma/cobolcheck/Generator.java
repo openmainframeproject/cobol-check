@@ -27,7 +27,7 @@ public class Generator {
         this.messages = messages;
     }
 
-    Writer mergeTestSuite(TestSuite testSuite, Reader cobolSourceIn, Writer testSourceOut) {
+    Writer mergeTestSuite(Reader testSuite, Reader cobolSourceIn, Writer testSourceOut) {
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
@@ -42,7 +42,6 @@ public class Generator {
         try {
             while ((sourceLine = reader.readLine()) != null) {
                 emptyInputStream = false;
-//                String sourceLine = String.format("%80s", line).toUpperCase();
 
 
                 testSourceOut.write(sourceLine + Constants.NEWLINE);

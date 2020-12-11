@@ -8,10 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,24 +21,13 @@ public class GeneratorGeneralTest {
     private SystemErr systemErr = new SystemErr();
 
     @Mock
-    TestSuite mockTestSuite;
-
-    @Mock
-    File fakeInputFile;
+    Reader mockTestSuite;
 
     @BeforeEach
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
         generator = new Generator(new Messages());
-    }
-
-    @Test
-    void TestSuite_cannot_be_null__probable_internal_logic_error() {
-        loadInputData(Constants.EMPTY_STRING);
-        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () -> {
-            mergeTestSuiteAndVerifyResults(null, cobolSourceData, testProgramSource);
-        });
     }
 
     @Test
@@ -66,7 +52,7 @@ public class GeneratorGeneralTest {
         }
     }
 
-    private Writer mergeTestSuiteAndVerifyResults(TestSuite testSuite,
+    private Writer mergeTestSuiteAndVerifyResults(Reader testSuite,
                                                   StringBuilder cobolSourceData,
                                                   Writer testProgramSource) {
         StringReader cobolProgramSource = new StringReader(cobolSourceData.toString());

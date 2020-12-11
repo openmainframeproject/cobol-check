@@ -1,6 +1,5 @@
-package com.neopragma.cobolcheck;
+package com.neopragma.cobolcheck.structure;
 
-import com.neopragma.cobolcheck.structure.CobolStructure;
 import org.junit.jupiter.api.Test;
 
 public class CobolStructureTest {
