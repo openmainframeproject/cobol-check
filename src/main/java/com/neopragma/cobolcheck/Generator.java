@@ -75,7 +75,7 @@ public class Generator implements Constants {
             throw new PossibleInternalLogicErrorException(ex);
         }
         if (emptyInputStream) {
-            throw new PossibleInternalLogicErrorException("Generator.runSuite() empty input stream (cobolSourceIn");
+            throw new PossibleInternalLogicErrorException(messages.get("ERR007"));
         }
         return testSourceOut;
     }
