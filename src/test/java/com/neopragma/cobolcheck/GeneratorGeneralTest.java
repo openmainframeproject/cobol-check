@@ -16,9 +16,8 @@ import java.io.Writer;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneratorTest {
+public class GeneratorGeneralTest {
 
-    private TestSuite emptyTestSuite = new EmptyTestSuite();
     private StringBuilder cobolSourceData;
     private StringWriter testProgramSource;
     private Generator generator;
@@ -59,20 +58,6 @@ public class GeneratorTest {
             mergeTestSuiteAndVerifyResults(mockTestSuite, cobolSourceData, testProgramSource);
         });
         assertTrue(ex.getMessage().contains("empty input stream"));
-    }
-
-    @Test
-    void when_TestSuite_is_empty_it_skips_processing_and_logs() {
-        loadInputData(Constants.EMPTY_STRING);
-        Log.set(LogLevel.INFO);
-        systemErr.record();
-
-        Writer testProgramSource = mergeTestSuiteAndVerifyResults(emptyTestSuite, cobolSourceData, new StringWriter());
-
-        Log.set(LogLevel.OFF);
-        assertTrue(systemErr.playback().contains("TestSuite is empty")
-                && systemErr.playback().contains("nothing to do here"));
-        assertEquals(Constants.EMPTY_STRING, testProgramSource.toString());
     }
 
     private void loadInputData(String... lines) {

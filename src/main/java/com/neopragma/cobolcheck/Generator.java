@@ -32,22 +32,17 @@ public class Generator {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
-        if (testSuite.getClass().getSimpleName().equals("EmptyTestSuite")) {
-            Log.info(messages.get("INF003"));
-            Log.info("TestSuite is empty on entry to Generator.mergeTestSuite() method; nothing to do here.");
-            return testSourceOut;
-        }
         if (cobolSourceIn == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
         }
         BufferedReader reader = new BufferedReader(cobolSourceIn);
-        String line;
+        String sourceLine;
         boolean emptyInputStream = true;
         try {
-            while ((line = reader.readLine()) != null) {
+            while ((sourceLine = reader.readLine()) != null) {
                 emptyInputStream = false;
-                String sourceLine = String.format("%73s", line).substring(6).toUpperCase();
+//                String sourceLine = String.format("%80s", line).toUpperCase();
 
 
                 testSourceOut.write(sourceLine + Constants.NEWLINE);
@@ -65,32 +60,4 @@ public class Generator {
         return testSourceOut;
     }
 
-
-    /**
-     * Merge test suite with Cobol source file and create Cobol test file
-     *
-     * @param testSuite - (TestSuite) the test cases
-     * @param sourceFile - (Reader) the original Cobol source
-     * @param testFile - (Writer) the output object for the merged Cobol test source
-     * @return (Writer) the merged Cobol test source program
-     */
-    Writer runSuiteXXX(TestSuite testSuite, Reader sourceFile, Writer testFile) {
-        Writer mergedSourceData = testFile;
-        try {
-            int data = sourceFile.read();
-            while(data != Constants.END_OF_STREAM) {
-                char dataChar = (char) data;
-                testFile.write(data);
-                data = sourceFile.read();
-            }
-            sourceFile.close();
-            testFile.close();
-        } catch (IOException ioEx) {
-            throw new CobolSourceCouldNotBeReadException(ioEx);
-        }
-        catch (Exception ex) {
-            throw new PossibleInternalLogicErrorException(ex);
-        }
-        return mergedSourceData;
-    }
 }
