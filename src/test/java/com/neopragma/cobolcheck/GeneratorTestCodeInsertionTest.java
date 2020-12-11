@@ -15,6 +15,8 @@ public class GeneratorTestCodeInsertionTest implements Constants {
 
     private Generator generator;
     private Messages messages = new Messages();
+    private Log log = new Log();
+    private TokenExtractor tokenExtractor = new StringTokenizerExtractor(messages);
 
     @Mock
     Reader mockTestSuite;
@@ -42,29 +44,30 @@ public class GeneratorTestCodeInsertionTest implements Constants {
 
     @BeforeEach
     public void commonSetup() {
-        generator = new Generator(messages);
+        generator = new Generator(messages, log, tokenExtractor);
     }
 
     @Test
     public void it_inserts_test_copybooks_in_the_right_places() {
-        StringReader cobolSource = makeCobolSourceProgram(simple1CobolSource);
-        StringWriter testWriter = new StringWriter();
-        generator.mergeTestSuite(mockTestSuite, cobolSource, testWriter);
+        StringReader cobolSourceIn = makeCobolSourceProgram(simple1CobolSource);
+        StringWriter testSourceOut = new StringWriter();
+        generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
 
-        System.out.println("testWriter: ");
-        System.out.println(testWriter.toString());
 
-        String data = testWriter.toString();
+        System.out.println("testSourceOut: ");
+        System.out.println(testSourceOut.toString());
 
-        int offset = 0;
-        int length = 81;
-        int count = (data.length() / 81) - 1;
-        System.out.println("crude line count = " + count);
-        while(offset < data.length()) {
-            System.out.println("Output Line: <" + data.substring(offset,offset+length) + ">");
-            offset += length;
-            count++;
-        }
+//        String data = testSourceOut.toString();
+//
+//        int offset = 0;
+//        int length = 81;
+//        int count = (data.length() / 81) - 1;
+//        System.out.println("crude line count = " + count);
+//        while(offset < data.length()) {
+//            System.out.println("Output Line: <" + data.substring(offset,offset+length) + ">");
+//            offset += length;
+//            count++;
+//        }
 
     }
 

@@ -19,6 +19,7 @@ public class GeneratorGeneralTest {
     private StringWriter testProgramSource;
     private Generator generator;
     private SystemErr systemErr = new SystemErr();
+    private Messages messages = new Messages();
 
     @Mock
     Reader mockTestSuite;
@@ -27,7 +28,7 @@ public class GeneratorGeneralTest {
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(new Messages());
+        generator = new Generator(new Messages(), new Log(), new StringTokenizerExtractor(messages));
     }
 
     @Test
