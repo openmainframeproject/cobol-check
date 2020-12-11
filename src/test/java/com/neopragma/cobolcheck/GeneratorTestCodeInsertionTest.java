@@ -14,33 +14,52 @@ import java.io.StringWriter;
 public class GeneratorTestCodeInsertionTest implements Constants {
 
     private Generator generator;
-    private Messages messages = new Messages();
-    private Log log = new Log();
-    private TokenExtractor tokenExtractor = new StringTokenizerExtractor(messages);
+    private final Messages messages = new Messages();
+    private final Log log = new Log();
+    private final TokenExtractor tokenExtractor = new StringTokenizerExtractor(messages);
 
     @Mock
     Reader mockTestSuite;
 
-    private String[] simple1CobolSource = new String[] {
-        " IDENTIFICATION DIVISION.",
-        " PROGRAM-ID. SIMPLE1.",
-        " ENVIRONMENT DIVISION.",
-        "       DATA DIVISION.",
-        "       WORKING-STORAGE SECTION.",
-        "       01  W-GROUP-1.",
-        "           05  W-FIELD-1 PIC X(03) VALUE \"FOO\".",
-        "           05  FILLER    PIC X(01) VALUE \"-\".",
-        "           05  W-FIELD-2 PIC X(03) VALUE \"XXX\".",
-        "       PROCEDURE DIVISION.",
-        "       100-APPEND-TEXT.",
-        "           MOVE \"ZZZ\" TO W-FIELD-2",
-        "           DISPLAY W-GROUP-1 UPON CONSOLE.",
-        "           .",
-        "       200-NOT-UNDER-TEST.",
-        "           DISPLAY \"Should not see this.\" UPON CONSOLE",
-        "           ."
+    private final String[] cobolSourceWithWorkingStorage = new String[] {
+            " IDENTIFICATION DIVISION.",
+            " PROGRAM-ID. SIMPLE1.",
+            " ENVIRONMENT DIVISION.",
+            " DATA DIVISION.",
+            " LOCAL-STORAGE SECTION.",
+            " 01  W-GROUP-1.",
+            "     05  W-FIELD-1 PIC X(03) VALUE \"FOO\".",
+            "     05  FILLER    PIC X(01) VALUE \"-\".",
+            "     05  W-FIELD-2 PIC X(03) VALUE \"XXX\".",
+            " PROCEDURE DIVISION.",
+            " 100-APPEND-TEXT.",
+            "     MOVE \"ZZZ\" TO W-FIELD-2",
+            "     DISPLAY W-GROUP-1 UPON CONSOLE.",
+            "     .",
+            " 200-NOT-UNDER-TEST.",
+            "     DISPLAY \"Should not see this.\" UPON CONSOLE",
+            "     ."
     };
 
+    private final String[] cobolSourceWithoutWorkingStorage = new String[] {
+            " IDENTIFICATION DIVISION.",
+            " PROGRAM-ID. SIMPLE1.",
+            " ENVIRONMENT DIVISION.",
+            " DATA DIVISION.",
+            " LOCAL-STORAGE SECTION.",
+            " 01  W-GROUP-1.",
+            "     05  W-FIELD-1 PIC X(03) VALUE \"FOO\".",
+            "     05  FILLER    PIC X(01) VALUE \"-\".",
+            "     05  W-FIELD-2 PIC X(03) VALUE \"XXX\".",
+            " PROCEDURE DIVISION.",
+            " 100-APPEND-TEXT.",
+            "     MOVE \"ZZZ\" TO W-FIELD-2",
+            "     DISPLAY W-GROUP-1 UPON CONSOLE.",
+            "     .",
+            " 200-NOT-UNDER-TEST.",
+            "     DISPLAY \"Should not see this.\" UPON CONSOLE",
+            "     ."
+    };
 
     @BeforeEach
     public void commonSetup() {
@@ -49,7 +68,7 @@ public class GeneratorTestCodeInsertionTest implements Constants {
 
     @Test
     public void it_inserts_test_copybooks_in_the_right_places() {
-        StringReader cobolSourceIn = makeCobolSourceProgram(simple1CobolSource);
+        StringReader cobolSourceIn = makeCobolSourceProgram(cobolSourceWithoutWorkingStorage);
         StringWriter testSourceOut = new StringWriter();
         generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
 
