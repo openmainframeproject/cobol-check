@@ -55,7 +55,7 @@ public class GeneratorGeneralTest {
 
     private Writer mergeTestSuiteAndVerifyResults(Reader testSuite,
                                                   StringBuilder cobolSourceData,
-                                                  Writer testProgramSource) {
+                                                  Writer testProgramSource) throws IOException {
         StringReader cobolProgramSource = new StringReader(cobolSourceData.toString());
         Writer mergedCobolData = generator.mergeTestSuite(testSuite, cobolProgramSource, testProgramSource);
         assertEquals(cobolSourceData.toString(), mergedCobolData.toString());

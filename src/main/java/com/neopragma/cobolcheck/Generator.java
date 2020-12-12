@@ -59,7 +59,7 @@ public class Generator implements Constants {
     public Writer mergeTestSuite(
             Reader testSuite,
             Reader cobolSourceIn,
-            Writer testSourceOut) {
+            Writer testSourceOut) throws IOException {
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
@@ -68,21 +68,22 @@ public class Generator implements Constants {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
         }
-        BufferedReader reader = new BufferedReader(cobolSourceIn);
+        BufferedReader cobolSourceInReader
+                = new BufferedReader(cobolSourceIn);
         String sourceLine;
         boolean emptyInputStream = true;
         try {
-            while ((sourceLine = reader.readLine()) != null) {
+            while ((sourceLine = cobolSourceInReader.readLine()) != null) {
                 emptyInputStream = false;
                 sourceLine = fixedLength(sourceLine);
                 List<String> tokens = tokenExtractor.extractTokensFrom(sourceLine);
                 processingBeforeEchoingTheSourceLineToTheOutput(
-                        tokens, sourceLine, cobolSourceIn, testSourceOut);
+                        tokens, sourceLine, cobolSourceInReader, testSourceOut);
                 testSourceOut.write(sourceLine);
                 processingAfterEchoingTheSourceLineToTheOutput(
-                        tokens, sourceLine, cobolSourceIn, testSourceOut);
+                        tokens, sourceLine, cobolSourceInReader, testSourceOut);
             }
-            reader.close();
+            cobolSourceInReader.close();
         } catch (IOException ioEx) {
             throw new CobolSourceCouldNotBeReadException(ioEx);
         }
@@ -98,41 +99,48 @@ public class Generator implements Constants {
     private void processingBeforeEchoingTheSourceLineToTheOutput(
             List<String> tokens,
             String sourceLine,
-            Reader cobolSourceIn,
+            Reader reader,
             Writer testSourceOut) throws IOException {
 
-        if (hasToken(tokens, DATA_DIVISION)) enteringDataDivision();
-        if (hasToken(tokens, PROCEDURE_DIVISION)) {
-            enteringProcedureDivision();
-            if (workingStorageTestCodeHasBeenInserted == false) {
-                testSourceOut.write(workingStorageHeader);
-                testSourceOut.write(fixedLength(
-                        "      ***** insert working-storage code here *****"));
-            }
+        if (sourceLineContains(tokens, DATA_DIVISION)) enteringDataDivision();
 
+        if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
+            enteringProcedureDivision();
+            if (!workingStorageTestCodeHasBeenInserted) {
+                testSourceOut.write(workingStorageHeader);
+                insertWorkingStorageTestCode(testSourceOut);
+            }
         }
-        if (hasToken(tokens, WORKING_STORAGE_SECTION)) enteringWorkingStorageSection();
+        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) enteringWorkingStorageSection();
     }
 
     private void processingAfterEchoingTheSourceLineToTheOutput(
             List<String> tokens,
             String sourceLine,
-            Reader cobolSourceIn,
+            Reader reader,
             Writer testSourceOut) throws IOException {
 
-        if (hasToken(tokens, WORKING_STORAGE_SECTION)) {
-            testSourceOut.write(fixedLength(
-                    "      ***** insert working-storage code here *****"));
-            workingStorageTestCodeHasBeenInserted = true;
+        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) {
+            insertWorkingStorageTestCode(testSourceOut);
         }
 
-        if (hasToken(tokens, PROCEDURE_DIVISION)) {
-            testSourceOut.write(fixedLength(
-                    "      ***** insert procedure division code here *****"));
+        if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
+            insertProcedureDivisionTestCode(testSourceOut);
         }
     }
 
-    private boolean hasToken(List<String> tokens, String tokenValue) {
+    private void insertWorkingStorageTestCode(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(
+                "      ***** insert working-storage code here *****"));
+        workingStorageTestCodeHasBeenInserted = true;
+    }
+
+    private void insertProcedureDivisionTestCode(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(
+                "      ***** insert procedure division code here *****"));
+    }
+
+    private boolean sourceLineContains(List<String> tokens, String tokenValue) {
         return tokens.size() > 0 && tokens.contains(tokenValue);
     }
 

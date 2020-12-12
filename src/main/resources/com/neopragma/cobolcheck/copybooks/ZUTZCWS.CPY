@@ -1,4 +1,4 @@
-      * TEST CODE INSERTED BY ZUTZCPC
+      * ZUTZCWS.CPY
        01  FILLER PIC X(16) VALUE '******* ZUTZCPC'.
        01  FILLER PIC X(16) VALUE '******* 0.1.0'.
        01  UT-FIELDS.

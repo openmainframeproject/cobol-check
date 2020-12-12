@@ -1,8 +1,9 @@
+      * Test Cobol source: Main program with no WORKING-STORAGE
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. SIMPLE1.
+       PROGRAM-ID. IN2.
        ENVIRONMENT DIVISION.
        DATA DIVISION.
-       WORKING-STORAGE SECTION.
+       LOCAL-STORAGE SECTION.
        01  W-GROUP-1.
            05  W-FIELD-1 PIC X(03) VALUE "FOO".
            05  FILLER    PIC X(01) VALUE "-".

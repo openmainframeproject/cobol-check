@@ -1,22 +1,26 @@
 package com.neopragma.cobolcheck;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
+import java.security.MessageDigest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneratorTestCodeInsertionTest implements Constants {
 
     private Generator generator;
-    private final Messages messages = new Messages();
+    private static final Messages messages = new Messages();
     private final Log log = new Log();
     private final TokenExtractor tokenExtractor = new StringTokenizerExtractor(messages);
+    private static final Config config = new Config(messages);
+    private static String pathToTestCobolSources = EMPTY_STRING;
 
     @Mock
     Reader mockTestSuite;
@@ -61,13 +65,40 @@ public class GeneratorTestCodeInsertionTest implements Constants {
             "     ."
     };
 
+    @BeforeAll
+    public static void oneTimeSetup() {
+        config.load("testconfig.properties");
+        pathToTestCobolSources = config.getString("test.cobol.sources");
+
+        System.out.println("In BeforeAll, pathToTestCobolSources is: " + pathToTestCobolSources);
+    }
+
     @BeforeEach
     public void commonSetup() {
         generator = new Generator(messages, log, tokenExtractor);
     }
 
     @Test
-    public void it_inserts_test_copybooks_in_the_right_places() {
+    public void given_main_program_with_working_storage_it_inserts_test_copybooks_in_the_right_places() throws Exception {
+        Reader cobolSourceReader = new FileReader(testFile("IN1.CBL"));
+        BufferedReader reader = new BufferedReader(cobolSourceReader);
+        Writer mergedSourceWriter = new FileWriter(testFile("MERGEDSOURCE.CBL"));
+        generator.mergeTestSuite(mockTestSuite, cobolSourceReader, mergedSourceWriter);
+        cobolSourceReader.close();
+        mergedSourceWriter.close();
+
+        String expectedHashValue = MD5HashFile(testFileName("EX1.CBL"));
+        String actualHashValue = MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
+        assertEquals(expectedHashValue, actualHashValue,
+                "Comparing expected file <" + testFileName("EX1.CBL")
+                       + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
+
+    }
+
+    @Test
+    public void test() throws IOException {
+
+
         StringReader cobolSourceIn = makeCobolSourceProgram(cobolSourceWithoutWorkingStorage);
         StringWriter testSourceOut = new StringWriter();
         generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
@@ -76,18 +107,39 @@ public class GeneratorTestCodeInsertionTest implements Constants {
         System.out.println("testSourceOut: ");
         System.out.println(testSourceOut.toString());
 
-//        String data = testSourceOut.toString();
-//
-//        int offset = 0;
-//        int length = 81;
-//        int count = (data.length() / 81) - 1;
-//        System.out.println("crude line count = " + count);
-//        while(offset < data.length()) {
-//            System.out.println("Output Line: <" + data.substring(offset,offset+length) + ">");
-//            offset += length;
-//            count++;
-//        }
 
+    }
+
+    public static String MD5HashFile(String filename) throws Exception {
+        byte[] buf = ChecksumFile(filename);
+        String res = "";
+        for (int i = 0; i < buf.length; i++) {
+            res+= Integer.toString((buf[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return res;
+    }
+
+    public static byte[]  ChecksumFile(String filename) throws Exception {
+        InputStream fis = new FileInputStream(filename);
+        byte[] buf = new byte[1024];
+        MessageDigest complete = MessageDigest.getInstance("MD5");
+        int n;
+        do {
+            n= fis.read(buf);
+            if (n > 0) {
+                complete.update(buf, 0, n);
+            }
+        } while (n != -1);
+        fis.close();
+        return complete.digest();
+    }
+
+    private File testFile(String fileName) {
+        return new File(pathToTestCobolSources + fileName);
+    }
+
+    private String testFileName(String fileName) {
+        return pathToTestCobolSources + fileName;
     }
 
     private StringReader makeCobolSourceProgram(String[] sourceLines) {
@@ -97,4 +149,5 @@ public class GeneratorTestCodeInsertionTest implements Constants {
         }
         return new StringReader(sourceCode.toString());
     }
+
 }
