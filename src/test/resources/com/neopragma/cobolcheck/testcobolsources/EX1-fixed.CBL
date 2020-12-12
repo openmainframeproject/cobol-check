@@ -3,6 +3,10 @@
        ENVIRONMENT DIVISION.                                                    
        DATA DIVISION.                                                           
        WORKING-STORAGE SECTION.                                                 
+       01  W-GROUP-1.                                                           
+           05  W-FIELD-1 PIC X(03) VALUE "FOO".                                 
+           05  FILLER    PIC X(01) VALUE "-".                                   
+           05  W-FIELD-2 PIC X(03) VALUE "XXX".                                 
       * ZUTZCWS.CPY                                                             
        01  FILLER PIC X(16) VALUE '******* ZUTZCPC'.                            
        01  FILLER PIC X(16) VALUE '******* 0.1.0'.                              
@@ -35,8 +39,8 @@
            05  UT-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
            05  UT-EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.                  
            05  UT-ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.                  
-           05  UT-EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.                             
-           05  UT-ACTUAL-ACCESSES-FMT    PIC Z,ZZ9.                             
+           05  UT-EXPECTED-ACCESSES-FMT  PIC Z                                  
+           05  UT-ACTUAL-ACCESSES-FMT    PIC Z                                  
            05  UT-FAILED                 PIC X(11)  VALUE "**** FAIL: ".        
            05  UT-PASSED                 PIC X(11)  VALUE "     PASS: ".        
            05  UT-TEST-CASE-NAME         PIC X(80)  VALUE SPACES.               
@@ -103,10 +107,6 @@
                    15  UT-FILE-STATUS-FIELD-NAME PIC X(31).                     
                                                                                 
       * ZUTZCWS.CPY END                                                         
-       01  W-GROUP-1.                                                           
-           05  W-FIELD-1 PIC X(03) VALUE "FOO".                                 
-           05  FILLER    PIC X(01) VALUE "-".                                   
-           05  W-FIELD-2 PIC X(03) VALUE "XXX".                                 
        PROCEDURE DIVISION.                                                      
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
@@ -171,10 +171,10 @@
                    UT-TEST-CASE-NAME                                            
            IF UT-COMPARE-NUMERIC                                                
                DISPLAY '    EXPECTED ' UT-EXPECTED-NUMERIC                      
-                       ', WAS ' UT-ACTUAL-NUMERIC                               
+                       '                                                        
            ELSE                                                                 
                DISPLAY '    EXPECTED <' UT-EXPECTED                             
-                       '>, WAS <' UT-ACTUAL '>'                                 
+                       '>                                                       
            END-IF                                                               
            MOVE 4 TO UT-RETCODE                                                 
            .                                                                    
@@ -233,7 +233,7 @@
                        UT-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE         
                        SPACE                          DELIMITED BY SIZE         
                        UT-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE        
-                       ', WAS '                       DELIMITED BY SIZE         
+                       '                                                        
                        UT-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE         
                        INTO UT-DISPLAY-MESSAGE                                  
                    END-STRING                                                   
@@ -253,7 +253,7 @@
                        UT-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE         
                        SPACE                          DELIMITED BY SIZE         
                        UT-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE        
-                       ', WAS '                       DELIMITED BY SIZE         
+                       '                                                        
                        UT-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE         
                        INTO UT-DISPLAY-MESSAGE                                  
                    END-STRING                                                   

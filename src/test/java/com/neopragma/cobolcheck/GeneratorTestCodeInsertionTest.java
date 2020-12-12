@@ -69,13 +69,11 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     public static void oneTimeSetup() {
         config.load("testconfig.properties");
         pathToTestCobolSources = config.getString("test.cobol.sources");
-
-        System.out.println("In BeforeAll, pathToTestCobolSources is: " + pathToTestCobolSources);
     }
 
     @BeforeEach
     public void commonSetup() {
-        generator = new Generator(messages, log, tokenExtractor);
+        generator = new Generator(messages, log, tokenExtractor, config);
     }
 
     @Test
@@ -96,18 +94,13 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     }
 
     @Test
-    public void test() throws IOException {
-
-
+    // We're asserting on computed hashes; this "test" gives us a readable version of the output file.
+    public void see_the_merged_source_file_on_stdout() throws IOException {
         StringReader cobolSourceIn = makeCobolSourceProgram(cobolSourceWithoutWorkingStorage);
         StringWriter testSourceOut = new StringWriter();
         generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
-
-
         System.out.println("testSourceOut: ");
         System.out.println(testSourceOut.toString());
-
-
     }
 
     public static String MD5HashFile(String filename) throws Exception {

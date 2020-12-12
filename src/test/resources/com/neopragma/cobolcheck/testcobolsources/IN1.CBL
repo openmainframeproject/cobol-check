@@ -1,4 +1,3 @@
-      * Test Cobol source: Main program with WORKING-STORAGE
        IDENTIFICATION DIVISION.
        PROGRAM-ID. IN1.
        ENVIRONMENT DIVISION.

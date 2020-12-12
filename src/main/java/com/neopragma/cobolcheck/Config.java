@@ -1,6 +1,5 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.ExpectedConfigSettingNotFoundException;
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
@@ -48,7 +47,6 @@ public class Config {
                             "configResourceName", "Config.load(configResourceName)"),
                             npe);
         }
-        setCopybookPathFileObject();
         setDefaultLocaleOverride();
         Log.info(messages.get("INF002", configResourceName));
 
@@ -72,27 +70,15 @@ public class Config {
 
     Locale getDefaultLocale() { return (Locale) config.get("default.locale"); }
 
-    private void setCopybookPathFileObject() {
-        if (config.containsKey("resources.directory") && config.containsKey("copybook.directory")) {
-            config.compute("copybook.path", (key, val)
-                    -> new File(config.getProperty("resources.directory")
-                    + Constants.FILE_SEPARATOR
-                    + config.getProperty("copybook.directory")));
-        } else {
-            throw new ExpectedConfigSettingNotFoundException(
-                    messages.get("ERR002", configFilePath, "resources.directory, copybook.directory"));
-        }
-    }
-
     private void setDefaultLocaleOverride() {
 
-        if (config.containsKey("locale.language") == false) {
+        if (!config.containsKey("locale.language")) {
             return;
         }
         Locale locale;
-        if (config.containsKey("locale.country") == false) {
+        if (!config.containsKey("locale.country")) {
             locale = new Locale(config.getProperty("locale.language"));
-        } else if (config.containsKey("locale.variant") == false) {
+        } else if (!config.containsKey("locale.variant")) {
             locale = new Locale(
                     config.getProperty("locale.language"),
                     config.getProperty("locale.country"));

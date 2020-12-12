@@ -1,7 +1,7 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.testhelpers.SystemErr;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,17 +18,22 @@ public class GeneratorGeneralTest {
     private StringBuilder cobolSourceData;
     private StringWriter testProgramSource;
     private Generator generator;
-    private SystemErr systemErr = new SystemErr();
-    private Messages messages = new Messages();
+    private static final Messages messages = new Messages();
+    private static final Config config = new Config(messages);
 
     @Mock
     Reader mockTestSuite;
+
+    @BeforeAll
+    static void oneTimeSetup() {
+        config.load("testconfig.properties");
+    }
 
     @BeforeEach
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(new Messages(), new Log(), new StringTokenizerExtractor(messages));
+        generator = new Generator(new Messages(), new Log(), new StringTokenizerExtractor(messages), config);
     }
 
     @Test

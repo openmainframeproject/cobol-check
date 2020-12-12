@@ -3,10 +3,7 @@ package com.neopragma.cobolcheck;
 import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,28 +20,40 @@ public class Generator implements Constants {
     private final Messages messages;
     private final Log log;
     private final TokenExtractor tokenExtractor;
+    private final Config config;
 
     private final State state = new State();
 
-    public static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
-    public static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
-    public static final String DATA_DIVISION = "DATA DIVISION";
-    public static final String PROCEDURE_DIVISION = "PROCEDURE DIVISION";
-    public static final String FILE_SECTION = "FILE SECTION";
-    public static final String LOCAL_STORAGE_SECTION = "LOCAL-STORAGE SECTION";
-    public static final String LINKAGE_SECTION = "LINKAGE SECTION";
-    public static final String WORKING_STORAGE_SECTION = "WORKING-STORAGE SECTION";
+    private static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
+    private static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
+    private static final String DATA_DIVISION = "DATA DIVISION";
+    private static final String PROCEDURE_DIVISION = "PROCEDURE DIVISION";
+    private static final String FILE_SECTION = "FILE SECTION";
+    private static final String LOCAL_STORAGE_SECTION = "LOCAL-STORAGE SECTION";
+    private static final String LINKAGE_SECTION = "LINKAGE SECTION";
+    private static final String WORKING_STORAGE_SECTION = "WORKING-STORAGE SECTION";
+
+    private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
+    private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
 
     private boolean workingStorageTestCodeHasBeenInserted = false;
-    private String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
+    private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
+    private static String copybookDirectoryName = EMPTY_STRING;
+    private BufferedReader secondarySourceBufferedReader;
+    private String secondarySourceLine = EMPTY_STRING;
+
+    private Reader secondarySourceReader;
 
     public Generator(
             Messages messages,
             Log log,
-            TokenExtractor tokenExtractor) {
+            TokenExtractor tokenExtractor,
+            Config config) {
         this.messages = messages;
         this.log = log;
         this.tokenExtractor = tokenExtractor;
+        this.config = config;
+        copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
     /**
@@ -102,16 +111,16 @@ public class Generator implements Constants {
             Reader reader,
             Writer testSourceOut) throws IOException {
 
-        if (sourceLineContains(tokens, DATA_DIVISION)) enteringDataDivision();
+        if (sourceLineContains(tokens, DATA_DIVISION)) entering(DATA_DIVISION);
 
         if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
-            enteringProcedureDivision();
+            entering(PROCEDURE_DIVISION);
             if (!workingStorageTestCodeHasBeenInserted) {
                 testSourceOut.write(workingStorageHeader);
                 insertWorkingStorageTestCode(testSourceOut);
             }
         }
-        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) enteringWorkingStorageSection();
+        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) entering(WORKING_STORAGE_SECTION);
     }
 
     private void processingAfterEchoingTheSourceLineToTheOutput(
@@ -130,32 +139,39 @@ public class Generator implements Constants {
     }
 
     private void insertWorkingStorageTestCode(Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(
-                "      ***** insert working-storage code here *****"));
+        secondarySourceReader = new FileReader(copybookFile(workingStorageCopybookFilename));
+        insertSecondarySourceIntoTestSource(testSourceOut);
         workingStorageTestCodeHasBeenInserted = true;
     }
 
     private void insertProcedureDivisionTestCode(Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(
-                "      ***** insert procedure division code here *****"));
+        secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
+        insertSecondarySourceIntoTestSource(testSourceOut);
+        workingStorageTestCodeHasBeenInserted = true;
+    }
+
+    private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
+        secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
+        secondarySourceLine = EMPTY_STRING;
+        while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
+            testSourceOut.write(fixedLength(secondarySourceLine));
+        }
+        secondarySourceBufferedReader.close();
     }
 
     private boolean sourceLineContains(List<String> tokens, String tokenValue) {
         return tokens.size() > 0 && tokens.contains(tokenValue);
     }
 
-    private void enteringDataDivision() {
-        state.flags.get(DATA_DIVISION).set();
+
+    private File copybookFile(String fileName) {
+        return new File(copybookDirectoryName + fileName);
     }
 
-    private void enteringProcedureDivision() {
-        state.flags.get(PROCEDURE_DIVISION).set();
-    }
 
-    private void enteringWorkingStorageSection() {
-        state.flags.get(WORKING_STORAGE_SECTION).set();
+    private void entering(String partOfProgram) {
+        state.flags.get(partOfProgram).set();
     }
-
 
     /**
      * Ensure the input line is fixed length 80 bytes plus a newline.
@@ -167,6 +183,14 @@ public class Generator implements Constants {
         return String.format("%1$-80s", sourceLine) + NEWLINE;
     }
 
+    private String setCopybookDirectoryName(Config config) {
+        return config.getString("resources.directory")
+                + Constants.FILE_SEPARATOR
+                + this.getClass().getPackageName().replace(".", "/")
+                + Constants.FILE_SEPARATOR
+                + config.getString("copybook.directory")
+                + Constants.FILE_SEPARATOR;
+    }
 
     class State {
         private Map<String, Flag> flags;
