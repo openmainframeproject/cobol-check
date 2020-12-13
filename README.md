@@ -5,9 +5,18 @@ This project is intended to be a full rewrite of https://github.com/neopragma/co
 - Apply lessons learned from the proof of concept cobol-unit-test project.
 - Build the tool in a language that is well supported on all the target platforms: Unix, Linux, Windows, and zOS; possibly OS X.
 
+## Documentation 
+
+Documentation is in progress. Please see [the wiki](https://github.com/neopragma/cobol-check/wiki/) for more information.
+
+
 ## Current status
 
 Just starting.
+
+Initial development goal is to implement the same functionality as cobol-unit-test and to include fixes for some of the issues on that project's issues list.
+
+Next goal after that is to ensure the tool will run on all target platforms.
 
 ## Related projects:
 
