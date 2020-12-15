@@ -55,13 +55,6 @@ public class CopybookExpander implements Constants, StringHelper {
                          String copybookFilenameSuffix,
                          StringTuple... textReplacement) throws IOException {
 
-        System.out.println("Entering CopybookExpander.expand()");
-        System.out.println("textReplacement array size: " + textReplacement.length);
-        for (StringTuple tuple : textReplacement) {
-            System.out.println("replace " + tuple.getFirst() + " by " + tuple.getSecond());
-        }
-
-
         BufferedReader copybookReader
                 = new BufferedReader(new FileReader(
                         Path.of(pathToCopybooks
@@ -70,13 +63,13 @@ public class CopybookExpander implements Constants, StringHelper {
                                 .toFile()));
         String sourceLine = EMPTY_STRING;
         while ((sourceLine = copybookReader.readLine()) != null) {
+            // Nested COPY
             if (copyStatementIsPresentIn(sourceLine)) {
                 String copybookName = extractCopybookNameFrom(sourceLine);
-                StringBuilder tempLine = new StringBuilder(sourceLine);
-                tempLine.setCharAt(6, '*');
-                sourceLine = tempLine.toString();
+                sourceLine = commentOut(sourceLine);
                 expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textReplacement);
             }
+            // COPY REPLACING
             if (!textReplacement[0].isEmpty()) {
                 for (StringTuple replace : textReplacement) {
                     for (String followingCharacter : List.of(PERIOD, SPACE)) {
@@ -93,6 +86,12 @@ public class CopybookExpander implements Constants, StringHelper {
         }
         copybookReader.close();
         return expandedSource;
+    }
+
+    private String commentOut(String sourceLine) {
+        StringBuilder tempLine = new StringBuilder(sourceLine);
+        tempLine.setCharAt(6, '*');
+        return tempLine.toString();
     }
 
     private boolean copyStatementIsPresentIn(String sourceLine) {
