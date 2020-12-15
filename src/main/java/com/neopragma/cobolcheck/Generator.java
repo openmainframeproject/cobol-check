@@ -188,7 +188,7 @@ public class Generator implements Constants {
                 + Constants.FILE_SEPARATOR
                 + this.getClass().getPackageName().replace(".", "/")
                 + Constants.FILE_SEPARATOR
-                + config.getString("copybook.directory")
+                + config.getString("cobolcheck.copybook.directory")
                 + Constants.FILE_SEPARATOR;
     }
 

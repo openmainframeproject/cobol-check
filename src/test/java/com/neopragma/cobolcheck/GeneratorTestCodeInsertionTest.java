@@ -68,7 +68,14 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     @BeforeAll
     public static void oneTimeSetup() {
         config.load("testconfig.properties");
-        pathToTestCobolSources = config.getString("test.cobol.sources");
+        pathToTestCobolSources =
+                config.getString("resources.directory")
+              + FILE_SEPARATOR
+              + GeneratorTestCodeInsertionTest.class.getPackageName().replace(".", FILE_SEPARATOR)
+              + FILE_SEPARATOR
+              + config.getString("application.source.directory")
+              + FILE_SEPARATOR;
+
     }
 
     @BeforeEach
@@ -128,7 +135,10 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     }
 
     private File testFile(String fileName) {
-        return new File(pathToTestCobolSources + fileName);
+        File file = new File(pathToTestCobolSources + fileName);
+        System.out.println("testFile full path: " + file.getAbsolutePath());
+        return file;
+//        return new File(pathToTestCobolSources + fileName);
     }
 
     private String testFileName(String fileName) {

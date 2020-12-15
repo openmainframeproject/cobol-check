@@ -27,8 +27,6 @@ public class Config {
     private String configFilePath;
 
     void load() {
-//        configFilePath = "/%s/config.properties"
-//                .formatted(this.getClass().getPackageName().replaceAll("\\.", Constants.FILE_SEPARATOR));
         configFilePath = "config.properties";
         load(configFilePath);
     }

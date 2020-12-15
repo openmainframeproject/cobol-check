@@ -53,7 +53,7 @@ public class GetOpt implements Constants, StringHelper {
         if (isBlank(optionsString))
             throw new PossibleInternalLogicErrorException(messages.get("ERR005"));
 
-        options = new HashMap();
+        options = new HashMap<>();
 
         // "a:bg: --long alpha:,beta,gamma:" -> [0] "a:bg:", [1] "--long", [2] "alpha:,beta,gamma:"
         String[] optionSpecs = optionsString.split(SPACE);
@@ -133,12 +133,12 @@ public class GetOpt implements Constants, StringHelper {
         return argValue.substring(offset);
     }
 
-    class OptionKey {
+    static class OptionKey {
         public String shortKey = EMPTY_STRING;
         public String longKey = EMPTY_STRING;
     }
 
-    class OptionValue {
+    static class OptionValue {
         public boolean hasArgument = false;
         public boolean isSet = false;
         public String argumentValue = EMPTY_STRING;
