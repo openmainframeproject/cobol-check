@@ -18,9 +18,7 @@ import java.util.Map;
  */
 public class Generator implements Constants, StringHelper {
     private final Messages messages;
-    private final Log log;
     private final TokenExtractor tokenExtractor;
-    private final Config config;
 
     private final State state = new State();
 
@@ -39,8 +37,6 @@ public class Generator implements Constants, StringHelper {
     private boolean workingStorageTestCodeHasBeenInserted = false;
     private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
     private static String copybookDirectoryName = EMPTY_STRING;
-    private BufferedReader secondarySourceBufferedReader;
-    private String secondarySourceLine = EMPTY_STRING;
 
     private Reader secondarySourceReader;
 
@@ -50,9 +46,7 @@ public class Generator implements Constants, StringHelper {
             TokenExtractor tokenExtractor,
             Config config) {
         this.messages = messages;
-        this.log = log;
         this.tokenExtractor = tokenExtractor;
-        this.config = config;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -68,7 +62,7 @@ public class Generator implements Constants, StringHelper {
     public Writer mergeTestSuite(
             Reader testSuite,
             Reader cobolSourceIn,
-            Writer testSourceOut) throws IOException {
+            Writer testSourceOut) {
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
@@ -151,8 +145,8 @@ public class Generator implements Constants, StringHelper {
     }
 
     private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
-        secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
-        secondarySourceLine = EMPTY_STRING;
+        BufferedReader secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
+        String secondarySourceLine = EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
             testSourceOut.write(fixedLength(secondarySourceLine));
         }
@@ -183,7 +177,7 @@ public class Generator implements Constants, StringHelper {
     }
 
     class State {
-        private Map<String, Flag> flags;
+        private final Map<String, Flag> flags;
 
         public State() {
             flags = new HashMap<>();
@@ -238,7 +232,7 @@ public class Generator implements Constants, StringHelper {
         }
     }
 
-    class Flag {
+    static class Flag {
         private boolean state = false;
         private List<Flag> mutuallyExclusiveFlags;
         private List<Flag> dependentFlags;

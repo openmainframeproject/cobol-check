@@ -5,6 +5,7 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Process command line options.
@@ -37,11 +38,11 @@ public class GetOpt implements Constants, StringHelper {
     }
 
     public String getValueFor(String key) {
-        return lookupOption(key).argumentValue;
+        return Objects.requireNonNull(lookupOption(key)).argumentValue;
     }
 
     public boolean isSet(String key) {
-        return lookupOption(key).isSet;
+        return Objects.requireNonNull(lookupOption(key)).isSet;
     }
 
     /**
@@ -81,15 +82,6 @@ public class GetOpt implements Constants, StringHelper {
             options.put(optionKey, optionValue);
             optionIndex += 1;
         }
-
-//        System.out.println("Options loaded:");
-//        for (OptionKey key : options.keySet()) {
-//            System.out.println("Keys: " + key.shortKey + ", " + key.longKey);
-//            OptionValue optionValue = lookupOption(key.shortKey);
-//            System.out.println("Value: isSet=" + optionValue.isSet
-//                + ", hasArgument=" + optionValue.hasArgument
-//                + ", argumentValue=" + optionValue.argumentValue);
-//        }
     }
 
     private void processCommandLineArgumentArray(String[] args) {

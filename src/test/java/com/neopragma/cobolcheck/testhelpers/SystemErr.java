@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class SystemErr {
-    private PrintStream originalSystemErr = System.err;
+    private final PrintStream originalSystemErr = System.err;
     private ByteArrayOutputStream tempSystemErr;
 
     public void record() {

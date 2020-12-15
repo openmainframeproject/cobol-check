@@ -38,17 +38,13 @@ public class GeneratorGeneralTest {
 
     @Test
     void cobol_source_cannot_be_null__probable_internal_logic_error() {
-        assertThrows(PossibleInternalLogicErrorException.class, () -> {
-            generator.mergeTestSuite(mockTestSuite, null, testProgramSource);
-        });
+        assertThrows(PossibleInternalLogicErrorException.class, () -> generator.mergeTestSuite(mockTestSuite, null, testProgramSource));
     }
 
     @Test
     void cobol_source_cannot_be_empty__probable_internal_logic_error() {
         cobolSourceData = new StringBuilder();
-        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () -> {
-            mergeTestSuiteAndVerifyResults(mockTestSuite, cobolSourceData, testProgramSource);
-        });
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () -> mergeTestSuiteAndVerifyResults(mockTestSuite, cobolSourceData, testProgramSource));
         assertTrue(ex.getMessage().contains("empty input stream"));
     }
 
@@ -58,13 +54,12 @@ public class GeneratorGeneralTest {
         }
     }
 
-    private Writer mergeTestSuiteAndVerifyResults(Reader testSuite,
-                                                  StringBuilder cobolSourceData,
-                                                  Writer testProgramSource) throws IOException {
+    private void mergeTestSuiteAndVerifyResults(Reader testSuite,
+                                                StringBuilder cobolSourceData,
+                                                Writer testProgramSource) throws IOException {
         StringReader cobolProgramSource = new StringReader(cobolSourceData.toString());
         Writer mergedCobolData = generator.mergeTestSuite(testSuite, cobolProgramSource, testProgramSource);
         assertEquals(cobolSourceData.toString(), mergedCobolData.toString());
-        return mergedCobolData;
     }
 }
 

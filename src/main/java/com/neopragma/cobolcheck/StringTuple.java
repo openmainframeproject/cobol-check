@@ -1,8 +1,8 @@
 package com.neopragma.cobolcheck;
 
 public class StringTuple implements Tuple {
-    private String first;
-    public String second;
+    private final String first;
+    public final String second;
     public StringTuple(String first, String second) {
         this.first = first;
         this.second = second;

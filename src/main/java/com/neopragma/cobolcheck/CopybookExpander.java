@@ -32,13 +32,13 @@ import java.util.StringTokenizer;
 public class CopybookExpander implements Constants, StringHelper {
 
     private final Config config;
-    private Messages messages;
+    private final Messages messages;
     private final String pathToCopybooks;
 
     public CopybookExpander(Config config, Messages messages) {
         this.config = config;
         this.messages = messages;
-        pathToCopybooks = getPathFor("testcobolcopybooks");
+        pathToCopybooks = getPathToCopybooks();
     }
 
     public Writer expand(Writer expandedSource,
@@ -61,7 +61,7 @@ public class CopybookExpander implements Constants, StringHelper {
                                 + copybookFilename
                                 + copybookFilenameSuffix)
                                 .toFile()));
-        String sourceLine = EMPTY_STRING;
+        String sourceLine;
         while ((sourceLine = copybookReader.readLine()) != null) {
             // Nested COPY
             if (copyStatementIsPresentIn(sourceLine)) {
@@ -100,7 +100,7 @@ public class CopybookExpander implements Constants, StringHelper {
     }
 
     private String extractCopybookNameFrom(String sourceLine) {
-        String copybookName = EMPTY_STRING;
+        String copybookName;
         StringTokenizer st = new StringTokenizer(sourceLine);
         String copyVerb = st.nextToken();
         if (st.hasMoreTokens()) {
@@ -118,7 +118,7 @@ public class CopybookExpander implements Constants, StringHelper {
         return copybookName;
     }
 
-    private String getPathFor(String defaultValue) {
+    private String getPathToCopybooks() {
         String pathString = EMPTY_STRING;
         String directoryName =
                 config.getString("application.copybook.directory",

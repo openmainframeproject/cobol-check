@@ -20,13 +20,12 @@ public class Config implements Constants {
         this.messages = messages;
     }
 
-    private Messages messages;
+    private final Messages messages;
     private Properties config = null;
     private static final String configFileExceptionMessage = "Name: %s";
-    private String configFilePath;
 
     void load() {
-        configFilePath = "config.properties";
+        String configFilePath = "config.properties";
         load(configFilePath);
     }
 

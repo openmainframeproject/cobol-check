@@ -19,14 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class CopybookExpanderTest implements Constants, StringHelper {
-    private static String pathToTestCobolSources;
-    private static String pathToTestCobolCopybooks;
-
     private CopybookExpander copybookExpander;
     private String expectedResult;
     private String testCopybookFilename;
     private String testCopybookBasename;
     private static String copybookFilenameSuffix;
+    private static String pathToTestCobolCopybooks;
 
     @Mock
     private static Messages messages;
@@ -43,9 +41,8 @@ public class CopybookExpanderTest implements Constants, StringHelper {
         config = new Config(new Messages());
 
         config.load("testconfig.properties");
-        pathToTestCobolSources = getPathFor("application.source.directory", "testcobolsources");
-        pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "testcobolcopybooks");
         copybookFilenameSuffix = config.getApplicationFilenameSuffix();
+        pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "testcobolcopybooks");
     }
 
     @BeforeEach
@@ -121,7 +118,7 @@ public class CopybookExpanderTest implements Constants, StringHelper {
     }
 
     private static String getPathFor(String configPropertyName, String defaultValue) {
-        String pathString = EMPTY_STRING;
+        String pathString;
         String directoryName =
                 config.getString(configPropertyName,
                         "testcobolsources");

@@ -13,27 +13,21 @@ public class GetOptTest {
 
     @Test
     public void it_throws_when_option_specification_string_is_null() {
-        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> {
-            new GetOpt(new String[] { "--help" }, null, new Messages());
-        });
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> new GetOpt(new String[] { "--help" }, null, new Messages()));
         assertEquals("ERR005: Command line option specification string passed to GetOpt was null.",
                 ex.getMessage());
     }
 
     @Test
     public void it_throws_when_required_argument_is_not_present() {
-        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
-            new GetOpt(new String[] { "-c", "-l", "warn" }, optionSpecsWithOnlyShortOptions, new Messages());
-        });
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-c", "-l", "warn" }, optionSpecsWithOnlyShortOptions, new Messages()));
         assertEquals("ERR004: Expecting an argument for command line option <-c> but got <-l>.",
                 ex.getMessage());
     }
 
     @Test
     public void it_throws_when_an_option_is_not_present_when_expected() {
-        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
-            new GetOpt(new String[] { "-l", "warn", "c" }, optionSpecsWithOnlyShortOptions, new Messages());
-        });
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-l", "warn", "c" }, optionSpecsWithOnlyShortOptions, new Messages()));
         assertEquals("ERR006: Expecting a command line option but got <c>.",
                 ex.getMessage());
     }

@@ -16,11 +16,11 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
         this.messages = messages;
     }
 
-    private Messages messages;
+    private final Messages messages;
     private static final String delimiters = String.format(" .%s", Constants.NEWLINE);
 
     // Couldn't use Map.of because it has a limitation of 10 entries. (Dec 2020)
-    private static Map<String, String> expectedTokens = new HashMap();
+    private static final Map<String, String> expectedTokens = new HashMap();
     static {
         expectedTokens.put("PROCEDURE", "DIVISION");
         expectedTokens.put("DATA", "DIVISION");
@@ -64,7 +64,7 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
             if (token.startsWith(COMMENT_INDICATOR)) {
                 break;
             }
-            if (expectedNext != EMPTY_STRING) {
+            if (!expectedNext.equals(EMPTY_STRING)) {
                 if (token.equals(expectedNext)) {
                     token = saved + " " + token;
                     expectedNext = EMPTY_STRING;

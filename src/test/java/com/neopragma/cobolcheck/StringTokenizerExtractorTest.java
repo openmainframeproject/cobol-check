@@ -23,9 +23,7 @@ public class StringTokenizerExtractorTest implements Constants {
 
     @Test
     public void when_the_line_is_a_null_reference_it_throws__probable_internal_logic_error() {
-        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> {
-            extractor.extractTokensFrom(null);
-        });
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> extractor.extractTokensFrom(null));
         assertEquals("ERR001: sourceLine is null on entry to StringTokenizerExtractor.extractTokensFrom(sourceLine) method.", ex.getMessage());
     }
 

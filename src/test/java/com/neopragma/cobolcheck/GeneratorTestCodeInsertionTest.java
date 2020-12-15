@@ -113,8 +113,8 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     public static String MD5HashFile(String filename) throws Exception {
         byte[] buf = ChecksumFile(filename);
         String res = "";
-        for (int i = 0; i < buf.length; i++) {
-            res+= Integer.toString((buf[i] & 0xff) + 0x100, 16).substring(1);
+        for (byte b : buf) {
+            res += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
         }
         return res;
     }
@@ -148,7 +148,7 @@ public class GeneratorTestCodeInsertionTest implements Constants {
     private StringReader makeCobolSourceProgram(String[] sourceLines) {
         StringBuilder sourceCode = new StringBuilder();
         for (String sourceLine : sourceLines) {
-            sourceCode.append("      " + String.format("%1$-74s", sourceLine) + NEWLINE);
+            sourceCode.append("      ").append(String.format("%1$-74s", sourceLine)).append(NEWLINE);
         }
         return new StringReader(sourceCode.toString());
     }

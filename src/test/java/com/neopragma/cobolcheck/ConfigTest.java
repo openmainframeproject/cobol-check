@@ -34,9 +34,7 @@ public class ConfigTest implements Constants {
 
     @Test
     public void it_throws_when_config_file_is_not_found() {
-        Throwable ex = assertThrows(IOExceptionProcessingConfigFile.class, () -> {
-            config.load("bogus name");
-        });
+        Throwable ex = assertThrows(IOExceptionProcessingConfigFile.class, () -> config.load("bogus name"));
         assertEquals("ERR003: IOException accessing config file <bogus name> in Config.load(configResourceName).",
                 ex.getMessage());
         assertEquals("bogus name (No such file or directory)",
@@ -45,9 +43,7 @@ public class ConfigTest implements Constants {
 
     @Test
     public void it_throws_when_config_file_name_is_null() {
-        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> {
-            config.load(null);
-        });
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> config.load(null));
         assertEquals("ERR001: configResourceName is null on entry to Config.load(configResourceName) method.",
                 ex.getMessage());
         assertEquals(NullPointerException.class,
