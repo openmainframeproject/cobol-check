@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -46,15 +47,21 @@ public class CopybookExpander implements Constants, StringHelper {
         return expand(expandedSource,
                 copybookFilename,
                 copybookFilenameSuffix,
-                EMPTY_STRING,
-                EMPTY_STRING);
+                new StringTuple(null, null));
     }
 
     public Writer expand(Writer expandedSource,
                          String copybookFilename,
                          String copybookFilenameSuffix,
-                         String textToReplace,
-                         String replacementText) throws IOException {
+                         StringTuple... textReplacement) throws IOException {
+
+        System.out.println("Entering CopybookExpander.expand()");
+        System.out.println("textReplacement array size: " + textReplacement.length);
+        for (StringTuple tuple : textReplacement) {
+            System.out.println("replace " + tuple.getFirst() + " by " + tuple.getSecond());
+        }
+
+
         BufferedReader copybookReader
                 = new BufferedReader(new FileReader(
                         Path.of(pathToCopybooks
@@ -68,10 +75,18 @@ public class CopybookExpander implements Constants, StringHelper {
                 StringBuilder tempLine = new StringBuilder(sourceLine);
                 tempLine.setCharAt(6, '*');
                 sourceLine = tempLine.toString();
-                if (textToReplace != EMPTY_STRING & replacementText != EMPTY_STRING) {
-                    sourceLine = sourceLine.replaceAll(textToReplace, replacementText);
+                expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textReplacement);
+            }
+            if (!textReplacement[0].isEmpty()) {
+                for (StringTuple replace : textReplacement) {
+                    for (String followingCharacter : List.of(PERIOD, SPACE)) {
+                        String textToReplace = SPACE + replace.getFirst() + followingCharacter;
+                        String replacementText = SPACE + replace.getSecond() + followingCharacter;
+                        if (sourceLine.contains(textToReplace)) {
+                            sourceLine = sourceLine.replaceAll(textToReplace, replacementText);
+                        }
+                    }
                 }
-                expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textToReplace, replacementText);
             }
             sourceLine = fixedLength(sourceLine);
             expandedSource.write(sourceLine);

@@ -15,7 +15,7 @@ public interface StringHelper {
     }
 
     default String fixedLength(String sourceLine) {
-        return String.format("%1$-80s", sourceLine) + "\n";
+        return String.format("%1$-80s", sourceLine.stripTrailing()) + "\n";
     }
 
 }

@@ -87,19 +87,32 @@ public class CopybookExpanderTest implements Constants, StringHelper {
     @Test
     public void it_handles_copy_replacing_with_whole_words() throws IOException {
         Writer expandedSource =
-                runTestCase("COPYR001-padded", "EXR001-padded");
+                runTestCase("COPYR001-padded",
+                        "EXR001-padded",
+                        new StringTuple("A", "ALPHA"),
+                        new StringTuple("B", "BETA"),
+                        new StringTuple("C", "CHARLIE"),
+                        new StringTuple("D", "DELTA"));
         assertEquals(expectedResult, expandedSource.toString());
     }
 
-
-    private Writer runTestCase(String testCopybookBasename, String expectedExpansionBasename) throws IOException {
+    private Writer runTestCase(String testCopybookBasename,
+                               String expectedExpansionBasename) throws IOException {
+            return runTestCase(testCopybookBasename,
+                    expectedExpansionBasename,
+                    new StringTuple(null, null));
+    }
+        private Writer runTestCase(String testCopybookBasename,
+                String expectedExpansionBasename,
+                StringTuple... textReplacement) throws IOException {
         testCopybookFilename = testCopybookBasename + copybookFilenameSuffix;
         expectedResult = getExpectedResult(expectedExpansionBasename + copybookFilenameSuffix);
         Writer expandedSource = new StringWriter();
         expandedSource = copybookExpander.expand(
                 expandedSource,
                 testCopybookBasename,
-                copybookFilenameSuffix);
+                copybookFilenameSuffix,
+                textReplacement);
         return expandedSource;
     }
 

@@ -2,30 +2,21 @@ package com.neopragma.cobolcheck;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TupleTest {
 
     @Test
     public void it_handles_two_strings() {
-        Tuple<String, String> tuple = new Tuple("A", "B");
-        assertEquals("A", tuple.first);
-        assertEquals("B", tuple.second);
+        Tuple<String, String> tuple = new StringTuple("A", "B");
+        assertEquals("A", tuple.getFirst());
+        assertEquals("B", tuple.getSecond());
     }
 
     @Test
-    public void it_handles_two_integers() {
-        Tuple<Integer, Integer> tuple = new Tuple(0, 100);
-        assertEquals(0, tuple.first);
-        assertEquals(100, tuple.second);
-    }
-
-    @Test
-    public void it_handles_two_arbitrary_types() {
-        Tuple<Class, List<Boolean>> tuple = new Tuple(this.getClass(), List.of(true, false));
-        assertEquals(this.getClass(), tuple.first);
-        assertEquals(false, tuple.second.get(1));
+    public void it_knows_when_it_is_empty() {
+        Tuple<String, String> tuple = new StringTuple(null, null);
+        assertTrue(tuple.isEmpty());
     }
 }
