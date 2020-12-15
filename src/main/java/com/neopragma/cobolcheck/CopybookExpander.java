@@ -38,7 +38,7 @@ public class CopybookExpander implements Constants, StringHelper {
     public CopybookExpander(Config config, Messages messages) {
         this.config = config;
         this.messages = messages;
-        pathToCopybooks = getPathFor("application.copybook.directory", "testcobolcopybooks");
+        pathToCopybooks = getPathFor("testcobolcopybooks");
     }
 
     public Writer expand(Writer expandedSource,
@@ -118,10 +118,10 @@ public class CopybookExpander implements Constants, StringHelper {
         return copybookName;
     }
 
-    private String getPathFor(String configPropertyName, String defaultValue) {
+    private String getPathFor(String defaultValue) {
         String pathString = EMPTY_STRING;
         String directoryName =
-                config.getString(configPropertyName,
+                config.getString("application.copybook.directory",
                         "testcobolsources");
         if (directoryName.startsWith(FILE_SEPARATOR)) {
             pathString = directoryName;
