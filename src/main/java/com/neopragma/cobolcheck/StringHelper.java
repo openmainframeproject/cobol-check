@@ -13,4 +13,9 @@ public interface StringHelper {
     default boolean isEmptyArray(String[] subject) {
         return subject == null || subject.length == 0;
     }
+
+    default String fixedLength(String sourceLine) {
+        return String.format("%1$-80s", sourceLine) + "\n";
+    }
+
 }

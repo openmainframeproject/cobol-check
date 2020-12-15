@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Generator implements Constants {
+public class Generator implements Constants, StringHelper {
     private final Messages messages;
     private final Log log;
     private final TokenExtractor tokenExtractor;
@@ -171,16 +171,6 @@ public class Generator implements Constants {
 
     private void entering(String partOfProgram) {
         state.flags.get(partOfProgram).set();
-    }
-
-    /**
-     * Ensure the input line is fixed length 80 bytes plus a newline.
-     *
-     * @param sourceLine
-     * @return 81-byte String: 80-byte Cobol source line followed by a newline character.
-     */
-    private String fixedLength(String sourceLine) {
-        return String.format("%1$-80s", sourceLine) + NEWLINE;
     }
 
     private String setCopybookDirectoryName(Config config) {

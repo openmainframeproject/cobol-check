@@ -3,7 +3,6 @@ package com.neopragma.cobolcheck;
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
@@ -15,7 +14,7 @@ import java.util.Properties;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Config {
+public class Config implements Constants {
 
     public Config(Messages messages) {
         this.messages = messages;
@@ -48,6 +47,7 @@ public class Config {
         setDefaultLocaleOverride();
         Log.info(messages.get("INF002", configResourceName));
 
+        setCopybookFilenameSuffix();
     }
 
     String getString(String key) {
@@ -58,18 +58,28 @@ public class Config {
         return (String) config.getOrDefault(key, defaultValue);
     }
 
-    File getCopybookDirectory() {
-        return (File) config.get("copybook.path");
-    }
-
     void remove(String key) {
         config.remove(key);
     }
 
     Locale getDefaultLocale() { return (Locale) config.get("default.locale"); }
 
-    private void setDefaultLocaleOverride() {
+    String getApplicationFilenameSuffix() {
+        return config.getProperty("resolved.application.copybook.filename.suffix");
+    }
 
+    private void setCopybookFilenameSuffix() {
+        String propertyValue = EMPTY_STRING;
+        String suffix = getString(
+                "application.copybook.filename.suffix",
+                "none");
+        if (!suffix.equalsIgnoreCase("none")) {
+            propertyValue = PERIOD + suffix;
+        }
+        config.put("resolved.application.copybook.filename.suffix", propertyValue);
+    }
+
+    private void setDefaultLocaleOverride() {
         if (!config.containsKey("locale.language")) {
             return;
         }
