@@ -58,41 +58,49 @@ public class CopybookExpanderTest implements Constants, StringHelper {
 
     @Test
     public void it_expands_a_simple_copybook() throws IOException {
-        testCopybookBasename = "COPY001-padded";
-        testCopybookFilename = testCopybookBasename + copybookFilenameSuffix;
-        expectedResult = getExpectedResult(testCopybookFilename);
-        Writer expandedSource = new StringWriter();
-        expandedSource = copybookExpander.expand(
-                expandedSource,
-                testCopybookBasename,
-                copybookFilenameSuffix);
+        Writer expandedSource =
+                runTestCase("COPY001-padded", "COPY001-padded");
         assertEquals(expectedResult, expandedSource.toString());
     }
 
     @Test
     public void it_expands_nested_copybooks_one_level_deep() throws IOException {
-        testCopybookBasename = "COPY002-padded";
-        testCopybookFilename = testCopybookBasename + copybookFilenameSuffix;
-        expectedResult = getExpectedResult("EX002-padded" + copybookFilenameSuffix);
-        Writer expandedSource = new StringWriter();
-        expandedSource = copybookExpander.expand(
-                expandedSource,
-                testCopybookBasename,
-                copybookFilenameSuffix);
-        assertEquals(expectedResult, expandedSource.toString());
+        Writer expandedSource =
+                runTestCase("COPY002-padded", "EX002-padded");
+        assertEquals(expectedResult, runTestCase("COPY002-padded", "EX002-padded").toString());
     }
 
     @Test
     public void it_expands_nested_copybooks_three_levels_deep() throws IOException {
-        testCopybookBasename = "COPY005-padded";
+        Writer expandedSource =
+                runTestCase("COPY005-padded", "EX005-padded");
+        assertEquals(expectedResult, expandedSource.toString());
+    }
+
+    @Test
+    public void it_handles_lower_case_and_mixed_case_code() throws IOException {
+        Writer expandedSource =
+                runTestCase("mixed005-padded", "mixedex005-padded");
+        assertEquals(expectedResult, expandedSource.toString());
+    }
+
+    @Test
+    public void it_handles_copy_replacing_with_whole_words() throws IOException {
+        Writer expandedSource =
+                runTestCase("COPYR001-padded", "EXR001-padded");
+        assertEquals(expectedResult, expandedSource.toString());
+    }
+
+
+    private Writer runTestCase(String testCopybookBasename, String expectedExpansionBasename) throws IOException {
         testCopybookFilename = testCopybookBasename + copybookFilenameSuffix;
-        expectedResult = getExpectedResult("EX005-padded" + copybookFilenameSuffix);
+        expectedResult = getExpectedResult(expectedExpansionBasename + copybookFilenameSuffix);
         Writer expandedSource = new StringWriter();
         expandedSource = copybookExpander.expand(
                 expandedSource,
                 testCopybookBasename,
                 copybookFilenameSuffix);
-        assertEquals(expectedResult, expandedSource.toString());
+        return expandedSource;
     }
 
     private String getExpectedResult(String copybookFilename) throws IOException {

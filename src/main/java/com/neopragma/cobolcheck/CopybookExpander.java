@@ -43,6 +43,18 @@ public class CopybookExpander implements Constants, StringHelper {
     public Writer expand(Writer expandedSource,
                          String copybookFilename,
                          String copybookFilenameSuffix) throws IOException {
+        return expand(expandedSource,
+                copybookFilename,
+                copybookFilenameSuffix,
+                EMPTY_STRING,
+                EMPTY_STRING);
+    }
+
+    public Writer expand(Writer expandedSource,
+                         String copybookFilename,
+                         String copybookFilenameSuffix,
+                         String textToReplace,
+                         String replacementText) throws IOException {
         BufferedReader copybookReader
                 = new BufferedReader(new FileReader(
                         Path.of(pathToCopybooks
@@ -56,7 +68,10 @@ public class CopybookExpander implements Constants, StringHelper {
                 StringBuilder tempLine = new StringBuilder(sourceLine);
                 tempLine.setCharAt(6, '*');
                 sourceLine = tempLine.toString();
-                expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix);
+                if (textToReplace != EMPTY_STRING & replacementText != EMPTY_STRING) {
+                    sourceLine = sourceLine.replaceAll(textToReplace, replacementText);
+                }
+                expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textToReplace, replacementText);
             }
             sourceLine = fixedLength(sourceLine);
             expandedSource.write(sourceLine);
