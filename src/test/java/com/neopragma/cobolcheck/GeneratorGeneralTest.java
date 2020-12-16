@@ -33,7 +33,7 @@ public class GeneratorGeneralTest {
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(new Messages(), new Log(), new StringTokenizerExtractor(messages), config);
+        generator = new Generator(new Messages(), new StringTokenizerExtractor(messages), config);
     }
 
     @Test

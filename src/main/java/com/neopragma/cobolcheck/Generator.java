@@ -42,7 +42,6 @@ public class Generator implements Constants, StringHelper {
 
     public Generator(
             Messages messages,
-            Log log,
             TokenExtractor tokenExtractor,
             Config config) {
         this.messages = messages;

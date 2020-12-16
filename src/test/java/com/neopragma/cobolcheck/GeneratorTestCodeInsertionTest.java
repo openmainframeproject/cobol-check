@@ -80,7 +80,7 @@ public class GeneratorTestCodeInsertionTest implements Constants {
 
     @BeforeEach
     public void commonSetup() {
-        generator = new Generator(messages, log, tokenExtractor, config);
+        generator = new Generator(messages, tokenExtractor, config);
     }
 
     @Test
