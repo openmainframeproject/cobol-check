@@ -13,7 +13,7 @@ import java.security.MessageDigest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneratorTestCodeInsertionTest implements Constants {
+public class GeneratorTestCodeInsertionIT implements Constants {
 
     private Generator generator;
     private static final Messages messages = new Messages();
@@ -71,7 +71,7 @@ public class GeneratorTestCodeInsertionTest implements Constants {
         pathToTestCobolSources =
                 config.getString("resources.directory")
               + FILE_SEPARATOR
-              + GeneratorTestCodeInsertionTest.class.getPackageName().replace(".", FILE_SEPARATOR)
+              + GeneratorTestCodeInsertionIT.class.getPackageName().replace(".", FILE_SEPARATOR)
               + FILE_SEPARATOR
               + config.getString("application.source.directory")
               + FILE_SEPARATOR;

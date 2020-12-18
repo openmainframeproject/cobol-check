@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,12 +16,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @ExtendWith(MockitoExtension.class)
-public class CopybookExpanderTest implements Constants, StringHelper {
+public class CopybookExpanderIT implements Constants, StringHelper {
     private CopybookExpander copybookExpander;
     private String expectedResult;
     private String testCopybookFilename;
@@ -38,6 +41,9 @@ public class CopybookExpanderTest implements Constants, StringHelper {
 //        when(messages.get(anyString())).thenReturn(EMPTY_STRING);
 //        doReturn(EMPTY_STRING).when(messages).get(anyString(), anyString());
 //        config = new Config(messages);
+
+        System.out.println("********** CopybookExpanderIT **********");
+
         config = new Config(new Messages());
 
         config.load("testconfig.properties");
@@ -82,7 +88,7 @@ public class CopybookExpanderTest implements Constants, StringHelper {
     }
 
     @Test
-    public void it_handles_copy_replacing_with_whole_words() throws IOException {
+    public void it_handles_copy_replacing() throws IOException {
         Writer expandedSource =
                 runTestCase("COPYR001-padded",
                         "EXR001-padded",
@@ -92,6 +98,27 @@ public class CopybookExpanderTest implements Constants, StringHelper {
                         new StringTuple("D", "DELTA"));
         assertEquals(expectedResult, expandedSource.toString());
     }
+
+    @ParameterizedTest
+    @MethodSource("textPatternAndTestFilenameProvider")
+    public void it_handles_pseudo_text_replacement(
+            String pseudoTextPattern,
+            String replacementText,
+            String testCopybookFilename,
+            String expectedResultFilename) throws IOException {
+        Writer expandedSource =
+                runTestCase(testCopybookFilename + "-padded",
+                        expectedResultFilename + "-padded",
+                        new StringTuple(pseudoTextPattern, replacementText));
+        assertEquals(expectedResult, expandedSource.toString());
+    }
+    private static Stream<Arguments> textPatternAndTestFilenameProvider() {
+        return Stream.of(
+                Arguments.of("==XXX==", "NEW-TEXT","COPYP001", "EXP01"),
+                Arguments.of("::XXX::", "NEW-TEXT", "COPYP002", "EXP01")
+        );
+    }
+
 
     private Writer runTestCase(String testCopybookBasename,
                                String expectedExpansionBasename) throws IOException {
@@ -128,7 +155,7 @@ public class CopybookExpanderTest implements Constants, StringHelper {
             pathString =
                     config.getString("resources.directory")
                             + FILE_SEPARATOR
-                            + CopybookExpanderTest.class.getPackageName().replace(".", FILE_SEPARATOR)
+                            + CopybookExpanderIT.class.getPackageName().replace(".", FILE_SEPARATOR)
                             + FILE_SEPARATOR
                             + directoryName
                             + FILE_SEPARATOR;

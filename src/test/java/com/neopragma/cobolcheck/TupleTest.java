@@ -12,6 +12,7 @@ public class TupleTest {
         Tuple<String, String> tuple = new StringTuple("A", "B");
         assertEquals("A", tuple.getFirst());
         assertEquals("B", tuple.getSecond());
+
     }
 
     @Test

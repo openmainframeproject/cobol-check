@@ -72,6 +72,11 @@ public class CopybookExpander implements Constants, StringHelper {
             // COPY REPLACING
             if (!textReplacement[0].isEmpty()) {
                 for (StringTuple replace : textReplacement) {
+                    for (String pseudoTextDelimiter : List.of (PSEUDO_TEXT_DELIMITER_EQUALS, PSEUDO_TEXT_DELIMITER_COLON)) {
+                        if (sourceLine.contains(pseudoTextDelimiter)) {
+                            sourceLine = sourceLine.replaceAll(replace.getFirst(), replace.getSecond());
+                        }
+                    }
                     for (String followingCharacter : List.of(PERIOD, SPACE)) {
                         String textToReplace = SPACE + replace.getFirst() + followingCharacter;
                         String replacementText = SPACE + replace.getSecond() + followingCharacter;

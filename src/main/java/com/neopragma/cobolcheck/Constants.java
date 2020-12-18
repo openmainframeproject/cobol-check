@@ -11,4 +11,6 @@ public interface Constants {
     String COLON = ":";
     String SPACE = " ";
     String COMMA = ",";
+    String PSEUDO_TEXT_DELIMITER_EQUALS = "==";
+    String PSEUDO_TEXT_DELIMITER_COLON = "::";
 }
