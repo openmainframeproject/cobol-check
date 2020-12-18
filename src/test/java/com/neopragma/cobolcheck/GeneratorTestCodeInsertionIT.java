@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.testhelpers.MD5;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.security.MessageDigest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -92,53 +92,29 @@ public class GeneratorTestCodeInsertionIT implements Constants {
         cobolSourceReader.close();
         mergedSourceWriter.close();
 
-        String expectedHashValue = MD5HashFile(testFileName("EX1.CBL"));
-        String actualHashValue = MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
+        String expectedHashValue = MD5.MD5HashFile(testFileName("EX1.CBL"));
+        String actualHashValue = MD5.MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
         assertEquals(expectedHashValue, actualHashValue,
                 "Comparing expected file <" + testFileName("EX1.CBL")
                        + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
 
     }
 
-    @Test
-    // We're asserting on computed hashes; this "test" gives us a readable version of the output file.
-    public void see_the_merged_source_file_on_stdout() throws IOException {
-        StringReader cobolSourceIn = makeCobolSourceProgram(cobolSourceWithoutWorkingStorage);
-        StringWriter testSourceOut = new StringWriter();
-        generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
-        System.out.println("testSourceOut: ");
-        System.out.println(testSourceOut.toString());
-    }
+//    @Test
+//    // We're asserting on computed hashes; this "test" gives us a readable version of the output file.
+//    public void see_the_merged_source_file_on_stdout() throws IOException {
+//        StringReader cobolSourceIn = makeCobolSourceProgram(cobolSourceWithoutWorkingStorage);
+//        StringWriter testSourceOut = new StringWriter();
+//        generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
+//        System.out.println("testSourceOut: ");
+//        System.out.println(testSourceOut.toString());
+//    }
 
-    public static String MD5HashFile(String filename) throws Exception {
-        byte[] buf = ChecksumFile(filename);
-        String res = "";
-        for (byte b : buf) {
-            res += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
-        }
-        return res;
-    }
-
-    public static byte[]  ChecksumFile(String filename) throws Exception {
-        InputStream fis = new FileInputStream(filename);
-        byte[] buf = new byte[1024];
-        MessageDigest complete = MessageDigest.getInstance("MD5");
-        int n;
-        do {
-            n= fis.read(buf);
-            if (n > 0) {
-                complete.update(buf, 0, n);
-            }
-        } while (n != -1);
-        fis.close();
-        return complete.digest();
-    }
 
     private File testFile(String fileName) {
         File file = new File(pathToTestCobolSources + fileName);
         System.out.println("testFile full path: " + file.getAbsolutePath());
         return file;
-//        return new File(pathToTestCobolSources + fileName);
     }
 
     private String testFileName(String fileName) {

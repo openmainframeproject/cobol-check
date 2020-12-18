@@ -2,7 +2,13 @@ plugins {
     id 'java-library'
 }
 
-version = '1.2.1'
+version = '0.0.1'
+group = 'com.neopragma'
+description = 'Unit testing framework for Cobol'
+
+ext {
+    mainClassName = 'com.neopragma.cobolcheck.Driver'
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_14
@@ -56,4 +62,25 @@ def integrationTest = tasks.register("integrationTest", Test) {
     filter {
         includeTestsMatching "com.neopragma.cobolcheck.*IT"
     }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': "${mainClassName}"
+    }
+//    baseName = "${rootProject.name}"
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task defaultProperties {
+    println "Project: $project"
+    println "Name: $name"
+    println "Path: $path"
+    println "Project directory: $projectDir"
+    println "Build directory: $buildDir"
+    println "Version: $version"
+    println "Group: $project.group"
+    println "Description: $project.description"
+//    println "AntBuilder: $ant"
 }
