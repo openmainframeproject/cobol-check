@@ -1,0 +1,1 @@
+java -jar --enable-preview build/libs/cobol-check-0.0.1.jar
