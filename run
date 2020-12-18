@@ -1,0 +1,14 @@
+#!/bin/sh
+# Run gradle build
+
+if [ "$1" = "ut" ]; then
+  ./gradlew test --tests com.neopragma.cobolcheck.*Test
+elif [ "$1" = "it" ]; then
+  ./gradlew test --tests com.neopragma.cobolcheck.*IT
+else
+  ./gradlew "$@"
+fi
+
+
+
+

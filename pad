@@ -1,0 +1,2 @@
+# Pad all lines of a text file to 80 characters plus newline
+awk -F, '{printf("%80-s\n", $1)}' "$1" > "$2"
