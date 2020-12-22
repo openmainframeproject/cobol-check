@@ -1,0 +1,1 @@
+Dave Nicolette, davenicolette@gmail.com, neopragma
