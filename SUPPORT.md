@@ -10,3 +10,9 @@ Please open an [issue](https://github.com/neopragma/cobol-check/issues). Please 
 ## Contributing a fix
 
 Please refer to [Contributing](https://github.com/neopragma/cobol-check/wiki/Contributing) to make a project contribution.
+
+## Other ways to contact us 
+
+- Email: cobolcheck@gmail.com 
+- Forum: https://groups.google.com/u/1/g/cobol-check 
+- Twitter: https://twitter.com/CheckCobol 
