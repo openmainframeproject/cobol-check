@@ -3,6 +3,13 @@ package com.neopragma.cobolcheck;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Test cases specify CICS conditions to be set for mocked resources using the condition name.
+ * This class provides a table lookup to get the values for EIBFN, EIBRCODE, and EIBRESP to inject into the program under test.
+ *
+ * @author Dave Nicolette (neopragma)
+ * @since 1.7
+ */
 public class EIBResponseLookup {
 
     private static Map<String, EIBResponseCodes> EIBResponsesTable;
