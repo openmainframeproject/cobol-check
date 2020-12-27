@@ -33,7 +33,11 @@ public class Messages {
     }
 
     public String get(String messageId, String... substitutionValues) {
-        return String.format(messageBundle.getString(messageId), substitutionValues);
+        if (substitutionValues.length < 1) {
+            return messageBundle.getString(messageId);
+        } else {
+            return String.format(messageBundle.getString(messageId), (Object[]) substitutionValues);
+        }
     }
 
     public void setLocale(Locale locale) {
