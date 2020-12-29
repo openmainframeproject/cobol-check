@@ -125,6 +125,7 @@
            05  WS-MESSAGE               PIC X(40) VALUE SPACES.                 
                                                                                 
        PROCEDURE DIVISION.                                                      
+           PERFORM UT-INITIALIZE                                                
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       

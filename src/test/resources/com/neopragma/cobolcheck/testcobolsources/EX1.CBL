@@ -107,7 +107,8 @@
            05  W-FIELD-1 PIC X(03) VALUE "FOO".                                 
            05  FILLER    PIC X(01) VALUE "-".                                   
            05  W-FIELD-2 PIC X(03) VALUE "XXX".                                 
-       PROCEDURE DIVISION.                                                      
+       PROCEDURE DIVISION.    
+           PERFORM UT-INITIALIZE                                                  
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       

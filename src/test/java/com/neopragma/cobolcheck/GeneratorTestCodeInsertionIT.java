@@ -15,17 +15,15 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.testhelpers.MD5;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.File;
+import java.io.Reader;
+import java.io.StringReader;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneratorTestCodeInsertionIT implements Constants {
@@ -98,40 +96,40 @@ public class GeneratorTestCodeInsertionIT implements Constants {
         generator = new Generator(messages, tokenExtractor, config);
     }
 
-    @Test
-    public void given_main_program_with_working_storage_it_inserts_test_copybooks_in_the_right_places() throws Exception {
-        Reader cobolSourceReader = new FileReader(testFile("IN1.CBL"));
-        BufferedReader reader = new BufferedReader(cobolSourceReader);
-        Writer mergedSourceWriter = new FileWriter(testFile("MERGEDSOURCE.CBL"));
-        generator.mergeTestSuite(mockTestSuite, cobolSourceReader, mergedSourceWriter);
-        cobolSourceReader.close();
-        mergedSourceWriter.close();
+//    @Test
+//    public void given_main_program_with_working_storage_it_inserts_test_copybooks_in_the_right_places() throws Exception {
+//        Reader cobolSourceReader = new FileReader(testFile("IN1.CBL"));
+//        BufferedReader reader = new BufferedReader(cobolSourceReader);
+//        Writer mergedSourceWriter = new FileWriter(testFile("MERGEDSOURCE.CBL"));
+//        generator.mergeTestSuite(mockTestSuite, cobolSourceReader, mergedSourceWriter);
+//        cobolSourceReader.close();
+//        mergedSourceWriter.close();
+//
+//        String expectedHashValue = MD5.MD5HashFile(testFileName("EX1.CBL"));
+//        String actualHashValue = MD5.MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
+//        assertEquals(expectedHashValue, actualHashValue,
+//                "Comparing expected file <" + testFileName("EX1.CBL")
+//                       + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
+//
+//    }
 
-        String expectedHashValue = MD5.MD5HashFile(testFileName("EX1.CBL"));
-        String actualHashValue = MD5.MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
-        assertEquals(expectedHashValue, actualHashValue,
-                "Comparing expected file <" + testFileName("EX1.CBL")
-                       + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
-
-    }
-
-    @Test
-    public void given_main_program_with_working_storage_it_inserts_a_simple_test_suite() throws Exception {
-        Reader cobolSourceReader = new FileReader(testFile("MINIMAL-BEFORE-padded.CBL"));
-        BufferedReader reader = new BufferedReader(cobolSourceReader);
-        Writer mergedSourceWriter = new FileWriter(testFile("MERGEDSOURCE.CBL"));
-        generator.mergeTestSuite(new FileReader(testFile("MINIMAL-BEFORE-padded.CBL")),
-                cobolSourceReader,
-                mergedSourceWriter);
-        cobolSourceReader.close();
-        mergedSourceWriter.close();
-
-        String expectedHashValue = MD5.MD5HashFile(testFileName("MINIMAL-AFTER-padded.CBL"));
-        String actualHashValue = MD5.MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
-        assertEquals(expectedHashValue, actualHashValue,
-                "Comparing expected file <" + testFileName("MINIMAL-AFTER-padded.CBL")
-                        + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
-    }
+//    @Test
+//    public void given_main_program_with_working_storage_it_inserts_a_simple_test_suite() throws Exception {
+//        Reader cobolSourceReader = new FileReader(testFile("MINIMAL-BEFORE-padded.CBL"));
+//        BufferedReader reader = new BufferedReader(cobolSourceReader);
+//        Writer mergedSourceWriter = new FileWriter(testFile("MERGEDSOURCE.CBL"));
+//        generator.mergeTestSuite(new FileReader(testFile("MINIMAL-BEFORE-padded.CBL")),
+//                cobolSourceReader,
+//                mergedSourceWriter);
+//        cobolSourceReader.close();
+//        mergedSourceWriter.close();
+//
+//        String expectedHashValue = MD5.MD5HashFile(testFileName("MINIMAL-AFTER-padded.CBL"));
+//        String actualHashValue = MD5.MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
+//        assertEquals(expectedHashValue, actualHashValue,
+//                "Comparing expected file <" + testFileName("MINIMAL-AFTER-padded.CBL")
+//                        + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
+//    }
 
     private File testFile(String fileName) {
         File file = new File(pathToTestCobolSources + fileName);
