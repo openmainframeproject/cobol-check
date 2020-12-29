@@ -17,12 +17,10 @@ package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class merges a Test Suite (a text file) with the source of the Cobol program to be tested,
@@ -34,6 +32,7 @@ import java.util.Map;
 public class Generator implements Constants, StringHelper {
     private final Messages messages;
     private final TokenExtractor tokenExtractor;
+    private final KeywordExtractor keywordExtractor;
 
     private final State state = new State();
 
@@ -56,13 +55,17 @@ public class Generator implements Constants, StringHelper {
     private static final String performUTInitialize = "           PERFORM UT-INITIALIZE";
 
     private Reader secondarySourceReader;
+    private KeywordAction nextAction = KeywordAction.NONE;
+    private String currentTestSuiteName = EMPTY_STRING;
 
     public Generator(
             Messages messages,
             TokenExtractor tokenExtractor,
+            KeywordExtractor keywordExtractor,
             Config config) {
         this.messages = messages;
         this.tokenExtractor = tokenExtractor;
+        this.keywordExtractor = keywordExtractor;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -83,6 +86,8 @@ public class Generator implements Constants, StringHelper {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
+        BufferedReader testSuiteReader
+                = new BufferedReader(testSuite);
         if (cobolSourceIn == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
@@ -100,7 +105,7 @@ public class Generator implements Constants, StringHelper {
                         tokens, sourceLine, cobolSourceInReader, testSourceOut);
                 testSourceOut.write(sourceLine);
                 processingAfterEchoingTheSourceLineToTheOutput(
-                        tokens, sourceLine, cobolSourceInReader, testSourceOut);
+                        tokens, sourceLine, testSuiteReader, cobolSourceInReader, testSourceOut);
             }
             cobolSourceInReader.close();
         } catch (IOException ioEx) {
@@ -136,6 +141,7 @@ public class Generator implements Constants, StringHelper {
     private void processingAfterEchoingTheSourceLineToTheOutput(
             List<String> tokens,
             String sourceLine,
+            BufferedReader testSuiteReader,
             Reader reader,
             Writer testSourceOut) throws IOException {
 
@@ -144,7 +150,7 @@ public class Generator implements Constants, StringHelper {
         }
 
         if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
-            insertProcedureDivisionTestCode(testSourceOut);
+            insertProcedureDivisionTestCode(testSuiteReader, testSourceOut);
         }
     }
 
@@ -154,10 +160,13 @@ public class Generator implements Constants, StringHelper {
         workingStorageTestCodeHasBeenInserted = true;
     }
 
-    private void insertProcedureDivisionTestCode(Writer testSourceOut) throws IOException {
+    private void insertProcedureDivisionTestCode(
+            BufferedReader testSuiteReader,
+            Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(performUTInitialize));
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
+        parseTestSuite(testSuiteReader, testSourceOut);
     }
 
     private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
@@ -167,6 +176,49 @@ public class Generator implements Constants, StringHelper {
             testSourceOut.write(fixedLength(secondarySourceLine));
         }
         secondarySourceBufferedReader.close();
+    }
+
+    void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) {
+        String testSuiteLine;
+        boolean emptyTestSuite = true;
+        try {
+            while ((testSuiteLine = testSuiteReader.readLine()) != null) {
+                emptyTestSuite = false;
+                testSuiteLine = fixedLength(testSuiteLine);
+
+                System.out.println("Generator.parseTestSuite() about to call "
+                        + "keywordExtractor.extractTokensFrom()");
+
+                List<String> tokens = keywordExtractor.extractTokensFrom(testSuiteLine);
+                if (!tokens.isEmpty()) {
+                    Keyword keyword = Keywords.getKeywordFor(tokens.get(0));
+                    //TODO this logic cannot stay this way.
+
+                    System.out.println("First token: " + tokens.get(0));
+
+
+                    if (keyword.keywordAction() == KeywordAction.TESTSUITE_NAME) {
+                        nextAction = keyword.keywordAction();
+                    }
+                    if (tokens.size() > 1) {
+                        String thisToken = tokens.get(1);
+                        if (nextAction == KeywordAction.TESTSUITE_NAME) {
+                            currentTestSuiteName = thisToken;
+                            testSourceOut.write(fixedLength("           TESTSUITE " + currentTestSuiteName));
+                        }
+                    }
+                }
+            }
+        } catch (IOException ioEx) {
+            throw new TestSuiteCouldNotBeReadException(ioEx);
+        }
+        catch (Exception ex) {
+            throw new PossibleInternalLogicErrorException(ex);
+        }
+        if (emptyTestSuite) {
+            throw new PossibleInternalLogicErrorException(messages.get("ERR010"));
+        }
+
     }
 
     private boolean sourceLineContains(List<String> tokens, String tokenValue) {
@@ -190,6 +242,10 @@ public class Generator implements Constants, StringHelper {
                 + Constants.FILE_SEPARATOR
                 + config.getString("cobolcheck.copybook.directory")
                 + Constants.FILE_SEPARATOR;
+    }
+
+    String getCurrentTestSuiteName() {
+        return currentTestSuiteName;
     }
 
     class State {

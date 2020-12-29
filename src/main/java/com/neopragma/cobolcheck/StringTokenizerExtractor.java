@@ -20,7 +20,8 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import java.util.*;
 
 /**
- * This class uses StringTokenizer to find tokens in the Cobol source line.
+ * This class uses StringTokenizer to find tokens in the Cobol source line. It is used by the Generator
+ * when processing the source for the program under test.
  *
  * @author Dave Nicolette (neopragma)
  * @since 14

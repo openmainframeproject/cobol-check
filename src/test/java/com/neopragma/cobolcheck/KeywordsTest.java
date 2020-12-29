@@ -1,5 +1,7 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.UndefinedKeywordException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KeywordsTest implements Constants {
 
@@ -41,8 +44,18 @@ public class KeywordsTest implements Constants {
                                 NUMERIC_LITERAL_KEYWORD,
                                 TRUE,
                                 FALSE),
-                        KeywordAction.EXPECTED_VALUE)
+                        KeywordAction.EXPECTED_VALUE),
+                Arguments.of(TESTSUITE_KEYWORD, TESTSUITE_KEYWORD,
+                        List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.TESTSUITE_NAME)
         );
+    }
+
+    @Test
+    public void it_throws_when_keyword_is_undefined() {
+        Throwable ex = assertThrows(UndefinedKeywordException.class, () ->
+                Keywords.getKeywordFor("** bogus keyword **"));
+        assertEquals("ERR009: Undefined keyword <** bogus keyword **> was encountered while parsing a test suite.", ex.getMessage());
     }
 
 }

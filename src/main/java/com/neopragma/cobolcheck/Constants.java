@@ -26,10 +26,13 @@ public interface Constants {
     String COLON = ":";
     String SPACE = " ";
     String COMMA = ",";
+    String QUOTE = "\"";
     String PSEUDO_TEXT_DELIMITER_EQUALS = "==";
     String PSEUDO_TEXT_DELIMITER_COLON = "::";
     String TRUE = "TRUE";
     String FALSE = "FALSE";
+    String TESTSUITE_KEYWORD = "TESTSUITE";
+    String TESTCASE_KEYWORD = "TESTCASE";
     String EXPECT_KEYWORD = "EXPECT";
     String FIELDNAME_KEYWORD = "fieldname";
     String TO_BE_KEYWORD = "TO BE";

@@ -39,6 +39,9 @@ public class GeneratorGeneralTest {
     @Mock
     Reader mockTestSuite;
 
+    @Mock
+    KeywordExtractor keywordExtractor;
+
     @BeforeAll
     static void oneTimeSetup() {
         config.load("testconfig.properties");
@@ -48,7 +51,10 @@ public class GeneratorGeneralTest {
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(new Messages(), new StringTokenizerExtractor(messages), config);
+        generator = new Generator(new Messages(),
+                new StringTokenizerExtractor(messages),
+                keywordExtractor,
+                config);
     }
 
     @Test

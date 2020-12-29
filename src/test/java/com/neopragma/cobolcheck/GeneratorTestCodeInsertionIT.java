@@ -38,6 +38,9 @@ public class GeneratorTestCodeInsertionIT implements Constants {
     @Mock
     Reader mockTestSuite;
 
+    @Mock
+    KeywordExtractor keywordExtractor;
+
     private final String[] cobolSourceWithWorkingStorage = new String[] {
             " IDENTIFICATION DIVISION.",
             " PROGRAM-ID. SIMPLE1.",
@@ -93,7 +96,7 @@ public class GeneratorTestCodeInsertionIT implements Constants {
 
     @BeforeEach
     public void commonSetup() {
-        generator = new Generator(messages, tokenExtractor, config);
+        generator = new Generator(messages, tokenExtractor, keywordExtractor, config);
     }
 
 //    @Test

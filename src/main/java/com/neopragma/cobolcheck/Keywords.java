@@ -34,6 +34,12 @@ public class Keywords implements Constants {
 
     static {
         keywordInfo = new HashMap<>();
+        keywordInfo.put(TESTSUITE_KEYWORD,
+                new Keyword(TESTSUITE_KEYWORD, List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.TESTSUITE_NAME));
+        keywordInfo.put(TESTCASE_KEYWORD,
+                new Keyword(TESTCASE_KEYWORD, List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.TESTCASE_NAME));
         keywordInfo.put(EXPECT_KEYWORD,
                 new Keyword(EXPECT_KEYWORD, List.of(FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME));
@@ -46,15 +52,15 @@ public class Keywords implements Constants {
         keywordInfo.put(TO_BE_KEYWORD,
                 new Keyword(TO_BE_KEYWORD,
                         List.of(FIELDNAME_KEYWORD,
-                                "alphanumeric-literal",
-                                "numeric-literal",
+                                ALPHANUMERIC_LITERAL_KEYWORD,
+                                NUMERIC_LITERAL_KEYWORD,
                                 TRUE,
                                 FALSE),
                         KeywordAction.EXPECTED_VALUE));
-        keywordInfo.put("alphanumeric-literal",
+        keywordInfo.put(ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(EMPTY_STRING, List.of(),
                         KeywordAction.FIELDNAME));
-        keywordInfo.put("numeric-literal",
+        keywordInfo.put(NUMERIC_LITERAL_KEYWORD,
                 new Keyword(EMPTY_STRING, List.of(),
                         KeywordAction.FIELDNAME));
     }

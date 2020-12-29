@@ -25,6 +25,8 @@ package com.neopragma.cobolcheck;
  * REVERSE_LOGIC - the comparison logic for this EXPECT is to be reversed (NOT logic)
  * IGNORE - the next token will be TESTCASE - bypass that test case
  * FIELDNAME - this token is the name of a field in the Data Division of the program under test
+ * TESTSUITE_NAME - the next token will be an alphanumeric literal representing the name of the TESTSUITE
+ * TESTCASE_NAME - the next token will be an alphanumeric literal representing the name of the TESTCASE
  *
  * @author Dave Nicolette (neopragma)
  * @since 14
@@ -35,5 +37,7 @@ public enum KeywordAction {
     EXPECTED_VALUE,
     REVERSE_LOGIC,
     IGNORE,
-    FIELDNAME
+    FIELDNAME,
+    TESTSUITE_NAME,
+    TESTCASE_NAME
 }
