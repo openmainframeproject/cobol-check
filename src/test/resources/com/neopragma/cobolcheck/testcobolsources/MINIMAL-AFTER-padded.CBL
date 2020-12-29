@@ -124,7 +124,58 @@
                                                                                 
            05  WS-MESSAGE               PIC X(40) VALUE SPACES.                 
                                                                                 
-       PROCEDURE DIVISION.                                                      
+       PROCEDURE DIVISION.    
+           PERFORM UT-INITIALIZE                                                
+                                                                                
+           DISPLAY SPACE                                                        
+           DISPLAY "TEST SUITE:"                                                
+           DISPLAY                                                              
+           'GREETING AND FAREWELL (FAREWELL WILL FAIL)'                         
+           DISPLAY SPACE                                                        
+                                                                                
+           MOVE 'IT RETURNS HELLO                                               
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
+           MOVE 'GREETING' TO WS-MESSAGE-TYPE                                   
+           PERFORM 2000-SPEAK                                                   
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-MESSAGE TO UT-ACTUAL                                         
+           MOVE 'HELLO                                                          
+                       TO UT-EXPECTED                                           
+           SET UT-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM UT-ASSERT-EQUAL                                              
+                                                                                
+           PERFORM UT-AFTER                                                     
+           MOVE 'IT RETURNS GOODBYE                                             
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
+           MOVE 'FAREWELL' TO WS-MESSAGE-TYPE                                   
+           PERFORM 2000-SPEAK                                                   
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-MESSAGE TO UT-ACTUAL                                         
+           MOVE 'GOODBYE                                                        
+                       TO UT-EXPECTED                                           
+           SET UT-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
+            COPY ZUTZCPD     .                                                  
+           .                                                                    
+       UT-BEFORE.                                                               
+                                                                                
+           .                                                                    
+       UT-AFTER.                                                                
+                                                                                
+           .                                                                    
+       UT-INITIALIZE.                                                           
+           MOVE SPACES TO UT-FILE-INFORMATION                                   
+                                                                                
+           .                                                                    
+       UT-END.                                                                  
+                                                                                
+                                                                                
+           .                                                                                                                      
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       

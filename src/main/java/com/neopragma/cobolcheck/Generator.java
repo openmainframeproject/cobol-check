@@ -53,6 +53,8 @@ public class Generator implements Constants, StringHelper {
     private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
     private static String copybookDirectoryName = EMPTY_STRING;
 
+    private static final String performUTInitialize = "           PERFORM UT-INITIALIZE";
+
     private Reader secondarySourceReader;
 
     public Generator(
@@ -153,9 +155,9 @@ public class Generator implements Constants, StringHelper {
     }
 
     private void insertProcedureDivisionTestCode(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(performUTInitialize));
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
-        workingStorageTestCodeHasBeenInserted = true;
     }
 
     private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {

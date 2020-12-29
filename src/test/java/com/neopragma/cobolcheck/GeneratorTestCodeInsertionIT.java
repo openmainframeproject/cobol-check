@@ -115,16 +115,23 @@ public class GeneratorTestCodeInsertionIT implements Constants {
 
     }
 
-//    @Test
-//    // We're asserting on computed hashes; this "test" gives us a readable version of the output file.
-//    public void see_the_merged_source_file_on_stdout() throws IOException {
-//        StringReader cobolSourceIn = makeCobolSourceProgram(cobolSourceWithoutWorkingStorage);
-//        StringWriter testSourceOut = new StringWriter();
-//        generator.mergeTestSuite(mockTestSuite, cobolSourceIn, testSourceOut);
-//        System.out.println("testSourceOut: ");
-//        System.out.println(testSourceOut.toString());
-//    }
+    @Test
+    public void given_main_program_with_working_storage_it_inserts_a_simple_test_suite() throws Exception {
+        Reader cobolSourceReader = new FileReader(testFile("MINIMAL-BEFORE-padded.CBL"));
+        BufferedReader reader = new BufferedReader(cobolSourceReader);
+        Writer mergedSourceWriter = new FileWriter(testFile("MERGEDSOURCE.CBL"));
+        generator.mergeTestSuite(new FileReader(testFile("MINIMAL-BEFORE-padded.CBL")),
+                cobolSourceReader,
+                mergedSourceWriter);
+        cobolSourceReader.close();
+        mergedSourceWriter.close();
 
+        String expectedHashValue = MD5.MD5HashFile(testFileName("MINIMAL-AFTER-padded.CBL"));
+        String actualHashValue = MD5.MD5HashFile(testFileName("MERGEDSOURCE.CBL"));
+        assertEquals(expectedHashValue, actualHashValue,
+                "Comparing expected file <" + testFileName("MINIMAL-AFTER-padded.CBL")
+                        + "> and actual file <" + testFileName("MERGEDSOURCE.CBL") + ">");
+    }
 
     private File testFile(String fileName) {
         File file = new File(pathToTestCobolSources + fileName);

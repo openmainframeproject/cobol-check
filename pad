@@ -1,2 +1,5 @@
 # Pad all lines of a text file to 80 characters plus newline
-awk -F, '{printf("%80-s\n", $1)}' "$1" > "$2"
+paddir="$1"
+padsource="$2"
+padtarget="$3"
+awk -F, '{printf("%80-s\n", $1)}' "$paddir/$padsource" > "$paddir/$padtarget"

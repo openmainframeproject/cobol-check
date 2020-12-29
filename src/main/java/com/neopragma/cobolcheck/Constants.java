@@ -28,4 +28,12 @@ public interface Constants {
     String COMMA = ",";
     String PSEUDO_TEXT_DELIMITER_EQUALS = "==";
     String PSEUDO_TEXT_DELIMITER_COLON = "::";
+    String TRUE = "TRUE";
+    String FALSE = "FALSE";
+    String EXPECT_KEYWORD = "EXPECT";
+    String FIELDNAME_KEYWORD = "fieldname";
+    String TO_BE_KEYWORD = "TO BE";
+    String NOT_KEYWORD = "NOT";
+    String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
+    String NUMERIC_LITERAL_KEYWORD = "numeric-literal";
 }
