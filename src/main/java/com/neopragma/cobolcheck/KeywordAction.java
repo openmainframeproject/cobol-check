@@ -21,12 +21,13 @@ package com.neopragma.cobolcheck;
  *
  * NONE - no special action is associated with this keyword
  * ACTUAL_FIELDNAME - the next token will be the fieldname of the actual (result) value for an EXPECT
+ * COBOL_STATEMENT_TOKEN - pass through user-written Cobol statements for test case setup or mock behavior
  * EXPECTED_VALUE - the next token will be the expected value for an EXPECT
- * REVERSE_LOGIC - the comparison logic for this EXPECT is to be reversed (NOT logic)
- * IGNORE - the next token will be TESTCASE - bypass that test case
  * FIELDNAME - this token is the name of a field in the Data Division of the program under test
+ * IGNORE - the next token will be TESTCASE - bypass that test case
+ * NEW_TESTCASE - the next token will be an alphanumeric literal representing the name of the TESTCASE
+ * REVERSE_LOGIC - the comparison logic for this EXPECT is to be reversed (NOT logic)
  * TESTSUITE_NAME - the next token will be an alphanumeric literal representing the name of the TESTSUITE
- * TESTCASE_NAME - the next token will be an alphanumeric literal representing the name of the TESTCASE
  *
  * @author Dave Nicolette (neopragma)
  * @since 14
@@ -34,10 +35,11 @@ package com.neopragma.cobolcheck;
 public enum KeywordAction {
     NONE,
     ACTUAL_FIELDNAME,
+    COBOL_STATEMENT,
     EXPECTED_VALUE,
-    REVERSE_LOGIC,
-    IGNORE,
     FIELDNAME,
-    TESTSUITE_NAME,
-    NEW_TESTCASE
+    IGNORE,
+    NEW_TESTCASE,
+    REVERSE_LOGIC,
+    TESTSUITE_NAME
 }

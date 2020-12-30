@@ -1,6 +1,5 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.UndefinedKeywordException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KeywordsTest implements Constants {
 
@@ -54,16 +52,9 @@ public class KeywordsTest implements Constants {
     @Test
     public void when_the_token_is_an_alphanumeric_literal_it_does_not_try_to_look_up_the_literal_as_a_key() {
         Keyword keyword = Keywords.getKeywordFor("\"alphanumeric literal value\"");
-        assertEquals(EMPTY_STRING, keyword.value());
+        assertEquals(ALPHANUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
-        assertEquals(List.of(), keyword.validNextKey());
-    }
-
-    @Test
-    public void it_throws_when_keyword_is_undefined() {
-        Throwable ex = assertThrows(UndefinedKeywordException.class, () ->
-                Keywords.getKeywordFor("** bogus keyword **"));
-        assertEquals("ERR009: Undefined keyword <** bogus keyword **> was encountered while parsing a test suite.", ex.getMessage());
+        assertEquals(List.of(EXPECT_KEYWORD, COBOL_TOKEN), keyword.validNextKey());
     }
 
 }

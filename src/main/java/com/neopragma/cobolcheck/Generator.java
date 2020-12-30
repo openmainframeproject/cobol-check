@@ -59,6 +59,7 @@ public class Generator implements Constants, StringHelper {
 
     private List<String> testSuiteTokens;
     private boolean emptyTestSuite;
+    private boolean cobolStatementInProgress;
 
     //TODO: Use prefix specified in config file
     private static final String testCodePrefix = "UT-";
@@ -77,6 +78,9 @@ public class Generator implements Constants, StringHelper {
             "               TO %sTEST-CASE-NAME";
     private static final String COBOL_PERFORM_BEFORE =
             "           PERFORM %sBEFORE";
+    private static final String ELEVEN_LEADING_SPACES = "           ";
+    private StringBuffer cobolStatement;
+
 
     public Generator(
             Messages messages,
@@ -88,6 +92,8 @@ public class Generator implements Constants, StringHelper {
         this.keywordExtractor = keywordExtractor;
         this.testSuiteTokens = new ArrayList<>();
         this.emptyTestSuite = true;
+        initializeCobolStatement();
+        this.cobolStatementInProgress = false;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -216,12 +222,35 @@ public class Generator implements Constants, StringHelper {
         testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
     }
 
+    /**
+     * Build a Cobol statement out of tokens from the test suite input.
+     * Users may code standard Cobol statements to set up preconditions for a test case.
+     * These tokens may occur immediately following the test case name string.
+     * Users may code standard Cobol statements to define the behavior of a MOCK.
+     *
+     * @param testSuiteToken
+     */
+    void appendTokenToCobolStatement(String testSuiteToken) {
+        if (cobolStatement.length() > 0) cobolStatement.append(SPACE);
+        cobolStatement.append(testSuiteToken);
+
+        System.out.println("Cobol statement is: <" + cobolStatement.toString() + ">");
+    }
+
+    void insertUserWrittenCobolStatement(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(cobolStatement.toString()));
+    }
+
     String quoted(String value) {
         StringBuffer buffer = new StringBuffer();
         buffer.append(QUOTE);
         buffer.append(value);
         buffer.append(QUOTE);
         return buffer.toString();
+    }
+
+    private void initializeCobolStatement() {
+        cobolStatement = new StringBuffer(ELEVEN_LEADING_SPACES);
     }
 
     /**
@@ -236,7 +265,20 @@ public class Generator implements Constants, StringHelper {
         while (testSuiteToken != null) {
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
-            // take actions that were triggered by the previous token, pertaining to the current token
+
+            System.out.println("\ntestSuiteToken: <" + testSuiteToken + ">");
+            System.out.println("keyword: " + keyword);
+
+            // take actions triggered by the type of the current token
+            switch (keyword.value()) {
+                case EXPECT_KEYWORD:
+                    if (cobolStatementInProgress) {
+                        insertUserWrittenCobolStatement(testSourceOut);
+                    }
+                    break;
+            }
+
+            // take actions that were triggered by the previous token's action, pertaining to the current token
             switch (nextAction) {
                 case TESTSUITE_NAME:
                     currentTestSuiteName = testSuiteToken;
@@ -248,8 +290,21 @@ public class Generator implements Constants, StringHelper {
                     break;
             }
 
-            // take actions that are triggered by the current token
+            // take actions that are triggered by the current token's action
             switch (keyword.keywordAction()) {
+                case COBOL_STATEMENT:
+                    if (CobolVerbs.isCobolVerb(testSuiteToken) && (cobolStatementInProgress)) {
+                        insertUserWrittenCobolStatement(testSourceOut);
+                        initializeCobolStatement();
+                    }
+                    appendTokenToCobolStatement(testSuiteToken);
+                    cobolStatementInProgress = true;
+                    break;
+                case FIELDNAME:
+                    if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
+                    }
+                    break;
                 case TESTSUITE_NAME:
                     insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
                     break;
@@ -260,6 +315,9 @@ public class Generator implements Constants, StringHelper {
             }
             nextAction = keyword.keywordAction();
             testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+        }
+        if (cobolStatementInProgress) {
+            insertUserWrittenCobolStatement(testSourceOut);
         }
     }
 
@@ -343,6 +401,10 @@ public class Generator implements Constants, StringHelper {
 
     String getCurrentTestCaseName() {
         return currentTestCaseName;
+    }
+
+    String getCobolStatement() {
+        return cobolStatement.toString();
     }
 
     class State {

@@ -39,4 +39,5 @@ public interface Constants {
     String NOT_KEYWORD = "NOT";
     String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
     String NUMERIC_LITERAL_KEYWORD = "numeric-literal";
+    String COBOL_TOKEN = "cobol-token";
 }

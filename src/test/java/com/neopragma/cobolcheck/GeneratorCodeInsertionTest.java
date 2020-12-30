@@ -60,5 +60,4 @@ public class GeneratorCodeInsertionTest implements Constants {
         generator.insertPerformBeforeEachIntoTestSource(testSourceOut);
         assertEquals(expectedResult, testSourceOut.toString());
     }
-
 }

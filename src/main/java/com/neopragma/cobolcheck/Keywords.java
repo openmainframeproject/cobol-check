@@ -15,8 +15,6 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.UndefinedKeywordException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,19 +33,26 @@ public class Keywords implements Constants {
     static {
         keywordInfo = new HashMap<>();
         keywordInfo.put(TESTSUITE_KEYWORD,
-                new Keyword(TESTSUITE_KEYWORD, List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+                new Keyword(TESTSUITE_KEYWORD,
+                        List.of(ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.TESTSUITE_NAME));
         keywordInfo.put(TESTCASE_KEYWORD,
-                new Keyword(TESTCASE_KEYWORD, List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+                new Keyword(TESTCASE_KEYWORD,
+                        List.of(ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.NEW_TESTCASE));
         keywordInfo.put(EXPECT_KEYWORD,
-                new Keyword(EXPECT_KEYWORD, List.of(FIELDNAME_KEYWORD),
+                new Keyword(EXPECT_KEYWORD,
+                        List.of(FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME));
         keywordInfo.put(FIELDNAME_KEYWORD,
-                new Keyword(EMPTY_STRING, List.of(TO_BE_KEYWORD, NOT_KEYWORD),
+                new Keyword(EMPTY_STRING,
+                        List.of(TO_BE_KEYWORD,
+                                NOT_KEYWORD,
+                                COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(NOT_KEYWORD,
-                new Keyword(NOT_KEYWORD, List.of(TO_BE_KEYWORD),
+                new Keyword(NOT_KEYWORD,
+                        List.of(TO_BE_KEYWORD),
                         KeywordAction.REVERSE_LOGIC));
         keywordInfo.put(TO_BE_KEYWORD,
                 new Keyword(TO_BE_KEYWORD,
@@ -58,11 +63,20 @@ public class Keywords implements Constants {
                                 FALSE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(ALPHANUMERIC_LITERAL_KEYWORD,
-                new Keyword(EMPTY_STRING, List.of(),
+                new Keyword(ALPHANUMERIC_LITERAL_KEYWORD,
+                        List.of(EXPECT_KEYWORD, COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(NUMERIC_LITERAL_KEYWORD,
-                new Keyword(EMPTY_STRING, List.of(),
+                new Keyword(EMPTY_STRING,
+                        List.of(),
                         KeywordAction.FIELDNAME));
+        keywordInfo.put(COBOL_TOKEN,
+                new Keyword(COBOL_TOKEN,
+                        List.of(COBOL_TOKEN,
+                                ALPHANUMERIC_LITERAL_KEYWORD,
+                                FIELDNAME_KEYWORD,
+                                EXPECT_KEYWORD),
+                        KeywordAction.COBOL_STATEMENT));
     }
 
     public static Keyword getKeywordFor(String key) {
@@ -70,13 +84,7 @@ public class Keywords implements Constants {
         if (key != null && key.startsWith("\"")) {
             key = ALPHANUMERIC_LITERAL_KEYWORD;
         }
-        result = keywordInfo.get(key);
-        if (result == null) {
-            throw new UndefinedKeywordException(
-                    messages.get("ERR009",
-                            key)
-            );
-        }
+        result = keywordInfo.getOrDefault(key, keywordInfo.get(COBOL_TOKEN));
         return result;
     }
 }
