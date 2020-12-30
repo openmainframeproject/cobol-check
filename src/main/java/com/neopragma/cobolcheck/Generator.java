@@ -270,6 +270,7 @@ public class Generator implements Constants, StringHelper {
      * When the file read routine returns a null reference, it means we have reached end-of-file on the test suite.
      * This method uses a keyword extractor instance to get tokens from the input record. "Tokens" in this context
      * may mean phrases that contain embedded spaces, like "TO BE", and quoted string literals with the quotes intact.
+     * Comment lines are bypassed, as there is no need to insert them into the test program.
      *
      * @param testSuiteReader
      * @return
@@ -280,7 +281,9 @@ public class Generator implements Constants, StringHelper {
             if (testSuiteLine == null) {
                 return null;
             }
-            testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
+            if (testSuiteLine.charAt(6) != '*') {
+                testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
+            }
         }
         String testSuiteToken = testSuiteTokens.get(0);
         testSuiteTokens.remove(0);
