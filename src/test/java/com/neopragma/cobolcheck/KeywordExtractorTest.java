@@ -40,30 +40,30 @@ public class KeywordExtractorTest {
     @Test
     public void given_a_two_word_keyword_it_treats_the_keyword_as_a_single_token() {
         tokens = extractor.extractTokensFrom("TO BE");
-//        assertEquals(1, tokens.size());
         assertEquals("TO BE", tokens.get(0));
+        assertEquals(1, tokens.size());
     }
 
     @Test
     public void given_the_first_word_in_a_two_word_keyword_and_the_second_token_matches_the_expected_second_word_it_knows_it_is_not_a_match() {
         tokens = extractor.extractTokensFrom("TO BEST-WORLD");
-        assertEquals(2, tokens.size());
         assertEquals("TO", tokens.get(0));
         assertEquals("BEST-WORLD", tokens.get(1));
+        assertEquals(2, tokens.size());
     }
 
     @Test
     public void given_the_first_word_in_a_two_word_keyword_it_knows_the_second_word_is_not_a_match() {
         tokens = extractor.extractTokensFrom("TO WS-FIELDNAME");
-        assertEquals(2, tokens.size());
         assertEquals("TO", tokens.get(0));
         assertEquals("WS-FIELDNAME", tokens.get(1));
+        assertEquals(2, tokens.size());
     }
 
     @Test
     public void given_a_mixture_of_different_types_of_tokens_it_extracts_them_correctly() {
         tokens = extractor.extractTokensFrom("  EXPECT WS-FOO TO BE \"something\"");
-//        assertEquals(4, tokens.size());
         assertEquals("TO BE", tokens.get(2));
+        assertEquals(4, tokens.size());
     }
 }
