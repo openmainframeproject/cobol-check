@@ -24,34 +24,40 @@ public class KeywordExtractor implements TokenExtractor, Constants {
         boolean openQuote = false;
         sourceLine = sourceLine.trim();
         while (tokenOffset < sourceLine.length()) {
-            if (sourceLine.charAt(tokenOffset) == '"') {
+            if (isQuote(sourceLine.charAt(tokenOffset))) {
                 if (openQuote) {
                     openQuote = false;
                     buffer.append("\"");
                     buffer = addTokenAndClearBuffer(buffer, tokens);
                 } else {
                     openQuote = true;
-                    buffer.append("\"");
+                    buffer.append(QUOTE);
                 }
             } else {
                 if (sourceLine.charAt(tokenOffset) == ' ') {
                     if (openQuote) {
                         buffer.append(SPACE);
                     } else {
-                        if (nextExpectedToken.length() > 0) {
+                        if (twoWordTokens.containsKey(buffer.toString())) {
+                            nextExpectedToken = twoWordTokens.get(buffer.toString());
                             buffer.append(SPACE);
-                            buffer.append(sourceLine.charAt(tokenOffset));
-                            buffer = addTokenAndClearBuffer(buffer, tokens);
-                            nextExpectedToken = EMPTY_STRING;
-                        } else {
-                            if (twoWordTokens.containsKey(buffer.toString())) {
-                                nextExpectedToken = twoWordTokens.get(buffer.toString());
-                                buffer.append(SPACE);
+
+                            int startOfLookahead = tokenOffset + 1;
+                            int endOfLookahead = startOfLookahead + nextExpectedToken.length();
+                            if (nextExpectedToken.equalsIgnoreCase(sourceLine.substring(startOfLookahead, endOfLookahead))
+                                    && (endOfLookahead >= sourceLine.length()
+                                    || sourceLine.charAt(endOfLookahead) == ' ')) {
+                                    buffer.append(nextExpectedToken);
+                                    tokenOffset += nextExpectedToken.length();
+                                    nextExpectedToken = EMPTY_STRING;
                             } else {
+                                buffer = addTokenAndClearBuffer(buffer, tokens);
                                 nextExpectedToken = EMPTY_STRING;
-                                if (buffer.length() > 0) {
-                                    buffer = addTokenAndClearBuffer(buffer, tokens);
-                                }
+                            }
+                        } else {
+                            nextExpectedToken = EMPTY_STRING;
+                            if (buffer.length() > 0) {
+                                buffer = addTokenAndClearBuffer(buffer, tokens);
                             }
                         }
                     }
@@ -65,6 +71,10 @@ public class KeywordExtractor implements TokenExtractor, Constants {
             buffer = addTokenAndClearBuffer(buffer, tokens);
         }
         return tokens;
+    }
+
+    private boolean isQuote(char character) {
+        return character == '"' || character == '\'';
     }
 
     private StringBuilder addTokenAndClearBuffer(StringBuilder buffer, List<String> tokens) {
