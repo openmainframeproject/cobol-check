@@ -7,10 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.BufferedReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,7 +40,7 @@ public class GeneratorTestsuiteParsingTest {
     }
 
     @Test
-    public void it_stores_the_name_of_the_test_suite_after_detecting_the_TESTSUITE_keyword() {
+    public void it_stores_the_name_of_the_test_suite_after_detecting_the_TESTSUITE_keyword() throws IOException {
         testSuite.append("       TESTSUITE \"Name of test suite\"");
         generator.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
                 mockTestProgramSource);
@@ -51,7 +48,7 @@ public class GeneratorTestsuiteParsingTest {
     }
 
     @Test
-    public void it_stores_the_name_of_a_test_case_after_detecting_the_TESTCASE_keyword() {
+    public void it_stores_the_name_of_a_test_case_after_detecting_the_TESTCASE_keyword() throws IOException {
         testSuite.append("       TESTCASE \"Name of test case\"");
         generator.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
                 mockTestProgramSource);

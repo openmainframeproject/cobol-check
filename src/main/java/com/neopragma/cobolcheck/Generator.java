@@ -56,11 +56,20 @@ public class Generator implements Constants, StringHelper {
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = EMPTY_STRING;
     private String currentTestCaseName = EMPTY_STRING;
+
     private List<String> testSuiteTokens;
     private boolean emptyTestSuite;
 
     // Lines inserted into the test program
-    private static final String performUTInitialize = "           PERFORM UT-INITIALIZE";
+    private static final String COBOL_PERFORM_UT_INITIALIZE = "           PERFORM UT-INITIALIZE";
+    private static final String COBOL_DISPLAY_SPACE =
+            "           DISPLAY SPACE                                                        ";
+    private static final String COBOL_DISPLAY_TESTSUITE =
+            "           DISPLAY TESTSUITE:                                                   ";
+    private static final String COBOL_DISPLAY_TESTCASE =
+            "           DISPLAY TESTCASE:                                                   ";
+    private static final String COBOL_DISPLAY_NAME =
+            "           DISPLAY %s";
 
     public Generator(
             Messages messages,
@@ -169,7 +178,7 @@ public class Generator implements Constants, StringHelper {
     private void insertProcedureDivisionTestCode(
             BufferedReader testSuiteReader,
             Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(performUTInitialize));
+        testSourceOut.write(fixedLength(COBOL_PERFORM_UT_INITIALIZE));
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
         parseTestSuite(testSuiteReader, testSourceOut);
@@ -184,11 +193,32 @@ public class Generator implements Constants, StringHelper {
         secondarySourceBufferedReader.close();
     }
 
-    void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) {
+    private void insertTestSuiteNameIntoTestSource(String testSuiteName, Writer testSourceOut) throws IOException {
+        testSourceOut.write(COBOL_DISPLAY_SPACE);
+        testSourceOut.write(COBOL_DISPLAY_TESTSUITE);
+        testSourceOut.write(fixedLength(String.format(COBOL_DISPLAY_NAME, testSuiteName)));
+        testSourceOut.write(COBOL_DISPLAY_SPACE);
+    }
+
+    private void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
+        testSourceOut.write(COBOL_DISPLAY_SPACE);
+        testSourceOut.write(COBOL_DISPLAY_TESTCASE);
+        testSourceOut.write(fixedLength(String.format(COBOL_DISPLAY_NAME, testCaseName)));
+    }
+
+    /**
+     * Process the test suite as a series of tokens. When we have processed all the input, getNextTokenFromTestSuite()
+     * returns a null reference.
+     *
+     * @param testSuiteReader
+     * @param testSourceOut
+     */
+    void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
+            // take actions that were triggered by the previous token, pertaining to the current token
             switch (nextAction) {
                 case TESTSUITE_NAME:
                     currentTestSuiteName = testSuiteToken;
@@ -200,16 +230,31 @@ public class Generator implements Constants, StringHelper {
                     break;
             }
 
+            // take actions that are triggered by the current token
             switch (keyword.keywordAction()) {
                 case TESTSUITE_NAME:
+                    insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
+                    break;
                 case TESTCASE_NAME:
-                    nextAction = keyword.keywordAction();
+                    insertTestCaseNameIntoTestSource(currentTestCaseName, testSourceOut);
+                    break;
             }
-
+            nextAction = keyword.keywordAction();
             testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         }
     }
 
+    /**
+     * This method hides file I/O from the test suite parsing logic so the parsing logic will be easier to understand.
+     * We don't want to load the whole test suite into memory at once, as we don't know how large it may be.
+     * Here we consume tokens one by one and invoke the file read routine whenever we exhaust the list of tokens.
+     * When the file read routine returns a null reference, it means we have reached end-of-file on the test suite.
+     * This method uses a keyword extractor instance to get tokens from the input record. "Tokens" in this context
+     * may mean phrases that contain embedded spaces, like "TO BE", and quoted string literals with the quotes intact.
+     *
+     * @param testSuiteReader
+     * @return
+     */
     private String getNextTokenFromTestSuite(BufferedReader testSuiteReader) {
         while (testSuiteTokens.isEmpty()) {
             String testSuiteLine = readNextLineFromTestSuite(testSuiteReader);
@@ -223,6 +268,12 @@ public class Generator implements Constants, StringHelper {
         return testSuiteToken;
     }
 
+    /**
+     * This method performs the grunt work of reading records from the test suite input source.
+     *
+     * @param testSuiteReader
+     * @return
+     */
     private String readNextLineFromTestSuite(BufferedReader testSuiteReader) {
         String testSuiteLine = EMPTY_STRING;
         try {
@@ -247,11 +298,9 @@ public class Generator implements Constants, StringHelper {
         return tokens.size() > 0 && tokens.contains(tokenValue);
     }
 
-
     private File copybookFile(String fileName) {
         return new File(copybookDirectoryName + fileName);
     }
-
 
     private void entering(String partOfProgram) {
         state.flags.get(partOfProgram).set();
