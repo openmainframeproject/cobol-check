@@ -52,11 +52,15 @@ public class Generator implements Constants, StringHelper {
     private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
     private static String copybookDirectoryName = EMPTY_STRING;
 
-    private static final String performUTInitialize = "           PERFORM UT-INITIALIZE";
-
     private Reader secondarySourceReader;
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = EMPTY_STRING;
+    private String currentTestCaseName = EMPTY_STRING;
+    private List<String> testSuiteTokens;
+    private boolean emptyTestSuite;
+
+    // Lines inserted into the test program
+    private static final String performUTInitialize = "           PERFORM UT-INITIALIZE";
 
     public Generator(
             Messages messages,
@@ -66,6 +70,8 @@ public class Generator implements Constants, StringHelper {
         this.messages = messages;
         this.tokenExtractor = tokenExtractor;
         this.keywordExtractor = keywordExtractor;
+        this.testSuiteTokens = new ArrayList<>();
+        this.emptyTestSuite = true;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -179,46 +185,62 @@ public class Generator implements Constants, StringHelper {
     }
 
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) {
-        String testSuiteLine;
-        boolean emptyTestSuite = true;
-        try {
-            while ((testSuiteLine = testSuiteReader.readLine()) != null) {
-                emptyTestSuite = false;
-                testSuiteLine = fixedLength(testSuiteLine);
+        String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+        while (testSuiteToken != null) {
+            Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
-                System.out.println("Generator.parseTestSuite() about to call "
-                        + "keywordExtractor.extractTokensFrom()");
-
-                List<String> tokens = keywordExtractor.extractTokensFrom(testSuiteLine);
-                if (!tokens.isEmpty()) {
-                    Keyword keyword = Keywords.getKeywordFor(tokens.get(0));
-                    //TODO this logic cannot stay this way.
-
-                    System.out.println("First token: " + tokens.get(0));
-
-
-                    if (keyword.keywordAction() == KeywordAction.TESTSUITE_NAME) {
-                        nextAction = keyword.keywordAction();
-                    }
-                    if (tokens.size() > 1) {
-                        String thisToken = tokens.get(1);
-                        if (nextAction == KeywordAction.TESTSUITE_NAME) {
-                            currentTestSuiteName = thisToken;
-                            testSourceOut.write(fixedLength("           TESTSUITE " + currentTestSuiteName));
-                        }
-                    }
-                }
+            switch (nextAction) {
+                case TESTSUITE_NAME:
+                    currentTestSuiteName = testSuiteToken;
+                    nextAction = KeywordAction.NONE;
+                    break;
+                case TESTCASE_NAME:
+                    currentTestCaseName = testSuiteToken;
+                    nextAction = KeywordAction.NONE;
+                    break;
             }
+
+            switch (keyword.keywordAction()) {
+                case TESTSUITE_NAME:
+                case TESTCASE_NAME:
+                    nextAction = keyword.keywordAction();
+            }
+
+            testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+        }
+    }
+
+    private String getNextTokenFromTestSuite(BufferedReader testSuiteReader) {
+        while (testSuiteTokens.isEmpty()) {
+            String testSuiteLine = readNextLineFromTestSuite(testSuiteReader);
+            if (testSuiteLine == null) {
+                return null;
+            }
+            testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
+        }
+        String testSuiteToken = testSuiteTokens.get(0);
+        testSuiteTokens.remove(0);
+        return testSuiteToken;
+    }
+
+    private String readNextLineFromTestSuite(BufferedReader testSuiteReader) {
+        String testSuiteLine = EMPTY_STRING;
+        try {
+            testSuiteLine = testSuiteReader.readLine();
+            if (testSuiteLine == null) {
+                if (emptyTestSuite) {
+                    throw new PossibleInternalLogicErrorException(messages.get("ERR010"));
+                }
+                return null;
+            }
+            emptyTestSuite = false;
+            return testSuiteLine;
         } catch (IOException ioEx) {
             throw new TestSuiteCouldNotBeReadException(ioEx);
         }
         catch (Exception ex) {
             throw new PossibleInternalLogicErrorException(ex);
         }
-        if (emptyTestSuite) {
-            throw new PossibleInternalLogicErrorException(messages.get("ERR010"));
-        }
-
     }
 
     private boolean sourceLineContains(List<String> tokens, String tokenValue) {
@@ -246,6 +268,10 @@ public class Generator implements Constants, StringHelper {
 
     String getCurrentTestSuiteName() {
         return currentTestSuiteName;
+    }
+
+    String getCurrentTestCaseName() {
+        return currentTestCaseName;
     }
 
     class State {

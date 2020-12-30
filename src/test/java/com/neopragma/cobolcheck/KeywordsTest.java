@@ -52,6 +52,14 @@ public class KeywordsTest implements Constants {
     }
 
     @Test
+    public void when_the_token_is_an_alphanumeric_literal_it_does_not_try_to_look_up_the_literal_as_a_key() {
+        Keyword keyword = Keywords.getKeywordFor("\"alphanumeric literal value\"");
+        assertEquals(EMPTY_STRING, keyword.value());
+        assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
+        assertEquals(List.of(), keyword.validNextKey());
+    }
+
+    @Test
     public void it_throws_when_keyword_is_undefined() {
         Throwable ex = assertThrows(UndefinedKeywordException.class, () ->
                 Keywords.getKeywordFor("** bogus keyword **"));

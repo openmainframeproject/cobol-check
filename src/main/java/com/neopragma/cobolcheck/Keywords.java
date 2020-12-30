@@ -66,7 +66,11 @@ public class Keywords implements Constants {
     }
 
     public static Keyword getKeywordFor(String key) {
-        Keyword result = keywordInfo.get(key);
+        Keyword result = null;
+        if (key != null && key.startsWith("\"")) {
+            key = ALPHANUMERIC_LITERAL_KEYWORD;
+        }
+        result = keywordInfo.get(key);
         if (result == null) {
             throw new UndefinedKeywordException(
                     messages.get("ERR009",

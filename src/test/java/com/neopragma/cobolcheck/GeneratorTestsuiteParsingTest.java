@@ -45,7 +45,16 @@ public class GeneratorTestsuiteParsingTest {
     @Test
     public void it_stores_the_name_of_the_test_suite_after_detecting_the_TESTSUITE_keyword() {
         testSuite.append("       TESTSUITE \"Name of test suite\"");
-        generator.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())), mockTestProgramSource);
+        generator.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
+                mockTestProgramSource);
         assertEquals("\"Name of test suite\"", generator.getCurrentTestSuiteName());
+    }
+
+    @Test
+    public void it_stores_the_name_of_a_test_case_after_detecting_the_TESTCASE_keyword() {
+        testSuite.append("       TESTCASE \"Name of test case\"");
+        generator.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
+                mockTestProgramSource);
+        assertEquals("\"Name of test case\"", generator.getCurrentTestCaseName());
     }
 }
