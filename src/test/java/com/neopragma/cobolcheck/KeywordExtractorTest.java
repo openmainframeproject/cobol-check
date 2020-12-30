@@ -66,4 +66,10 @@ public class KeywordExtractorTest {
         assertEquals("TO BE", tokens.get(2));
         assertEquals(4, tokens.size());
     }
+
+    @Test
+    public void it_removes_periods_used_as_statement_delimiters() {
+        tokens = extractor.extractTokensFrom("           MOVE A TO B.");
+        assertEquals("B", tokens.get(3));
+    }
 }

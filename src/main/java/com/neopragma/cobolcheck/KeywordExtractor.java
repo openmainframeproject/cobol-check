@@ -24,10 +24,13 @@ public class KeywordExtractor implements TokenExtractor, Constants {
         boolean openQuote = false;
         sourceLine = sourceLine.trim();
         while (tokenOffset < sourceLine.length()) {
+            if (sourceLine.charAt(tokenOffset) == '.') {
+                break;
+            }
             if (isQuote(sourceLine.charAt(tokenOffset))) {
                 if (openQuote) {
                     openQuote = false;
-                    buffer.append("\"");
+                    buffer.append(QUOTE);
                     buffer = addTokenAndClearBuffer(buffer, tokens);
                 } else {
                     openQuote = true;
