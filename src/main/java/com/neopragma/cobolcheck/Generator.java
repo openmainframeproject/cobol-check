@@ -60,16 +60,23 @@ public class Generator implements Constants, StringHelper {
     private List<String> testSuiteTokens;
     private boolean emptyTestSuite;
 
+    //TODO: Use prefix specified in config file
+    private static final String testCodePrefix = "UT-";
+
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_UT_INITIALIZE = "           PERFORM UT-INITIALIZE";
     private static final String COBOL_DISPLAY_SPACE =
             "           DISPLAY SPACE                                                        ";
     private static final String COBOL_DISPLAY_TESTSUITE =
             "           DISPLAY TESTSUITE:                                                   ";
-    private static final String COBOL_DISPLAY_TESTCASE =
-            "           DISPLAY TESTCASE:                                                   ";
     private static final String COBOL_DISPLAY_NAME =
             "           DISPLAY %s";
+    private static final String COBOL_STORE_TESTCASE_NAME_1 =
+            "           MOVE %s";
+    private static final String COBOL_STORE_TESTCASE_NAME_2 =
+            "               TO %sTEST-CASE-NAME";
+    private static final String COBOL_PERFORM_BEFORE =
+            "           PERFORM %sBEFORE";
 
     public Generator(
             Messages messages,
@@ -193,17 +200,28 @@ public class Generator implements Constants, StringHelper {
         secondarySourceBufferedReader.close();
     }
 
-    private void insertTestSuiteNameIntoTestSource(String testSuiteName, Writer testSourceOut) throws IOException {
-        testSourceOut.write(COBOL_DISPLAY_SPACE);
-        testSourceOut.write(COBOL_DISPLAY_TESTSUITE);
-        testSourceOut.write(fixedLength(String.format(COBOL_DISPLAY_NAME, testSuiteName)));
-        testSourceOut.write(COBOL_DISPLAY_SPACE);
+    void insertTestSuiteNameIntoTestSource(String testSuiteName, Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(COBOL_DISPLAY_SPACE));
+        testSourceOut.write(fixedLength(COBOL_DISPLAY_TESTSUITE));
+        testSourceOut.write(fixedLength(String.format(COBOL_DISPLAY_NAME, quoted(testSuiteName))));
+        testSourceOut.write(fixedLength(COBOL_DISPLAY_SPACE));
     }
 
-    private void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
-        testSourceOut.write(COBOL_DISPLAY_SPACE);
-        testSourceOut.write(COBOL_DISPLAY_TESTCASE);
-        testSourceOut.write(fixedLength(String.format(COBOL_DISPLAY_NAME, testCaseName)));
+    void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_1, quoted(testCaseName))));
+        testSourceOut.write(fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix)));
+    }
+
+    void insertPerformBeforeEachIntoTestSource(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
+    }
+
+    String quoted(String value) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(QUOTE);
+        buffer.append(value);
+        buffer.append(QUOTE);
+        return buffer.toString();
     }
 
     /**
@@ -224,7 +242,7 @@ public class Generator implements Constants, StringHelper {
                     currentTestSuiteName = testSuiteToken;
                     nextAction = KeywordAction.NONE;
                     break;
-                case TESTCASE_NAME:
+                case NEW_TESTCASE:
                     currentTestCaseName = testSuiteToken;
                     nextAction = KeywordAction.NONE;
                     break;
@@ -235,8 +253,9 @@ public class Generator implements Constants, StringHelper {
                 case TESTSUITE_NAME:
                     insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
                     break;
-                case TESTCASE_NAME:
+                case NEW_TESTCASE:
                     insertTestCaseNameIntoTestSource(currentTestCaseName, testSourceOut);
+                    insertPerformBeforeEachIntoTestSource(testSourceOut);
                     break;
             }
             nextAction = keyword.keywordAction();

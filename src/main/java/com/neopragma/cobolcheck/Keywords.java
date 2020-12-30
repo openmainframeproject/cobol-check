@@ -39,7 +39,7 @@ public class Keywords implements Constants {
                         KeywordAction.TESTSUITE_NAME));
         keywordInfo.put(TESTCASE_KEYWORD,
                 new Keyword(TESTCASE_KEYWORD, List.of(ALPHANUMERIC_LITERAL_KEYWORD),
-                        KeywordAction.TESTCASE_NAME));
+                        KeywordAction.NEW_TESTCASE));
         keywordInfo.put(EXPECT_KEYWORD,
                 new Keyword(EXPECT_KEYWORD, List.of(FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME));

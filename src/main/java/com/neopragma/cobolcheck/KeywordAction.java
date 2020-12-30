@@ -39,5 +39,5 @@ public enum KeywordAction {
     IGNORE,
     FIELDNAME,
     TESTSUITE_NAME,
-    TESTCASE_NAME
+    NEW_TESTCASE
 }
