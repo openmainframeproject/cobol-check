@@ -60,6 +60,11 @@ public class Generator implements Constants, StringHelper {
     private List<String> testSuiteTokens;
     private boolean emptyTestSuite;
     private boolean cobolStatementInProgress;
+    private boolean expectInProgress;
+    private boolean toBeInProgress;
+    private boolean alphanumericLiteralCompare;
+    private String fieldNameForExpect;
+    private String expectedValueToCompare;
 
     //TODO: Use prefix specified in config file
     private static final String testCodePrefix = "UT-";
@@ -78,6 +83,22 @@ public class Generator implements Constants, StringHelper {
             "               TO %sTEST-CASE-NAME";
     private static final String COBOL_PERFORM_BEFORE =
             "           PERFORM %sBEFORE";
+    private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
+            "           ADD 1 TO %sTEST-CASE-COUNT";
+    private static final String COBOL_SET_UT_NORMAL_COMPARE =
+            "           SET %1$sNORMAL-COMPARE TO %2$s";
+    private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL =
+            "           MOVE %2$s TO %1$sACTUAL";
+    private static final String COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1 =
+            "           MOVE %s";
+    private static final String COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2 =
+            "               TO %sEXPECTED";
+    private static final String COBOL_SET_UT_COMPARE_DEFAULT =
+            "           SET %1$sCOMPARE-DEFAULT TO %2$s";
+    private static final String COBOL_PERFORM_UT_ASSERT_EQUAL =
+            "           PERFORM %sASSERT-EQUAL";
+    private static final String COBOL_PERFORM_UT_AFTER =
+            "           PERFORM %sAFTER";
     private static final String ELEVEN_LEADING_SPACES = "           ";
     private StringBuffer cobolStatement;
 
@@ -90,10 +111,13 @@ public class Generator implements Constants, StringHelper {
         this.messages = messages;
         this.tokenExtractor = tokenExtractor;
         this.keywordExtractor = keywordExtractor;
-        this.testSuiteTokens = new ArrayList<>();
-        this.emptyTestSuite = true;
+        testSuiteTokens = new ArrayList<>();
+        emptyTestSuite = true;
         initializeCobolStatement();
-        this.cobolStatementInProgress = false;
+        cobolStatementInProgress = false;
+        expectInProgress = false;
+        toBeInProgress = false;
+        alphanumericLiteralCompare = false;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -222,6 +246,33 @@ public class Generator implements Constants, StringHelper {
         testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
     }
 
+    void insertIncrementTestCaseCount(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix)));
+    }
+
+    void insertTestCodeForAssertion(Writer testSourceOut) throws IOException {
+        if (alphanumericLiteralCompare) {
+            insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
+        }
+    }
+
+    void insertTestCodeForAlphanumericEqualityCheck(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_UT_NORMAL_COMPARE, testCodePrefix, TRUE)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1, expectedValueToCompare)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_UT_COMPARE_DEFAULT, testCodePrefix, TRUE)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix, TRUE)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_UT_AFTER, testCodePrefix, TRUE)));
+    }
+
     /**
      * Build a Cobol statement out of tokens from the test suite input.
      * Users may code standard Cobol statements to set up preconditions for a test case.
@@ -233,8 +284,6 @@ public class Generator implements Constants, StringHelper {
     void appendTokenToCobolStatement(String testSuiteToken) {
         if (cobolStatement.length() > 0) cobolStatement.append(SPACE);
         cobolStatement.append(testSuiteToken);
-
-        System.out.println("Cobol statement is: <" + cobolStatement.toString() + ">");
     }
 
     void insertUserWrittenCobolStatement(Writer testSourceOut) throws IOException {
@@ -265,16 +314,43 @@ public class Generator implements Constants, StringHelper {
         while (testSuiteToken != null) {
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
-
-            System.out.println("\ntestSuiteToken: <" + testSuiteToken + ">");
-            System.out.println("keyword: " + keyword);
-
             // take actions triggered by the type of the current token
             switch (keyword.value()) {
                 case EXPECT_KEYWORD:
+
+                    System.out.println("In switch, case EXPECT_KEYWORD");
+                    System.out.println("cobolStatementInProgress: " + cobolStatementInProgress);
+                    System.out.println("cobolStatement: <" + cobolStatement.toString());
+
                     if (cobolStatementInProgress) {
                         insertUserWrittenCobolStatement(testSourceOut);
+                        initializeCobolStatement();
+                        cobolStatementInProgress = false;
                     }
+                    cobolStatementInProgress = false;
+                    initializeCobolStatement();
+                    insertIncrementTestCaseCount(testSourceOut);
+                    expectInProgress = true;
+                    fieldNameForExpect = EMPTY_STRING;
+                    break;
+                case COBOL_TOKEN:
+                    if (expectInProgress) {
+                        fieldNameForExpect = testSuiteToken;
+                        expectInProgress = false;
+                    }
+                    break;
+                case ALPHANUMERIC_LITERAL_KEYWORD:
+                    if (toBeInProgress) {
+                        if (testSuiteToken.startsWith(QUOTE)) {
+                            alphanumericLiteralCompare = true;
+                            expectedValueToCompare = testSuiteToken;
+                            insertTestCodeForAssertion(testSourceOut);
+                        }
+                        toBeInProgress = false;
+                    }
+                    break;
+                case TO_BE_KEYWORD:
+                    toBeInProgress = true;
                     break;
             }
 
@@ -293,12 +369,14 @@ public class Generator implements Constants, StringHelper {
             // take actions that are triggered by the current token's action
             switch (keyword.keywordAction()) {
                 case COBOL_STATEMENT:
-                    if (CobolVerbs.isCobolVerb(testSuiteToken) && (cobolStatementInProgress)) {
-                        insertUserWrittenCobolStatement(testSourceOut);
-                        initializeCobolStatement();
+                    if (CobolVerbs.isCobolVerb(testSuiteToken)) {
+                        if (cobolStatementInProgress) {
+                            insertUserWrittenCobolStatement(testSourceOut);
+                            initializeCobolStatement();
+                        }
+                        cobolStatementInProgress = true;
                     }
                     appendTokenToCobolStatement(testSuiteToken);
-                    cobolStatementInProgress = true;
                     break;
                 case FIELDNAME:
                     if (cobolStatementInProgress) {

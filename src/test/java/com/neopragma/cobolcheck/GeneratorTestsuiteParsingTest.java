@@ -93,16 +93,6 @@ public class GeneratorTestsuiteParsingTest {
     }
 
     @Test
-    public void it_recognizes_the_end_of_a_user_written_cobol_statement_when_it_encounters_a_cobolcheck_keyword_that_can_follow_a_user_written_statement() throws IOException {
-        String expectedResult = "            MOVE \"alpha\" TO WS-FIELDNAME";
-        testSuite.append(expectedResult);
-        testSuite.append("\n           EXPECT");
-        generator.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
-                mockTestProgramSource);
-        assertEquals(expectedResult, generator.getCobolStatement());
-    }
-
-    @Test
     public void it_recognizes_the_start_of_a_user_written_cobol_statement_when_it_encounters_a_cobol_verb() throws Exception {
         String expectedResult = "            MULTIPLY WS-TAXABLE-SUBTOTAL BY WS-SALES-TAX-RATE GIVING WS-TOTAL";
         testSuite.append("           MOVE \"first thing\" TO WS-FIELD-1\n");

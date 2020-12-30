@@ -31,7 +31,7 @@ public class KeywordsTest implements Constants {
                         List.of(FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME),
                 Arguments.of(FIELDNAME_KEYWORD, EMPTY_STRING,
-                        List.of(TO_BE_KEYWORD, NOT_KEYWORD),
+                        List.of(TO_BE_KEYWORD, NOT_KEYWORD, COBOL_TOKEN),
                         KeywordAction.FIELDNAME),
                 Arguments.of(NOT_KEYWORD, NOT_KEYWORD,
                         List.of(TO_BE_KEYWORD),
