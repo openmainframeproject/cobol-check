@@ -25,7 +25,7 @@ import java.time.Instant;
  * decided how to handle logging.
  */
 public class Log {
-    private static LogLevel currentLogLevel = LogLevel.OFF;
+    private static LogLevel currentLogLevel = LogLevel.INFO;
 
     public static void off() {
         currentLogLevel = LogLevel.OFF;

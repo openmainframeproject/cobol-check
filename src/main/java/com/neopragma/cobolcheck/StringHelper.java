@@ -21,6 +21,10 @@ public interface StringHelper {
         return subject == null || subject.equals("");
     }
 
+    default boolean notBlank(String subject) {
+        return subject != null && !subject.equals("");
+    }
+
     default String defaultIfBlank(String subject, String defaultValue) {
         return isBlank(subject) ? defaultValue : subject;
     }
