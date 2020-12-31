@@ -20,7 +20,6 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Process command line options.
@@ -46,6 +45,7 @@ public class GetOpt implements Constants, StringHelper {
      *                      e.g. "abc:d: --long alpha,bravo,charlie:,delta:"
      */
     public GetOpt(String[] args, String optionsString, Messages messages) {
+        options = new HashMap<>();
         if (isEmptyArray(args)) return;
         this.messages = messages;
         storeOptionSettings(optionsString);
@@ -53,11 +53,13 @@ public class GetOpt implements Constants, StringHelper {
     }
 
     public String getValueFor(String key) {
-        return Objects.requireNonNull(lookupOption(key)).argumentValue;
+        OptionValue optionValue = lookupOption(key);
+        return optionValue == null ? EMPTY_STRING : optionValue.argumentValue;
     }
 
     public boolean isSet(String key) {
-        return Objects.requireNonNull(lookupOption(key)).isSet;
+        OptionValue optionValue = lookupOption(key);
+        return optionValue != null && optionValue.isSet;
     }
 
     /**
@@ -68,8 +70,6 @@ public class GetOpt implements Constants, StringHelper {
     private void storeOptionSettings(String optionsString) {
         if (isBlank(optionsString))
             throw new PossibleInternalLogicErrorException(messages.get("ERR005"));
-
-        options = new HashMap<>();
 
         // "a:bg: --long alpha:,beta,gamma:" -> [0] "a:bg:", [1] "--long", [2] "alpha:,beta,gamma:"
         String[] optionSpecs = optionsString.split(SPACE);
