@@ -42,6 +42,7 @@ public class Messages {
 
     public void setLocale(Locale locale) {
         Locale.setDefault(locale);
+        loadResourceBundle();
     }
 
     public void loadResourceBundle() {
