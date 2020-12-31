@@ -15,6 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import java.time.Instant;
+
 /**
  * Empty logging implementation - don't yet know
  * how we will handle logging in the application.
@@ -31,6 +33,7 @@ public class Log {
     public static void set(LogLevel level) {
         currentLogLevel = level;
     }
+    public static LogLevel level() { return currentLogLevel; }
     public static void fatal(String message) {
         if (currentLogLevel.ordinal() >= LogLevel.FATAL.ordinal()) {
             write(message);
@@ -62,6 +65,6 @@ public class Log {
         }
     }
     private static void write(String message) {
-        System.err.println("Generator Log: " + message);
+        System.err.println("CobolCheck: "+ currentLogLevel.toString() + " " + Instant.now() + " " + message);
     }
 }
