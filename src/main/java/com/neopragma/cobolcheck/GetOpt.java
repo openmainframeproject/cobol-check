@@ -108,10 +108,6 @@ public class GetOpt implements Constants, StringHelper {
         OptionValue optionValue = new OptionValue();
         String lastOption = EMPTY_STRING;
         for (String argValue : args) {
-
-            System.out.println("argValue: " + argValue);
-
-
             if (isKey(argValue)) {
                 if (expectValueNext) throw new CommandLineArgumentException(
                         messages.get("ERR004", lastOption, argValue)

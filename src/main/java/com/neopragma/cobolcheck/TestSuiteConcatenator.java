@@ -37,7 +37,7 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
     private Config config;
     private Messages messages;
     private GetOpt options;
-    private Reader testSuite;
+    private BufferedReader testSuite;
 
     public TestSuiteConcatenator(Config config, GetOpt options) {
         this.config = config;
@@ -88,17 +88,19 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
         }
         String[] testSuitePathList = testSuitePaths.toString().split(COLON);
 
-        String line = EMPTY_STRING;
+        String line;
         for (String pathname : testSuitePathList) {
             try {
                 Log.info(messages.get("INF007", pathname, concatenatedTestSuiteFileName));
-                testSuite = new FileReader(pathname);
-            } catch (FileNotFoundException testSuiteException) {
+                testSuite = new BufferedReader(new FileReader(pathname));
+                while ((line = testSuite.readLine()) != null) {
+                    concatenatedTestSuitesWriter.write(line);
+                }
+            } catch (IOException testSuiteNotFound) {
                 throw new TestSuiteInputFileNotFoundException(
                         messages.get("ERR011", pathname),
-                        testSuiteException);
+                        testSuiteNotFound);
             }
-
         }
         FileReader testSuite;
         try {

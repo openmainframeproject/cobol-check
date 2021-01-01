@@ -48,7 +48,8 @@ public class Driver implements Constants, StringHelper {
             "      Default: INFO",
             "  -t|--test-suite-path absolute-or-relative-path[:absolute-or-relative-path[...]]",
             "      Location(s) of test suite input file(s) for this run. Values specified here are prefixed",
-            "      to those specified in the config file as test.suite.path (if any)."
+            "      to those specified in the config file as test.suite.path (if any). Globs are supported here",
+            "      but not in the config file."
     };
 
     public Driver(
@@ -73,8 +74,6 @@ public class Driver implements Constants, StringHelper {
     }
 
     void prepareInputAndOutputFiles() {
-
-        //TODO: concatenate test suite files
         TestSuiteConcatenator concatenator =
                 new TestSuiteConcatenator(config, options);
         testSuite = concatenator.concatenateTestSuites();
