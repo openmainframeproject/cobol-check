@@ -78,6 +78,10 @@ public class Config implements Constants {
 
     Locale getDefaultLocale() { return (Locale) config.get("default.locale"); }
 
+    Messages getMessages() {
+        return messages;
+    }
+
     String getApplicationFilenameSuffix() {
         return config.getProperty("resolved.application.copybook.filename.suffix");
     }

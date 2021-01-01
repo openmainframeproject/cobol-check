@@ -15,10 +15,10 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.ConcatenatedTestSuiteIOException;
-import com.neopragma.cobolcheck.exceptions.TestSuiteInputFileNotFoundException;
-
-import java.io.*;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Locale;
 
 /**
@@ -29,8 +29,6 @@ import java.util.Locale;
  */
 public class Driver implements Constants, StringHelper {
 
-    public static final String TEST_SUITE_PATH_OPTION = "test-suite-path";
-    public static final String TEST_SUITE_PATH_CONFIG_KEY = "test.suite.path";
     private final Config config;
     private static Messages messages;
     private final GetOpt options;
@@ -56,10 +54,9 @@ public class Driver implements Constants, StringHelper {
     public Driver(
             String[] args,
             Config config,
-            Messages messages,
             GetOpt options) {
         this.config = config;
-        Driver.messages = messages;
+        Driver.messages = config.getMessages();
         this.options = options;
     }
 
@@ -69,67 +66,21 @@ public class Driver implements Constants, StringHelper {
             return;
         }
         initialize();
-        concatenateTestSuitesForThisRun();
-        mergeTestSuiteIntoTheProgramUnderTest();
+        prepareInputAndOutputFiles();
+//        mergeTestSuiteIntoTheProgramUnderTest();
 
         Log.info(messages.get("INF004"));        // We are terminating
     }
 
-    /**
-     * Multiple test suite files may be input to Cobol Check. Their absolute or relative paths are specified in the
-     * config file under key test.suite.path and/or on the command line via option -t or --test-suite-path. Entries
-     * specified on the command line are processed first and those specified in the config file second. There is no
-     * default path or test suite filename. If nothing is specified, we throw TestSuiteInputFileNotFoundException.
-     *
-     * The various test suite input files are concatenated into a single file for the Generator to process.
-     * In case of an IOException on this file, we throw ConcatenatedTestSuiteIOException and provide info to
-     * help correct the error.
-     *
-     * @throws ConcatenatedTestSuiteIOException
-     * @throws TestSuiteInputFileNotFoundException
-     */
-    //TODO: Extract this to a separate class
-    void concatenateTestSuitesForThisRun() {
-        //TODO: Make this a config setting
-        String concatenatedTestSuiteFileName = "./ALLTESTS";
-        FileWriter concatenatedTestSuitesWriter;
-        try {
-            concatenatedTestSuitesWriter = new FileWriter(concatenatedTestSuiteFileName);
-        } catch (IOException concatenatedTestSuitesException) {
-            throw new ConcatenatedTestSuiteIOException(
-                    messages.get("ERR012", concatenatedTestSuiteFileName),
-                    concatenatedTestSuitesException);
-        }
-        String testSuitePathsFromCommandLine = EMPTY_STRING;
-        if (options.isSet(TEST_SUITE_PATH_OPTION)) {
-            testSuitePathsFromCommandLine = options.getValueFor(TEST_SUITE_PATH_OPTION);
-        }
-        String testSuitePathsFromConfig =
-                config.getString(TEST_SUITE_PATH_CONFIG_KEY, Constants.EMPTY_STRING);
-        StringBuffer testSuitePaths = new StringBuffer();
-        if (notBlank(testSuitePathsFromCommandLine)) {
-            testSuitePaths.append(testSuitePathsFromCommandLine);
-        }
-        if (notBlank(testSuitePathsFromConfig)) {
-            testSuitePaths.append(COLON);
-            testSuitePaths.append(testSuitePathsFromConfig);
-        }
-        String[] testSuitePathList = testSuitePaths.toString().split(COLON);
+    void prepareInputAndOutputFiles() {
 
-        String line = EMPTY_STRING;
-        for (String pathname : testSuitePathList) {
-            try {
-                Log.info(messages.get("INF007", pathname, concatenatedTestSuiteFileName));
-                testSuite = new FileReader(pathname);
-            } catch (FileNotFoundException testSuiteException) {
-                throw new TestSuiteInputFileNotFoundException(
-                        messages.get("ERR011", pathname),
-                        testSuiteException);
-            }
+        //TODO: concatenate test suite files
+        TestSuiteConcatenator concatenator =
+                new TestSuiteConcatenator(config, options);
+        testSuite = concatenator.concatenateTestSuites();
 
-        }
-
-        cobolSourceIn = new StringReader("MINIMAL-BEFORE.CBL");
+        //TODO: Make these real
+        cobolSourceIn = new StringReader(EMPTY_STRING);
         testSourceOut = new StringWriter();
 
     }
@@ -185,7 +136,6 @@ public class Driver implements Constants, StringHelper {
         Driver app = new Driver(
                 args,
                 new Config(messages),
-                new Messages(),
                 new GetOpt(args, optionSpec, messages));
         app.run();
         System.exit(Constants.STATUS_NORMAL);
