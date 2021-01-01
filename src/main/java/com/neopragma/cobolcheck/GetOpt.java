@@ -19,6 +19,7 @@ import com.neopragma.cobolcheck.exceptions.CommandLineArgumentException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +35,8 @@ public class GetOpt implements Constants, StringHelper {
     private static final String SHORT_OPT_PREFIX = "-";
     private static final String LONG_OPT_KEYWORD = "--long";
     private static final char ARGUMENT_REQUIRED_INDICATOR = ':';
+    private static final List<String> canTakeMultipleArguments =
+            List.of("t", "test-suite-path");
 
     private Messages messages;
 
@@ -101,23 +104,39 @@ public class GetOpt implements Constants, StringHelper {
 
     private void processCommandLineArgumentArray(String[] args) {
         boolean expectValueNext = false;
+        boolean multipleArgumentsPossible = false;
         OptionValue optionValue = new OptionValue();
         String lastOption = EMPTY_STRING;
         for (String argValue : args) {
+
+            System.out.println("argValue: " + argValue);
+
+
             if (isKey(argValue)) {
                 if (expectValueNext) throw new CommandLineArgumentException(
                         messages.get("ERR004", lastOption, argValue)
                 );
+                multipleArgumentsPossible = false;
                 optionValue = lookupOption(stripPrefix(argValue));
                 optionValue.isSet = true;
                 expectValueNext = optionValue.hasArgument;
                 lastOption = argValue;
+                if (canTakeMultipleArguments.contains(stripPrefix(argValue))) {
+                    multipleArgumentsPossible = true;
+                }
             } else {
-                if (!expectValueNext) throw new CommandLineArgumentException(
-                        messages.get("ERR006", argValue)
-                );
-                optionValue.argumentValue = argValue;
-                expectValueNext = false;
+                if (multipleArgumentsPossible) {
+                    if (optionValue.argumentValue.length() > 0) {
+                        optionValue.argumentValue += ":";
+                    }
+                    optionValue.argumentValue += argValue;
+                } else {
+                    if (!expectValueNext) throw new CommandLineArgumentException(
+                            messages.get("ERR006", argValue)
+                    );
+                    optionValue.argumentValue = argValue;
+                    expectValueNext = false;
+                }
             }
         }
     }
@@ -128,7 +147,7 @@ public class GetOpt implements Constants, StringHelper {
                 return options.get(optionKey);
             }
         }
-        return null; //TODO improve this
+        return null;
     }
 
     private boolean isKey(String argValue) {
