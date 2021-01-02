@@ -29,10 +29,10 @@ import java.io.*;
  * @since 14
  */
 public class TestSuiteConcatenator implements Constants, StringHelper {
-    public static final String TEST_SUITE_PATH_OPTION = "test-suite-path";
-    public static final String TEST_SUITE_PATH_CONFIG_KEY = "test.suite.path";
-    public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
-    public static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
+    private static final String TEST_SUITE_PATH_OPTION = "test-suite-path";
+    private static final String TEST_SUITE_PATH_CONFIG_KEY = "test.suite.path";
+    private static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
+    private static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
 
     private Config config;
     private Messages messages;
