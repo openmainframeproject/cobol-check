@@ -94,7 +94,7 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
                 Log.info(messages.get("INF007", pathname, concatenatedTestSuiteFileName));
                 testSuite = new BufferedReader(new FileReader(pathname));
                 while ((line = testSuite.readLine()) != null) {
-                    concatenatedTestSuitesWriter.write(line);
+                    concatenatedTestSuitesWriter.write(line + NEWLINE);
                 }
             } catch (IOException testSuiteNotFound) {
                 throw new TestSuiteInputFileNotFoundException(
