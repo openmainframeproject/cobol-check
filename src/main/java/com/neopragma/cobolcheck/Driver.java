@@ -36,7 +36,7 @@ public class Driver implements Constants, StringHelper {
     private Reader testSuite;
     private Reader cobolSourceIn;
     private Writer testSourceOut;
-    private static final String optionSpec = "c:l:t:h --long config-file:,log-level:,tests:,help";
+    private static final String optionSpec = "c:l:p:t:h --long config-file:,log-level:,programs:,tests:,help";
     private String configFileFromCommandLine = EMPTY_STRING;
 
     private final String[] helpText = {
@@ -46,9 +46,10 @@ public class Driver implements Constants, StringHelper {
             "      Default: ./config.properties",
             "  -l|--log-level off|fatal|info|warn|error|debug|trace",
             "      Default: INFO",
+            "  -p|--programs program-name-glob[:program-name-glob[:program-name-glob]]",
+            "      The name of the program(s) to test",
             "  -t|--tests filename-glob[:filename-glob[:filename-glob]]",
-            "      Test suite input file(s) for this run. Values specified here are prefixed",
-            "      with the path specified in test.suite.path in the config file."
+            "      Test suite input file(s) for this run."
     };
 
     public Driver(

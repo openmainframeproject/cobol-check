@@ -36,7 +36,7 @@ public class GetOpt implements Constants, StringHelper {
     private static final String LONG_OPT_KEYWORD = "--long";
     private static final char ARGUMENT_REQUIRED_INDICATOR = ':';
     private static final List<String> canTakeMultipleArguments =
-            List.of("t", "tests");
+            List.of("t", "tests", "p", "program");
 
     private Messages messages;
 
@@ -105,11 +105,12 @@ public class GetOpt implements Constants, StringHelper {
     private void processCommandLineArgumentArray(String[] args) {
         boolean expectValueNext = false;
         boolean multipleArgumentsPossible = false;
+        boolean atLeastOneArgumentWasPassed = false;
         OptionValue optionValue = new OptionValue();
         String lastOption = EMPTY_STRING;
         for (String argValue : args) {
             if (isKey(argValue)) {
-                if (expectValueNext) throw new CommandLineArgumentException(
+                if (!atLeastOneArgumentWasPassed && expectValueNext) throw new CommandLineArgumentException(
                         messages.get("ERR004", lastOption, argValue)
                 );
                 multipleArgumentsPossible = false;
@@ -121,16 +122,12 @@ public class GetOpt implements Constants, StringHelper {
                     multipleArgumentsPossible = true;
                 }
             } else {
+                atLeastOneArgumentWasPassed = true;
                 if (multipleArgumentsPossible) {
                     if (optionValue.argumentValue.length() > 0) {
                         optionValue.argumentValue += ":";
                     }
                     optionValue.argumentValue += argValue;
-
-
-                    System.out.println("GetOpt argValue: " + optionValue.argumentValue);
-
-
                 } else {
                     if (!expectValueNext) throw new CommandLineArgumentException(
                             messages.get("ERR006", argValue)
