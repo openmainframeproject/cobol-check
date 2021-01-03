@@ -16,9 +16,8 @@ public class TestSuiteConcatenatorIT implements Constants {
     private StringReader concatenatedTestSuites;
     private TestSuiteConcatenator concat;
     private static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
-    private static final String TEST_SUITE_PATH_CONFIG_KEY = "test.suite.path";
     private static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
-    private static final String TEST_SUITE_PATH_OPTION = "test-suite-path";
+    private static final String TESTS_OPTION = "tests";
     private static final String pathToResults = "testsuites/concatenatedTestsuites";
 
     @Mock
@@ -33,12 +32,12 @@ public class TestSuiteConcatenatorIT implements Constants {
         when(config.getString(CONCATENATED_TEST_SUITES_CONFIG_KEY,
                 DEFAULT_CONCATENATED_TEST_SUITES_PATH))
                 .thenReturn(pathToResults);
-        when(config.getString(TEST_SUITE_PATH_CONFIG_KEY, Constants.EMPTY_STRING))
-                .thenReturn("testsuites/testsuite2");
-        when(options.isSet(TEST_SUITE_PATH_OPTION))
+        when(config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY))
+                .thenReturn("src/test/cobol");
+        when(options.isSet(TESTS_OPTION))
                 .thenReturn(true);
-        when(options.getValueFor(TEST_SUITE_PATH_OPTION))
-                .thenReturn("testsuites/testsuite1");
+        when(options.getValueFor(TESTS_OPTION))
+                .thenReturn("GREETING-TEST");
         when(config.getMessages())
                 .thenReturn(messages);
         when(messages.get(any(),any()))
@@ -47,7 +46,7 @@ public class TestSuiteConcatenatorIT implements Constants {
         StringBuilder expectedResult = new StringBuilder();
         BufferedReader testSuiteReader;
         String line;
-        for (String filename : new String[] { "testsuites/testsuite1", "testsuites/testsuite2" }) {
+        for (String filename : new String[] { "src/test/cobol/GREETING-TEST" }) {
             testSuiteReader = new BufferedReader(new FileReader(filename));
             while ((line = testSuiteReader.readLine()) != null) {
                 expectedResult.append(line);

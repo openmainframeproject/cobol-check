@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -63,7 +64,7 @@ public class CopybookExpanderIT implements Constants, StringHelper {
 
         config.load("testconfig.properties");
         copybookFilenameSuffix = config.getApplicationFilenameSuffix();
-        pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "testcobolcopybooks");
+        pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "src/main/cobol/copy");
     }
 
     @BeforeEach
@@ -160,21 +161,13 @@ public class CopybookExpanderIT implements Constants, StringHelper {
     }
 
     private static String getPathFor(String configPropertyName, String defaultValue) {
-        String pathString;
-        String directoryName =
-                config.getString(configPropertyName,
-                        "testcobolsources");
-        if (directoryName.startsWith(FILE_SEPARATOR)) {
-            pathString = directoryName;
-        } else {
-            pathString =
-                    config.getString("resources.directory")
-                            + FILE_SEPARATOR
-                            + CopybookExpanderIT.class.getPackageName().replace(".", FILE_SEPARATOR)
-                            + FILE_SEPARATOR
-                            + directoryName
-                            + FILE_SEPARATOR;
+        StringBuilder directoryName = new StringBuilder();
+        directoryName.append(new File("./").getAbsolutePath());
+        directoryName.append(FILE_SEPARATOR);
+        directoryName.append(config.getString(configPropertyName, "src/main/cobol/copy"));
+        if (!directoryName.toString().endsWith(FILE_SEPARATOR)) {
+            directoryName.append(FILE_SEPARATOR);
         }
-        return pathString;
+        return directoryName.toString();
     }
 }

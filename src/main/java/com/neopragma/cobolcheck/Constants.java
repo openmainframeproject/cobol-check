@@ -21,6 +21,7 @@ public interface Constants {
     int STATUS_NORMAL = 0;
     String NEWLINE = System.getProperty("line.separator");
     String FILE_SEPARATOR = System.getProperty("file.separator");
+    String CURRENT_DIRECTORY = "./";
     String PERIOD = ".";
     String COMMENT_INDICATOR = "*";
     String COLON = ":";
@@ -40,4 +41,5 @@ public interface Constants {
     String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
     String NUMERIC_LITERAL_KEYWORD = "numeric-literal";
     String COBOL_TOKEN = "cobol-token";
+    String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
 }

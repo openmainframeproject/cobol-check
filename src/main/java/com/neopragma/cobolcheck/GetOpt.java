@@ -36,7 +36,7 @@ public class GetOpt implements Constants, StringHelper {
     private static final String LONG_OPT_KEYWORD = "--long";
     private static final char ARGUMENT_REQUIRED_INDICATOR = ':';
     private static final List<String> canTakeMultipleArguments =
-            List.of("t", "test-suite-path");
+            List.of("t", "tests");
 
     private Messages messages;
 
@@ -126,6 +126,11 @@ public class GetOpt implements Constants, StringHelper {
                         optionValue.argumentValue += ":";
                     }
                     optionValue.argumentValue += argValue;
+
+
+                    System.out.println("GetOpt argValue: " + optionValue.argumentValue);
+
+
                 } else {
                     if (!expectValueNext) throw new CommandLineArgumentException(
                             messages.get("ERR006", argValue)

@@ -29,8 +29,7 @@ import java.io.*;
  * @since 14
  */
 public class TestSuiteConcatenator implements Constants, StringHelper {
-    private static final String TEST_SUITE_PATH_OPTION = "test-suite-path";
-    private static final String TEST_SUITE_PATH_CONFIG_KEY = "test.suite.path";
+    private static final String TESTS_OPTION = "tests";
     private static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
     private static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
 
@@ -72,24 +71,31 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
                     messages.get("ERR012", concatenatedTestSuiteFileName),
                     concatenatedTestSuitesException);
         }
-        String testSuitePathsFromCommandLine = EMPTY_STRING;
-        if (options.isSet(TEST_SUITE_PATH_OPTION)) {
-            testSuitePathsFromCommandLine = options.getValueFor(TEST_SUITE_PATH_OPTION);
+
+        String testDirectory =
+                config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        if (!testDirectory.endsWith(FILE_SEPARATOR)) {
+            testDirectory += FILE_SEPARATOR;
         }
-        String testSuitePathsFromConfig =
-                config.getString(TEST_SUITE_PATH_CONFIG_KEY, Constants.EMPTY_STRING);
-        StringBuilder testSuitePaths = new StringBuilder();
-        if (notBlank(testSuitePathsFromCommandLine)) {
-            testSuitePaths.append(testSuitePathsFromCommandLine);
+
+        String colonDelimitedTestFileNamesFromCommandLine = EMPTY_STRING;
+        if (options.isSet(TESTS_OPTION)) {
+            colonDelimitedTestFileNamesFromCommandLine = options.getValueFor(TESTS_OPTION);
         }
-        if (notBlank(testSuitePathsFromConfig)) {
-            testSuitePaths.append(COLON);
-            testSuitePaths.append(testSuitePathsFromConfig);
+        String[] testFileNames = colonDelimitedTestFileNamesFromCommandLine.split(COLON);
+        String[] expandedTestFileNames = new String[testFileNames.length];
+        int nextIndex = 0;
+
+        for (String testFileName : testFileNames) {
+            expandedTestFileNames[nextIndex] = testDirectory + testFileName;
+
+            System.out.println("expandedTestFileName: " + expandedTestFileNames[nextIndex]);
+
+            nextIndex++;
         }
-        String[] testSuitePathList = testSuitePaths.toString().split(COLON);
 
         String line;
-        for (String pathname : testSuitePathList) {
+        for (String pathname : expandedTestFileNames) {
             try {
                 Log.info(messages.get("INF007", pathname, concatenatedTestSuiteFileName));
                 testSuite = new BufferedReader(new FileReader(pathname));

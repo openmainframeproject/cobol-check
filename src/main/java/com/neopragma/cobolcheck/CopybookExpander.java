@@ -17,10 +17,7 @@ package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -139,22 +136,14 @@ public class CopybookExpander implements Constants, StringHelper {
     }
 
     private String getPathToCopybooks() {
-        String pathString = EMPTY_STRING;
-        String directoryName =
-                config.getString("application.copybook.directory",
-                        "testcobolsources");
-        if (directoryName.startsWith(FILE_SEPARATOR)) {
-            pathString = directoryName;
-        } else {
-            pathString =
-                    config.getString("resources.directory")
-                            + FILE_SEPARATOR
-                            + this.getClass().getPackageName().replace(".", FILE_SEPARATOR)
-                            + FILE_SEPARATOR
-                            + directoryName
-                            + FILE_SEPARATOR;
+        StringBuilder directoryName = new StringBuilder();
+        directoryName.append(new File("./").getAbsolutePath());
+        directoryName.append(FILE_SEPARATOR);
+        directoryName.append(config.getString("application.copybook.directory", "src/main/cobol/copy"));
+        if (!directoryName.toString().endsWith(FILE_SEPARATOR)) {
+            directoryName.append(FILE_SEPARATOR);
         }
-        return pathString;
+        return directoryName.toString();
     }
 
 }
