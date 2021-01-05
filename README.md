@@ -2,6 +2,13 @@
 
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
 
+## Immediate needs 
+
+As of January 2021 we could use help with: 
+
+- access to a z/OS system including MVS and USS for testing cobol-check on-platform
+- review of localized messages by native speakers and creation of additional localized message files
+
 ## Why?
 
 The industry is experiencing a resurgence in interest in Cobol, both to support existing applications and to take advantage of the continuing evolution of the zSeries platform. Commercial unit testing tools for Cobol are able to exercise code at the level of a whole load module, but cannot exercise individual Cobol paragraphs in isolation. That limitation means we cannot achieve the same degree of granularity in microtests as we can when working in other languages, such as Java, Kotlin, C#, Python, or Ruby.

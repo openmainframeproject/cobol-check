@@ -1,4 +1,5 @@
-# Cobol-related gitignore entries
+# Cobol- and cobol-check-related gitignore entries
+TESTPRG*
 envvars
 
 *~
