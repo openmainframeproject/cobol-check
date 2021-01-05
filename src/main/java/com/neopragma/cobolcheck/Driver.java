@@ -37,7 +37,7 @@ public class Driver implements Constants, StringHelper {
     private Reader testSuite;
     private Reader cobolSourceIn;
     private Writer testSourceOut;
-    private static final String optionSpec = "c:l:p:t:h --long config-file:,log-level:,programs:,tests:,help";
+    private static final String optionSpec = "c:l:p:t:v:h --long config-file:,log-level:,programs:,tests:,version:,help";
     private String configFileFromCommandLine = EMPTY_STRING;
 
     private final String[] helpText = {
@@ -65,6 +65,10 @@ public class Driver implements Constants, StringHelper {
     void run() {
         if (options.isSet("help")) {
             emitHelp();
+            return;
+        }
+        if (options.isSet("version")) {
+            System.out.println(Version.current());
             return;
         }
         initialize();
@@ -105,19 +109,6 @@ public class Driver implements Constants, StringHelper {
                 TestSuiteConcatenator concatenator =
                         new TestSuiteConcatenator(config, options);
                 testSuite = concatenator.concatenateTestSuites(matchingDirectory);
-
-                //temp
-//                System.out.println("This is what Driver got back from TestSuiteConcatenator:");
-//                try {
-//                    BufferedReader testSuiteReader = new BufferedReader(testSuite);
-//                    String line = EMPTY_STRING;
-//                    while((line = testSuiteReader.readLine()) != null) {
-//                        System.out.println(line + NEWLINE);
-//                    }
-//                    System.out.println("end of data from TestSuiteConcatenator");
-//                } catch (Exception ex) {
-//
-//                }
 
                 // create READER for the Cobol source program to be tested
                 StringBuilder cobolSourceInPath = new StringBuilder();
