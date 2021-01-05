@@ -53,13 +53,8 @@ public class DirectoryNameMatcher extends SimpleFileVisitor<Path> {
             return matchingDirectories;
         }
 
-        // Compares the glob pattern against
-        // the file or directory name.
         void find(Path path) {
             Path name = path.getFileName();
-
-            System.out.println("DirectoryNameMatcher: pathname is: " + name);
-
             if (name != null && matcher.matches(name)) {
                 if (new File(String.valueOf(path)).isDirectory()) {
                     matchingDirectories.add(path.toString());

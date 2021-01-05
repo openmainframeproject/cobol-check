@@ -41,8 +41,12 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 public class FileNameMatcher extends SimpleFileVisitor<Path> {
         private final PathMatcher matcher;
         private List<String> matchingFiles;
+        private boolean defaultToAllFiles = false;
 
         FileNameMatcher(String pattern) {
+            if (pattern.length() == 0) {
+                defaultToAllFiles = true;
+            }
             matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
             matchingFiles = new ArrayList<>();
         }
@@ -53,14 +57,11 @@ public class FileNameMatcher extends SimpleFileVisitor<Path> {
 
         void find(Path file) {
             Path name = file.getFileName();
-
-            System.out.println("FileNameMatcher: pathname is: " + name);
-
-            if (name != null && matcher.matches(name)) {
-                if (new File(String.valueOf(file)).isFile()) {
-                    matchingFiles.add(file.getFileName().toString());
-
-                    System.out.println("matched file: " + file);
+            if (name != null) {
+                if (defaultToAllFiles || matcher.matches(name)) {
+                    if (new File(String.valueOf(file)).isFile()) {
+                        matchingFiles.add(file.toAbsolutePath().toString());
+                    }
                 }
             }
         }

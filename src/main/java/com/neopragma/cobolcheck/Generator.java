@@ -63,6 +63,8 @@ public class Generator implements Constants, StringHelper {
     private boolean expectInProgress;
     private boolean toBeInProgress;
     private boolean alphanumericLiteralCompare;
+    private boolean expectTestsuiteName;
+    private boolean expectTestcaseName;
     private String fieldNameForExpect;
     private String expectedValueToCompare;
 
@@ -134,6 +136,10 @@ public class Generator implements Constants, StringHelper {
             Reader testSuite,
             Reader cobolSourceIn,
             Writer testSourceOut) {
+
+
+        System.out.println("Entry: Generator.mergeTestSuite()");
+
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
@@ -216,9 +222,9 @@ public class Generator implements Constants, StringHelper {
             BufferedReader testSuiteReader,
             Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(COBOL_PERFORM_UT_INITIALIZE));
+        parseTestSuite(testSuiteReader, testSourceOut);
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
-        parseTestSuite(testSuiteReader, testSourceOut);
     }
 
     private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
@@ -231,14 +237,12 @@ public class Generator implements Constants, StringHelper {
     }
 
     void insertTestSuiteNameIntoTestSource(String testSuiteName, Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(COBOL_DISPLAY_SPACE));
         testSourceOut.write(fixedLength(COBOL_DISPLAY_TESTSUITE));
-        testSourceOut.write(fixedLength(String.format(COBOL_DISPLAY_NAME, quoted(testSuiteName))));
-        testSourceOut.write(fixedLength(COBOL_DISPLAY_SPACE));
+        writeCobolLine(String.format(COBOL_DISPLAY_NAME, testSuiteName), testSourceOut);
     }
 
     void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_1, quoted(testCaseName))));
+        writeCobolLine(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName), testSourceOut);
         testSourceOut.write(fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix)));
     }
 
@@ -312,16 +316,25 @@ public class Generator implements Constants, StringHelper {
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
+
+            System.out.println("parseTestSuite(), testSuiteToken is <" + testSuiteToken + ">");
+
+            if (!testSuiteToken.startsWith("\"") && !testSuiteToken.startsWith("\'")) {
+                testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
+            }
+            System.out.println("parseTestSuite(), testSuiteToken after upcase <" + testSuiteToken + ">");
+
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
             // take actions triggered by the type of the current token
             switch (keyword.value()) {
+                case TESTSUITE_KEYWORD:
+                    expectTestsuiteName = true;
+                    break;
+                case TESTCASE_KEYWORD:
+                    expectTestcaseName = true;
+                    break;
                 case EXPECT_KEYWORD:
-
-                    System.out.println("In switch, case EXPECT_KEYWORD");
-                    System.out.println("cobolStatementInProgress: " + cobolStatementInProgress);
-                    System.out.println("cobolStatement: <" + cobolStatement.toString());
-
                     if (cobolStatementInProgress) {
                         insertUserWrittenCobolStatement(testSourceOut);
                         initializeCobolStatement();
@@ -340,8 +353,18 @@ public class Generator implements Constants, StringHelper {
                     }
                     break;
                 case ALPHANUMERIC_LITERAL_KEYWORD:
+                    if (expectTestsuiteName) {
+                        expectTestsuiteName = false;
+                        currentTestSuiteName = testSuiteToken;
+                        insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
+                    }
+                    if (expectTestcaseName) {
+                        expectTestcaseName = false;
+                        currentTestCaseName = testSuiteToken;
+                        insertTestCaseNameIntoTestSource(currentTestCaseName, testSourceOut);
+                    }
                     if (toBeInProgress) {
-                        if (testSuiteToken.startsWith(QUOTE)) {
+                        if (testSuiteToken.startsWith(QUOTE) || testSuiteToken.startsWith(APOSTROPHE)) {
                             alphanumericLiteralCompare = true;
                             expectedValueToCompare = testSuiteToken;
                             insertTestCodeForAssertion(testSourceOut);
@@ -383,13 +406,6 @@ public class Generator implements Constants, StringHelper {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
-                case TESTSUITE_NAME:
-                    insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
-                    break;
-                case NEW_TESTCASE:
-                    insertTestCaseNameIntoTestSource(currentTestCaseName, testSourceOut);
-                    insertPerformBeforeEachIntoTestSource(testSourceOut);
-                    break;
             }
             nextAction = keyword.keywordAction();
             testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
@@ -417,7 +433,7 @@ public class Generator implements Constants, StringHelper {
             if (testSuiteLine == null) {
                 return null;
             }
-            if (testSuiteLine.charAt(6) != '*') {
+            if (testSuiteLine.length() > 5 && testSuiteLine.charAt(6) != '*') {
                 testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
             }
         }
@@ -483,6 +499,20 @@ public class Generator implements Constants, StringHelper {
 
     String getCobolStatement() {
         return cobolStatement.toString();
+    }
+
+    void writeCobolLine(String line, Writer testSourceOut) throws IOException {
+        String line1 = line;
+        String line2 = EMPTY_STRING;
+        if (line.length() > 72) {
+            line1 = line.substring(0,72);
+            line2 = line.substring(72);
+        }
+        testSourceOut.write(fixedLength(line1));
+        if (line2.length() > 0) {
+            line2 = fixedLength("      -    \"" + line2);
+        }
+        testSourceOut.write(line2);
     }
 
     class State {

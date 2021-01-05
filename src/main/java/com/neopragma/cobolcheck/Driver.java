@@ -15,10 +15,11 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -68,23 +69,115 @@ public class Driver implements Constants, StringHelper {
         }
         initialize();
         prepareInputAndOutputFiles();
-//        mergeTestSuiteIntoTheProgramUnderTest();
 
         Log.info(messages.get("INF004"));        // We are terminating
     }
 
+    /**
+     *
+     */
     void prepareInputAndOutputFiles() {
-        TestSuiteConcatenator concatenator =
-                new TestSuiteConcatenator(config, options);
-        testSuite = concatenator.concatenateTestSuites();
+        // all test suites are located under this directory
+        String testSuiteDirectory =
+                config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        if (!testSuiteDirectory.endsWith(FILE_SEPARATOR)) {
+            testSuiteDirectory += FILE_SEPARATOR;
+        }
 
-        //TODO: Make these real
-        cobolSourceIn = new StringReader(EMPTY_STRING);
-        testSourceOut = new StringWriter();
+        String programNames = options.getValueFor(PROGRAMS_OPTION);
+        String[] programNamesSeparated = programNames.split(COLON);
+
+        // find subdirectories that match program names
+        List<String> matchingDirectories = new ArrayList<>();
+        for (String programName : programNamesSeparated) {
+            DirectoryNameMatcher directoryFinder = new DirectoryNameMatcher(programName);
+            try {
+                Files.walkFileTree(Paths.get(testSuiteDirectory), directoryFinder);
+                matchingDirectories = directoryFinder.getMatchingDirectories();
+                if (matchingDirectories.isEmpty()) {
+                    Log.warn(messages.get("WRN001", programName, testSuiteDirectory));
+                }
+            } catch (IOException ioException) {
+            //TODO: need exception and log message here
+            }
+
+            for (String matchingDirectory : matchingDirectories) {
+                TestSuiteConcatenator concatenator =
+                        new TestSuiteConcatenator(config, options);
+                testSuite = concatenator.concatenateTestSuites(matchingDirectory);
+
+                //temp
+//                System.out.println("This is what Driver got back from TestSuiteConcatenator:");
+//                try {
+//                    BufferedReader testSuiteReader = new BufferedReader(testSuite);
+//                    String line = EMPTY_STRING;
+//                    while((line = testSuiteReader.readLine()) != null) {
+//                        System.out.println(line + NEWLINE);
+//                    }
+//                    System.out.println("end of data from TestSuiteConcatenator");
+//                } catch (Exception ex) {
+//
+//                }
+
+                // create READER for the Cobol source program to be tested
+                StringBuilder cobolSourceInPath = new StringBuilder();
+                cobolSourceInPath.append(config.getString(
+                        APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
+                        DEFAULT_APPLICATION_SOURCE_DIRECTORY));
+                if (!cobolSourceInPath.toString().endsWith(FILE_SEPARATOR)) {
+                    cobolSourceInPath.append(FILE_SEPARATOR);
+                }
+                cobolSourceInPath.append(programName);
+                cobolSourceInPath.append(FILE_SEPARATOR);
+                cobolSourceInPath.append(programName);
+                cobolSourceInPath.append(config.getApplicationFilenameSuffix());
+
+                System.out.println("Cobol source file path: " + cobolSourceInPath.toString());
+
+                try {
+                    cobolSourceIn = new FileReader(cobolSourceInPath.toString());
+                } catch (IOException cobolSourceInException) {
+                    //TODO: Need proper throw and log here
+                }
+
+
+                // create WRITER for the test source program (copy of program to be tested plus test code)
+
+                StringBuilder testSourceOutPath = new StringBuilder();
+                testSourceOutPath.append(new File(EMPTY_STRING).getAbsolutePath());
+                testSourceOutPath.append(FILE_SEPARATOR);
+                testSourceOutPath.append("TESTPRG.CBL"); //TODO: This needs to be unique per program
+
+                System.out.println("testSourceOutPath: " + testSourceOutPath.toString());
+
+                try {
+                    testSourceOut = new FileWriter(testSourceOutPath.toString());
+                } catch (IOException testSourceOutException) {
+                    System.out.println("oops");
+                    //TODO: Proper throw and log here
+                }
+
+
+
+                mergeTestSuiteIntoTheProgramUnderTest();
+                try {
+                    testSourceOut.close();
+                } catch (IOException closeTestSourceOutException) {
+                    System.out.println("exception closing testSourceOut");
+                    //TODO: Proper throw and log here
+                }
+
+            }
+        }
+
+
 
     }
 
     void mergeTestSuiteIntoTheProgramUnderTest() {
+
+        System.out.println("Driver about to call Generator");
+
         generator = new Generator(messages,
                 new StringTokenizerExtractor(messages),
                 new KeywordExtractor(),

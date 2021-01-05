@@ -33,7 +33,7 @@ public class KeywordExtractorTest {
     @Test
     public void given_a_single_quoted_string_it_treats_the_string_as_a_single_token() {
         tokens = extractor.extractTokensFrom("\'A single quoted string\'");
-        assertEquals("\"A single quoted string\"", tokens.get(0));
+        assertEquals("\'A single quoted string\'", tokens.get(0));
         assertEquals(1, tokens.size());
     }
 
@@ -72,4 +72,5 @@ public class KeywordExtractorTest {
         tokens = extractor.extractTokensFrom("           MOVE A TO B.");
         assertEquals("B", tokens.get(3));
     }
+
 }

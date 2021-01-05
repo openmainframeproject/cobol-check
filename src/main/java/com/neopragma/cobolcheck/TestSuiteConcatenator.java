@@ -16,12 +16,10 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.ConcatenatedTestSuiteIOException;
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.TestSuiteInputFileNotFoundException;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -36,15 +34,10 @@ import java.util.List;
  * @since 14
  */
 public class TestSuiteConcatenator implements Constants, StringHelper {
-    private static final String PROGRAMS_OPTION = "programs";
-    private static final String TESTS_OPTION = "tests";
-    private static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
-    private static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
 
     private Config config;
     private Messages messages;
     private GetOpt options;
-    private BufferedReader testSuite;
 
     public TestSuiteConcatenator(Config config, GetOpt options) {
         this.config = config;
@@ -63,23 +56,49 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
      *
      * This:
      *
-     * cobolcheck --tests ALPHA/*-test ALPHA/*-unit BETA DELTA/first DELTA/second
+     * cobolcheck --programs ALPHA BETA --tests *-test
      *
-     * Comes in as:
+     * Comes in on separate calls as:
      *
-     * ALPHA/*-test:ALPHA/*-unit:BETA:DELTA/first:DELTA/second
+     * [testSuiteDirectory]/ALPHA/
+     * [testSuiteDirectory]/BETA/
      *
      * And means:
      *
-     * Run all testsuites under ALPHA whose names match *-test or *-unit
-     * plus all test suites under BETA
-     * plus all the first and second test suites under DELTA
+     * Run all testsuites under [testSuiteDirectory]/ALPHA whose names match *-test against program ALPHA.CBL
+     *
+     * and (separately)
+     *
+     * Run all testsuites under [testSuiteDirectory]/BETA whose names match *-test against program BETA.CBL.
+     *
      *
      * @return Reader for the concatenated test suites
      * @throws ConcatenatedTestSuiteIOException
      * @throws TestSuiteInputFileNotFoundException
+     * @throws PossibleInternalLogicErrorException
      */
-    Reader concatenateTestSuites() {
+    Reader concatenateTestSuites(String programTestSuiteSubdirectory) {
+        String testFileNames = options.getValueFor(TESTS_OPTION);
+        String[] testFileNamesSeparated = testFileNames.split(COLON);
+
+        // find files under subdirectory
+        List<String> matchingFiles = new ArrayList<>();
+        for (String testFileNameGlob : testFileNamesSeparated) {
+            FileNameMatcher fileFinder = new FileNameMatcher(testFileNameGlob);
+            try {
+                Files.walkFileTree(Paths.get(programTestSuiteSubdirectory), fileFinder);
+                matchingFiles = fileFinder.getMatchingFiles();
+                if (matchingFiles.isEmpty()) {
+                    Log.warn(messages.get("WRN002", programTestSuiteSubdirectory));
+                }
+            } catch (IOException exceptionWalkingFiles) {
+                throw new PossibleInternalLogicErrorException(
+                        messages.get("ERR013", testFileNameGlob),
+                        exceptionWalkingFiles);
+            }
+        }
+
+        // concatenate matching test suite files into a single test input file for the Generator to consume
         String concatenatedTestSuiteFileName =
                 config.getString(CONCATENATED_TEST_SUITES_CONFIG_KEY,
                         DEFAULT_CONCATENATED_TEST_SUITES_PATH);
@@ -92,110 +111,31 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
                     concatenatedTestSuitesException);
         }
 
-        String testDirectory =
-                config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
-        if (!testDirectory.endsWith(FILE_SEPARATOR)) {
-            testDirectory += FILE_SEPARATOR;
-        }
-
-        System.out.println("testDirectory: " + testDirectory);
-
-        String programNames = options.getValueFor(PROGRAMS_OPTION);
-        String testFileNames = options.getValueFor(TESTS_OPTION);
-
-        System.out.println(NEWLINE);
-        System.out.println("programNames: " + programNames);
-        System.out.println("testFileNames: " + testFileNames);
-
-        String[] programNamesSeparated = programNames.split(COLON);
-
-        System.out.println(NEWLINE);
-        for (String name : programNamesSeparated) {
-            System.out.println("programName: " + name);
-        }
-
-
-        String[] testFileNamesSeparated = testFileNames.split(COLON);
-
-        System.out.println(NEWLINE);
-        for (String name : testFileNamesSeparated) {
-            System.out.println("separatedName: " + name);
-        }
-
-        // find subdirectories that match program names
-        List<String> matchingDirectories = new ArrayList<>();
-        for (String programName : programNamesSeparated) {
-            DirectoryNameMatcher directoryFinder = new DirectoryNameMatcher(programNamesSeparated[0]);
-            try {
-                Files.walkFileTree(Paths.get(testDirectory), directoryFinder);
-                matchingDirectories = directoryFinder.getMatchingDirectories();
-            } catch (IOException ex) {
-                //TODO: Issue warning here - program name specified on command line doesn't have a test directory
-            }
-
-            for (String matchingDirectory : matchingDirectories) {
-                System.out.println("matchingDirectory: " + matchingDirectory);
-            }
-        }
-
-        // find files under subdirectory
-        List<String> matchingFiles = new ArrayList<>();
-        for (String testFileNameGlob : testFileNamesSeparated) {
-            FileNameMatcher fileFinder = new FileNameMatcher(testFileNamesSeparated[0]);
-            try {
-                Files.walkFileTree(Paths.get(matchingDirectories.get(0)), fileFinder);
-                matchingFiles = fileFinder.getMatchingFiles();
-            } catch (IOException ex) {
-                //TODO: Issue warning here - filename specified on command line doesn't exist in directory
-            }
-
+        try {
             for (String matchingFile : matchingFiles) {
-                System.out.println("matchingFile: " + matchingFile);
+                BufferedReader testFileReader = new BufferedReader(new FileReader(matchingFile));
+                String line = EMPTY_STRING;
+                while((line = testFileReader.readLine()) != null) {
+                    concatenatedTestSuitesWriter.write(line + NEWLINE);
+                }
+                testFileReader.close();
             }
+            concatenatedTestSuitesWriter.close();
+        } catch (IOException testFileReaderException) {
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR014", programTestSuiteSubdirectory),
+                    testFileReaderException);
         }
 
+        // return the concatenated test suite file as a Reader
+        FileReader testSuite = null;
+        try {
+            testSuite = new FileReader(concatenatedTestSuiteFileName);
+        } catch (IOException exceptionCreatingTestSuiteReader) {
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR015"));
+        }
 
-
-
-//        String colonDelimitedTestFileNamesFromCommandLine = EMPTY_STRING;
-//        if (options.isSet(TESTS_OPTION)) {
-//            colonDelimitedTestFileNamesFromCommandLine = options.getValueFor(TESTS_OPTION);
-//        }
-//        String[] testFileNames = colonDelimitedTestFileNamesFromCommandLine.split(COLON);
-//        String[] expandedTestFileNames = new String[testFileNames.length];
-//        int nextIndex = 0;
-//
-//        for (String testFileName : testFileNames) {
-//            expandedTestFileNames[nextIndex] = testDirectory + testFileName;
-//
-//            System.out.println("expandedTestFileName: " + expandedTestFileNames[nextIndex]);
-//
-//            nextIndex++;
-//        }
-//
-//        String line;
-//        for (String pathname : expandedTestFileNames) {
-//            try {
-//                Log.info(messages.get("INF007", pathname, concatenatedTestSuiteFileName));
-//                testSuite = new BufferedReader(new FileReader(pathname));
-//                while ((line = testSuite.readLine()) != null) {
-//                    concatenatedTestSuitesWriter.write(line + NEWLINE);
-//                }
-//            } catch (IOException testSuiteNotFound) {
-//                throw new TestSuiteInputFileNotFoundException(
-//                        messages.get("ERR011", pathname),
-//                        testSuiteNotFound);
-//            }
-//        }
-//        FileReader testSuite;
-//        try {
-//            concatenatedTestSuitesWriter.close();
-//            testSuite =  new FileReader(concatenatedTestSuiteFileName);
-//        } catch (IOException concatenatedTestSuitesException) {
-//            throw new ConcatenatedTestSuiteIOException(
-//                    messages.get("ERR012", concatenatedTestSuiteFileName),
-//                    concatenatedTestSuitesException);
-//        }
         return testSuite;
     }
 }

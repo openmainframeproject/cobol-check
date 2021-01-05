@@ -61,6 +61,7 @@ public class Config implements Constants {
         setDefaultLocaleOverride();
         Log.info(messages.get("INF002", configResourceName));
 
+        setApplicationFilenameSuffix();
         setCopybookFilenameSuffix();
     }
 
@@ -83,6 +84,21 @@ public class Config implements Constants {
     }
 
     String getApplicationFilenameSuffix() {
+        return config.getProperty("resolved.application.source.filename.suffix");
+    }
+
+    private void setApplicationFilenameSuffix() {
+        String propertyValue = EMPTY_STRING;
+        String suffix = getString(
+                "application.source.filename.suffix",
+                "none");
+        if (!suffix.equalsIgnoreCase("none")) {
+            propertyValue = PERIOD + suffix;
+        }
+        config.put("resolved.application.source.filename.suffix", propertyValue);
+    }
+
+    String getCopybookFilenameSuffix() {
         return config.getProperty("resolved.application.copybook.filename.suffix");
     }
 

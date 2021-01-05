@@ -16,9 +16,13 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 public interface Constants {
-    String EMPTY_STRING = "";
+
+    // File read status values
     int END_OF_STREAM = -1;
     int STATUS_NORMAL = 0;
+
+    // Frequently-used string values
+    String EMPTY_STRING = "";
     String NEWLINE = System.getProperty("line.separator");
     String FILE_SEPARATOR = System.getProperty("file.separator");
     String CURRENT_DIRECTORY = "./";
@@ -28,8 +32,13 @@ public interface Constants {
     String SPACE = " ";
     String COMMA = ",";
     String QUOTE = "\"";
+    String APOSTROPHE = "'";
+
+    // COPY REPLACING delimiters
     String PSEUDO_TEXT_DELIMITER_EQUALS = "==";
     String PSEUDO_TEXT_DELIMITER_COLON = "::";
+
+    // Test suite keywords and values used in parsing test cases
     String TRUE = "TRUE";
     String FALSE = "FALSE";
     String TESTSUITE_KEYWORD = "TESTSUITE";
@@ -41,5 +50,15 @@ public interface Constants {
     String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
     String NUMERIC_LITERAL_KEYWORD = "numeric-literal";
     String COBOL_TOKEN = "cobol-token";
+
+    // Configuration key values
     String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
+    String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
+    String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
+    String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
+    String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
+
+    // Command line option key values
+    String TESTS_OPTION = "tests";
+    String PROGRAMS_OPTION = "programs";
 }

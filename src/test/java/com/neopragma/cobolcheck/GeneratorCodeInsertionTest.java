@@ -51,11 +51,9 @@ public class GeneratorCodeInsertionTest implements Constants {
     @Test
     public void it_inserts_cobol_statements_to_display_the_testsuite_name() throws IOException {
         String expectedResult =
-                "           DISPLAY SPACE                                                        " + NEWLINE
-              + "           DISPLAY TESTSUITE:                                                   " + NEWLINE
-              + "           DISPLAY \"Test Suite Name\"                                            " + NEWLINE
-              + "           DISPLAY SPACE                                                        " + NEWLINE;
-        generator.insertTestSuiteNameIntoTestSource("Test Suite Name", testSourceOut);
+                "           DISPLAY TESTSUITE:                                                   " + NEWLINE
+              + "           DISPLAY \"Test Suite Name\"                                            " + NEWLINE;
+        generator.insertTestSuiteNameIntoTestSource("\"Test Suite Name\"", testSourceOut);
         assertEquals(expectedResult, testSourceOut.toString());
     }
 
@@ -64,7 +62,7 @@ public class GeneratorCodeInsertionTest implements Constants {
         String expectedResult =
                 "           MOVE \"Test Case Name\"                                                " + NEWLINE
                         + "               TO UT-TEST-CASE-NAME                                             " + NEWLINE;
-        generator.insertTestCaseNameIntoTestSource("Test Case Name", testSourceOut);
+        generator.insertTestCaseNameIntoTestSource("\"Test Case Name\"", testSourceOut);
         assertEquals(expectedResult, testSourceOut.toString());
     }
 

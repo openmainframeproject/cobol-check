@@ -10,6 +10,8 @@ public class KeywordExtractor implements TokenExtractor, Constants {
     private Map<String, String> twoWordTokens;
     private StringBuilder buffer;
     private String nextExpectedToken = EMPTY_STRING;
+    private boolean openQuote = false;
+    private char quoteDelimiter = '"';
 
     public KeywordExtractor() {
         twoWordTokens = new HashMap<>();
@@ -21,20 +23,25 @@ public class KeywordExtractor implements TokenExtractor, Constants {
         List<String> tokens = new ArrayList<>();
         buffer = new StringBuilder();
         int tokenOffset = 0;
-        boolean openQuote = false;
         sourceLine = sourceLine.trim();
         while (tokenOffset < sourceLine.length()) {
             if (sourceLine.charAt(tokenOffset) == '.') {
                 break;
             }
             if (isQuote(sourceLine.charAt(tokenOffset))) {
+                char currentChar = sourceLine.charAt(tokenOffset);
                 if (openQuote) {
-                    openQuote = false;
-                    buffer.append(QUOTE);
-                    buffer = addTokenAndClearBuffer(buffer, tokens);
+                    if (currentChar == quoteDelimiter) {
+                        openQuote = false;
+                        buffer.append(currentChar);
+                        buffer = addTokenAndClearBuffer(buffer, tokens);
+                    } else {
+                        buffer.append(currentChar);
+                    }
                 } else {
                     openQuote = true;
-                    buffer.append(QUOTE);
+                    quoteDelimiter = currentChar;
+                    buffer.append(currentChar);
                 }
             } else {
                 if (sourceLine.charAt(tokenOffset) == ' ') {

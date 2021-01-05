@@ -1,16 +1,14 @@
            TESTSUITE
-           "Greeting returns the appropriate message"
+           "Greeting returns the appropriate message based on message type"
 
-      *  0         2         3         4         5         6         7
-           TESTCASE "When message type is greeting it returns 'Hello, Wo
-      -             "rld!'"
+           TestCase "When message type is greeting it returns 'Hello, World!'"
            SET MESSAGE-IS-GREETING TO TRUE
            PERFORM 2000-SPEAK
-           EXPECT WS-MESSAGE TO BE "Hello, World!"
+           Expect WS-GREETING To Be "Hello, World     !"
 
-      *  0         2         3         4         5         6         7
-           TESTCASE "When message type is farewell it returns Goodbye, c
-      -             "ruel world!"
+           testCASE "When message type is farewell it returns See you later, alligator!"
            SET MESSAGE-IS-FAREWELL TO TRUE
            PERFORM 2000-SPEAK
-           EXPECT WS-MESSAGE TO BE "Goodbye, cruel world!"
+           expect WS-FAREWELL to be "See you later, alligator!"
+
+
