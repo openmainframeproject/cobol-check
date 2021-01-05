@@ -15,6 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+
 import java.io.IOException;
 
 /**
@@ -36,31 +38,24 @@ public class LinuxProcessLauncher implements ProcessLauncher, StringHelper, Cons
     @Override
     public Process run(String programName) {
         if (isBlank(programName)) {
-
-            System.out.println("programName is null");
-            //TODO: throw and log
+            Log.error(messages.get("ERR020"));
+            throw new PossibleInternalLogicErrorException(messages.get("ERR020"));
         }
-        String scriptName = config.getString("linux.process");
+        String scriptName = config.getString(Constants.LINUX_PROCESS_CONFIG_KEY);
         if (isBlank(scriptName)) {
-
-            System.out.println("scriptName is null");
-            //TODO: throw and log
+            Log.error(messages.get("ERR021", LINUX_PROCESS_CONFIG_KEY));
+            throw new PossibleInternalLogicErrorException(messages.get("ERR021", LINUX_PROCESS_CONFIG_KEY));
         }
         String scriptDirectory = config.getString(COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
                 Constants.DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY);
         if (isBlank(scriptDirectory)) {
-
-            System.out.println("scriptDirectory is null");
-            //TODO: throw and log
+            Log.error(messages.get("ERR022", COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+            throw new PossibleInternalLogicErrorException(messages.get("ERR022", COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
         }
 
         if (!scriptDirectory.endsWith(FILE_SEPARATOR)) {
             scriptDirectory += FILE_SEPARATOR;
         }
-
-        System.out.println("LinuxProcessLauncher, ProcessBuilder, scriptName: "
-                + scriptName + ", scriptDirectory: " + scriptDirectory + ", programName: " + programName);
-
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
         processBuilder.inheritIO();
@@ -72,12 +67,13 @@ public class LinuxProcessLauncher implements ProcessLauncher, StringHelper, Cons
             processArguments.append(argument);
             delim = COMMA;
         }
-        Log.info(String.format(messages.get("INF008", processArguments.toString())));
+        Log.info(messages.get("INF008", processArguments.toString()));
         try {
             process = processBuilder.start();
         } catch (IOException processBuilderException) {
-            processBuilderException.printStackTrace();
-            //TODO: throw and log
+            Log.error(messages.get("ERR023", processArguments.toString()));
+            throw new PossibleInternalLogicErrorException(messages.get("ERR023",
+                    processArguments.toString()), processBuilderException);
         }
         return process;
     }
