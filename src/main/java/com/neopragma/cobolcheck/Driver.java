@@ -15,6 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -102,7 +104,8 @@ public class Driver implements Constants, StringHelper {
                     Log.warn(messages.get("WRN001", programName, testSuiteDirectory));
                 }
             } catch (IOException ioException) {
-            //TODO: need exception and log message here
+                throw new PossibleInternalLogicErrorException(
+                        String.format(messages.get("ERR019", programName)));
             }
 
             for (String matchingDirectory : matchingDirectories) {
@@ -122,53 +125,39 @@ public class Driver implements Constants, StringHelper {
                 cobolSourceInPath.append(FILE_SEPARATOR);
                 cobolSourceInPath.append(programName);
                 cobolSourceInPath.append(config.getApplicationFilenameSuffix());
-
-                System.out.println("Cobol source file path: " + cobolSourceInPath.toString());
-
                 try {
                     cobolSourceIn = new FileReader(cobolSourceInPath.toString());
                 } catch (IOException cobolSourceInException) {
-                    //TODO: Need proper throw and log here
+                    throw new PossibleInternalLogicErrorException(
+                            String.format(messages.get("ERR018", programName)));
                 }
 
 
                 // create WRITER for the test source program (copy of program to be tested plus test code)
-
                 StringBuilder testSourceOutPath = new StringBuilder();
                 testSourceOutPath.append(new File(EMPTY_STRING).getAbsolutePath());
                 testSourceOutPath.append(FILE_SEPARATOR);
                 testSourceOutPath.append("TESTPRG.CBL"); //TODO: This needs to be unique per program
-
-                System.out.println("testSourceOutPath: " + testSourceOutPath.toString());
-
                 try {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
                 } catch (IOException testSourceOutException) {
-                    System.out.println("oops");
-                    //TODO: Proper throw and log here
+                    throw new PossibleInternalLogicErrorException(
+                            String.format(messages.get("ERR016", programName)));
                 }
-
-
 
                 mergeTestSuiteIntoTheProgramUnderTest();
                 try {
                     testSourceOut.close();
                 } catch (IOException closeTestSourceOutException) {
-                    System.out.println("exception closing testSourceOut");
-                    //TODO: Proper throw and log here
+                    throw new PossibleInternalLogicErrorException(
+                            String.format(messages.get("ERR017", programName)));
                 }
 
             }
         }
-
-
-
     }
 
     void mergeTestSuiteIntoTheProgramUnderTest() {
-
-        System.out.println("Driver about to call Generator");
-
         generator = new Generator(messages,
                 new StringTokenizerExtractor(messages),
                 new KeywordExtractor(),

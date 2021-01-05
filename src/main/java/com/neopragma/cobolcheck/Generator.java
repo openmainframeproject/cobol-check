@@ -137,9 +137,6 @@ public class Generator implements Constants, StringHelper {
             Reader cobolSourceIn,
             Writer testSourceOut) {
 
-
-        System.out.println("Entry: Generator.mergeTestSuite()");
-
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
                     messages.get("ERR001", "testSuite", "Generator.runSuite()"));
@@ -317,15 +314,9 @@ public class Generator implements Constants, StringHelper {
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
-
-            System.out.println("parseTestSuite(), testSuiteToken is <" + testSuiteToken + ">");
-
             if (!testSuiteToken.startsWith("\"") && !testSuiteToken.startsWith("\'")) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
-
-            System.out.println("parseTestSuite(), testSuiteToken uppercase is <" + testSuiteToken + ">");
-
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
             // take actions triggered by the type of the current token
@@ -337,9 +328,6 @@ public class Generator implements Constants, StringHelper {
                     expectTestcaseName = true;
                     break;
                 case EXPECT_KEYWORD:
-
-                    System.out.println("EXPECT keyword recognized");
-
                     if (cobolStatementInProgress) {
                         insertUserWrittenCobolStatement(testSourceOut);
                         initializeCobolStatement();

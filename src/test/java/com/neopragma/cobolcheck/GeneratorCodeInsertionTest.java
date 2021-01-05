@@ -61,7 +61,9 @@ public class GeneratorCodeInsertionTest implements Constants {
     public void it_inserts_cobol_statements_to_store_the_testcase_name() throws IOException {
         String expectedResult =
                 "           MOVE \"Test Case Name\"                                                " + NEWLINE
-                        + "               TO UT-TEST-CASE-NAME                                             " + NEWLINE;
+              + "               TO UT-TEST-CASE-NAME                                             " + NEWLINE
+              + "           PERFORM UT-BEFORE                                                    " + NEWLINE;
+
         generator.insertTestCaseNameIntoTestSource("\"Test Case Name\"", testSourceOut);
         assertEquals(expectedResult, testSourceOut.toString());
     }
