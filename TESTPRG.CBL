@@ -129,15 +129,31 @@
            MOVE "When message type is greeting it returns 'Hello, World!        
       -    "'"                                                                  
                TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
             SET MESSAGE-IS-GREETING TO TRUE                                     
             PERFORM 2000-SPEAK                                                  
            ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-GREETING TO UT-ACTUAL                                        
+           MOVE "Hello, World     !"                                            
+               TO UT-EXPECTED                                                   
+           SET UT-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
            MOVE "When message type is farewell it returns See you later,        
       -    " alligator!"                                                        
                TO UT-TEST-CASE-NAME                                             
-            WS-GREETING TO BE SET MESSAGE-IS-FAREWELL TO TRUE                   
+           PERFORM UT-BEFORE                                                    
+            SET MESSAGE-IS-FAREWELL TO TRUE                                     
             PERFORM 2000-SPEAK                                                  
            ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-FAREWELL TO UT-ACTUAL                                        
+           MOVE "See you later, alligator!"                                     
+               TO UT-EXPECTED                                                   
+           SET UT-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       

@@ -1,9 +1,6 @@
 package com.neopragma.cobolcheck;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KeywordExtractor implements TokenExtractor, Constants {
 
@@ -48,8 +45,8 @@ public class KeywordExtractor implements TokenExtractor, Constants {
                     if (openQuote) {
                         buffer.append(SPACE);
                     } else {
-                        if (twoWordTokens.containsKey(buffer.toString())) {
-                            nextExpectedToken = twoWordTokens.get(buffer.toString());
+                        if (twoWordTokens.containsKey(buffer.toString().toUpperCase(Locale.ROOT))) {
+                            nextExpectedToken = twoWordTokens.get(buffer.toString().toUpperCase(Locale.ROOT));
                             buffer.append(SPACE);
 
                             int startOfLookahead = tokenOffset + 1;

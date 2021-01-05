@@ -76,14 +76,14 @@ public class Generator implements Constants, StringHelper {
     private static final String COBOL_DISPLAY_SPACE =
             "           DISPLAY SPACE                                                        ";
     private static final String COBOL_DISPLAY_TESTSUITE =
-            "           DISPLAY TESTSUITE:                                                   ";
+            "           DISPLAY \"TESTSUITE:\"                                                 ";
     private static final String COBOL_DISPLAY_NAME =
             "           DISPLAY %s";
     private static final String COBOL_STORE_TESTCASE_NAME_1 =
             "           MOVE %s";
     private static final String COBOL_STORE_TESTCASE_NAME_2 =
             "               TO %sTEST-CASE-NAME";
-    private static final String COBOL_PERFORM_BEFORE =
+    private static final String COBOL_PERFORM_UT_BEFORE =
             "           PERFORM %sBEFORE";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
             "           ADD 1 TO %sTEST-CASE-COUNT";
@@ -244,10 +244,11 @@ public class Generator implements Constants, StringHelper {
     void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
         writeCobolLine(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName), testSourceOut);
         testSourceOut.write(fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_UT_BEFORE, testCodePrefix)));
     }
 
     void insertPerformBeforeEachIntoTestSource(Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_UT_BEFORE, testCodePrefix)));
     }
 
     void insertIncrementTestCaseCount(Writer testSourceOut) throws IOException {
@@ -272,9 +273,9 @@ public class Generator implements Constants, StringHelper {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_UT_COMPARE_DEFAULT, testCodePrefix, TRUE)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix, TRUE)));
+                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_AFTER, testCodePrefix, TRUE)));
+                COBOL_PERFORM_UT_AFTER, testCodePrefix)));
     }
 
     /**
@@ -322,7 +323,8 @@ public class Generator implements Constants, StringHelper {
             if (!testSuiteToken.startsWith("\"") && !testSuiteToken.startsWith("\'")) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
-            System.out.println("parseTestSuite(), testSuiteToken after upcase <" + testSuiteToken + ">");
+
+            System.out.println("parseTestSuite(), testSuiteToken uppercase is <" + testSuiteToken + ">");
 
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
 
@@ -335,6 +337,9 @@ public class Generator implements Constants, StringHelper {
                     expectTestcaseName = true;
                     break;
                 case EXPECT_KEYWORD:
+
+                    System.out.println("EXPECT keyword recognized");
+
                     if (cobolStatementInProgress) {
                         insertUserWrittenCobolStatement(testSourceOut);
                         initializeCobolStatement();
@@ -357,11 +362,13 @@ public class Generator implements Constants, StringHelper {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
                         insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
+                        initializeCobolStatement();
                     }
                     if (expectTestcaseName) {
                         expectTestcaseName = false;
                         currentTestCaseName = testSuiteToken;
                         insertTestCaseNameIntoTestSource(currentTestCaseName, testSourceOut);
+                        initializeCobolStatement();
                     }
                     if (toBeInProgress) {
                         if (testSuiteToken.startsWith(QUOTE) || testSuiteToken.startsWith(APOSTROPHE)) {
