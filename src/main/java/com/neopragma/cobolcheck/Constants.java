@@ -57,6 +57,8 @@ public interface Constants {
     String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
     String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
+    String TEST_PROGRAM_SUFFIX_CONFIG_KEY = "cobolcheck.test.program.suffix";
+    String DEFAULT_TEST_PROGRAM_SUFFIX = "T.CBL";
 
     // Command line option key values
     String TESTS_OPTION = "tests";

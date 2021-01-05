@@ -74,7 +74,7 @@ public class Driver implements Constants, StringHelper {
             return;
         }
         initialize();
-        prepareInputAndOutputFiles();
+        runTestSuites();
 
         Log.info(messages.get("INF004"));        // We are terminating
     }
@@ -82,7 +82,7 @@ public class Driver implements Constants, StringHelper {
     /**
      *
      */
-    void prepareInputAndOutputFiles() {
+    void runTestSuites() {
         // all test suites are located under this directory
         String testSuiteDirectory =
                 config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
@@ -132,12 +132,14 @@ public class Driver implements Constants, StringHelper {
                             String.format(messages.get("ERR018", programName)));
                 }
 
-
                 // create WRITER for the test source program (copy of program to be tested plus test code)
                 StringBuilder testSourceOutPath = new StringBuilder();
                 testSourceOutPath.append(new File(EMPTY_STRING).getAbsolutePath());
                 testSourceOutPath.append(FILE_SEPARATOR);
-                testSourceOutPath.append("TESTPRG.CBL"); //TODO: This needs to be unique per program
+                testSourceOutPath.append(programName);
+                testSourceOutPath.append(
+                        config.getString(TEST_PROGRAM_SUFFIX_CONFIG_KEY,
+                                DEFAULT_TEST_PROGRAM_SUFFIX));
                 try {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
                 } catch (IOException testSourceOutException) {
@@ -145,7 +147,7 @@ public class Driver implements Constants, StringHelper {
                             String.format(messages.get("ERR016", programName)));
                 }
 
-                mergeTestSuiteIntoTheProgramUnderTest();
+                mergeTestSuitesIntoTheProgramUnderTest();
                 try {
                     testSourceOut.close();
                 } catch (IOException closeTestSourceOutException) {
@@ -157,7 +159,7 @@ public class Driver implements Constants, StringHelper {
         }
     }
 
-    void mergeTestSuiteIntoTheProgramUnderTest() {
+    void mergeTestSuitesIntoTheProgramUnderTest() {
         generator = new Generator(messages,
                 new StringTokenizerExtractor(messages),
                 new KeywordExtractor(),
