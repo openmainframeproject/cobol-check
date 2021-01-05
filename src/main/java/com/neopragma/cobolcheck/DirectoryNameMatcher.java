@@ -58,8 +58,6 @@ public class DirectoryNameMatcher extends SimpleFileVisitor<Path> {
             if (name != null && matcher.matches(name)) {
                 if (new File(String.valueOf(path)).isDirectory()) {
                     matchingDirectories.add(path.toString());
-
-                    System.out.println("matched directory: " + path);
                 }
             }
         }

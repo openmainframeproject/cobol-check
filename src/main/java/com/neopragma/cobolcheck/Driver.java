@@ -52,7 +52,9 @@ public class Driver implements Constants, StringHelper {
             "  -p|--programs program-name-glob[:program-name-glob[:program-name-glob]]",
             "      The name of the program(s) to test",
             "  -t|--tests filename-glob[:filename-glob[:filename-glob]]",
-            "      Test suite input file(s) for this run."
+            "      Test suite input file(s) for this run.",
+            "  -v|--version",
+            "      Displays the current version of cobol-check"
     };
 
     public Driver(
@@ -80,7 +82,12 @@ public class Driver implements Constants, StringHelper {
     }
 
     /**
-     *
+     * For each program name specified in command-line option --programs, walk the directory tree under
+     * test.suite.directory (from config) to find subdirectories that match the program name, and then pick up
+     * all the testsuite files there (or the ones that match the specifications in command-line option --tests)
+     * and concatenate them into a single testsuite source. For each program, invoke the Generator to merge the test
+     * code into the program under test to produce a test program. Finally, launch an OS process to compile the test
+     * program and execute it.
      */
     void runTestSuites() {
         // all test suites are located under this directory
