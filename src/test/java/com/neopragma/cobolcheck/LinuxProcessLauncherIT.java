@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LinuxProcessLauncherTest {
+public class LinuxProcessLauncherIT {
 
     Messages messages = new Messages();
     Config config;

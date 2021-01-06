@@ -61,7 +61,7 @@ public interface Constants {
     String DEFAULT_TEST_PROGRAM_SUFFIX = "T.CBL";
     String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
     String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
-    String LINUX_PROCESS_CONFIG_KEY = "linux.process";
+    String PROCESS_CONFIG_KEY = ".process";
 
     // Command line option key values
     String TESTS_OPTION = "tests";

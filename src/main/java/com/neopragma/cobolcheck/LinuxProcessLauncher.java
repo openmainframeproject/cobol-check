@@ -41,10 +41,11 @@ public class LinuxProcessLauncher implements ProcessLauncher, StringHelper, Cons
             Log.error(messages.get("ERR020"));
             throw new PossibleInternalLogicErrorException(messages.get("ERR020"));
         }
-        String scriptName = config.getString(Constants.LINUX_PROCESS_CONFIG_KEY);
+        String processConfigKey = "linux" + PROCESS_CONFIG_KEY;
+        String scriptName = config.getString(processConfigKey);
         if (isBlank(scriptName)) {
-            Log.error(messages.get("ERR021", LINUX_PROCESS_CONFIG_KEY));
-            throw new PossibleInternalLogicErrorException(messages.get("ERR021", LINUX_PROCESS_CONFIG_KEY));
+            Log.error(messages.get("ERR021", processConfigKey));
+            throw new PossibleInternalLogicErrorException(messages.get("ERR021", processConfigKey));
         }
         String scriptDirectory = config.getString(COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
                 Constants.DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY);

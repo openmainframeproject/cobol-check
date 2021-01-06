@@ -154,37 +154,6 @@
            SET UT-COMPARE-DEFAULT TO TRUE                                       
            PERFORM UT-ASSERT-EQUAL                                              
            PERFORM UT-AFTER                                                     
-           DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Greeting includes the user name when it is provided"        
-           MOVE "When message type is greeting it returns Hello, James!"        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            SET MESSAGE-IS-GREETING TO TRUE                                     
-            MOVE "James" TO WS-FRIEND                                           
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO UT-ACTUAL                                        
-           MOVE "Hello, James!"                                                 
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
-           MOVE "When message type is farewell it returns Goodbye, James        
-      -    "!"                                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            SET MESSAGE-IS-FAREWELL TO TRUE                                     
-            MOVE "James" TO WS-FRIEND                                           
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO UT-ACTUAL                                        
-           MOVE "See you later, James!"                                         
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       

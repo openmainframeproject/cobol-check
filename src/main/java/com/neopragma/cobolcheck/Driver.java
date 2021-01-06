@@ -20,7 +20,6 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,7 +34,6 @@ public class Driver implements Constants, StringHelper {
     private final Config config;
     private static Messages messages;
     private final GetOpt options;
-    private Generator generator;
     private Reader testSuite;
     private Reader cobolSourceIn;
     private Writer testSourceOut;
@@ -58,7 +56,6 @@ public class Driver implements Constants, StringHelper {
     };
 
     public Driver(
-            String[] args,
             Config config,
             GetOpt options) {
         this.config = config;
@@ -101,7 +98,7 @@ public class Driver implements Constants, StringHelper {
         String[] programNamesSeparated = programNames.split(COLON);
 
         // find subdirectories that match program names
-        List<String> matchingDirectories = new ArrayList<>();
+        List<String> matchingDirectories;
         for (String programName : programNamesSeparated) {
             DirectoryNameMatcher directoryFinder = new DirectoryNameMatcher(programName);
             try {
@@ -112,7 +109,7 @@ public class Driver implements Constants, StringHelper {
                 }
             } catch (IOException ioException) {
                 throw new PossibleInternalLogicErrorException(
-                        String.format(messages.get("ERR019", programName)));
+                        messages.get("ERR019", programName));
             }
 
             for (String matchingDirectory : matchingDirectories) {
@@ -136,7 +133,7 @@ public class Driver implements Constants, StringHelper {
                     cobolSourceIn = new FileReader(cobolSourceInPath.toString());
                 } catch (IOException cobolSourceInException) {
                     throw new PossibleInternalLogicErrorException(
-                            String.format(messages.get("ERR018", programName)));
+                            messages.get("ERR018", programName));
                 }
 
                 // create WRITER for the test source program (copy of program to be tested plus test code)
@@ -151,23 +148,67 @@ public class Driver implements Constants, StringHelper {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
                 } catch (IOException testSourceOutException) {
                     throw new PossibleInternalLogicErrorException(
-                            String.format(messages.get("ERR016", programName)));
+                            messages.get("ERR016", programName));
                 }
 
-                mergeTestSuitesIntoTheProgramUnderTest();
+                mergeTestSuitesIntoTheTestProgram();
                 try {
                     testSourceOut.close();
                 } catch (IOException closeTestSourceOutException) {
                     throw new PossibleInternalLogicErrorException(
-                            String.format(messages.get("ERR017", programName)));
+                            messages.get("ERR017", programName));
                 }
 
+                // compile and run the test program
+                String processConfigKeyPrefix;
+                ProcessLauncher launcher = null;
+                switch (PlatformLookup.get()) {
+                    case LINUX :
+                        processConfigKeyPrefix = "linux";
+                        launcher = new LinuxProcessLauncher(config);
+                        break;
+                    case WINDOWS :
+                        processConfigKeyPrefix = "windows";
+                        //launcher = new WindowsProcessLauncher(config);
+                        break;
+                    case OSX :
+                        processConfigKeyPrefix = "osx";
+                        //launcher = new OSXProcessLauncher(config);
+                        break;
+                    case ZOS :
+                        processConfigKeyPrefix = "zos";
+                        //launcher = new ZOSProcessLauncher(config);
+                        break;
+                    default :
+                        processConfigKeyPrefix = "unix";
+                        //launcher = new UnixProcessLauncher(config);
+                        break;
+                }
+                String processConfigKey = processConfigKeyPrefix + PROCESS_CONFIG_KEY;
+                String processName = config.getString(processConfigKey);
+                if (isBlank(processName)) {
+                    String errorMessage = messages.get("ERR021", processConfigKey);
+                    Log.error(errorMessage);
+                    throw new PossibleInternalLogicErrorException(errorMessage);
+                }
+                StringBuilder testProgramName = new StringBuilder();
+                testProgramName.append(programName);
+                testProgramName.append(
+                        config.getString(TEST_PROGRAM_SUFFIX_CONFIG_KEY,
+                                DEFAULT_TEST_PROGRAM_SUFFIX));
+                Process process = launcher.run(testProgramName.toString());
+                int exitCode = 1;
+                try {
+                    exitCode = process.waitFor();
+                } catch (InterruptedException ignored) {
+                }
+                Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
             }
         }
     }
 
-    void mergeTestSuitesIntoTheProgramUnderTest() {
-        generator = new Generator(messages,
+    void mergeTestSuitesIntoTheTestProgram() {
+        Generator generator = new Generator(messages,
                 new StringTokenizerExtractor(messages),
                 new KeywordExtractor(),
                 config);
@@ -215,7 +256,6 @@ public class Driver implements Constants, StringHelper {
     public static void main(String[] args) {
         messages = new Messages();
         Driver app = new Driver(
-                args,
                 new Config(messages),
                 new GetOpt(args, optionSpec, messages));
         app.run();
