@@ -1,8 +1,12 @@
 package com.neopragma.cobolcheck;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,9 +43,12 @@ public class KeywordExtractorTest {
 
     @Test
     public void given_a_two_word_keyword_it_treats_the_keyword_as_a_single_token() {
-        tokens = extractor.extractTokensFrom("TO BE");
+        tokens = extractor.extractTokensFrom("TO BE OR NOT TO BE");
         assertEquals("TO BE", tokens.get(0));
-        assertEquals(1, tokens.size());
+        assertEquals("OR", tokens.get(1));
+        assertEquals("NOT", tokens.get(2));
+        assertEquals("TO BE", tokens.get(3));
+        assertEquals(4, tokens.size());
     }
 
     @Test
@@ -59,6 +66,27 @@ public class KeywordExtractorTest {
         assertEquals("WS-FIELDNAME", tokens.get(1));
         assertEquals(2, tokens.size());
     }
+
+    @ParameterizedTest
+    @MethodSource("numericLiteralProvider")
+    public void it_handles_numeric_literals_in_various_positions_in_the_source_line(
+            String sourceLine, int indexOfExpectedValue, String expectedValue, int numberOfTokens
+    ) {
+        tokens = extractor.extractTokensFrom(sourceLine);
+        assertEquals(expectedValue, tokens.get(indexOfExpectedValue));
+        assertEquals(numberOfTokens, tokens.size());
+    }
+    private static Stream<Arguments> numericLiteralProvider() {
+        return Stream.of(
+            Arguments.of("135", 0, "135", 1),
+            Arguments.of("  TO BE 135  ", 1, "135", 2),
+                Arguments.of("  TO BE 135.", 1, "135", 2),
+            Arguments.of("135.64", 0, "135.64", 1),
+            Arguments.of("135.64.", 0, "135.64", 1),
+            Arguments.of("  \"number 537.52 inside string literal\"  ", 0, "\"number 537.52 inside string literal\"", 1)
+        );
+    }
+
 
     @Test
     public void given_a_mixture_of_different_types_of_tokens_it_extracts_them_correctly() {

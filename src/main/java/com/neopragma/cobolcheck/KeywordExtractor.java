@@ -6,9 +6,15 @@ public class KeywordExtractor implements TokenExtractor, Constants {
 
     private Map<String, String> twoWordTokens;
     private StringBuilder buffer;
+    private final char PERIOD = '.';
+    private final char COMMA = ',';
+    private final char DOUBLE_QUOTE = '"';
+    private final char SINGLE_QUOTE = '\'';
+    private final char SPACE = ' ';
     private String nextExpectedToken = EMPTY_STRING;
     private boolean openQuote = false;
     private char quoteDelimiter = '"';
+    private boolean processingNumericLiteral = false;
 
     public KeywordExtractor() {
         twoWordTokens = new HashMap<>();
@@ -22,26 +28,38 @@ public class KeywordExtractor implements TokenExtractor, Constants {
         int tokenOffset = 0;
         sourceLine = sourceLine.trim();
         while (tokenOffset < sourceLine.length()) {
-            if (sourceLine.charAt(tokenOffset) == '.') {
-                break;
-            }
-            if (isQuote(sourceLine.charAt(tokenOffset))) {
-                char currentChar = sourceLine.charAt(tokenOffset);
+            char currentCharacter = sourceLine.charAt(tokenOffset);
+            if (isQuote(currentCharacter)) {
                 if (openQuote) {
-                    if (currentChar == quoteDelimiter) {
+                    if (currentCharacter == quoteDelimiter) {
                         openQuote = false;
-                        buffer.append(currentChar);
+                        buffer.append(currentCharacter);
                         buffer = addTokenAndClearBuffer(buffer, tokens);
                     } else {
-                        buffer.append(currentChar);
+                        buffer.append(currentCharacter);
                     }
                 } else {
                     openQuote = true;
-                    quoteDelimiter = currentChar;
-                    buffer.append(currentChar);
+                    quoteDelimiter = currentCharacter;
+                    buffer.append(currentCharacter);
                 }
             } else {
-                if (sourceLine.charAt(tokenOffset) == ' ') {
+
+                if (processingNumericLiteral) {
+                    if (isDecimalPoint(buffer, currentCharacter, sourceLine, tokenOffset)) {
+                        processingNumericLiteral = false;      // prevent next period from being interpreted as end of sentence
+                    }
+                } else {
+                    if (currentCharacter == PERIOD) {          // Cobol end of sentence
+                        break;                                 // skip it
+                    }
+                    if (startNumericLiteral(buffer, currentCharacter)) {
+                        processingNumericLiteral = true;
+                    }
+                }
+
+                if (currentCharacter == SPACE) {
+                    processingNumericLiteral = false;
                     if (openQuote) {
                         buffer.append(SPACE);
                     } else {
@@ -53,7 +71,7 @@ public class KeywordExtractor implements TokenExtractor, Constants {
                             int endOfLookahead = startOfLookahead + nextExpectedToken.length();
                             if (nextExpectedToken.equalsIgnoreCase(sourceLine.substring(startOfLookahead, endOfLookahead))
                                     && (endOfLookahead >= sourceLine.length()
-                                    || sourceLine.charAt(endOfLookahead) == ' ')) {
+                                    || sourceLine.charAt(endOfLookahead) == SPACE)) {
                                     buffer.append(nextExpectedToken);
                                     tokenOffset += nextExpectedToken.length();
                                     nextExpectedToken = EMPTY_STRING;
@@ -69,7 +87,7 @@ public class KeywordExtractor implements TokenExtractor, Constants {
                         }
                     }
                 } else{
-                    buffer.append(sourceLine.charAt(tokenOffset));
+                    buffer.append(currentCharacter);
                 }
             }
             tokenOffset += 1;
@@ -80,11 +98,50 @@ public class KeywordExtractor implements TokenExtractor, Constants {
         return tokens;
     }
 
+
+    /**
+     * Quoted strings may be enclosed in apostrophes (single quotes) or quotation marks (double quotes).
+     */
     private boolean isQuote(char character) {
-        return character == '"' || character == '\'';
+        return character == DOUBLE_QUOTE || character == SINGLE_QUOTE;
+    }
+
+    /**
+     * The start of a numeric literal is recognized when the previous character was a space and the current
+     * character is a numerical digit. We care about this so we can distinguish between a period as a decimal point
+     * and a period as a Cobol statement delimiter.
+     */
+    private boolean startNumericLiteral(StringBuilder buffer, char currentCharacter) {
+        return (getPreviousCharacterFromBuffer(buffer) == SPACE && Character.isDigit(currentCharacter));
+    }
+
+    /**
+     * Decimal point is recognized when a period or comma appears between two numeric digits.
+     */
+    private boolean isDecimalPoint(StringBuilder buffer, char currentCharacter, String sourceLine, int tokenOffset) {
+        if (currentCharacter != PERIOD && currentCharacter != COMMA) {
+            return false;
+        }
+        int lookahead = tokenOffset + 1;
+        if (lookahead >= sourceLine.length()) {
+            return false; // no digit after this character
+        }
+        return (Character.isDigit(getPreviousCharacterFromBuffer(buffer)) && Character.isDigit(sourceLine.charAt(lookahead)));
+    }
+
+    private char getPreviousCharacterFromBuffer(StringBuilder buffer) {
+        char previousCharacter = SPACE;
+        if (buffer.length() > 1) {
+            previousCharacter = buffer.charAt(buffer.length()-1);
+        }
+        return previousCharacter;
     }
 
     private StringBuilder addTokenAndClearBuffer(StringBuilder buffer, List<String> tokens) {
+        // this "if" is for a single case: a numeric literal is the last thing on a line and it's followed by a period.
+        if (buffer.charAt(buffer.length()-1) == PERIOD) {
+            buffer = new StringBuilder(buffer.substring(0, buffer.length()-1));
+        }
         tokens.add(buffer.toString().trim());
         return new StringBuilder();
     }
