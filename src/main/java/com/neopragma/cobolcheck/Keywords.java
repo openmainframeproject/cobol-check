@@ -67,8 +67,8 @@ public class Keywords implements Constants {
                         List.of(EXPECT_KEYWORD, COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(NUMERIC_LITERAL_KEYWORD,
-                new Keyword(EMPTY_STRING,
-                        List.of(),
+                new Keyword(NUMERIC_LITERAL_KEYWORD,
+                        List.of(EXPECT_KEYWORD, COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(COBOL_TOKEN,
                 new Keyword(COBOL_TOKEN,
@@ -83,6 +83,20 @@ public class Keywords implements Constants {
         Keyword result = null;
         if (key != null && (key.startsWith("\"") || key.startsWith("'"))) {
             key = ALPHANUMERIC_LITERAL_KEYWORD;
+        }
+        if (key != null && (Character.isDigit(key.charAt(0)))) {
+            boolean isNumeric = true;
+            for (char digit : key.toCharArray()) {
+                if (!Character.isDigit(digit) &&
+                        digit != '.' &&
+                        digit != ',') {
+                    isNumeric = false;
+                    break;
+                }
+            }
+            if (isNumeric) {
+                key = NUMERIC_LITERAL_KEYWORD;
+            }
         }
         result = keywordInfo.getOrDefault(key, keywordInfo.get(COBOL_TOKEN));
         return result;

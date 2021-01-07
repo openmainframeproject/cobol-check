@@ -9,6 +9,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  FILLER.
+           05  WS-COUNT           PIC S9(5) COMP-3.
            05  FILLER             PIC X VALUE 'G'.
                88  MESSAGE-IS-GREETING  VALUE 'G'.
                88  MESSAGE-IS-FAREWELL  VALUE 'F'.

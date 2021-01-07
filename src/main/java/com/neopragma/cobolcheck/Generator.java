@@ -63,6 +63,7 @@ public class Generator implements Constants, StringHelper {
     private boolean expectInProgress;
     private boolean toBeInProgress;
     private boolean alphanumericLiteralCompare;
+    private boolean numericLiteralCompare;
     private boolean expectTestsuiteName;
     private boolean expectTestcaseName;
     private String fieldNameForExpect;
@@ -89,12 +90,18 @@ public class Generator implements Constants, StringHelper {
             "           ADD 1 TO %sTEST-CASE-COUNT";
     private static final String COBOL_SET_UT_NORMAL_COMPARE =
             "           SET %1$sNORMAL-COMPARE TO %2$s";
+    private static final String COBOL_SET_COMPARE_NUMERIC =
+            "           SET %1$sCOMPARE-NUMERIC TO %2$s";
     private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL =
             "           MOVE %2$s TO %1$sACTUAL";
+    private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC =
+            "           MOVE %2$s TO %1$sACTUAL-NUMERIC";
     private static final String COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1 =
             "           MOVE %s";
     private static final String COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2 =
             "               TO %sEXPECTED";
+    private static final String COBOL_MOVE_EXPECTED_NUMERIC_LITERAL =
+            "           MOVE %2$s TO %1$sEXPECTED-NUMERIC";
     private static final String COBOL_SET_UT_COMPARE_DEFAULT =
             "           SET %1$sCOMPARE-DEFAULT TO %2$s";
     private static final String COBOL_PERFORM_UT_ASSERT_EQUAL =
@@ -120,6 +127,7 @@ public class Generator implements Constants, StringHelper {
         expectInProgress = false;
         toBeInProgress = false;
         alphanumericLiteralCompare = false;
+        numericLiteralCompare = false;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -255,6 +263,8 @@ public class Generator implements Constants, StringHelper {
     void insertTestCodeForAssertion(Writer testSourceOut) throws IOException {
         if (alphanumericLiteralCompare) {
             insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
+        } else if (numericLiteralCompare) {
+            insertTestCodeForNumericEqualityCheck(testSourceOut);
         }
     }
 
@@ -263,12 +273,26 @@ public class Generator implements Constants, StringHelper {
                 COBOL_SET_UT_NORMAL_COMPARE, testCodePrefix, TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
-        testSourceOut.write(fixedLength(String.format(
-                COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1, expectedValueToCompare)));
+        String cobolLine = String.format(
+                COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1, expectedValueToCompare);
+        writeCobolLine(cobolLine, testSourceOut);
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_UT_COMPARE_DEFAULT, testCodePrefix, TRUE)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_UT_AFTER, testCodePrefix)));
+    }
+
+    void insertTestCodeForNumericEqualityCheck(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_COMPARE_NUMERIC, testCodePrefix, TRUE)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
@@ -314,24 +338,29 @@ public class Generator implements Constants, StringHelper {
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
-            if (!testSuiteToken.startsWith("\"") && !testSuiteToken.startsWith("\'")) {
+            if (!testSuiteToken.startsWith(QUOTE) && !testSuiteToken.startsWith(APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
+
+            if (Log.level() == LogLevel.DEBUG) {
+                System.out.println("Generator.parseTestSuite(), " +
+                        "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
+            }
 
             // take actions triggered by the type of the current token
             switch (keyword.value()) {
                 case TESTSUITE_KEYWORD:
                     expectTestsuiteName = true;
                     break;
+
                 case TESTCASE_KEYWORD:
                     expectTestcaseName = true;
                     break;
+
                 case EXPECT_KEYWORD:
                     if (cobolStatementInProgress) {
                         insertUserWrittenCobolStatement(testSourceOut);
-                        initializeCobolStatement();
-                        cobolStatementInProgress = false;
                     }
                     cobolStatementInProgress = false;
                     initializeCobolStatement();
@@ -339,12 +368,14 @@ public class Generator implements Constants, StringHelper {
                     expectInProgress = true;
                     fieldNameForExpect = EMPTY_STRING;
                     break;
+
                 case COBOL_TOKEN:
                     if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
                         expectInProgress = false;
                     }
                     break;
+
                 case ALPHANUMERIC_LITERAL_KEYWORD:
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
@@ -363,10 +394,22 @@ public class Generator implements Constants, StringHelper {
                             alphanumericLiteralCompare = true;
                             expectedValueToCompare = testSuiteToken;
                             insertTestCodeForAssertion(testSourceOut);
+                            alphanumericLiteralCompare = false;
                         }
                         toBeInProgress = false;
                     }
                     break;
+
+                case NUMERIC_LITERAL_KEYWORD:
+                    if (toBeInProgress) {
+                        numericLiteralCompare = true;
+                        expectedValueToCompare = testSuiteToken;
+                        insertTestCodeForAssertion(testSourceOut);
+                        numericLiteralCompare = false;
+                        toBeInProgress = false;
+                    }
+                    break;
+
                 case TO_BE_KEYWORD:
                     toBeInProgress = true;
                     break;

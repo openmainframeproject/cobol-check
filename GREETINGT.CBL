@@ -109,6 +109,7 @@
                                                                                 
       * ZUTZCWS.CPY END                                                         
        01  FILLER.                                                              
+           05  WS-COUNT           PIC S9(5) COMP-3.                             
            05  FILLER             PIC X VALUE 'G'.                              
                88  MESSAGE-IS-GREETING  VALUE 'G'.                              
                88  MESSAGE-IS-FAREWELL  VALUE 'F'.                              
@@ -140,6 +141,16 @@
            SET UT-COMPARE-DEFAULT TO TRUE                                       
            PERFORM UT-ASSERT-EQUAL                                              
            PERFORM UT-AFTER                                                     
+           MOVE "try numerical compare"                                         
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
+            ADD 1 TO WS-COUNT                                                   
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-COMPARE-NUMERIC TO TRUE                                       
+           MOVE WS-COUNT TO UT-ACTUAL-NUMERIC                                   
+           MOVE 1 TO UT-EXPECTED-NUMERIC                                        
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
            MOVE "When message type is farewell it returns See you later,        
       -    " alligator!"                                                        
                TO UT-TEST-CASE-NAME                                             
@@ -150,6 +161,37 @@
            SET UT-NORMAL-COMPARE TO TRUE                                        
            MOVE WS-FAREWELL TO UT-ACTUAL                                        
            MOVE "See you later, alligator!"                                     
+               TO UT-EXPECTED                                                   
+           SET UT-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
+           DISPLAY "TESTSUITE:"                                                 
+           DISPLAY "Greeting includes the user name when it is provided"        
+           MOVE "When message type is greeting it returns Hello, James!"        
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
+            SET MESSAGE-IS-GREETING TO TRUE                                     
+            MOVE "James" TO WS-FRIEND                                           
+            PERFORM 2000-SPEAK                                                  
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-GREETING TO UT-ACTUAL                                        
+           MOVE "Hello, James!"                                                 
+               TO UT-EXPECTED                                                   
+           SET UT-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
+           MOVE "When message type is farewell it returns Goodbye, James        
+      -    "!"                                                                  
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
+            SET MESSAGE-IS-FAREWELL TO TRUE                                     
+            MOVE "James" TO WS-FRIEND                                           
+            PERFORM 2000-SPEAK                                                  
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-FAREWELL TO UT-ACTUAL                                        
+           MOVE "See you later, James!"                                         
                TO UT-EXPECTED                                                   
            SET UT-COMPARE-DEFAULT TO TRUE                                       
            PERFORM UT-ASSERT-EQUAL                                              
@@ -433,10 +475,8 @@
            SET UT-FILE-IX DOWN BY 1                                             
            .                                                                    
        UT-BEFORE.                                                               
-                                                                                
            .                                                                    
        UT-AFTER.                                                                
-                                                                                
            .                                                                    
        UT-INITIALIZE.                                                           
            MOVE SPACES TO UT-FILE-INFORMATION                                   

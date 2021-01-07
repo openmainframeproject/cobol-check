@@ -57,4 +57,23 @@ public class KeywordsTest implements Constants {
         assertEquals(List.of(EXPECT_KEYWORD, COBOL_TOKEN), keyword.validNextKey());
     }
 
+    @Test
+    public void when_the_token_is_a_numeric_literal_it_does_not_try_to_look_up_the_literal_as_a_key() {
+        Keyword keyword = Keywords.getKeywordFor("5473.19");
+        assertEquals(NUMERIC_LITERAL_KEYWORD, keyword.value());
+        assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
+        assertEquals(List.of(EXPECT_KEYWORD, COBOL_TOKEN), keyword.validNextKey());
+    }
+
+    @Test
+    public void when_the_token_is_an_alphanumeric_literal_that_starts_with_a_digit_it_recognizes_the_token_as_a_cobol_token() {
+        Keyword keyword = Keywords.getKeywordFor("2000-PARAGRAPH-NAME");
+        assertEquals(COBOL_TOKEN, keyword.value());
+        assertEquals(KeywordAction.COBOL_STATEMENT, keyword.keywordAction());
+        assertEquals(List.of(COBOL_TOKEN,
+                ALPHANUMERIC_LITERAL_KEYWORD,
+                FIELDNAME_KEYWORD,
+                EXPECT_KEYWORD), keyword.validNextKey());
+    }
+
 }
