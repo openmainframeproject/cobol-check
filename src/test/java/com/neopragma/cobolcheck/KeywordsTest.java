@@ -76,4 +76,20 @@ public class KeywordsTest implements Constants {
                 EXPECT_KEYWORD), keyword.validNextKey());
     }
 
+    @Test
+    public void when_the_token_is_TRUE_it_is_treated_as_a_boolean_expected_result() {
+        Keyword keyword = Keywords.getKeywordFor("TRUE");
+        assertEquals(BOOLEAN_VALUE, keyword.value());
+        assertEquals(KeywordAction.BOOLEAN_COMPARE, keyword.keywordAction());
+        assertEquals(List.of(EXPECT_KEYWORD, COBOL_TOKEN), keyword.validNextKey());
+    }
+
+    @Test
+    public void when_the_token_is_FALSE_it_is_treated_as_a_boolean_expected_result() {
+        Keyword keyword = Keywords.getKeywordFor("FALSE");
+        assertEquals(BOOLEAN_VALUE, keyword.value());
+        assertEquals(KeywordAction.BOOLEAN_COMPARE, keyword.keywordAction());
+        assertEquals(List.of(EXPECT_KEYWORD, COBOL_TOKEN), keyword.validNextKey());
+    }
+
 }

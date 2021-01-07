@@ -29,10 +29,19 @@
                IF UT-ACTUAL-NUMERIC IS EQUAL TO UT-EXPECTED-NUMERIC
                    SET UT-COMPARE-PASSED TO TRUE
                END-IF    
-           ELSE 
-               IF UT-ACTUAL IS EQUAL TO UT-EXPECTED
-                   SET UT-COMPARE-PASSED TO TRUE
-               END-IF    
+           ELSE
+               IF UT-COMPARE-88-LEVEL
+                   IF (UT-ACTUAL-88-VALUE
+                       AND UT-EXPECTED-88-VALUE)
+                   OR (NOT UT-ACTUAL-88-VALUE
+                       AND NOT UT-EXPECTED-88-VALUE)
+                       SET UT-COMPARE-PASSED TO TRUE
+                   END-IF
+               ELSE
+                   IF UT-ACTUAL IS EQUAL TO UT-EXPECTED
+                       SET UT-COMPARE-PASSED TO TRUE
+                   END-IF
+               END-IF
            END-IF        
            PERFORM UT-REVERSE-RESULT
            .

@@ -64,6 +64,7 @@ public class Generator implements Constants, StringHelper {
     private boolean toBeInProgress;
     private boolean alphanumericLiteralCompare;
     private boolean numericLiteralCompare;
+    private boolean boolean88LevelCompare;
     private boolean expectTestsuiteName;
     private boolean expectTestcaseName;
     private String fieldNameForExpect;
@@ -92,6 +93,8 @@ public class Generator implements Constants, StringHelper {
             "           SET %1$sNORMAL-COMPARE TO %2$s";
     private static final String COBOL_SET_COMPARE_NUMERIC =
             "           SET %1$sCOMPARE-NUMERIC TO %2$s";
+    private static final String COBOL_SET_COMPARE_88_LEVEL =
+            "           SET %1$sCOMPARE-88-LEVEL TO %2$s";
     private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL =
             "           MOVE %2$s TO %1$sACTUAL";
     private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC =
@@ -102,6 +105,36 @@ public class Generator implements Constants, StringHelper {
             "               TO %sEXPECTED";
     private static final String COBOL_MOVE_EXPECTED_NUMERIC_LITERAL =
             "           MOVE %2$s TO %1$sEXPECTED-NUMERIC";
+
+
+    private static final String COBOL_SET_ACTUAL_88_VALUE_1 =
+            "           IF %1$s";
+    private static final String COBOL_SET_ACTUAL_88_VALUE_2 =
+            "               SET %1$sACTUAL-88-VALUE TO TRUE";
+    private static final String COBOL_SET_ACTUAL_88_VALUE_3 =
+            "               MOVE 'TRUE' TO %1$sACTUAL";
+    private static final String COBOL_SET_ACTUAL_88_VALUE_4 =
+            "           ELSE";
+    private static final String COBOL_SET_ACTUAL_88_VALUE_5 =
+            "               SET %1$sACTUAL-88-VALUE TO FALSE";
+    private static final String COBOL_SET_ACTUAL_88_VALUE_6 =
+            "               MOVE 'FALSE' TO %1$sACTUAL";
+    private static final String COBOL_SET_ACTUAL_88_VALUE_7 =
+            "           END-IF";
+
+    private static final String COBOL_SET_EXPECTED_88_VALUE_1 =
+            "           IF %1$sEXPECTED-88-VALUE";
+    private static final String COBOL_SET_EXPECTED_88_VALUE_2 =
+            "               MOVE 'TRUE' TO %1$sEXPECTED";
+    private static final String COBOL_SET_EXPECTED_88_VALUE_3 =
+            "           ELSE";
+    private static final String COBOL_SET_EXPECTED_88_VALUE_4 =
+            "               MOVE 'FALSE' TO %1$sEXPECTED";
+    private static final String COBOL_SET_EXPECTED_88_VALUE_5 =
+            "           END-IF";
+
+    private static final String COBOL_SET_EXPECTED_88_VALUE =
+            "           SET %1$sEXPECTED-88-VALUE TO %2$s";
     private static final String COBOL_SET_UT_COMPARE_DEFAULT =
             "           SET %1$sCOMPARE-DEFAULT TO %2$s";
     private static final String COBOL_PERFORM_UT_ASSERT_EQUAL =
@@ -123,11 +156,6 @@ public class Generator implements Constants, StringHelper {
         testSuiteTokens = new ArrayList<>();
         emptyTestSuite = true;
         initializeCobolStatement();
-        cobolStatementInProgress = false;
-        expectInProgress = false;
-        toBeInProgress = false;
-        alphanumericLiteralCompare = false;
-        numericLiteralCompare = false;
         copybookDirectoryName = setCopybookDirectoryName(config);
     }
 
@@ -265,6 +293,8 @@ public class Generator implements Constants, StringHelper {
             insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
         } else if (numericLiteralCompare) {
             insertTestCodeForNumericEqualityCheck(testSourceOut);
+        } else if (boolean88LevelCompare) {
+            insertTestCodeFor88LevelEqualityCheck(testSourceOut);
         }
     }
 
@@ -293,6 +323,45 @@ public class Generator implements Constants, StringHelper {
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_UT_AFTER, testCodePrefix)));
+    }
+
+    void insertTestCodeFor88LevelEqualityCheck(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_COMPARE_88_LEVEL, testCodePrefix, TRUE)));
+
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_1, fieldNameForExpect)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_2, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_3, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_4)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_5, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_6, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_ACTUAL_88_VALUE_7, testCodePrefix)));
+
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_EXPECTED_88_VALUE, testCodePrefix, expectedValueToCompare)));
+
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_EXPECTED_88_VALUE_1, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_EXPECTED_88_VALUE_2, testCodePrefix)));
+        testSourceOut.write(fixedLength(
+                COBOL_SET_EXPECTED_88_VALUE_3));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_EXPECTED_88_VALUE_4, testCodePrefix)));
+        testSourceOut.write(fixedLength(
+                COBOL_SET_EXPECTED_88_VALUE_5));
+
         testSourceOut.write(fixedLength(String.format(
                 COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
@@ -407,6 +476,23 @@ public class Generator implements Constants, StringHelper {
                         insertTestCodeForAssertion(testSourceOut);
                         numericLiteralCompare = false;
                         toBeInProgress = false;
+                    }
+                    break;
+
+                case BOOLEAN_VALUE:
+                    if (toBeInProgress) {
+                        boolean88LevelCompare = true;
+                        expectedValueToCompare = testSuiteToken;
+                        insertTestCodeForAssertion(testSourceOut);
+                        boolean88LevelCompare = false;
+                        toBeInProgress = false;
+                    } else {
+                        if (cobolStatementInProgress) {
+                            appendTokenToCobolStatement(testSuiteToken);
+                            insertUserWrittenCobolStatement(testSourceOut);
+                            initializeCobolStatement();
+                        }
+                        cobolStatementInProgress = false;
                     }
                     break;
 

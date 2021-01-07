@@ -50,6 +50,7 @@ public interface Constants {
     String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
     String NUMERIC_LITERAL_KEYWORD = "numeric-literal";
     String COBOL_TOKEN = "cobol-token";
+    String BOOLEAN_VALUE = "boolean-value";
 
     // Configuration key values
     String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";

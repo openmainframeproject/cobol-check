@@ -35,6 +35,7 @@ package com.neopragma.cobolcheck;
 public enum KeywordAction {
     NONE,
     ACTUAL_FIELDNAME,
+    BOOLEAN_COMPARE,
     COBOL_STATEMENT,
     EXPECTED_VALUE,
     FIELDNAME,

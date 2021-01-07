@@ -31,6 +31,7 @@
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-COMPARE-DEFAULT    VALUE SPACE.                           
                88  UT-COMPARE-NUMERIC    VALUE 'N'.                             
+               88  UT-COMPARE-88-LEVEL   VALUE '8'.                             
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-COMPARE-PASSED     VALUE 'Y'.                             
                88  UT-COMPARE-FAILED     VALUE SPACES.                          
@@ -38,6 +39,10 @@
            05  UT-ACTUAL                 PIC X(60) VALUE SPACES.                
            05  UT-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.                 
            05  UT-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
+           05  FILLER                    PIC X     VALUE 'F'.                   
+               88 UT-EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.        
+           05  FILLER                    PIC X     VALUE 'F'.                   
+               88 UT-ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.        
            05  UT-EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.                  
            05  UT-ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.                  
            05  UT-EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.                             
@@ -151,6 +156,26 @@
            MOVE 1 TO UT-EXPECTED-NUMERIC                                        
            PERFORM UT-ASSERT-EQUAL                                              
            PERFORM UT-AFTER                                                     
+           MOVE "try 88 level compare"                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE                                                    
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-COMPARE-88-LEVEL TO TRUE                                      
+           IF MESSAGE-IS-GREETING                                               
+               SET UT-ACTUAL-88-VALUE TO TRUE                                   
+               MOVE 'TRUE' TO UT-ACTUAL                                         
+           ELSE                                                                 
+               SET UT-ACTUAL-88-VALUE TO FALSE                                  
+               MOVE 'FALSE' TO UT-ACTUAL                                        
+           END-IF                                                               
+           SET UT-EXPECTED-88-VALUE TO FALSE                                    
+           IF UT-EXPECTED-88-VALUE                                              
+               MOVE 'TRUE' TO UT-EXPECTED                                       
+           ELSE                                                                 
+               MOVE 'FALSE' TO UT-EXPECTED                                      
+           END-IF                                                               
+           PERFORM UT-ASSERT-EQUAL                                              
+           PERFORM UT-AFTER                                                     
            MOVE "When message type is farewell it returns See you later,        
       -    " alligator!"                                                        
                TO UT-TEST-CASE-NAME                                             
@@ -228,8 +253,17 @@
                    SET UT-COMPARE-PASSED TO TRUE                                
                END-IF                                                           
            ELSE                                                                 
-               IF UT-ACTUAL IS EQUAL TO UT-EXPECTED                             
-                   SET UT-COMPARE-PASSED TO TRUE                                
+               IF UT-COMPARE-88-LEVEL                                           
+                   IF (UT-ACTUAL-88-VALUE                                       
+                       AND UT-EXPECTED-88-VALUE)                                
+                   OR (NOT UT-ACTUAL-88-VALUE                                   
+                       AND NOT UT-EXPECTED-88-VALUE)                            
+                       SET UT-COMPARE-PASSED TO TRUE                            
+                   END-IF                                                       
+               ELSE                                                             
+                   IF UT-ACTUAL IS EQUAL TO UT-EXPECTED                         
+                       SET UT-COMPARE-PASSED TO TRUE                            
+                   END-IF                                                       
                END-IF                                                           
            END-IF                                                               
            PERFORM UT-REVERSE-RESULT                                            

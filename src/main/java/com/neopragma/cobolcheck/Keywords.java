@@ -77,25 +77,36 @@ public class Keywords implements Constants {
                                 FIELDNAME_KEYWORD,
                                 EXPECT_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
+        keywordInfo.put(BOOLEAN_VALUE,
+                new Keyword(BOOLEAN_VALUE,
+                        List.of(EXPECT_KEYWORD, COBOL_TOKEN),
+                        KeywordAction.BOOLEAN_COMPARE));
     }
 
     public static Keyword getKeywordFor(String key) {
         Keyword result = null;
-        if (key != null && (key.startsWith("\"") || key.startsWith("'"))) {
-            key = ALPHANUMERIC_LITERAL_KEYWORD;
-        }
-        if (key != null && (Character.isDigit(key.charAt(0)))) {
-            boolean isNumeric = true;
-            for (char digit : key.toCharArray()) {
-                if (!Character.isDigit(digit) &&
-                        digit != '.' &&
-                        digit != ',') {
-                    isNumeric = false;
-                    break;
+        if (key != null) {
+            if (key.startsWith("\"") || key.startsWith("'")) {
+                key = ALPHANUMERIC_LITERAL_KEYWORD;
+            } else {
+                if (Character.isDigit(key.charAt(0))) {
+                    boolean isNumeric = true;
+                    for (char digit : key.toCharArray()) {
+                        if (!Character.isDigit(digit) &&
+                                digit != '.' &&
+                                digit != ',') {
+                            isNumeric = false;
+                            break;
+                        }
+                    }
+                    if (isNumeric) {
+                        key = NUMERIC_LITERAL_KEYWORD;
+                    }
+                } else {
+                    if (key.equals("TRUE") || key.equals("FALSE")) {
+                        key = BOOLEAN_VALUE;
+                    }
                 }
-            }
-            if (isNumeric) {
-                key = NUMERIC_LITERAL_KEYWORD;
             }
         }
         result = keywordInfo.getOrDefault(key, keywordInfo.get(COBOL_TOKEN));
