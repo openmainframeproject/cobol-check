@@ -13,12 +13,12 @@
            05  FILLER             PIC X VALUE 'G'.
                88  MESSAGE-IS-GREETING  VALUE 'G'.
                88  MESSAGE-IS-FAREWELL  VALUE 'F'.
-           05  WS-FRIEND           PIC X(10) VALUE SPACES.
-           05  WS-GREETING.
+       01  WS-FRIEND           PIC X(10) VALUE SPACES.
+       01  WS-GREETING.
                10  FILLER          PIC X(07) VALUE 'Hello, '.
-               10  WS-USER-NAME    PIC X(10) VALUE SPACES.
+               10  WS-USER-NAME    PIC X(06) VALUE SPACES.
                10  FILLER          PIC X     VALUE '!'.
-           05  WS-FAREWELL.
+       01  WS-FAREWELL.
                10  FILLER          PIC X(15) VALUE 'See you later, '.
                10  WS-USER-NAME    PIC X(09) VALUE SPACES.
                10  FILLER          PIC X     VALUE '!'.

@@ -339,14 +339,14 @@ public class Generator implements Constants, StringHelper {
                 COBOL_SET_ACTUAL_88_VALUE_2, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_ACTUAL_88_VALUE_3, testCodePrefix)));
-        testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_4)));
+        testSourceOut.write(fixedLength(
+                COBOL_SET_ACTUAL_88_VALUE_4));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_ACTUAL_88_VALUE_5, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_ACTUAL_88_VALUE_6, testCodePrefix)));
-        testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_7, testCodePrefix)));
+        testSourceOut.write(fixedLength(
+                COBOL_SET_ACTUAL_88_VALUE_7));
 
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_EXPECTED_88_VALUE, testCodePrefix, expectedValueToCompare)));

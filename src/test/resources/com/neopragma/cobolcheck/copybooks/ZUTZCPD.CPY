@@ -71,9 +71,25 @@
            IF UT-COMPARE-NUMERIC
                DISPLAY '    EXPECTED ' UT-EXPECTED-NUMERIC
                        ', WAS ' UT-ACTUAL-NUMERIC
-           ELSE                     
-               DISPLAY '    EXPECTED <' UT-EXPECTED 
-                       '>, WAS <' UT-ACTUAL '>'
+           ELSE
+               MOVE ZERO TO UT-EXPECTED-TRIM
+               INSPECT FUNCTION REVERSE(UT-EXPECTED)
+                   TALLYING UT-EXPECTED-TRIM
+                   FOR LEADING SPACES
+               SUBTRACT UT-EXPECTED-TRIM
+                   FROM LENGTH OF UT-EXPECTED
+                   GIVING UT-EXPECTED-TRIM
+               MOVE ZERO TO UT-ACTUAL-TRIM
+               INSPECT FUNCTION REVERSE(UT-ACTUAL)
+                   TALLYING UT-ACTUAL-TRIM
+                   FOR LEADING SPACES
+               SUBTRACT UT-ACTUAL-TRIM
+                   FROM LENGTH OF UT-ACTUAL
+                   GIVING UT-ACTUAL-TRIM
+
+               DISPLAY '    EXPECTED <'
+                   UT-EXPECTED(1:UT-EXPECTED-TRIM)
+                       '>, WAS <' UT-ACTUAL(1:UT-ACTUAL-TRIM) '>'
            END-IF            
            MOVE 4 TO UT-RETCODE
            .

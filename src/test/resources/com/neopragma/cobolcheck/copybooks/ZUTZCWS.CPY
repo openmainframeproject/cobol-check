@@ -25,8 +25,8 @@
            05  FILLER                    PIC X(01) VALUE SPACES.
                88  UT-COMPARE-PASSED     VALUE 'Y'.
                88  UT-COMPARE-FAILED     VALUE SPACES.
-           05  UT-EXPECTED               PIC X(60) VALUE SPACES.
-           05  UT-ACTUAL                 PIC X(60) VALUE SPACES.
+           05  UT-EXPECTED               PIC X(256) VALUE SPACES.
+           05  UT-ACTUAL                 PIC X(256) VALUE SPACES.
            05  UT-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.
            05  UT-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.
            05  FILLER                    PIC X     VALUE 'F'.
@@ -45,6 +45,8 @@
            05  UT-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.
            05  UT-NUMBER-PASSED          PIC 9(4)   VALUE ZERO.
            05  UT-NUMBER-FAILED          PIC 9(4)   VALUE ZERO.
+           05  UT-EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.
+           05  UT-ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.
        01  UT-MOCKS.
            05  FILLER                    PIC X(01) VALUE SPACES.
                88  UT-MOCK-FOUND                   VALUE 'Y'.

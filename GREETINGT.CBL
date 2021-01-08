@@ -35,8 +35,8 @@
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-COMPARE-PASSED     VALUE 'Y'.                             
                88  UT-COMPARE-FAILED     VALUE SPACES.                          
-           05  UT-EXPECTED               PIC X(60) VALUE SPACES.                
-           05  UT-ACTUAL                 PIC X(60) VALUE SPACES.                
+           05  UT-EXPECTED               PIC X(256) VALUE SPACES.               
+           05  UT-ACTUAL                 PIC X(256) VALUE SPACES.               
            05  UT-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.                 
            05  UT-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
            05  FILLER                    PIC X     VALUE 'F'.                   
@@ -55,6 +55,8 @@
            05  UT-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.                 
            05  UT-NUMBER-PASSED          PIC 9(4)   VALUE ZERO.                 
            05  UT-NUMBER-FAILED          PIC 9(4)   VALUE ZERO.                 
+           05  UT-EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.           
+           05  UT-ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.           
        01  UT-MOCKS.                                                            
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-MOCK-FOUND                   VALUE 'Y'.                   
@@ -118,12 +120,12 @@
            05  FILLER             PIC X VALUE 'G'.                              
                88  MESSAGE-IS-GREETING  VALUE 'G'.                              
                88  MESSAGE-IS-FAREWELL  VALUE 'F'.                              
-           05  WS-FRIEND           PIC X(10) VALUE SPACES.                      
-           05  WS-GREETING.                                                     
+       01  WS-FRIEND           PIC X(10) VALUE SPACES.                          
+       01  WS-GREETING.                                                         
                10  FILLER          PIC X(07) VALUE 'Hello, '.                   
-               10  WS-USER-NAME    PIC X(10) VALUE SPACES.                      
+               10  WS-USER-NAME    PIC X(06) VALUE SPACES.                      
                10  FILLER          PIC X     VALUE '!'.                         
-           05  WS-FAREWELL.                                                     
+       01  WS-FAREWELL.                                                         
                10  FILLER          PIC X(15) VALUE 'See you later, '.           
                10  WS-USER-NAME    PIC X(09) VALUE SPACES.                      
                10  FILLER          PIC X     VALUE '!'.                         
@@ -295,8 +297,24 @@
                DISPLAY '    EXPECTED ' UT-EXPECTED-NUMERIC                      
                        ', WAS ' UT-ACTUAL-NUMERIC                               
            ELSE                                                                 
-               DISPLAY '    EXPECTED <' UT-EXPECTED                             
-                       '>, WAS <' UT-ACTUAL '>'                                 
+               MOVE ZERO TO UT-EXPECTED-TRIM                                    
+               INSPECT FUNCTION REVERSE(UT-EXPECTED)                            
+                   TALLYING UT-EXPECTED-TRIM                                    
+                   FOR LEADING SPACES                                           
+               SUBTRACT UT-EXPECTED-TRIM                                        
+                   FROM LENGTH OF UT-EXPECTED                                   
+                   GIVING UT-EXPECTED-TRIM                                      
+               MOVE ZERO TO UT-ACTUAL-TRIM                                      
+               INSPECT FUNCTION REVERSE(UT-ACTUAL)                              
+                   TALLYING UT-ACTUAL-TRIM                                      
+                   FOR LEADING SPACES                                           
+               SUBTRACT UT-ACTUAL-TRIM                                          
+                   FROM LENGTH OF UT-ACTUAL                                     
+                   GIVING UT-ACTUAL-TRIM                                        
+                                                                                
+               DISPLAY '    EXPECTED <'                                         
+                   UT-EXPECTED(1:UT-EXPECTED-TRIM)                              
+                       '>, WAS <' UT-ACTUAL(1:UT-ACTUAL-TRIM) '>'               
            END-IF                                                               
            MOVE 4 TO UT-RETCODE                                                 
            .                                                                    
