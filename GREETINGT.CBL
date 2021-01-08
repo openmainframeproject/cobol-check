@@ -11,108 +11,108 @@
       * ZUTZCWS.CPY                                                             
        01  FILLER PIC X(16) VALUE '******* ZUTZCPC'.                            
        01  FILLER PIC X(16) VALUE '******* 0.1.0'.                              
-       01  UT-FIELDS.                                                           
-           05  UT-CONST-ES               PIC X(02) VALUE 'ES'.                  
-           05  UT-LABEL-EXPECTED-ACCESS.                                        
+       01  CC-FIELDS.                                                           
+           05  CC-CONST-ES               PIC X(02) VALUE 'ES'.                  
+           05  CC-LABEL-EXPECTED-ACCESS.                                        
                10  FILLER                PIC X(06) VALUE 'ACCESS'.              
-               10  UT-LABEL-EXPECTED-ACCESS-PL                                  
+               10  CC-LABEL-EXPECTED-ACCESS-PL                                  
                                          PIC X(02) VALUE SPACES.                
-           05  UT-DISPLAY-MESSAGE        PIC X(256) VALUE SPACES.               
+           05  CC-DISPLAY-MESSAGE        PIC X(256) VALUE SPACES.               
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-NORMAL-COMPARE     VALUE 'N'.                             
-               88  UT-REVERSE-COMPARE    VALUE 'Y'.                             
+               88  CC-NORMAL-COMPARE     VALUE 'N'.                             
+               88  CC-REVERSE-COMPARE    VALUE 'Y'.                             
            05  FILLER                    PIC X(01) VALUE '1'.                   
-               88  UT-VERIFY-EXACT                 VALUE '1'.                   
-               88  UT-VERIFY-AT-LEAST              VALUE '2'.                   
-               88  UT-VERIFY-NO-MORE-THAN          VALUE '3'.                   
+               88  CC-VERIFY-EXACT                 VALUE '1'.                   
+               88  CC-VERIFY-AT-LEAST              VALUE '2'.                   
+               88  CC-VERIFY-NO-MORE-THAN          VALUE '3'.                   
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-VERIFY-PASSED      VALUE 'Y'.                             
-               88  UT-VERIFY-FAILED      VALUE SPACES.                          
+               88  CC-VERIFY-PASSED      VALUE 'Y'.                             
+               88  CC-VERIFY-FAILED      VALUE SPACES.                          
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-COMPARE-DEFAULT    VALUE SPACE.                           
-               88  UT-COMPARE-NUMERIC    VALUE 'N'.                             
-               88  UT-COMPARE-88-LEVEL   VALUE '8'.                             
+               88  CC-COMPARE-DEFAULT    VALUE SPACE.                           
+               88  CC-COMPARE-NUMERIC    VALUE 'N'.                             
+               88  CC-COMPARE-88-LEVEL   VALUE '8'.                             
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-COMPARE-PASSED     VALUE 'Y'.                             
-               88  UT-COMPARE-FAILED     VALUE SPACES.                          
-           05  UT-EXPECTED               PIC X(256) VALUE SPACES.               
-           05  UT-ACTUAL                 PIC X(256) VALUE SPACES.               
-           05  UT-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.                 
-           05  UT-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
+               88  CC-COMPARE-PASSED     VALUE 'Y'.                             
+               88  CC-COMPARE-FAILED     VALUE SPACES.                          
+           05  CC-EXPECTED               PIC X(256) VALUE SPACES.               
+           05  CC-ACTUAL                 PIC X(256) VALUE SPACES.               
+           05  CC-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.                 
+           05  CC-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
            05  FILLER                    PIC X     VALUE 'F'.                   
-               88 UT-EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.        
+               88 CC-EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.        
            05  FILLER                    PIC X     VALUE 'F'.                   
-               88 UT-ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.        
-           05  UT-EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.                  
-           05  UT-ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.                  
-           05  UT-EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.                             
-           05  UT-ACTUAL-ACCESSES-FMT    PIC Z,ZZ9.                             
-           05  UT-FAILED                 PIC X(11)  VALUE "**** FAIL: ".        
-           05  UT-PASSED                 PIC X(11)  VALUE "     PASS: ".        
-           05  UT-TEST-CASE-NAME         PIC X(80)  VALUE SPACES.               
-           05  UT-TEST-CASE-NUMBER       PIC ZZ9.                               
-           05  UT-RETCODE                PIC 9(4)   VALUE ZERO.                 
-           05  UT-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.                 
-           05  UT-NUMBER-PASSED          PIC 9(4)   VALUE ZERO.                 
-           05  UT-NUMBER-FAILED          PIC 9(4)   VALUE ZERO.                 
-           05  UT-EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.           
-           05  UT-ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.           
-       01  UT-MOCKS.                                                            
+               88 CC-ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.        
+           05  CC-EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.                  
+           05  CC-ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.                  
+           05  CC-EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.                             
+           05  CC-ACTUAL-ACCESSES-FMT    PIC Z,ZZ9.                             
+           05  CC-FAILED                 PIC X(11)  VALUE "**** FAIL: ".        
+           05  CC-PASSED                 PIC X(11)  VALUE "     PASS: ".        
+           05  CC-TEST-CASE-NAME         PIC X(80)  VALUE SPACES.               
+           05  CC-TEST-CASE-NUMBER       PIC ZZ9.                               
+           05  CC-RETCODE                PIC 9(4)   VALUE ZERO.                 
+           05  CC-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.                 
+           05  CC-NUMBER-PASSED          PIC 9(4)   VALUE ZERO.                 
+           05  CC-NUMBER-FAILED          PIC 9(4)   VALUE ZERO.                 
+           05  CC-EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.           
+           05  CC-ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.           
+       01  CC-MOCKS.                                                            
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-MOCK-FOUND                   VALUE 'Y'.                   
-               88  UT-MOCK-NOT-FOUND               VALUE SPACES.                
-           05  UT-MOCK-FIND-TYPE         PIC X(04).                             
-               88  UT-FIND-FILE-MOCK     VALUE 'FILE'.                          
-               88  UT-FIND-CALL-MOCK     VALUE 'CALL'.                          
-               88  UT-FIND-CICS-MOCK     VALUE 'CICS'.                          
-               88  UT-FIND-SQL-MOCK      VALUE 'SQL'.                           
-               88  UT-FIND-PARA-MOCK     VALUE 'PARA'.                          
-           05  UT-MOCK-FIND-FILENAME     PIC X(31).                             
-           05  UT-MOCK-FIND-PARA-NAME    PIC X(31).                             
-           05  UT-MOCK-FIND-OPERATION    PIC X(04).                             
-           05  UT-MOCK-FIND-CALL-TOKENS.                                        
-               10  UT-MOCK-FIND-CALL-TOKEN OCCURS 25 PIC X(31).                 
-           05  UT-MOCK-FIND-CICS-KEYWORDS.                                      
-               10  UT-MOCK-FIND-CICS-KEYWORD OCCURS 25 PIC X(31).               
-           05  UT-MOCK-SET-RECORD        PIC X(2048).                           
-           05  UT-MOCK-SET-FILE-STATUS   PIC X(02).                             
-           05  UT-MOCK-MAX               PIC 9(02) VALUE 10.                    
-           05  UT-MOCK-COUNT             PIC 9(02) VALUE ZERO.                  
-           05  UT-MOCK OCCURS 20 INDEXED BY UT-MOCK-IX.                         
-               10  UT-MOCK-TYPE          PIC X(04).                             
-                   88  UT-MOCK-FILE          VALUE 'FILE'.                      
-                   88  UT-MOCK-CALL          VALUE 'CALL'.                      
-                   88  UT-MOCK-CICS          VALUE 'CICS'.                      
-                   88  UT-MOCK-SQL           VALUE 'SQL'.                       
-                   88  UT-MOCK-PARA          VALUE 'PARA'.                      
-               10  UT-MOCK-ACCESS-COUNT    PIC 9(04) VALUE ZERO.                
-               10  UT-MOCK-RECORD        PIC X(8192).                           
-               10  UT-MOCK-DATA          PIC X(806).                            
-               10  UT-MOCK-FILE-DATA REDEFINES UT-MOCK-DATA.                    
-                   15  UT-MOCK-FILENAME       PIC X(31).                        
-                   15  UT-MOCK-OPERATION      PIC X(20).                        
-                   15  UT-MOCK-FILE-STATUS    PIC X(02).                        
+               88  CC-MOCK-FOUND                   VALUE 'Y'.                   
+               88  CC-MOCK-NOT-FOUND               VALUE SPACES.                
+           05  CC-MOCK-FIND-TYPE         PIC X(04).                             
+               88  CC-FIND-FILE-MOCK     VALUE 'FILE'.                          
+               88  CC-FIND-CALL-MOCK     VALUE 'CALL'.                          
+               88  CC-FIND-CICS-MOCK     VALUE 'CICS'.                          
+               88  CC-FIND-SQL-MOCK      VALUE 'SQL'.                           
+               88  CC-FIND-PARA-MOCK     VALUE 'PARA'.                          
+           05  CC-MOCK-FIND-FILENAME     PIC X(31).                             
+           05  CC-MOCK-FIND-PARA-NAME    PIC X(31).                             
+           05  CC-MOCK-FIND-OPERATION    PIC X(04).                             
+           05  CC-MOCK-FIND-CALL-TOKENS.                                        
+               10  CC-MOCK-FIND-CALL-TOKEN OCCURS 25 PIC X(31).                 
+           05  CC-MOCK-FIND-CICS-KEYWORDS.                                      
+               10  CC-MOCK-FIND-CICS-KEYWORD OCCURS 25 PIC X(31).               
+           05  CC-MOCK-SET-RECORD        PIC X(2048).                           
+           05  CC-MOCK-SET-FILE-STATUS   PIC X(02).                             
+           05  CC-MOCK-MAX               PIC 9(02) VALUE 10.                    
+           05  CC-MOCK-COUNT             PIC 9(02) VALUE ZERO.                  
+           05  CC-MOCK OCCURS 20 INDEXED BY CC-MOCK-IX.                         
+               10  CC-MOCK-TYPE          PIC X(04).                             
+                   88  CC-MOCK-FILE          VALUE 'FILE'.                      
+                   88  CC-MOCK-CALL          VALUE 'CALL'.                      
+                   88  CC-MOCK-CICS          VALUE 'CICS'.                      
+                   88  CC-MOCK-SQL           VALUE 'SQL'.                       
+                   88  CC-MOCK-PARA          VALUE 'PARA'.                      
+               10  CC-MOCK-ACCESS-COUNT    PIC 9(04) VALUE ZERO.                
+               10  CC-MOCK-RECORD        PIC X(8192).                           
+               10  CC-MOCK-DATA          PIC X(806).                            
+               10  CC-MOCK-FILE-DATA REDEFINES CC-MOCK-DATA.                    
+                   15  CC-MOCK-FILENAME       PIC X(31).                        
+                   15  CC-MOCK-OPERATION      PIC X(20).                        
+                   15  CC-MOCK-FILE-STATUS    PIC X(02).                        
                    15  FILLER                 PIC X(753).                       
-               10  UT-MOCK-CALL-DATA REDEFINES UT-MOCK-DATA.                    
-                   15  UT-MOCK-CALL-TOKENS-KEY PIC X(806).                      
-               10  UT-MOCK-CICS-DATA REDEFINES UT-MOCK-DATA.                    
-                   15  UT-MOCK-CICS-KEYWORDS-KEY PIC X(806).                    
-               10  UT-MOCK-PARA-DATA REDEFINES UT-MOCK-DATA.                    
-                   15  UT-MOCK-PARA-NAME  PIC X(31).                            
+               10  CC-MOCK-CALL-DATA REDEFINES CC-MOCK-DATA.                    
+                   15  CC-MOCK-CALL-TOKENS-KEY PIC X(806).                      
+               10  CC-MOCK-CICS-DATA REDEFINES CC-MOCK-DATA.                    
+                   15  CC-MOCK-CICS-KEYWORDS-KEY PIC X(806).                    
+               10  CC-MOCK-PARA-DATA REDEFINES CC-MOCK-DATA.                    
+                   15  CC-MOCK-PARA-NAME  PIC X(31).                            
                    15  FILLER             PIC X(775).                           
-               10  UT-MOCK-SQL-DATA REDEFINES UT-MOCK-DATA.                     
+               10  CC-MOCK-SQL-DATA REDEFINES CC-MOCK-DATA.                     
                    15  FILLER             PIC X(806).                           
-       01  UT-FILES.                                                            
-           05  UT-FILE-MAX                   PIC 9(02) VALUE 10.                
-           05  UT-FILE-COUNT                 PIC 9(02) VALUE ZERO.              
+       01  CC-FILES.                                                            
+           05  CC-FILE-MAX                   PIC 9(02) VALUE 10.                
+           05  CC-FILE-COUNT                 PIC 9(02) VALUE ZERO.              
            05  FILLER                        PIC X(01) VALUE SPACE.             
-               88  UT-FILENAME-MATCHED       VALUE 'Y'.                         
-               88  UT-FILENAME-NOT-MATCHED   VALUE 'N'.                         
-           05  UT-FILE-INFORMATION.                                             
-               10  FILLER OCCURS 10 INDEXED BY UT-FILE-IX.                      
-                   15  UT-INTERNAL-FILENAME      PIC X(31).                     
-                   15  UT-RECORD-FIELD-NAME      PIC X(31).                     
-                   15  UT-FILE-STATUS-FIELD-NAME PIC X(31).                     
+               88  CC-FILENAME-MATCHED       VALUE 'Y'.                         
+               88  CC-FILENAME-NOT-MATCHED   VALUE 'N'.                         
+           05  CC-FILE-INFORMATION.                                             
+               10  FILLER OCCURS 10 INDEXED BY CC-FILE-IX.                      
+                   15  CC-INTERNAL-FILENAME      PIC X(31).                     
+                   15  CC-RECORD-FIELD-NAME      PIC X(31).                     
+                   15  CC-FILE-STATUS-FIELD-NAME PIC X(31).                     
                                                                                 
       * ZUTZCWS.CPY END                                                         
        01  FILLER.                                                              
@@ -136,405 +136,405 @@
       -    "ssage type"                                                         
            MOVE "When message type is greeting it returns 'Hello, World!        
       -    "'"                                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
             SET MESSAGE-IS-GREETING TO TRUE                                     
             PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO UT-ACTUAL                                        
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-GREETING TO CC-ACTUAL                                        
            MOVE "Hello, World     !"                                            
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
            MOVE "try numerical compare"                                         
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
             ADD 1 TO WS-COUNT                                                   
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-COMPARE-NUMERIC TO TRUE                                       
-           MOVE WS-COUNT TO UT-ACTUAL-NUMERIC                                   
-           MOVE 1 TO UT-EXPECTED-NUMERIC                                        
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-NUMERIC TO TRUE                                       
+           MOVE WS-COUNT TO CC-ACTUAL-NUMERIC                                   
+           MOVE 1 TO CC-EXPECTED-NUMERIC                                        
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
            MOVE "try 88 level compare"                                          
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-COMPARE-88-LEVEL TO TRUE                                      
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-88-LEVEL TO TRUE                                      
            IF MESSAGE-IS-GREETING                                               
-               SET UT-ACTUAL-88-VALUE TO TRUE                                   
-               MOVE 'TRUE' TO UT-ACTUAL                                         
+               SET CC-ACTUAL-88-VALUE TO TRUE                                   
+               MOVE 'TRUE' TO CC-ACTUAL                                         
            ELSE                                                                 
-               SET UT-ACTUAL-88-VALUE TO FALSE                                  
-               MOVE 'FALSE' TO UT-ACTUAL                                        
+               SET CC-ACTUAL-88-VALUE TO FALSE                                  
+               MOVE 'FALSE' TO CC-ACTUAL                                        
            END-IF                                                               
-           SET UT-EXPECTED-88-VALUE TO FALSE                                    
-           IF UT-EXPECTED-88-VALUE                                              
-               MOVE 'TRUE' TO UT-EXPECTED                                       
+           SET CC-EXPECTED-88-VALUE TO FALSE                                    
+           IF CC-EXPECTED-88-VALUE                                              
+               MOVE 'TRUE' TO CC-EXPECTED                                       
            ELSE                                                                 
-               MOVE 'FALSE' TO UT-EXPECTED                                      
+               MOVE 'FALSE' TO CC-EXPECTED                                      
            END-IF                                                               
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
            MOVE "When message type is farewell it returns See you later,        
       -    " alligator!"                                                        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
             SET MESSAGE-IS-FAREWELL TO TRUE                                     
             PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO UT-ACTUAL                                        
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-FAREWELL TO CC-ACTUAL                                        
            MOVE "See you later, alligator!"                                     
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
            DISPLAY "TESTSUITE:"                                                 
            DISPLAY "Greeting includes the user name when it is provided"        
            MOVE "When message type is greeting it returns Hello, James!"        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
             SET MESSAGE-IS-GREETING TO TRUE                                     
             MOVE "James" TO WS-FRIEND                                           
             PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO UT-ACTUAL                                        
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-GREETING TO CC-ACTUAL                                        
            MOVE "Hello, James!"                                                 
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
            MOVE "When message type is farewell it returns Goodbye, James        
       -    "!"                                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
             SET MESSAGE-IS-FAREWELL TO TRUE                                     
             MOVE "James" TO WS-FRIEND                                           
             PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO UT-ACTUAL                                        
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-FAREWELL TO CC-ACTUAL                                        
            MOVE "See you later, James!"                                         
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
-           MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       
-           DISPLAY UT-TEST-CASE-NUMBER ' TEST CASES WERE EXECUTED'              
-           MOVE UT-NUMBER-PASSED TO UT-TEST-CASE-NUMBER                         
-           DISPLAY UT-TEST-CASE-NUMBER ' PASSED'                                
-           MOVE UT-NUMBER-FAILED TO UT-TEST-CASE-NUMBER                         
-           DISPLAY UT-TEST-CASE-NUMBER ' FAILED'                                
+           MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       
+           DISPLAY CC-TEST-CASE-NUMBER ' TEST CASES WERE EXECUTED'              
+           MOVE CC-NUMBER-PASSED TO CC-TEST-CASE-NUMBER                         
+           DISPLAY CC-TEST-CASE-NUMBER ' PASSED'                                
+           MOVE CC-NUMBER-FAILED TO CC-TEST-CASE-NUMBER                         
+           DISPLAY CC-TEST-CASE-NUMBER ' FAILED'                                
            DISPLAY "================================================="          
-           MOVE UT-RETCODE TO RETURN-CODE                                       
+           MOVE CC-RETCODE TO RETURN-CODE                                       
            GOBACK.                                                              
                                                                                 
-       UT-ASSERT-EQUAL.                                                         
+       CC-ASSERT-EQUAL.                                                         
       *****************************************************************         
       * COMPARE EXPECTED AND ACTUAL VALUES FOR EQUALITY.                        
       *****************************************************************         
-           MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       
-           PERFORM UT-COMPARE                                                   
-           IF UT-COMPARE-PASSED                                                 
-               PERFORM UT-DISPLAY-PASSED                                        
+           MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       
+           PERFORM CC-COMPARE                                                   
+           IF CC-COMPARE-PASSED                                                 
+               PERFORM CC-DISPLAY-PASSED                                        
            ELSE                                                                 
-               PERFORM UT-DISPLAY-FAILED                                        
+               PERFORM CC-DISPLAY-FAILED                                        
            END-IF                                                               
            .                                                                    
                                                                                 
-       UT-COMPARE.                                                              
-           SET UT-COMPARE-FAILED TO TRUE                                        
-           IF UT-COMPARE-NUMERIC                                                
-               IF UT-ACTUAL-NUMERIC IS EQUAL TO UT-EXPECTED-NUMERIC             
-                   SET UT-COMPARE-PASSED TO TRUE                                
+       CC-COMPARE.                                                              
+           SET CC-COMPARE-FAILED TO TRUE                                        
+           IF CC-COMPARE-NUMERIC                                                
+               IF CC-ACTUAL-NUMERIC IS EQUAL TO CC-EXPECTED-NUMERIC             
+                   SET CC-COMPARE-PASSED TO TRUE                                
                END-IF                                                           
            ELSE                                                                 
-               IF UT-COMPARE-88-LEVEL                                           
-                   IF (UT-ACTUAL-88-VALUE                                       
-                       AND UT-EXPECTED-88-VALUE)                                
-                   OR (NOT UT-ACTUAL-88-VALUE                                   
-                       AND NOT UT-EXPECTED-88-VALUE)                            
-                       SET UT-COMPARE-PASSED TO TRUE                            
+               IF CC-COMPARE-88-LEVEL                                           
+                   IF (CC-ACTUAL-88-VALUE                                       
+                       AND CC-EXPECTED-88-VALUE)                                
+                   OR (NOT CC-ACTUAL-88-VALUE                                   
+                       AND NOT CC-EXPECTED-88-VALUE)                            
+                       SET CC-COMPARE-PASSED TO TRUE                            
                    END-IF                                                       
                ELSE                                                             
-                   IF UT-ACTUAL IS EQUAL TO UT-EXPECTED                         
-                       SET UT-COMPARE-PASSED TO TRUE                            
+                   IF CC-ACTUAL IS EQUAL TO CC-EXPECTED                         
+                       SET CC-COMPARE-PASSED TO TRUE                            
                    END-IF                                                       
                END-IF                                                           
            END-IF                                                               
-           PERFORM UT-REVERSE-RESULT                                            
+           PERFORM CC-REVERSE-RESULT                                            
            .                                                                    
                                                                                 
-       UT-REVERSE-RESULT.                                                       
-           IF UT-REVERSE-COMPARE                                                
-               IF UT-COMPARE-PASSED                                             
-                   SET UT-COMPARE-FAILED TO TRUE                                
+       CC-REVERSE-RESULT.                                                       
+           IF CC-REVERSE-COMPARE                                                
+               IF CC-COMPARE-PASSED                                             
+                   SET CC-COMPARE-FAILED TO TRUE                                
                ELSE                                                             
-                   SET UT-COMPARE-PASSED TO TRUE                                
+                   SET CC-COMPARE-PASSED TO TRUE                                
                END-IF                                                           
            END-IF                                                               
            .                                                                    
                                                                                 
-       UT-DISPLAY-PASSED.                                                       
-           ADD 1 TO UT-NUMBER-PASSED                                            
-           DISPLAY UT-PASSED                                                    
-                   UT-TEST-CASE-NUMBER '. '                                     
-                   UT-TEST-CASE-NAME                                            
+       CC-DISPLAY-PASSED.                                                       
+           ADD 1 TO CC-NUMBER-PASSED                                            
+           DISPLAY CC-PASSED                                                    
+                   CC-TEST-CASE-NUMBER '. '                                     
+                   CC-TEST-CASE-NAME                                            
            .                                                                    
                                                                                 
-       UT-DISPLAY-FAILED.                                                       
-           ADD 1 TO UT-NUMBER-FAILED                                            
-           DISPLAY UT-FAILED                                                    
-                   UT-TEST-CASE-NUMBER '. '                                     
-                   UT-TEST-CASE-NAME                                            
-           IF UT-COMPARE-NUMERIC                                                
-               DISPLAY '    EXPECTED ' UT-EXPECTED-NUMERIC                      
-                       ', WAS ' UT-ACTUAL-NUMERIC                               
+       CC-DISPLAY-FAILED.                                                       
+           ADD 1 TO CC-NUMBER-FAILED                                            
+           DISPLAY CC-FAILED                                                    
+                   CC-TEST-CASE-NUMBER '. '                                     
+                   CC-TEST-CASE-NAME                                            
+           IF CC-COMPARE-NUMERIC                                                
+               DISPLAY '    EXPECTED ' CC-EXPECTED-NUMERIC                      
+                       ', WAS ' CC-ACTUAL-NUMERIC                               
            ELSE                                                                 
-               MOVE ZERO TO UT-EXPECTED-TRIM                                    
-               INSPECT FUNCTION REVERSE(UT-EXPECTED)                            
-                   TALLYING UT-EXPECTED-TRIM                                    
+               MOVE ZERO TO CC-EXPECTED-TRIM                                    
+               INSPECT FUNCTION REVERSE(CC-EXPECTED)                            
+                   TALLYING CC-EXPECTED-TRIM                                    
                    FOR LEADING SPACES                                           
-               SUBTRACT UT-EXPECTED-TRIM                                        
-                   FROM LENGTH OF UT-EXPECTED                                   
-                   GIVING UT-EXPECTED-TRIM                                      
-               MOVE ZERO TO UT-ACTUAL-TRIM                                      
-               INSPECT FUNCTION REVERSE(UT-ACTUAL)                              
-                   TALLYING UT-ACTUAL-TRIM                                      
+               SUBTRACT CC-EXPECTED-TRIM                                        
+                   FROM LENGTH OF CC-EXPECTED                                   
+                   GIVING CC-EXPECTED-TRIM                                      
+               MOVE ZERO TO CC-ACTUAL-TRIM                                      
+               INSPECT FUNCTION REVERSE(CC-ACTUAL)                              
+                   TALLYING CC-ACTUAL-TRIM                                      
                    FOR LEADING SPACES                                           
-               SUBTRACT UT-ACTUAL-TRIM                                          
-                   FROM LENGTH OF UT-ACTUAL                                     
-                   GIVING UT-ACTUAL-TRIM                                        
+               SUBTRACT CC-ACTUAL-TRIM                                          
+                   FROM LENGTH OF CC-ACTUAL                                     
+                   GIVING CC-ACTUAL-TRIM                                        
                                                                                 
                DISPLAY '    EXPECTED <'                                         
-                   UT-EXPECTED(1:UT-EXPECTED-TRIM)                              
-                       '>, WAS <' UT-ACTUAL(1:UT-ACTUAL-TRIM) '>'               
+                   CC-EXPECTED(1:CC-EXPECTED-TRIM)                              
+                       '>, WAS <' CC-ACTUAL(1:CC-ACTUAL-TRIM) '>'               
            END-IF                                                               
-           MOVE 4 TO UT-RETCODE                                                 
+           MOVE 4 TO CC-RETCODE                                                 
            .                                                                    
                                                                                 
-       UT-ASSERT-ACCESSES.                                                      
+       CC-ASSERT-ACCESSES.                                                      
       *****************************************************************         
       * COMPARE THE NUMBER OF ACCESSES TO A MOCK WITH THE EXPECTED              
       * NUMBER OF ACCESSES.                                                     
       *****************************************************************         
-           MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       
-           MOVE UT-ACTUAL-ACCESSES TO UT-ACTUAL-ACCESSES-FMT                    
-           MOVE UT-EXPECTED-ACCESSES TO UT-EXPECTED-ACCESSES-FMT                
-           IF UT-EXPECTED-ACCESSES IS EQUAL TO 1                                
-              MOVE SPACES TO UT-LABEL-EXPECTED-ACCESS-PL                        
+           MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       
+           MOVE CC-ACTUAL-ACCESSES TO CC-ACTUAL-ACCESSES-FMT                    
+           MOVE CC-EXPECTED-ACCESSES TO CC-EXPECTED-ACCESSES-FMT                
+           IF CC-EXPECTED-ACCESSES IS EQUAL TO 1                                
+              MOVE SPACES TO CC-LABEL-EXPECTED-ACCESS-PL                        
            ELSE                                                                 
-              MOVE UT-CONST-ES TO UT-LABEL-EXPECTED-ACCESS-PL                   
+              MOVE CC-CONST-ES TO CC-LABEL-EXPECTED-ACCESS-PL                   
            END-IF                                                               
                                                                                 
-           SET UT-VERIFY-FAILED TO TRUE                                         
+           SET CC-VERIFY-FAILED TO TRUE                                         
            EVALUATE TRUE                                                        
-               WHEN UT-VERIFY-AT-LEAST                                          
-                    IF UT-ACTUAL-ACCESSES IS GREATER THAN OR EQUAL TO           
-                            UT-EXPECTED-ACCESSES                                
-                        SET UT-VERIFY-PASSED TO TRUE                            
+               WHEN CC-VERIFY-AT-LEAST                                          
+                    IF CC-ACTUAL-ACCESSES IS GREATER THAN OR EQUAL TO           
+                            CC-EXPECTED-ACCESSES                                
+                        SET CC-VERIFY-PASSED TO TRUE                            
                     END-IF                                                      
-               WHEN UT-VERIFY-NO-MORE-THAN                                      
-                    IF UT-ACTUAL-ACCESSES IS LESS THAN OR EQUAL TO              
-                            UT-EXPECTED-ACCESSES                                
-                        SET UT-VERIFY-PASSED TO TRUE                            
+               WHEN CC-VERIFY-NO-MORE-THAN                                      
+                    IF CC-ACTUAL-ACCESSES IS LESS THAN OR EQUAL TO              
+                            CC-EXPECTED-ACCESSES                                
+                        SET CC-VERIFY-PASSED TO TRUE                            
                     END-IF                                                      
                WHEN OTHER                                                       
-                    IF UT-ACTUAL-ACCESSES IS EQUAL TO                           
-                            UT-EXPECTED-ACCESSES                                
-                        SET UT-VERIFY-PASSED TO TRUE                            
+                    IF CC-ACTUAL-ACCESSES IS EQUAL TO                           
+                            CC-EXPECTED-ACCESSES                                
+                        SET CC-VERIFY-PASSED TO TRUE                            
                     END-IF                                                      
            END-EVALUATE                                                         
                                                                                 
-           IF UT-VERIFY-PASSED                                                  
-               ADD 1 TO UT-NUMBER-PASSED                                        
-               DISPLAY UT-PASSED                                                
-                       UT-TEST-CASE-NUMBER '. '                                 
-                      'VERIFY ' UT-EXPECTED-ACCESSES-FMT SPACE                  
-                      UT-LABEL-EXPECTED-ACCESS                                  
+           IF CC-VERIFY-PASSED                                                  
+               ADD 1 TO CC-NUMBER-PASSED                                        
+               DISPLAY CC-PASSED                                                
+                       CC-TEST-CASE-NUMBER '. '                                 
+                      'VERIFY ' CC-EXPECTED-ACCESSES-FMT SPACE                  
+                      CC-LABEL-EXPECTED-ACCESS                                  
            ELSE                                                                 
-               ADD 1 TO UT-NUMBER-FAILED                                        
-               MOVE SPACES TO UT-DISPLAY-MESSAGE                                
-               IF UT-MOCK-FILE(UT-MOCK-IX)                                      
+               ADD 1 TO CC-NUMBER-FAILED                                        
+               MOVE SPACES TO CC-DISPLAY-MESSAGE                                
+               IF CC-MOCK-FILE(CC-MOCK-IX)                                      
                    STRING                                                       
-                       UT-FAILED                      DELIMITED BY SIZE         
-                       UT-TEST-CASE-NUMBER            DELIMITED BY SIZE         
+                       CC-FAILED                      DELIMITED BY SIZE         
+                       CC-TEST-CASE-NUMBER            DELIMITED BY SIZE         
                        '. VERIFY ACCESSES TO '        DELIMITED BY SIZE         
-                       UT-MOCK-OPERATION(UT-MOCK-IX)  DELIMITED BY SPACE        
+                       CC-MOCK-OPERATION(CC-MOCK-IX)  DELIMITED BY SPACE        
                        ' ON '                         DELIMITED BY SIZE         
-                       UT-MOCK-FILENAME(UT-MOCK-IX)   DELIMITED BY SPACE        
+                       CC-MOCK-FILENAME(CC-MOCK-IX)   DELIMITED BY SPACE        
                        ' | EXPECTED '                 DELIMITED BY SIZE         
-                       UT-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE         
+                       CC-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE         
                        SPACE                          DELIMITED BY SIZE         
-                       UT-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE        
+                       CC-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE        
                        ', WAS '                       DELIMITED BY SIZE         
-                       UT-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE         
-                       INTO UT-DISPLAY-MESSAGE                                  
+                       CC-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE         
+                       INTO CC-DISPLAY-MESSAGE                                  
                    END-STRING                                                   
                ELSE                                                             
                    STRING                                                       
-                       UT-FAILED                      DELIMITED BY SIZE         
-                       UT-TEST-CASE-NUMBER            DELIMITED BY SIZE         
+                       CC-FAILED                      DELIMITED BY SIZE         
+                       CC-TEST-CASE-NUMBER            DELIMITED BY SIZE         
                        '. VERIFY ACCESSES TO '        DELIMITED BY SIZE         
-                       UT-MOCK-CICS-KEYWORDS-KEY(UT-MOCK-IX)                    
+                       CC-MOCK-CICS-KEYWORDS-KEY(CC-MOCK-IX)                    
                                                       DELIMITED BY SIZE         
-                       INTO UT-DISPLAY-MESSAGE                                  
+                       INTO CC-DISPLAY-MESSAGE                                  
                    END-STRING                                                   
-                   DISPLAY UT-DISPLAY-MESSAGE                                   
-                   MOVE SPACES TO UT-DISPLAY-MESSAGE                            
+                   DISPLAY CC-DISPLAY-MESSAGE                                   
+                   MOVE SPACES TO CC-DISPLAY-MESSAGE                            
                    STRING                                                       
                        '   EXPECTED '                 DELIMITED BY SIZE         
-                       UT-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE         
+                       CC-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE         
                        SPACE                          DELIMITED BY SIZE         
-                       UT-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE        
+                       CC-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE        
                        ', WAS '                       DELIMITED BY SIZE         
-                       UT-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE         
-                       INTO UT-DISPLAY-MESSAGE                                  
+                       CC-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE         
+                       INTO CC-DISPLAY-MESSAGE                                  
                    END-STRING                                                   
                END-IF                                                           
-               DISPLAY UT-DISPLAY-MESSAGE                                       
-               MOVE 4 TO UT-RETCODE                                             
+               DISPLAY CC-DISPLAY-MESSAGE                                       
+               MOVE 4 TO CC-RETCODE                                             
            END-IF                                                               
            .                                                                    
                                                                                 
-       UT-SET-MOCK.                                                             
+       CC-SET-MOCK.                                                             
       *****************************************************************         
       * CREATE OR UPDATE A MOCK SPECIFICATION.                                  
       *****************************************************************         
            EVALUATE TRUE                                                        
-               WHEN UT-FIND-FILE-MOCK                                           
-                    PERFORM UT-SET-FILE-MOCK                                    
-               WHEN UT-FIND-CALL-MOCK                                           
-                    PERFORM UT-SET-CALL-MOCK                                    
-               WHEN UT-FIND-CICS-MOCK                                           
-                    PERFORM UT-SET-CICS-MOCK                                    
-               WHEN UT-FIND-PARA-MOCK                                           
-                    PERFORM UT-SET-PARA-MOCK                                    
+               WHEN CC-FIND-FILE-MOCK                                           
+                    PERFORM CC-SET-FILE-MOCK                                    
+               WHEN CC-FIND-CALL-MOCK                                           
+                    PERFORM CC-SET-CALL-MOCK                                    
+               WHEN CC-FIND-CICS-MOCK                                           
+                    PERFORM CC-SET-CICS-MOCK                                    
+               WHEN CC-FIND-PARA-MOCK                                           
+                    PERFORM CC-SET-PARA-MOCK                                    
            END-EVALUATE                                                         
            .                                                                    
                                                                                 
-       UT-SET-FILE-MOCK.                                                        
-           PERFORM UT-LOOKUP-MOCK                                               
-           IF UT-MOCK-FOUND                                                     
+       CC-SET-FILE-MOCK.                                                        
+           PERFORM CC-LOOKUP-MOCK                                               
+           IF CC-MOCK-FOUND                                                     
                CONTINUE                                                         
            ELSE                                                                 
-               ADD 1 TO UT-MOCK-COUNT                                           
-               SET UT-MOCK-IX TO UT-MOCK-COUNT                                  
-               SET UT-MOCK-FILE(UT-MOCK-IX) TO TRUE                             
-               MOVE UT-MOCK-FIND-FILENAME                                       
-                    TO UT-MOCK-FILENAME(UT-MOCK-IX)                             
-               MOVE UT-MOCK-FIND-OPERATION                                      
-                    TO UT-MOCK-OPERATION(UT-MOCK-IX)                            
+               ADD 1 TO CC-MOCK-COUNT                                           
+               SET CC-MOCK-IX TO CC-MOCK-COUNT                                  
+               SET CC-MOCK-FILE(CC-MOCK-IX) TO TRUE                             
+               MOVE CC-MOCK-FIND-FILENAME                                       
+                    TO CC-MOCK-FILENAME(CC-MOCK-IX)                             
+               MOVE CC-MOCK-FIND-OPERATION                                      
+                    TO CC-MOCK-OPERATION(CC-MOCK-IX)                            
            END-IF                                                               
-           MOVE UT-MOCK-SET-RECORD                                              
-                TO UT-MOCK-RECORD(UT-MOCK-IX)                                   
-           MOVE UT-MOCK-SET-FILE-STATUS                                         
-                TO UT-MOCK-FILE-STATUS(UT-MOCK-IX)                              
+           MOVE CC-MOCK-SET-RECORD                                              
+                TO CC-MOCK-RECORD(CC-MOCK-IX)                                   
+           MOVE CC-MOCK-SET-FILE-STATUS                                         
+                TO CC-MOCK-FILE-STATUS(CC-MOCK-IX)                              
            .                                                                    
                                                                                 
-       UT-SET-CALL-MOCK.                                                        
-           PERFORM UT-LOOKUP-MOCK                                               
-           IF UT-MOCK-FOUND                                                     
+       CC-SET-CALL-MOCK.                                                        
+           PERFORM CC-LOOKUP-MOCK                                               
+           IF CC-MOCK-FOUND                                                     
                CONTINUE                                                         
            ELSE                                                                 
-               ADD 1 TO UT-MOCK-COUNT                                           
-               SET UT-MOCK-IX TO UT-MOCK-COUNT                                  
-               MOVE UT-MOCK-FIND-CALL-TOKENS                                    
-                   TO UT-MOCK-CALL-TOKENS-KEY(UT-MOCK-IX)                       
-           END-IF                                                               
-           .                                                                    
-                                                                                
-       UT-SET-CICS-MOCK.                                                        
-           PERFORM UT-LOOKUP-MOCK                                               
-           IF UT-MOCK-FOUND                                                     
-               CONTINUE                                                         
-           ELSE                                                                 
-               ADD 1 TO UT-MOCK-COUNT                                           
-               SET UT-MOCK-IX TO UT-MOCK-COUNT                                  
-               MOVE UT-MOCK-FIND-CICS-KEYWORDS                                  
-                   TO UT-MOCK-CICS-KEYWORDS-KEY(UT-MOCK-IX)                     
+               ADD 1 TO CC-MOCK-COUNT                                           
+               SET CC-MOCK-IX TO CC-MOCK-COUNT                                  
+               MOVE CC-MOCK-FIND-CALL-TOKENS                                    
+                   TO CC-MOCK-CALL-TOKENS-KEY(CC-MOCK-IX)                       
            END-IF                                                               
            .                                                                    
                                                                                 
-       UT-SET-PARA-MOCK.                                                        
-           PERFORM UT-LOOKUP-MOCK                                               
-           IF UT-MOCK-FOUND                                                     
+       CC-SET-CICS-MOCK.                                                        
+           PERFORM CC-LOOKUP-MOCK                                               
+           IF CC-MOCK-FOUND                                                     
                CONTINUE                                                         
            ELSE                                                                 
-               ADD 1 TO UT-MOCK-COUNT                                           
-               SET UT-MOCK-IX TO UT-MOCK-COUNT                                  
-               MOVE UT-MOCK-FIND-PARA-NAME                                      
-                   TO UT-MOCK-PARA-NAME(UT-MOCK-IX)                             
+               ADD 1 TO CC-MOCK-COUNT                                           
+               SET CC-MOCK-IX TO CC-MOCK-COUNT                                  
+               MOVE CC-MOCK-FIND-CICS-KEYWORDS                                  
+                   TO CC-MOCK-CICS-KEYWORDS-KEY(CC-MOCK-IX)                     
            END-IF                                                               
            .                                                                    
                                                                                 
-       UT-LOOKUP-MOCK.                                                          
+       CC-SET-PARA-MOCK.                                                        
+           PERFORM CC-LOOKUP-MOCK                                               
+           IF CC-MOCK-FOUND                                                     
+               CONTINUE                                                         
+           ELSE                                                                 
+               ADD 1 TO CC-MOCK-COUNT                                           
+               SET CC-MOCK-IX TO CC-MOCK-COUNT                                  
+               MOVE CC-MOCK-FIND-PARA-NAME                                      
+                   TO CC-MOCK-PARA-NAME(CC-MOCK-IX)                             
+           END-IF                                                               
+           .                                                                    
+                                                                                
+       CC-LOOKUP-MOCK.                                                          
       *****************************************************************         
       * LOOK UP A MOCK SPECIFICATION.                                           
       *****************************************************************         
-           SET UT-MOCK-NOT-FOUND TO TRUE                                        
-           PERFORM VARYING UT-MOCK-IX FROM 1 BY 1                               
-               UNTIL UT-MOCK-IX IS GREATER THAN UT-MOCK-MAX                     
-                  OR UT-MOCK-FOUND                                              
+           SET CC-MOCK-NOT-FOUND TO TRUE                                        
+           PERFORM VARYING CC-MOCK-IX FROM 1 BY 1                               
+               UNTIL CC-MOCK-IX IS GREATER THAN CC-MOCK-MAX                     
+                  OR CC-MOCK-FOUND                                              
                EVALUATE TRUE                                                    
-                   WHEN UT-FIND-FILE-MOCK                                       
-                       IF UT-MOCK-FIND-FILENAME IS EQUAL TO                     
-                              UT-MOCK-FILENAME(UT-MOCK-IX)                      
-                       AND UT-MOCK-FIND-OPERATION IS EQUAL TO                   
-                              UT-MOCK-OPERATION(UT-MOCK-IX)                     
-                           SET UT-MOCK-FOUND TO TRUE                            
+                   WHEN CC-FIND-FILE-MOCK                                       
+                       IF CC-MOCK-FIND-FILENAME IS EQUAL TO                     
+                              CC-MOCK-FILENAME(CC-MOCK-IX)                      
+                       AND CC-MOCK-FIND-OPERATION IS EQUAL TO                   
+                              CC-MOCK-OPERATION(CC-MOCK-IX)                     
+                           SET CC-MOCK-FOUND TO TRUE                            
                            CONTINUE                                             
                        END-IF                                                   
-                   WHEN UT-FIND-CALL-MOCK                                       
-                       IF UT-MOCK-FIND-CALL-TOKENS IS EQUAL TO                  
-                              UT-MOCK-CALL-TOKENS-KEY(UT-MOCK-IX)               
-                           SET UT-MOCK-FOUND TO TRUE                            
+                   WHEN CC-FIND-CALL-MOCK                                       
+                       IF CC-MOCK-FIND-CALL-TOKENS IS EQUAL TO                  
+                              CC-MOCK-CALL-TOKENS-KEY(CC-MOCK-IX)               
+                           SET CC-MOCK-FOUND TO TRUE                            
                            CONTINUE                                             
                        END-IF                                                   
-                   WHEN UT-FIND-CICS-MOCK                                       
-                       IF UT-MOCK-FIND-CICS-KEYWORDS IS EQUAL TO                
-                              UT-MOCK-CICS-KEYWORDS-KEY(UT-MOCK-IX)             
-                           SET UT-MOCK-FOUND TO TRUE                            
+                   WHEN CC-FIND-CICS-MOCK                                       
+                       IF CC-MOCK-FIND-CICS-KEYWORDS IS EQUAL TO                
+                              CC-MOCK-CICS-KEYWORDS-KEY(CC-MOCK-IX)             
+                           SET CC-MOCK-FOUND TO TRUE                            
                            CONTINUE                                             
                        END-IF                                                   
-                   WHEN UT-FIND-PARA-MOCK                                       
-                       IF UT-MOCK-FIND-PARA-NAME IS EQUAL TO                    
-                              UT-MOCK-PARA-NAME(UT-MOCK-IX)                     
-                           SET UT-MOCK-FOUND TO TRUE                            
+                   WHEN CC-FIND-PARA-MOCK                                       
+                       IF CC-MOCK-FIND-PARA-NAME IS EQUAL TO                    
+                              CC-MOCK-PARA-NAME(CC-MOCK-IX)                     
+                           SET CC-MOCK-FOUND TO TRUE                            
                            CONTINUE                                             
                        END-IF                                                   
                END-EVALUATE                                                     
            END-PERFORM                                                          
-           SET UT-MOCK-IX DOWN BY 1                                             
+           SET CC-MOCK-IX DOWN BY 1                                             
            .                                                                    
                                                                                 
-       UT-LOOKUP-FILE.                                                          
+       CC-LOOKUP-FILE.                                                          
       *****************************************************************         
       * LOOK UP A FILE SPECIFICATION.                                           
       *****************************************************************         
-           PERFORM VARYING UT-FILE-IX FROM 1 BY 1                               
-               UNTIL UT-FILE-IX GREATER UT-FILE-MAX                             
-               OR UT-INTERNAL-FILENAME(UT-FILE-IX)                              
-                EQUAL UT-MOCK-FIND-FILENAME                                     
+           PERFORM VARYING CC-FILE-IX FROM 1 BY 1                               
+               UNTIL CC-FILE-IX GREATER CC-FILE-MAX                             
+               OR CC-INTERNAL-FILENAME(CC-FILE-IX)                              
+                EQUAL CC-MOCK-FIND-FILENAME                                     
              CONTINUE                                                           
            END-PERFORM                                                          
-           SET UT-FILE-IX DOWN BY 1                                             
+           SET CC-FILE-IX DOWN BY 1                                             
            .                                                                    
-       UT-BEFORE.                                                               
+       CC-BEFORE.                                                               
            .                                                                    
-       UT-AFTER.                                                                
+       CC-AFTER.                                                                
            .                                                                    
-       UT-INITIALIZE.                                                           
-           MOVE SPACES TO UT-FILE-INFORMATION                                   
+       CC-INITIALIZE.                                                           
+           MOVE SPACES TO CC-FILE-INFORMATION                                   
                                                                                 
            .                                                                    
-       UT-END.                                                                  
+       CC-END.                                                                  
                                                                                 
       * ZUTZCPD.CPY END                                                         
                                                                                 

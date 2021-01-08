@@ -70,8 +70,7 @@ public class Generator implements Constants, StringHelper {
     private String fieldNameForExpect;
     private String expectedValueToCompare;
 
-    //TODO: Use prefix specified in config file
-    private static final String testCodePrefix = "UT-";
+    private String testCodePrefix;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_UT_INITIALIZE = "           PERFORM UT-INITIALIZE";
@@ -157,6 +156,7 @@ public class Generator implements Constants, StringHelper {
         emptyTestSuite = true;
         initializeCobolStatement();
         copybookDirectoryName = setCopybookDirectoryName(config);
+        testCodePrefix = config.getString(COBOLCHECK_PREFIX_CONFIG_KEY, DEFAULT_COBOLCHECK_PREFIX);
     }
 
     /**
@@ -264,6 +264,11 @@ public class Generator implements Constants, StringHelper {
         BufferedReader secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
         String secondarySourceLine = EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
+
+            //TODO: Replace placeholder with testCodePrefix before writing the line
+            secondarySourceLine = secondarySourceLine
+                    .replaceAll(TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
+
             testSourceOut.write(fixedLength(secondarySourceLine));
         }
         secondarySourceBufferedReader.close();
@@ -605,11 +610,11 @@ public class Generator implements Constants, StringHelper {
     }
 
     private String setCopybookDirectoryName(Config config) {
-        return config.getString("resources.directory")
+        return config.getString(RESOURCES_DIRECTORY_CONFIG_KEY)
                 + Constants.FILE_SEPARATOR
                 + this.getClass().getPackageName().replace(".", "/")
                 + Constants.FILE_SEPARATOR
-                + config.getString("cobolcheck.copybook.directory")
+                + config.getString(COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY)
                 + Constants.FILE_SEPARATOR;
     }
 

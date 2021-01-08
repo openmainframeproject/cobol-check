@@ -63,6 +63,11 @@ public interface Constants {
     String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
     String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
     String PROCESS_CONFIG_KEY = ".process";
+    String COBOLCHECK_PREFIX_CONFIG_KEY = "cobolcheck.prefix";
+    String DEFAULT_COBOLCHECK_PREFIX = "UT-";
+    String TEST_CODE_PREFIX_PLACEHOLDER = "==UT==";
+    String RESOURCES_DIRECTORY_CONFIG_KEY = "resources.directory";
+    String COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY = "cobolcheck.copybook.directory";
 
     // Command line option key values
     String TESTS_OPTION = "tests";

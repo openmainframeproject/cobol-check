@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneratorCodeInsertionTest implements Constants {
@@ -28,6 +29,12 @@ public class GeneratorCodeInsertionTest implements Constants {
     @BeforeEach
     public void commonSetup() {
         testSourceOut = new StringWriter();
+        when(config.getString(RESOURCES_DIRECTORY_CONFIG_KEY))
+                .thenReturn("src/test/resources");
+        when(config.getString(COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY))
+                .thenReturn("copybooks");
+        when(config.getString(COBOLCHECK_PREFIX_CONFIG_KEY, DEFAULT_COBOLCHECK_PREFIX))
+                .thenReturn("UT-");
         generator = new Generator(messages,tokenExtractor, keywordExtractor, config);
     }
 
