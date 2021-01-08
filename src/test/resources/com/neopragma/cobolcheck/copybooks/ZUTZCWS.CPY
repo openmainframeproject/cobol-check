@@ -1,5 +1,5 @@
       * ZUTZCWS.CPY
-       01  FILLER PIC X(16) VALUE '******* ZUTZCPC'.
+       01  FILLER PIC X(16) VALUE '******* COBCHECK'.
        01  FILLER PIC X(16) VALUE '******* 0.1.0'.
        01  ==UT==FIELDS.
            05  ==UT==CONST-ES               PIC X(02) VALUE 'ES'.
