@@ -52,6 +52,7 @@ public interface Constants {
     String COBOL_TOKEN = "cobol-token";
     String BOOLEAN_VALUE = "boolean-value";
     String REPLACING_KEYWORD = "REPLACING";
+    String BY_KEYWORD = "BY";
 
     // Configuration key values
     String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
@@ -59,6 +60,8 @@ public interface Constants {
     String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
     String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
+    String APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY = "application.copybook.filename.suffix";
+    String DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX = ".CBL";
     String TEST_PROGRAM_SUFFIX_CONFIG_KEY = "cobolcheck.test.program.suffix";
     String DEFAULT_TEST_PROGRAM_SUFFIX = "T.CBL";
     String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";

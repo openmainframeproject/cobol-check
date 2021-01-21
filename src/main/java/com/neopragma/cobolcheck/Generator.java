@@ -62,7 +62,6 @@ public class Generator implements Constants, StringHelper {
     private static final String FD_TOKEN = "FD";
     private static final String LEVEL_01_TOKEN = "01";
     private static final String COPY_TOKEN = "COPY";
-    private static final String SECTION_TOKEN = "SECTION";
 
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
@@ -493,9 +492,12 @@ public class Generator implements Constants, StringHelper {
         // 2nd entry is the name of the copybook. The value might end with a period.
         String copybookName = copyTokens.get(1).replace(PERIOD, EMPTY_STRING);
 
-        // 3rd entry might be the word "REPLACING"
-        if (copyTokens.size() > 2) {
-            if (copyTokens.get(2).equalsIgnoreCase(REPLACING_KEYWORD)) {
+        // 3rd entry might be the word "REPLACING" followed by "x" "BY" "y"
+        StringTuple replacingValues = new StringTuple(null, null);
+        if (copyTokens.size() > 4) {
+            if (copyTokens.get(2).equalsIgnoreCase(REPLACING_KEYWORD)
+            || copyTokens.get(4).equalsIgnoreCase(BY_KEYWORD)) {
+                replacingValues = new StringTuple(copyTokens.get(3), copyTokens.get(5));
             }
         }
 
@@ -503,7 +505,13 @@ public class Generator implements Constants, StringHelper {
         StringWriter expandedLines = new StringWriter();
         CopybookExpander copybookExpander = new CopybookExpander(config, messages);
         try {
-            expandedLines = (StringWriter) copybookExpander.expand(expandedLines, copybookName, ".CBL");
+            expandedLines = (StringWriter) copybookExpander.expand(
+                    expandedLines,
+                    copybookName,
+                    PERIOD + config.getString(
+                            APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY,
+                            DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX),
+                    replacingValues);
             BufferedReader reader = new BufferedReader(new StringReader(expandedLines.toString()));
             String line = reader.readLine();
             while(line != null) {
@@ -513,9 +521,6 @@ public class Generator implements Constants, StringHelper {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-
-
-
         return copyLines;
     }
 
