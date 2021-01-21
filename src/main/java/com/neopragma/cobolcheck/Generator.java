@@ -57,6 +57,9 @@ public class Generator implements Constants, StringHelper {
     private static final String FILE_STATUS_TOKEN = "FILE STATUS";
     private static final String IS_TOKEN = "IS";
     private static final String FD_TOKEN = "FD";
+    private static final String LEVEL_01_TOKEN = "01";
+    private static final String COPY_TOKEN = "COPY";
+    private static final String SECTION_TOKEN = "SECTION";
 
     private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
     private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
@@ -90,6 +93,8 @@ public class Generator implements Constants, StringHelper {
     private String fieldNameForExpect;
     private String expectedValueToCompare;
     private boolean expectFileStatusFieldName;
+    private boolean processingFD;
+    private boolean processing01ItemUnderFD;
 
 
     private String testCodePrefix;
@@ -360,15 +365,64 @@ public class Generator implements Constants, StringHelper {
                 // Other source statements can be skipped.
                 // The record layouts need to be saved and inserted into Working-Storage.
 
-                // Step 1: Skip comment lines
-                // Step 2: Skip lines until first 01 or Copy statement
+                // Step 1: [OK 21-01-21] Skip comment lines
+                // Step 2: [OK 21-01-21] Skip lines until first 01 statement
+                // Step 3: Skip lines until first Copy statement when there is no 01 statement
                 // Step 3: Handle 01 level item coded after FD, no Copy.
                 // Step 4: Handle 01 level item coded after FD followed by Copy.
                 // Step 5: Handle Copy containing the 01 level definition coded after FD.
+                // Wow! This needs refactoring!
 
                 if (sourceLine.charAt(6) != '*') {
-                    fileSectionStatements.add(sourceLine);
+                    if (sourceLineContains(tokens, FD_TOKEN)) {
+                        processingFD = true;
+                    }
+                    if (processingFD) {
+                        if (sourceLineContains(tokens, LEVEL_01_TOKEN)) {
+                            processing01ItemUnderFD = true;
+                        }
+                        if (processing01ItemUnderFD) {
+                            if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)
+                            || sourceLineContains(tokens, LOCAL_STORAGE_SECTION)
+                            || sourceLineContains(tokens, LINKAGE_SECTION)
+                            || sourceLineContains(tokens, PROCEDURE_DIVISION)) {
+                                processingFD = false;
+                                processing01ItemUnderFD = false;
+                            } else {
+                                if (sourceLineContains(tokens, FD_TOKEN)) {
+                                    processing01ItemUnderFD = false;
+                                } else {
+                                    fileSectionStatements.add(sourceLine);
+                                }
+                            }
+                        }
+                    }
                 }
+
+
+
+
+//                            } else {
+//                                if (processing01ItemUnderFD) {
+//                                    if (sourceLineContains(tokens, FD_TOKEN)) {
+//                                        processing01ItemUnderFD = false;
+//                                    } else {
+//                                        if (sourceLineContains(tokens, SECTION_TOKEN)) {
+//
+//                                            System.out.println("===> recognized SECTION token <===");
+//
+//                                            processingFD = false;
+//                                        } else {
+//                                            fileSectionStatements.add(sourceLine);
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+
+
 
             }
             // Don't echo these lines to the test source program
