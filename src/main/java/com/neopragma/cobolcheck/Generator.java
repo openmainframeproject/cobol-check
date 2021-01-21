@@ -31,6 +31,7 @@ import java.util.*;
  */
 public class Generator implements Constants, StringHelper {
     private final Messages messages;
+    private final Config config;
     private final TokenExtractor tokenExtractor;
     private final KeywordExtractor keywordExtractor;
 
@@ -41,6 +42,8 @@ public class Generator implements Constants, StringHelper {
     private List<String> fileSectionStatements;
     // Internal file identifiers and status field names
     private Map<String, String> fileIdentifiersAndStatuses;
+    // Toke from COPY statements that may span multiple lines
+    private List<String> copyTokens;
 
     private static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
     private static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
@@ -60,6 +63,10 @@ public class Generator implements Constants, StringHelper {
     private static final String LEVEL_01_TOKEN = "01";
     private static final String COPY_TOKEN = "COPY";
     private static final String SECTION_TOKEN = "SECTION";
+
+    private static final int minimumMeaningfulSourceLineLength = 7;
+    private static final int commentIndicatorOffset = 6;
+    private static final char commentIndicator = '*';
 
     private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
     private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
@@ -95,6 +102,7 @@ public class Generator implements Constants, StringHelper {
     private boolean expectFileStatusFieldName;
     private boolean processingFD;
     private boolean processing01ItemUnderFD;
+    private boolean processingCopyStatement;
 
 
     private String testCodePrefix;
@@ -177,6 +185,7 @@ public class Generator implements Constants, StringHelper {
             TokenExtractor tokenExtractor,
             KeywordExtractor keywordExtractor,
             Config config) {
+        this.config = config;
         this.messages = messages;
         this.tokenExtractor = tokenExtractor;
         this.keywordExtractor = keywordExtractor;
@@ -242,20 +251,6 @@ public class Generator implements Constants, StringHelper {
         if (emptyInputStream) {
             throw new PossibleInternalLogicErrorException(messages.get("ERR007"));
         }
-
-
-        System.out.println("File Status values saved:");
-        for (String selectName : fileIdentifiersAndStatuses.keySet()) {
-            System.out.println("  key: <" + selectName + ">, value: <"
-                    + fileIdentifiersAndStatuses.get(selectName) + ">");
-        }
-
-        System.out.println("File Section statements saved:");
-        for (String sourceStatement : fileSectionStatements) {
-            System.out.println(sourceStatement);
-        }
-
-
         return testSourceOut;
     }
 
@@ -357,76 +352,7 @@ public class Generator implements Constants, StringHelper {
         }
 
         if (readingFileSection) {
-            if (sourceLine.length() > 6) {
-                // 21-01-21 state of the code is:
-                // Every source statement under File Section is copied here as-is.
-                // Desired state:
-                // Record layouts are captured, including expanding copybooks,
-                // Other source statements can be skipped.
-                // The record layouts need to be saved and inserted into Working-Storage.
-
-                // Step 1: [OK 21-01-21] Skip comment lines
-                // Step 2: [OK 21-01-21] Skip lines until first 01 statement
-                // Step 3: Skip lines until first Copy statement when there is no 01 statement
-                // Step 3: Handle 01 level item coded after FD, no Copy.
-                // Step 4: Handle 01 level item coded after FD followed by Copy.
-                // Step 5: Handle Copy containing the 01 level definition coded after FD.
-                // Wow! This needs refactoring!
-
-                if (sourceLine.charAt(6) != '*') {
-                    if (sourceLineContains(tokens, FD_TOKEN)) {
-                        processingFD = true;
-                    }
-                    if (processingFD) {
-                        if (sourceLineContains(tokens, LEVEL_01_TOKEN)) {
-                            processing01ItemUnderFD = true;
-                        }
-                        if (processing01ItemUnderFD) {
-                            if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)
-                            || sourceLineContains(tokens, LOCAL_STORAGE_SECTION)
-                            || sourceLineContains(tokens, LINKAGE_SECTION)
-                            || sourceLineContains(tokens, PROCEDURE_DIVISION)) {
-                                processingFD = false;
-                                processing01ItemUnderFD = false;
-                            } else {
-                                if (sourceLineContains(tokens, FD_TOKEN)) {
-                                    processing01ItemUnderFD = false;
-                                } else {
-                                    fileSectionStatements.add(sourceLine);
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-
-
-//                            } else {
-//                                if (processing01ItemUnderFD) {
-//                                    if (sourceLineContains(tokens, FD_TOKEN)) {
-//                                        processing01ItemUnderFD = false;
-//                                    } else {
-//                                        if (sourceLineContains(tokens, SECTION_TOKEN)) {
-//
-//                                            System.out.println("===> recognized SECTION token <===");
-//
-//                                            processingFD = false;
-//                                        } else {
-//                                            fileSectionStatements.add(sourceLine);
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-
-
-
-            }
-            // Don't echo these lines to the test source program
-            skipThisLine = true;
+            processFileSectionSource(tokens, sourceLine);
         }
 
         if (sourceLineContains(tokens, DATA_DIVISION)) {
@@ -463,6 +389,143 @@ public class Generator implements Constants, StringHelper {
         if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
             insertProcedureDivisionTestCode(testSuiteReader, testSourceOut);
         }
+    }
+
+    /**
+     * Called for each source line read from the program under test while
+     * processing the File Section of the Data Division.
+     *
+     * @param tokens - tokens extracted from source line.
+     * @param sourceLine - original source line.
+     */
+    void processFileSectionSource(List<String> tokens, String sourceLine) {
+        if (isTooShortToBeMeaningful(sourceLine)) {
+            skipThisLine = true;
+            return;
+        }
+        if (isComment(sourceLine)) {
+            skipThisLine = true;
+            return;
+        }
+        if (sourceLineContains(tokens, FD_TOKEN)) {
+            processingFD = true;
+        }
+        if (processingFD) {
+            if (sourceLineContains(tokens, LEVEL_01_TOKEN)) {
+                processing01ItemUnderFD = true;
+                processingCopyStatement = false;
+            } else {
+                if (sourceLineContains(tokens, COPY_TOKEN)) {
+                    // Collect the tokens that constitute the Copy statement
+                    copyTokens = accumulateTokensFromCopyStatement(copyTokens, sourceLine);
+                    if (sourceLine.trim().endsWith(".")) {
+                        // COPY statement is complete on this line
+                        fileSectionStatements.addAll(collectExpandedCopyStatements(copyTokens));
+                        processingCopyStatement = false;
+                    } else {
+                        // COPY statement is coded across multiple lines
+                        processingCopyStatement = true;
+                    }
+                    skipThisLine = true;
+                    return;
+                }
+            }
+            if (processing01ItemUnderFD) {
+                if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)
+                        || sourceLineContains(tokens, LOCAL_STORAGE_SECTION)
+                        || sourceLineContains(tokens, LINKAGE_SECTION)
+                        || sourceLineContains(tokens, PROCEDURE_DIVISION)) {
+                    processingFD = false;
+                    processing01ItemUnderFD = false;
+                } else {
+                    if (sourceLineContains(tokens, FD_TOKEN)) {
+                        processing01ItemUnderFD = false;
+                        skipThisLine = true;
+                        return;
+                    } else {
+                        if (processingCopyStatement) {
+                            List<String> lineTokens = new ArrayList<>(List.of(sourceLine.trim().split(SPACE)));
+                            copyTokens = accumulateTokensFromCopyStatement(copyTokens, sourceLine);
+                            if (sourceLine.trim().endsWith(".")) {
+                                // Multi-line COPY statement ends on this line
+                                fileSectionStatements.addAll(collectExpandedCopyStatements(copyTokens));
+                                processingCopyStatement = false;
+                            }
+                            skipThisLine = true;
+                            return;
+                        }
+                    }
+                    // Record layout statements coded directly and not in a copybook
+                    fileSectionStatements.add(sourceLine);
+                }
+            }
+        }
+        // Don't echo these lines to the test source program
+        skipThisLine = true;
+    }
+
+
+    List<String> accumulateTokensFromCopyStatement(List<String> copyTokens, String sourceLine) {
+        if (copyTokens == null) {
+            copyTokens = new ArrayList<>();
+        }
+        String[] lineTokens = sourceLine.trim().split(SPACE);
+        for (String lineToken : lineTokens) {
+            if (lineToken != null && !lineToken.equals(EMPTY_STRING)) {
+                copyTokens.add(lineToken);
+            }
+        }
+        return copyTokens;
+    }
+
+    List<String> collectExpandedCopyStatements(List<String> copyTokens) {
+        for (int i = 0 ; i < copyTokens.size() ; i++) {
+            if (copyTokens.get(i).equals(EMPTY_STRING)) {
+                copyTokens.remove(i);
+            }
+        }
+        if (copyTokens.isEmpty()
+                || !copyTokens.get(0).equalsIgnoreCase(COPY_TOKEN)
+                || copyTokens.size() < 2) {
+            throw new PossibleInternalLogicErrorException(messages.get("ERR024"));
+        }
+        List<String> copyLines = new ArrayList<>();
+
+        // 2nd entry is the name of the copybook. The value might end with a period.
+        String copybookName = copyTokens.get(1).replace(PERIOD, EMPTY_STRING);
+
+        // 3rd entry might be the word "REPLACING"
+        if (copyTokens.size() > 2) {
+            if (copyTokens.get(2).equalsIgnoreCase(REPLACING_KEYWORD)) {
+            }
+        }
+
+        //crude implementation
+        StringWriter expandedLines = new StringWriter();
+        CopybookExpander copybookExpander = new CopybookExpander(config, messages);
+        try {
+            expandedLines = (StringWriter) copybookExpander.expand(expandedLines, copybookName, ".CBL");
+            BufferedReader reader = new BufferedReader(new StringReader(expandedLines.toString()));
+            String line = reader.readLine();
+            while(line != null) {
+                copyLines.add(line);
+                line = reader.readLine();
+            }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+
+
+        return copyLines;
+    }
+
+    private boolean isComment(String sourceLine) {
+        return sourceLine.charAt(commentIndicatorOffset) == commentIndicator;
+    }
+
+    private boolean isTooShortToBeMeaningful(String sourceLine) {
+        return sourceLine == null || sourceLine.length() < minimumMeaningfulSourceLineLength;
     }
 
     private void insertWorkingStorageTestCode(Writer testSourceOut) throws IOException {

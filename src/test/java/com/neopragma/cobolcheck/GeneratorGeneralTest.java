@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,6 +90,27 @@ public class GeneratorGeneralTest implements Constants {
         Writer cobolOutWriter = new StringWriter();
         generator.writeCobolLine(originalText, cobolOutWriter);
         assertEquals(expectedLine1 + expectedLine2, cobolOutWriter.toString());
+    }
+
+    @Test
+    public void it_throws_when_copy_token_list_is_empty_for_copybook_expansion() {
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+                generator.collectExpandedCopyStatements(List.of()));
+        assertTrue(ex.getMessage().contains("ERR024:"));
+    }
+
+    @Test
+    public void it_throws_when_1st_token_in_copy_list_is_not_COPY() {
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+                generator.collectExpandedCopyStatements(List.of("foo", "bar")));
+        assertTrue(ex.getMessage().contains("ERR024:"));
+    }
+
+    @Test
+    public void it_throws_when_token_list_has_fewer_than_2_entries() {
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+                generator.collectExpandedCopyStatements(List.of("COPY")));
+        assertTrue(ex.getMessage().contains("ERR024:"));
     }
 
     private void loadInputData(String... lines) {

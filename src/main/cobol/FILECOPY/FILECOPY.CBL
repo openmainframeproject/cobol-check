@@ -26,14 +26,19 @@
            RECORDING MODE F
            DATA RECORD IS INPUT-RECORD.
       * Layout of an input record
-       01  INPUT-RECORD           PIC X(40).
+       01  INPUT-RECORD.
+           05  IN-FIELD-1         PIC X(10).
+           05  FILLER             PIC X(20).
+           05  IN-FIELD-2         PIC X(10).
       * This defines our output file
        FD  OUTPUT-FILE
            BLOCK CONTAINS 0 RECORDS
            RECORD CONTAINS 40 CHARACTERS
            RECORDING MODE F
            DATA RECORD IS OUTPUT-RECORD.
-       01  OUTPUT-RECORD           PIC X(40).
+       01  OUTPUT-RECORD.
+           COPY
+              OUTREC.
        WORKING-STORAGE SECTION.
        01  FILLER.
            05  INPUT-FILE-STATUS  PIC XX.

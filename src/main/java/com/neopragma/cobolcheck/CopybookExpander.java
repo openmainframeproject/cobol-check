@@ -66,7 +66,6 @@ public class CopybookExpander implements Constants, StringHelper {
                          String copybookFilename,
                          String copybookFilenameSuffix,
                          StringTuple... textReplacement) throws IOException {
-
         BufferedReader copybookReader
                 = new BufferedReader(new FileReader(
                         Path.of(pathToCopybooks
