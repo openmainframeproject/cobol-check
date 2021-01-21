@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.                                                 
-       PROGRAM-ID.  GREETING.                                                   
+       PROGRAM-ID.  FILECOPY.                                                   
       *****************************************************************         
-      * Trivial program to exercise CobolCheck.                                 
+      * Copy one sequential file to another.                                    
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
        INPUT-OUTPUT SECTION.                                                    
@@ -115,111 +115,21 @@
                                                                                 
       * ZUTZCWS.CPY END                                                         
        01  FILLER.                                                              
+           05  INPUT-FILE-STATUS  PIC XX.                                       
+           05  OUTPUT-FILE-STATUS PIC XX.                                       
            05  WS-COUNT           PIC S9(5) COMP-3.                             
-           05  FILLER             PIC X VALUE 'G'.                              
-               88  MESSAGE-IS-GREETING  VALUE 'G'.                              
-               88  MESSAGE-IS-FAREWELL  VALUE 'F'.                              
-       01  WS-FRIEND           PIC X(10) VALUE SPACES.                          
-       01  WS-GREETING.                                                         
-               10  FILLER          PIC X(07) VALUE 'Hello, '.                   
-               10  WS-USER-NAME    PIC X(06) VALUE SPACES.                      
-               10  FILLER          PIC X     VALUE '!'.                         
-       01  WS-FAREWELL.                                                         
-               10  FILLER          PIC X(15) VALUE 'See you later, '.           
-               10  WS-USER-NAME    PIC X(09) VALUE SPACES.                      
-               10  FILLER          PIC X     VALUE '!'.                         
        PROCEDURE DIVISION.                                                      
            PERFORM CC-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Greeting returns the appropriate message based on me        
-      -    "ssage type"                                                         
-           MOVE "When message type is greeting it returns 'Hello, World!        
-      -    "'"                                                                  
+           DISPLAY "Tests for a sequential file copy program"                   
+           MOVE "It blah blah blah"                                             
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            SET MESSAGE-IS-GREETING TO TRUE                                     
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO CC-ACTUAL                                        
-           MOVE "Hello, World     !"                                            
-               TO CC-EXPECTED                                                   
-           SET CC-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM CC-ASSERT-EQUAL                                              
-           PERFORM CC-AFTER                                                     
-           MOVE "try numerical compare"                                         
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            ADD 1 TO WS-COUNT                                                   
+            PERFORM 100-DONT-JUST-STAND-THERE                                   
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-COMPARE-NUMERIC TO TRUE                                       
            MOVE WS-COUNT TO CC-ACTUAL-NUMERIC                                   
-           MOVE 1 TO CC-EXPECTED-NUMERIC                                        
-           PERFORM CC-ASSERT-EQUAL                                              
-           PERFORM CC-AFTER                                                     
-           MOVE "try 88 level compare"                                          
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-COMPARE-88-LEVEL TO TRUE                                      
-           IF MESSAGE-IS-GREETING                                               
-               SET CC-ACTUAL-88-VALUE TO TRUE                                   
-               MOVE 'TRUE' TO CC-ACTUAL                                         
-           ELSE                                                                 
-               SET CC-ACTUAL-88-VALUE TO FALSE                                  
-               MOVE 'FALSE' TO CC-ACTUAL                                        
-           END-IF                                                               
-           SET CC-EXPECTED-88-VALUE TO FALSE                                    
-           IF CC-EXPECTED-88-VALUE                                              
-               MOVE 'TRUE' TO CC-EXPECTED                                       
-           ELSE                                                                 
-               MOVE 'FALSE' TO CC-EXPECTED                                      
-           END-IF                                                               
-           PERFORM CC-ASSERT-EQUAL                                              
-           PERFORM CC-AFTER                                                     
-           MOVE "When message type is farewell it returns See you later,        
-      -    " alligator!"                                                        
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            SET MESSAGE-IS-FAREWELL TO TRUE                                     
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO CC-ACTUAL                                        
-           MOVE "See you later, alligator!"                                     
-               TO CC-EXPECTED                                                   
-           SET CC-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM CC-ASSERT-EQUAL                                              
-           PERFORM CC-AFTER                                                     
-           DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Greeting includes the user name when it is provided"        
-           MOVE "When message type is greeting it returns Hello, James!"        
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            SET MESSAGE-IS-GREETING TO TRUE                                     
-            MOVE "James" TO WS-FRIEND                                           
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO CC-ACTUAL                                        
-           MOVE "Hello, James !"                                                
-               TO CC-EXPECTED                                                   
-           SET CC-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM CC-ASSERT-EQUAL                                              
-           PERFORM CC-AFTER                                                     
-           MOVE "When message type is farewell it returns Goodbye, James        
-      -    "!"                                                                  
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            SET MESSAGE-IS-FAREWELL TO TRUE                                     
-            MOVE "James" TO WS-FRIEND                                           
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO CC-ACTUAL                                        
-           MOVE "See you later, James!"                                         
-               TO CC-EXPECTED                                                   
-           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           MOVE 5 TO CC-EXPECTED-NUMERIC                                        
            PERFORM CC-ASSERT-EQUAL                                              
            PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
@@ -537,23 +447,9 @@
                                                                                 
       * ZUTZCPD.CPY END                                                         
                                                                                 
-           ACCEPT WS-FRIEND.                                                    
                                                                                 
-       2000-SPEAK.                                                              
-           IF MESSAGE-IS-GREETING                                               
-               IF WS-FRIEND EQUALS SPACES                                       
-                   MOVE 'World' TO WS-USER-NAME OF WS-GREETING                  
-               ELSE                                                             
-                   MOVE WS-FRIEND TO WS-USER-NAME OF WS-GREETING                
-               END-IF                                                           
-           END-IF                                                               
-           IF MESSAGE-IS-FAREWELL                                               
-               IF WS-FRIEND EQUALS SPACES                                       
-                   MOVE 'alligator!' TO WS-USER-NAME OF WS-FAREWELL             
-               ELSE                                                             
-                   MOVE WS-FRIEND TO WS-USER-NAME OF WS-FAREWELL                
-               END-IF                                                           
-           END-IF                                                               
+       100-Dont-Just-Stand-There.                                               
+           move 5 to ws-count                                                   
            .                                                                    
                                                                                 
        9999-END.                                                                

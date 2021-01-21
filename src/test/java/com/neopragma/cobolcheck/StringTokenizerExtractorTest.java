@@ -97,6 +97,21 @@ public class StringTokenizerExtractorTest implements Constants {
                 extractor.extractTokensFrom(makeCobolSourceLineContaining(inputValue)).get(0));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "       FILE CONTROL.,FILE CONTROL",
+            "       File Control,FILE CONTROL",
+            "       FILE STATUS,FILE STATUS",
+            "       File Status,FILE STATUS",
+            "       FILE SECTION.,FILE SECTION",
+            "       File Section.,FILE SECTION"
+    })
+    public void it_distinguishes_FILE_CONTROL_and_FILE_STATUS_and_FILE_SECTION(
+            String inputValue, String expectedValue) {
+        assertEquals(expectedValue,
+                extractor.extractTokensFrom(makeCobolSourceLineContaining(inputValue)).get(0));
+    }
+
     private String makeCobolSourceLineContaining(String text) {
         return String.format("%73s", text).substring(6).toUpperCase();
     }

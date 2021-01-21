@@ -5,7 +5,7 @@
            SET MESSAGE-IS-GREETING TO TRUE
            MOVE "James" TO WS-FRIEND
            PERFORM 2000-SPEAK
-           EXPECT WS-GREETING TO BE "Hello, James!"
+           EXPECT WS-GREETING TO BE "Hello, James !"
 
            TESTCASE "When message type is farewell it returns Goodbye, James!"
            SET MESSAGE-IS-FAREWELL TO TRUE

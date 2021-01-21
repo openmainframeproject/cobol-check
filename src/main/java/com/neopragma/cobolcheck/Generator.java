@@ -35,15 +35,28 @@ public class Generator implements Constants, StringHelper {
     private final KeywordExtractor keywordExtractor;
 
     private final State state = new State();
+    // All lines from original Environment Division / Input-Output Section / File Control
+    private List<String> fileControlStatements;
+    // All lines from original Data Division / File Section
+    private List<String> fileSectionStatements;
+    // Internal file identifiers and status field names
+    private Map<String, String> fileIdentifiersAndStatuses;
 
     private static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
     private static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
+    private static final String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
+    private static final String INPUT_OUTPUT_SECTION = "INPUT-OUTPUT SECTION";
+    private static final String FILE_CONTROL = "FILE-CONTROL";
     private static final String DATA_DIVISION = "DATA DIVISION";
     private static final String PROCEDURE_DIVISION = "PROCEDURE DIVISION";
     private static final String FILE_SECTION = "FILE SECTION";
     private static final String LOCAL_STORAGE_SECTION = "LOCAL-STORAGE SECTION";
     private static final String LINKAGE_SECTION = "LINKAGE SECTION";
     private static final String WORKING_STORAGE_SECTION = "WORKING-STORAGE SECTION";
+    private static final String SELECT_TOKEN = "SELECT";
+    private static final String FILE_STATUS_TOKEN = "FILE STATUS";
+    private static final String IS_TOKEN = "IS";
+    private static final String FD_TOKEN = "FD";
 
     private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
     private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
@@ -57,6 +70,10 @@ public class Generator implements Constants, StringHelper {
     private String currentTestSuiteName = EMPTY_STRING;
     private String currentTestCaseName = EMPTY_STRING;
 
+    // used while processing SELECT statements in the program under test
+    String fileIdentifier = EMPTY_STRING;
+    boolean expectFileIdentifier;
+
     private List<String> testSuiteTokens;
     private boolean emptyTestSuite;
     private boolean cobolStatementInProgress;
@@ -67,13 +84,19 @@ public class Generator implements Constants, StringHelper {
     private boolean boolean88LevelCompare;
     private boolean expectTestsuiteName;
     private boolean expectTestcaseName;
+    private boolean readingFileControl;
+    private boolean readingFileSection;
+    private boolean skipThisLine;
     private String fieldNameForExpect;
     private String expectedValueToCompare;
+    private boolean expectFileStatusFieldName;
+
 
     private String testCodePrefix;
 
     // Lines inserted into the test program
-    private static final String COBOL_PERFORM_UT_INITIALIZE = "           PERFORM UT-INITIALIZE";
+    private static final String COBOL_PERFORM_UT_INITIALIZE =
+            "           PERFORM %sINITIALIZE";
     private static final String COBOL_DISPLAY_SPACE =
             "           DISPLAY SPACE                                                        ";
     private static final String COBOL_DISPLAY_TESTSUITE =
@@ -157,6 +180,7 @@ public class Generator implements Constants, StringHelper {
         initializeCobolStatement();
         copybookDirectoryName = setCopybookDirectoryName(config);
         testCodePrefix = config.getString(COBOLCHECK_PREFIX_CONFIG_KEY, DEFAULT_COBOLCHECK_PREFIX);
+        fileIdentifiersAndStatuses = new HashMap<>();
     }
 
     /**
@@ -192,10 +216,15 @@ public class Generator implements Constants, StringHelper {
                 emptyInputStream = false;
                 sourceLine = fixedLength(sourceLine);
                 List<String> tokens = tokenExtractor.extractTokensFrom(sourceLine);
-                processingBeforeEchoingTheSourceLineToTheOutput(
+
+                processingBeforeEchoingSourceLineToOutput(
                         tokens, sourceLine, cobolSourceInReader, testSourceOut);
-                testSourceOut.write(sourceLine);
-                processingAfterEchoingTheSourceLineToTheOutput(
+
+                if (!skipThisLine) {
+                    testSourceOut.write(sourceLine);
+                }
+
+                processingAfterEchoingSourceLineToOutput(
                         tokens, sourceLine, testSuiteReader, cobolSourceInReader, testSourceOut);
             }
             cobolSourceInReader.close();
@@ -208,16 +237,149 @@ public class Generator implements Constants, StringHelper {
         if (emptyInputStream) {
             throw new PossibleInternalLogicErrorException(messages.get("ERR007"));
         }
+
+
+        System.out.println("File Status values saved:");
+        for (String selectName : fileIdentifiersAndStatuses.keySet()) {
+            System.out.println("  key: <" + selectName + ">, value: <"
+                    + fileIdentifiersAndStatuses.get(selectName) + ">");
+        }
+
+        System.out.println("File Section statements saved:");
+        for (String sourceStatement : fileSectionStatements) {
+            System.out.println(sourceStatement);
+        }
+
+
         return testSourceOut;
     }
 
-    private void processingBeforeEchoingTheSourceLineToTheOutput(
+    private void entering(String partOfProgram) {
+        state.flags.get(partOfProgram).set();
+    }
+
+    private void processingBeforeEchoingSourceLineToOutput(
             List<String> tokens,
             String sourceLine,
             Reader reader,
             Writer testSourceOut) throws IOException {
 
-        if (sourceLineContains(tokens, DATA_DIVISION)) entering(DATA_DIVISION);
+
+        System.out.println("just read sourceLine: <" + sourceLine + ">");
+
+        skipThisLine = false;
+
+        if (state.flags.get(FILE_CONTROL).isSet()) {
+            if (expectFileStatusFieldName) {
+                if (tokens.size() > 0) {
+                    fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(0));
+                    expectFileStatusFieldName = false;
+                }
+            }
+            if (sourceLineContains(tokens, FILE_STATUS_TOKEN)) {
+                // token sequence will be FILE STATUS [IS] FIELDNAME.
+                // Same line or next line.
+                // This will pertain to the current value of fileIdentifier
+                // which was picked up when the last SELECT token was recognized.
+
+                if (tokens.size() > 2) {
+                    if (tokens.get(1).equalsIgnoreCase(IS_TOKEN)) {
+                        fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(2));
+                    }
+                } else {
+                    if (tokens.size() > 1) {
+
+                        if (tokens.get(1).equalsIgnoreCase(IS_TOKEN)) {
+                            expectFileStatusFieldName = true;
+                        } else {
+                            fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(1));
+                        }
+                    } else {
+                        expectFileStatusFieldName = true;
+                    }
+                }
+            }
+        }
+        if (expectFileIdentifier) {
+            if (tokens.size() > 0) {
+                fileIdentifier = tokens.get(0);
+                fileIdentifiersAndStatuses.put(fileIdentifier, EMPTY_STRING);
+                expectFileIdentifier = false;
+            }
+        }
+
+        if (sourceLineContains(tokens, ENVIRONMENT_DIVISION)) entering(ENVIRONMENT_DIVISION);
+
+        if (sourceLineContains(tokens, CONFIGURATION_SECTION)) {
+            entering(CONFIGURATION_SECTION);
+            readingFileControl = false;
+            skipThisLine = false;
+        }
+        if (sourceLineContains(tokens, INPUT_OUTPUT_SECTION)) entering(INPUT_OUTPUT_SECTION);
+
+        if (sourceLineContains(tokens, FILE_CONTROL)) {
+            entering(FILE_CONTROL);
+            readingFileControl = true;
+            fileControlStatements = new ArrayList<>();
+        }
+
+        if (readingFileControl) {
+            if (sourceLine.length() > 6) {
+                // Store source line from File Control for later analysis
+                fileControlStatements.add(sourceLine);
+            }
+            if (sourceLineContains(tokens, SELECT_TOKEN)) {
+                // SELECT will be the first token on this line
+                // internal file identifier will be the second token on this line
+                // or the first token on the next line
+
+                fileIdentifier = EMPTY_STRING;
+                if (tokens.size() > 1) {
+                     fileIdentifier = tokens.get(1);
+                     fileIdentifiersAndStatuses.put(fileIdentifier, EMPTY_STRING);
+                } else {
+                    expectFileIdentifier = true;
+                }
+            }
+            // Don't echo to the test source program
+            skipThisLine = true;
+        }
+
+        if (sourceLineContains(tokens, FILE_SECTION)) {
+            entering(FILE_SECTION);
+            readingFileSection = true;
+            fileSectionStatements = new ArrayList<>();
+        }
+
+        if (readingFileSection) {
+            if (sourceLine.length() > 6) {
+                // 21-01-21 state of the code is:
+                // Every source statement under File Section is copied here as-is.
+                // Desired state:
+                // Record layouts are captured, including expanding copybooks,
+                // Other source statements can be skipped.
+                // The record layouts need to be saved and inserted into Working-Storage.
+
+                // Step 1: Skip comment lines
+                // Step 2: Skip lines until first 01 or Copy statement
+                // Step 3: Handle 01 level item coded after FD, no Copy.
+                // Step 4: Handle 01 level item coded after FD followed by Copy.
+                // Step 5: Handle Copy containing the 01 level definition coded after FD.
+
+                if (sourceLine.charAt(6) != '*') {
+                    fileSectionStatements.add(sourceLine);
+                }
+
+            }
+            // Don't echo these lines to the test source program
+            skipThisLine = true;
+        }
+
+        if (sourceLineContains(tokens, DATA_DIVISION)) {
+            entering(DATA_DIVISION);
+            skipThisLine = false;
+            readingFileControl = false;
+        }
 
         if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
             entering(PROCEDURE_DIVISION);
@@ -226,10 +388,14 @@ public class Generator implements Constants, StringHelper {
                 insertWorkingStorageTestCode(testSourceOut);
             }
         }
-        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) entering(WORKING_STORAGE_SECTION);
+        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) {
+            entering(WORKING_STORAGE_SECTION);
+            skipThisLine = false;
+            readingFileSection = false;
+        }
     }
 
-    private void processingAfterEchoingTheSourceLineToTheOutput(
+    private void processingAfterEchoingSourceLineToOutput(
             List<String> tokens,
             String sourceLine,
             BufferedReader testSuiteReader,
@@ -254,7 +420,7 @@ public class Generator implements Constants, StringHelper {
     private void insertProcedureDivisionTestCode(
             BufferedReader testSuiteReader,
             Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(COBOL_PERFORM_UT_INITIALIZE));
+        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_UT_INITIALIZE, testCodePrefix)));
         parseTestSuite(testSuiteReader, testSourceOut);
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
@@ -264,11 +430,8 @@ public class Generator implements Constants, StringHelper {
         BufferedReader secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
         String secondarySourceLine = EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
-
-            //TODO: Replace placeholder with testCodePrefix before writing the line
             secondarySourceLine = secondarySourceLine
                     .replaceAll(TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
-
             testSourceOut.write(fixedLength(secondarySourceLine));
         }
         secondarySourceBufferedReader.close();
@@ -598,15 +761,11 @@ public class Generator implements Constants, StringHelper {
     }
 
     private boolean sourceLineContains(List<String> tokens, String tokenValue) {
-        return tokens.size() > 0 && tokens.contains(tokenValue);
+        return tokens.size() > 0 && tokens.contains(tokenValue.toUpperCase(Locale.ROOT));
     }
 
     private File copybookFile(String fileName) {
         return new File(copybookDirectoryName + fileName);
-    }
-
-    private void entering(String partOfProgram) {
-        state.flags.get(partOfProgram).set();
     }
 
     private String setCopybookDirectoryName(Config config) {
@@ -649,6 +808,9 @@ public class Generator implements Constants, StringHelper {
 
         public State() {
             flags = new HashMap<>();
+
+            flags.put(IDENTIFICATION_DIVISION, new Flag());
+
             flags.put(FILE_SECTION, new Flag());
             flags.put(LINKAGE_SECTION, new Flag());
             flags.put(LOCAL_STORAGE_SECTION, new Flag());
@@ -662,9 +824,19 @@ public class Generator implements Constants, StringHelper {
             mutuallyExclusiveFlagsFor(WORKING_STORAGE_SECTION,
                     LINKAGE_SECTION, LOCAL_STORAGE_SECTION, FILE_SECTION);
 
-            flags.put(IDENTIFICATION_DIVISION, new Flag());
+            flags.put(CONFIGURATION_SECTION, new Flag());
+            flags.put(FILE_CONTROL, new Flag());
+            flags.put(INPUT_OUTPUT_SECTION, new Flag());
+            dependentFlagsFor(INPUT_OUTPUT_SECTION,
+                    FILE_CONTROL);
+            mutuallyExclusiveFlagsFor(CONFIGURATION_SECTION,
+                    INPUT_OUTPUT_SECTION);
+            mutuallyExclusiveFlagsFor(INPUT_OUTPUT_SECTION,
+                    CONFIGURATION_SECTION);
 
             flags.put(ENVIRONMENT_DIVISION, new Flag());
+            dependentFlagsFor(ENVIRONMENT_DIVISION,
+                    CONFIGURATION_SECTION, INPUT_OUTPUT_SECTION);
 
             flags.put(DATA_DIVISION, new Flag());
             dependentFlagsFor(DATA_DIVISION,

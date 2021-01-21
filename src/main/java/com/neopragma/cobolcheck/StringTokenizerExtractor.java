@@ -35,20 +35,21 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
     private final Messages messages;
     private static final String delimiters = String.format(" .%s", Constants.NEWLINE);
 
+    // Some "logical tokens" meaningful in Cobol source consist of two words separated by whitespace.
     // Couldn't use Map.of because it has a limitation of 10 entries. (Dec 2020)
-    private static final Map<String, String> expectedTokens = new HashMap();
+    private static final Map<String, List<String>> expectedTokens = new HashMap<>();
     static {
-        expectedTokens.put("PROCEDURE", "DIVISION");
-        expectedTokens.put("DATA", "DIVISION");
-        expectedTokens.put("ENVIRONMENT", "DIVISION");
-        expectedTokens.put("IDENTIFICATION", "DIVISION");
-        expectedTokens.put("ID", "DIVISION");
-        expectedTokens.put("CONFIGURATION", "SECTION");
-        expectedTokens.put("INPUT-OUTPUT", "SECTION");
-        expectedTokens.put("LINKAGE", "SECTION");
-        expectedTokens.put("FILE", "SECTION");
-        expectedTokens.put("WORKING-STORAGE", "SECTION");
-        expectedTokens.put("LOCAL-STORAGE", "SECTION");
+        expectedTokens.put("PROCEDURE", List.of("DIVISION"));
+        expectedTokens.put("DATA", List.of("DIVISION"));
+        expectedTokens.put("ENVIRONMENT", List.of("DIVISION"));
+        expectedTokens.put("IDENTIFICATION", List.of("DIVISION"));
+        expectedTokens.put("FILE", List.of("SECTION", "CONTROL", "STATUS"));
+        expectedTokens.put("ID", List.of("DIVISION"));
+        expectedTokens.put("CONFIGURATION", List.of("SECTION"));
+        expectedTokens.put("INPUT-OUTPUT", List.of("SECTION"));
+        expectedTokens.put("LINKAGE", List.of("SECTION"));
+        expectedTokens.put("WORKING-STORAGE", List.of("SECTION"));
+        expectedTokens.put("LOCAL-STORAGE", List.of("SECTION"));
     }
 
     /**
@@ -71,8 +72,8 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
                          "StringTokenizerExtractor.extractTokensFrom(sourceLine)")
             );
         }
-        List<String> tokens = new ArrayList();
-        String expectedNext = EMPTY_STRING;
+        List<String> tokens = new ArrayList<>();
+        List<String> expectedNext = new ArrayList<>();
         String saved = EMPTY_STRING;
         StringTokenizer tokenizer = new StringTokenizer(sourceLine, delimiters);
         while (tokenizer.hasMoreTokens()) {
@@ -80,11 +81,13 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
             if (token.startsWith(COMMENT_INDICATOR)) {
                 break;
             }
-            if (!expectedNext.equals(EMPTY_STRING)) {
-                if (token.equals(expectedNext)) {
-                    token = saved + " " + token;
-                    expectedNext = EMPTY_STRING;
-                    saved = EMPTY_STRING;
+            if (!expectedNext.isEmpty()) {
+                for (String expectedValue : expectedNext) {
+                    if (token.equals(expectedValue)) {
+                        token = saved + " " + token;
+                        expectedNext = new ArrayList<>();
+                        saved = EMPTY_STRING;
+                    }
                 }
             }
             if (expectedTokens.containsKey(token)) {
