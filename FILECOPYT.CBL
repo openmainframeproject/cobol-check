@@ -7,6 +7,16 @@
        INPUT-OUTPUT SECTION.                                                    
        DATA DIVISION.                                                           
        WORKING-STORAGE SECTION.                                                 
+       01  INPUT-RECORD.                                                        
+           05  IN-FIELD-1         PIC X(10).                                    
+           05  FILLER             PIC X(20).                                    
+           05  IN-FIELD-2         PIC X(10).                                    
+       01  OUTPUT-RECORD.                                                       
+           05  OUT-FIELD-1         PIC X(30).                                   
+           05  OUT-FIELD-2     PIC X(5).                                        
+           05  OUT-FIELD-3     PIC X(14).                                       
+      *    COPY OUTREC2.                                                        
+           05  FILLER              PIC X(10).                                   
       * ZUTZCWS.CPY                                                             
        01  FILLER PIC X(16) VALUE '******* COBCHECK'.                           
        01  FILLER PIC X(16) VALUE '******* 0.1.0'.                              

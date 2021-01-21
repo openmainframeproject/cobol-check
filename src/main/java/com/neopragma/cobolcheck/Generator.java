@@ -464,7 +464,6 @@ public class Generator implements Constants, StringHelper {
         skipThisLine = true;
     }
 
-
     List<String> accumulateTokensFromCopyStatement(List<String> copyTokens, String sourceLine) {
         if (copyTokens == null) {
             copyTokens = new ArrayList<>();
@@ -528,7 +527,17 @@ public class Generator implements Constants, StringHelper {
         return sourceLine == null || sourceLine.length() < minimumMeaningfulSourceLineLength;
     }
 
+    /**
+     * Insert record layout specifications captured from File Control at the top of Working-Storage.
+     * Then insert Cobol Check Working-Storage entries.
+     *
+     * @param testSourceOut
+     * @throws IOException
+     */
     private void insertWorkingStorageTestCode(Writer testSourceOut) throws IOException {
+        for (String line : fileSectionStatements) {
+            testSourceOut.write(fixedLength(line));
+        }
         secondarySourceReader = new FileReader(copybookFile(workingStorageCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
         workingStorageTestCodeHasBeenInserted = true;
