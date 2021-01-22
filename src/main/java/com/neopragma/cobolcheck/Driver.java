@@ -208,8 +208,7 @@ public class Driver implements Constants, StringHelper {
     }
 
     void mergeTestSuitesIntoTheTestProgram() {
-        Generator generator = new Generator(messages,
-                new StringTokenizerExtractor(messages),
+        Generator generator = new Generator(
                 new KeywordExtractor(),
                 config);
         generator.mergeTestSuite(

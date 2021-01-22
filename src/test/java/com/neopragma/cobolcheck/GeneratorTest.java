@@ -29,11 +29,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneratorGeneralTest implements Constants {
+public class GeneratorTest implements Constants {
 
     private StringBuilder cobolSourceData;
     private StringWriter testProgramSource;
     private Generator generator;
+    private TestSuiteParser testSuiteParser;
     private static final Messages messages = new Messages();
     private static final Config config = new Config(messages);
 
@@ -52,8 +53,10 @@ public class GeneratorGeneralTest implements Constants {
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(new Messages(),
-                new StringTokenizerExtractor(messages),
+        generator = new Generator(
+                keywordExtractor,
+                config);
+        testSuiteParser = new TestSuiteParser(
                 keywordExtractor,
                 config);
     }
@@ -66,7 +69,8 @@ public class GeneratorGeneralTest implements Constants {
     @Test
     void cobol_source_cannot_be_empty__probable_internal_logic_error() {
         cobolSourceData = new StringBuilder();
-        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () -> mergeTestSuiteAndVerifyResults(mockTestSuite, cobolSourceData, testProgramSource));
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+                mergeTestSuiteAndVerifyResults(mockTestSuite, cobolSourceData, testProgramSource));
         assertTrue(ex.getMessage().contains("empty input stream"));
     }
 
@@ -76,7 +80,7 @@ public class GeneratorGeneralTest implements Constants {
         String expectedLine = "           MOVE ALPHA TO BETA.                                                  ";
         expectedLine += NEWLINE;
         Writer cobolOutWriter = new StringWriter();
-        generator.writeCobolLine(originalText, cobolOutWriter);
+        testSuiteParser.writeCobolLine(originalText, cobolOutWriter);
         assertEquals(expectedLine, cobolOutWriter.toString());
     }
 
@@ -88,7 +92,7 @@ public class GeneratorGeneralTest implements Constants {
         String expectedLine2 = "      -    \"ng for Cobol.''                                                     ";
         expectedLine2 += NEWLINE;
         Writer cobolOutWriter = new StringWriter();
-        generator.writeCobolLine(originalText, cobolOutWriter);
+        testSuiteParser.writeCobolLine(originalText, cobolOutWriter);
         assertEquals(expectedLine1 + expectedLine2, cobolOutWriter.toString());
     }
 
