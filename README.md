@@ -28,7 +28,7 @@ Please see [the wiki](https://github.com/neopragma/cobol-check/wiki/) for more i
 
 ## Governance
 
-We are applying to have this project included under the [Open Mainframe Project](). 
+This project is part of the [Open Mainframe Project](https://www.openmainframeproject.org/). 
 
 ## Reporting Issues
 
