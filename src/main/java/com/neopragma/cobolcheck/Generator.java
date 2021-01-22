@@ -30,21 +30,27 @@ import java.util.*;
  * @since 14
  */
 public class Generator implements Constants, StringHelper {
+    //TODO simplify this:the injected Config object contains an instance of Messages; no need for another one
     private final Messages messages;
     private final Config config;
     private final TokenExtractor tokenExtractor;
     private final KeywordExtractor keywordExtractor;
 
     private final State state = new State();
+
     // All lines from original Environment Division / Input-Output Section / File Control
     private List<String> fileControlStatements;
+
     // All lines from original Data Division / File Section
     private List<String> fileSectionStatements;
+
     // Internal file identifiers and status field names
     private Map<String, String> fileIdentifiersAndStatuses;
-    // Toke from COPY statements that may span multiple lines
+
+    // Tokens collected from COPY statements that may span multiple lines
     private List<String> copyTokens;
 
+    // Special values to look for in the source of the program under test
     private static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
     private static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
     private static final String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
@@ -63,18 +69,29 @@ public class Generator implements Constants, StringHelper {
     private static final String LEVEL_01_TOKEN = "01";
     private static final String COPY_TOKEN = "COPY";
 
+    // Used for handling source lines from copybooks that may not have the standard 80-byte length
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
     private static final char commentIndicator = '*';
 
+    // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
+    // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
     private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
     private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
+    // Comes from config.properties, cobolcheck.copybook.directory entry.
+    private static String copybookDirectoryName = EMPTY_STRING;
+    // Used to read source lines from cobol-check copybooks (as opposed to reading the program under test)
+    private Reader secondarySourceReader;
+    // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
+    // in case of conflict with prefixes used in programs to be tested.
+    // This is set in config.properties, cobolcheck.prefix entry.
+    private String testCodePrefix;
 
+    // Used to handle programs that don't have a Working-Storage Section
     private boolean workingStorageTestCodeHasBeenInserted = false;
     private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
-    private static String copybookDirectoryName = EMPTY_STRING;
 
-    private Reader secondarySourceReader;
+    // Used when parsing and concatenating user-written test suites
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = EMPTY_STRING;
     private String currentTestCaseName = EMPTY_STRING;
@@ -83,6 +100,8 @@ public class Generator implements Constants, StringHelper {
     String fileIdentifier = EMPTY_STRING;
     boolean expectFileIdentifier;
 
+    // Flags to keep track of context while reading input source files.
+    // We want to make a single pass of all inputs, so we need to know what we are looking for at any given point.
     private List<String> testSuiteTokens;
     private boolean emptyTestSuite;
     private boolean cobolStatementInProgress;
@@ -102,9 +121,6 @@ public class Generator implements Constants, StringHelper {
     private boolean processingFD;
     private boolean processing01ItemUnderFD;
     private boolean processingCopyStatement;
-
-
-    private String testCodePrefix;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_UT_INITIALIZE =
@@ -253,10 +269,26 @@ public class Generator implements Constants, StringHelper {
         return testSourceOut;
     }
 
+    /**
+     * Change the state of the merge process depending on which section of the program under test we have reached.
+     * This is how we know which kinds of source statements to look for when parsing the program source.
+     *
+     * @param partOfProgram
+     */
     private void entering(String partOfProgram) {
         state.flags.get(partOfProgram).set();
     }
 
+    /**
+     * Perform appropriate processing of the current input line from the program under test prior to echoing that
+     * line to the test program (that is, the copy of the program under test that has test code injected into it).
+     *
+     * @param tokens - extracted from the current source line
+     * @param sourceLine - the current source line
+     * @param reader - the reader attached to the source of the program under test
+     * @param testSourceOut - the writer attached to the test program being generated
+     * @throws IOException - pass any IOExceptions up to the caller
+     */
     private void processingBeforeEchoingSourceLineToOutput(
             List<String> tokens,
             String sourceLine,
@@ -275,12 +307,10 @@ public class Generator implements Constants, StringHelper {
                     expectFileStatusFieldName = false;
                 }
             }
-            if (sourceLineContains(tokens, FILE_STATUS_TOKEN)) {
-                // token sequence will be FILE STATUS [IS] FIELDNAME.
-                // Same line or next line.
-                // This will pertain to the current value of fileIdentifier
-                // which was picked up when the last SELECT token was recognized.
 
+            // When the current source line contains FILE STATUS, the next tokens will be [IS] FIELDNAME.
+            // Those tokens may be coded on the same line or on subsequent lines in the source program.
+            if (sourceLineContains(tokens, FILE_STATUS_TOKEN)) {
                 if (tokens.size() > 2) {
                     if (tokens.get(1).equalsIgnoreCase(IS_TOKEN)) {
                         fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(2));
@@ -299,6 +329,10 @@ public class Generator implements Constants, StringHelper {
                 }
             }
         }
+
+        // We expect the next token from the source program to be the file identifier associated with the
+        // most recent SELECT statement we encountered. It will become a key in a map of file identifiers
+        // to file status field names.
         if (expectFileIdentifier) {
             if (tokens.size() > 0) {
                 fileIdentifier = tokens.get(0);
@@ -314,6 +348,7 @@ public class Generator implements Constants, StringHelper {
             readingFileControl = false;
             skipThisLine = false;
         }
+
         if (sourceLineContains(tokens, INPUT_OUTPUT_SECTION)) entering(INPUT_OUTPUT_SECTION);
 
         if (sourceLineContains(tokens, FILE_CONTROL)) {
@@ -323,25 +358,7 @@ public class Generator implements Constants, StringHelper {
         }
 
         if (readingFileControl) {
-            if (sourceLine.length() > 6) {
-                // Store source line from File Control for later analysis
-                fileControlStatements.add(sourceLine);
-            }
-            if (sourceLineContains(tokens, SELECT_TOKEN)) {
-                // SELECT will be the first token on this line
-                // internal file identifier will be the second token on this line
-                // or the first token on the next line
-
-                fileIdentifier = EMPTY_STRING;
-                if (tokens.size() > 1) {
-                     fileIdentifier = tokens.get(1);
-                     fileIdentifiersAndStatuses.put(fileIdentifier, EMPTY_STRING);
-                } else {
-                    expectFileIdentifier = true;
-                }
-            }
-            // Don't echo to the test source program
-            skipThisLine = true;
+            processFileControlSource(tokens, sourceLine);
         }
 
         if (sourceLineContains(tokens, FILE_SECTION)) {
@@ -374,6 +391,16 @@ public class Generator implements Constants, StringHelper {
         }
     }
 
+    /**
+     * Perform appropriate processing after echoing (or skipping) the current source line from the program under test.
+     *
+     * @param tokens - extracted from the current source line
+     * @param sourceLine - the original source line
+     * @param testSuiteReader - reader attached to the user-written test suite
+     * @param reader - reader attached to the source of the program under test
+     * @param testSourceOut - writer attached to the test program being generated
+     * @throws IOException - pass any IOExceptions to the caller
+     */
     private void processingAfterEchoingSourceLineToOutput(
             List<String> tokens,
             String sourceLine,
@@ -391,8 +418,11 @@ public class Generator implements Constants, StringHelper {
     }
 
     /**
-     * Called for each source line read from the program under test while
-     * processing the File Section of the Data Division.
+     * Called for each source line read from the program under test while processing the File Section of the
+     * Data Division. We capture source statements that define record layouts so that we can copy them into
+     * the Working-Storage Section later. These statements may use optional Cobol keywords and they may be
+     * coded on multiple source lines. We also need to expand any copybooks referenced in this part of the
+     * source, in case data items in the copybooks are referenced by user-written test cases.
      *
      * @param tokens - tokens extracted from source line.
      * @param sourceLine - original source line.
@@ -461,6 +491,38 @@ public class Generator implements Constants, StringHelper {
         }
         // Don't echo these lines to the test source program
         skipThisLine = true;
+    }
+
+    /**
+     * If we are currently reading the FILE CONTROL paragraph of the program under test, look for specific
+     * source lines that require explicit processing by cobol-check.
+     * Specifically, we need to save the file identifiers associated with SELECT statements and store the
+     * corresponding field names of FILE STATUS specifications in case they are referenced in user-written
+     * test cases. We also need to copy any record layout items into Working-Storage, as storage for FD areas
+     * will not be allocated when we stub out the OPEN statements for files.
+     *
+     * @param tokens - extracted from the current source line
+     * @param sourceLine - the original source line
+     */
+    void processFileControlSource(List<String> tokens, String sourceLine) {
+        skipThisLine = true;
+        if (isTooShortToBeMeaningful(sourceLine)) {
+            return;
+        }
+        fileControlStatements.add(sourceLine);
+
+        // If the current line contains SELECT, then the next token on the same line or the first token on the
+        // next line will be the file identifier. We will store the file identifier as the key in a map of
+        // file identifiers and file status field names.
+        if (sourceLineContains(tokens, SELECT_TOKEN)) {
+            fileIdentifier = EMPTY_STRING;
+            if (tokens.size() > 1) {
+                fileIdentifier = tokens.get(1);
+                fileIdentifiersAndStatuses.put(fileIdentifier, EMPTY_STRING);
+            } else {
+                expectFileIdentifier = true;
+            }
+        }
     }
 
     List<String> accumulateTokensFromCopyStatement(List<String> copyTokens, String sourceLine) {
@@ -540,9 +602,14 @@ public class Generator implements Constants, StringHelper {
      * @throws IOException
      */
     private void insertWorkingStorageTestCode(Writer testSourceOut) throws IOException {
-        for (String line : fileSectionStatements) {
-            testSourceOut.write(fixedLength(line));
+        // If this program had File Section source that we need to move to Working-Storage, inject them here.
+        if (fileSectionStatements != null) {
+            for (String line : fileSectionStatements) {
+                testSourceOut.write(fixedLength(line));
+            }
         }
+
+        // Inject boilerplate test code from cobol-check Working-Storage copybook
         secondarySourceReader = new FileReader(copybookFile(workingStorageCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
         workingStorageTestCodeHasBeenInserted = true;
