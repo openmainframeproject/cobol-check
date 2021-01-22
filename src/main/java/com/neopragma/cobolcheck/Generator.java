@@ -50,25 +50,6 @@ public class Generator implements Constants, StringHelper {
     // Tokens collected from COPY statements that may span multiple lines
     private List<String> copyTokens;
 
-    // Special values to look for in the source of the program under test
-    private static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
-    private static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
-    private static final String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
-    private static final String INPUT_OUTPUT_SECTION = "INPUT-OUTPUT SECTION";
-    private static final String FILE_CONTROL = "FILE-CONTROL";
-    private static final String DATA_DIVISION = "DATA DIVISION";
-    private static final String PROCEDURE_DIVISION = "PROCEDURE DIVISION";
-    private static final String FILE_SECTION = "FILE SECTION";
-    private static final String LOCAL_STORAGE_SECTION = "LOCAL-STORAGE SECTION";
-    private static final String LINKAGE_SECTION = "LINKAGE SECTION";
-    private static final String WORKING_STORAGE_SECTION = "WORKING-STORAGE SECTION";
-    private static final String SELECT_TOKEN = "SELECT";
-    private static final String FILE_STATUS_TOKEN = "FILE STATUS";
-    private static final String IS_TOKEN = "IS";
-    private static final String FD_TOKEN = "FD";
-    private static final String LEVEL_01_TOKEN = "01";
-    private static final String COPY_TOKEN = "COPY";
-
     // Used for handling source lines from copybooks that may not have the standard 80-byte length
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
@@ -563,7 +544,6 @@ public class Generator implements Constants, StringHelper {
             }
         }
 
-        //crude implementation
         StringWriter expandedLines = new StringWriter();
         CopybookExpander copybookExpander = new CopybookExpander(config, messages);
         try {
@@ -586,23 +566,32 @@ public class Generator implements Constants, StringHelper {
         return copyLines;
     }
 
+    /**
+     * @param sourceLine
+     * @return true if the source line "looks like" a Cobol comment line.
+     */
     private boolean isComment(String sourceLine) {
         return sourceLine.charAt(commentIndicatorOffset) == commentIndicator;
     }
 
+    /**
+     * This "shouldn't happen." Famous last words.
+     *
+     * @param sourceLine
+     * @return true if the source line is too short to be a meaningful line of code in Cobol.
+     */
     private boolean isTooShortToBeMeaningful(String sourceLine) {
         return sourceLine == null || sourceLine.length() < minimumMeaningfulSourceLineLength;
     }
 
     /**
-     * Insert record layout specifications captured from File Control at the top of Working-Storage.
-     * Then insert Cobol Check Working-Storage entries.
+     * Insert test code into the Working-Storage Section of the test program being generated.
      *
-     * @param testSourceOut
-     * @throws IOException
+     * @param testSourceOut - writer attached to the test program being generated.
+     * @throws IOException - pass any IOExceptions to the caller.
      */
     private void insertWorkingStorageTestCode(Writer testSourceOut) throws IOException {
-        // If this program had File Section source that we need to move to Working-Storage, inject them here.
+        // If this program had File Section source that we need to move to Working-Storage, inject the lines here.
         if (fileSectionStatements != null) {
             for (String line : fileSectionStatements) {
                 testSourceOut.write(fixedLength(line));
@@ -615,15 +604,34 @@ public class Generator implements Constants, StringHelper {
         workingStorageTestCodeHasBeenInserted = true;
     }
 
+    /**
+     * Insert test code into the Procedure Division of the test program being generated.
+     *
+     * @param testSourceOut - writer attached to the test program being generated.
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
     private void insertProcedureDivisionTestCode(
             BufferedReader testSuiteReader,
             Writer testSourceOut) throws IOException {
+        // Inject test initialization statement
         testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_UT_INITIALIZE, testCodePrefix)));
+
+        // Parse the concatenated test suite and insert generated Cobol test statements
         parseTestSuite(testSuiteReader, testSourceOut);
+
+        // Inject boilerplate test code from cobol-check Procedure Division copybook
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
         insertSecondarySourceIntoTestSource(testSourceOut);
     }
 
+    /**
+     * Inject source statements from a secondary source (not the program under test) into the test program
+     * being generated. Secondary sources are the cobol-check boilerplate copybooks, one for Working-Storage
+     * and one for Procedure Division.
+     *
+     * @param testSourceOut - writer attached to the test program being generated.
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
     private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
         BufferedReader secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
         String secondarySourceLine = EMPTY_STRING;
@@ -634,6 +642,9 @@ public class Generator implements Constants, StringHelper {
         }
         secondarySourceBufferedReader.close();
     }
+
+    // Helper methods to insert code into the test program being generated based on interpretation of user-written
+    // test case code.
 
     void insertTestSuiteNameIntoTestSource(String testSuiteName, Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(COBOL_DISPLAY_TESTSUITE));
@@ -747,10 +758,23 @@ public class Generator implements Constants, StringHelper {
         cobolStatement.append(testSuiteToken);
     }
 
+    /**
+     * Insert user-written Cobol statement from a test suite (not from the program under test) into the test program
+     * being generated.
+     *
+     * @param testSourceOut
+     * @throws IOException
+     */
     void insertUserWrittenCobolStatement(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(cobolStatement.toString()));
     }
 
+    /**
+     * Enclose a value in quotation marks.
+     *
+     * @param value - original string
+     * @return - quoted string
+     */
     String quoted(String value) {
         StringBuffer buffer = new StringBuffer();
         buffer.append(QUOTE);
@@ -987,7 +1011,19 @@ public class Generator implements Constants, StringHelper {
         return cobolStatement.toString();
     }
 
+    /**
+     * Lines of test code in a test suite are Cobol-like, but not strictly Cobol. The descriptions for TESTSUITE and
+     * TESTCASE specifications may exceed the maximum length allowed for Area B in the generated test Cobol program.
+     * This method splits the literal and writes the value with a continuation line, if necessary.
+     *
+     * Limitation: Only works for a maximum of 2 source lines.
+     *
+     * @param line - original line from test suite.
+     * @param testSourceOut - writer attached to the test program being generated.
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
     void writeCobolLine(String line, Writer testSourceOut) throws IOException {
+        //TODO: Enhance this to work with an arbitrary number of continuation lines
         String line1 = line;
         String line2 = EMPTY_STRING;
         if (line.length() > 72) {

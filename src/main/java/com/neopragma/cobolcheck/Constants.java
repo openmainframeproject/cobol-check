@@ -76,4 +76,24 @@ public interface Constants {
     // Command line option key values
     String TESTS_OPTION = "tests";
     String PROGRAMS_OPTION = "programs";
+
+    // Special values the Generator looks for in the source of the program under test
+    String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
+    String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
+    String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
+    String INPUT_OUTPUT_SECTION = "INPUT-OUTPUT SECTION";
+    String FILE_CONTROL = "FILE-CONTROL";
+    String DATA_DIVISION = "DATA DIVISION";
+    String PROCEDURE_DIVISION = "PROCEDURE DIVISION";
+    String FILE_SECTION = "FILE SECTION";
+    String LOCAL_STORAGE_SECTION = "LOCAL-STORAGE SECTION";
+    String LINKAGE_SECTION = "LINKAGE SECTION";
+    String WORKING_STORAGE_SECTION = "WORKING-STORAGE SECTION";
+    String SELECT_TOKEN = "SELECT";
+    String FILE_STATUS_TOKEN = "FILE STATUS";
+    String IS_TOKEN = "IS";
+    String FD_TOKEN = "FD";
+    String LEVEL_01_TOKEN = "01";
+    String COPY_TOKEN = "COPY";
+
 }
