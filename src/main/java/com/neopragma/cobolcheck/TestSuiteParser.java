@@ -64,11 +64,11 @@ public class TestSuiteParser implements Constants, StringHelper {
             "           MOVE %s";
     private static final String COBOL_STORE_TESTCASE_NAME_2 =
             "               TO %sTEST-CASE-NAME";
-    private static final String COBOL_PERFORM_UT_BEFORE =
+    private static final String COBOL_PERFORM_BEFORE =
             "           PERFORM %sBEFORE";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
             "           ADD 1 TO %sTEST-CASE-COUNT";
-    private static final String COBOL_SET_UT_NORMAL_COMPARE =
+    private static final String COBOL_SET_NORMAL_COMPARE =
             "           SET %1$sNORMAL-COMPARE TO %2$s";
     private static final String COBOL_SET_COMPARE_NUMERIC =
             "           SET %1$sCOMPARE-NUMERIC TO %2$s";
@@ -84,8 +84,6 @@ public class TestSuiteParser implements Constants, StringHelper {
             "               TO %sEXPECTED";
     private static final String COBOL_MOVE_EXPECTED_NUMERIC_LITERAL =
             "           MOVE %2$s TO %1$sEXPECTED-NUMERIC";
-
-
     private static final String COBOL_SET_ACTUAL_88_VALUE_1 =
             "           IF %1$s";
     private static final String COBOL_SET_ACTUAL_88_VALUE_2 =
@@ -114,11 +112,11 @@ public class TestSuiteParser implements Constants, StringHelper {
 
     private static final String COBOL_SET_EXPECTED_88_VALUE =
             "           SET %1$sEXPECTED-88-VALUE TO %2$s";
-    private static final String COBOL_SET_UT_COMPARE_DEFAULT =
+    private static final String COBOL_SET_COMPARE_DEFAULT =
             "           SET %1$sCOMPARE-DEFAULT TO %2$s";
-    private static final String COBOL_PERFORM_UT_ASSERT_EQUAL =
+    private static final String COBOL_PERFORM_ASSERT_EQUAL =
             "           PERFORM %sASSERT-EQUAL";
-    private static final String COBOL_PERFORM_UT_AFTER =
+    private static final String COBOL_PERFORM_AFTER =
             "           PERFORM %sAFTER";
     private static final String ELEVEN_LEADING_SPACES = "           ";
     private StringBuffer cobolStatement;
@@ -344,11 +342,11 @@ public class TestSuiteParser implements Constants, StringHelper {
     void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
         writeCobolLine(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName), testSourceOut);
         testSourceOut.write(fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix)));
-        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_UT_BEFORE, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
     }
 
     void insertPerformBeforeEachIntoTestSource(Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_UT_BEFORE, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
     }
 
     void insertIncrementTestCaseCount(Writer testSourceOut) throws IOException {
@@ -367,7 +365,7 @@ public class TestSuiteParser implements Constants, StringHelper {
 
     void insertTestCodeForAlphanumericEqualityCheck(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_UT_NORMAL_COMPARE, testCodePrefix, TRUE)));
+                COBOL_SET_NORMAL_COMPARE, testCodePrefix, TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
         String cobolLine = String.format(
@@ -376,11 +374,11 @@ public class TestSuiteParser implements Constants, StringHelper {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_UT_COMPARE_DEFAULT, testCodePrefix, TRUE)));
+                COBOL_SET_COMPARE_DEFAULT, testCodePrefix, TRUE)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
+                COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_AFTER, testCodePrefix)));
+                COBOL_PERFORM_AFTER, testCodePrefix)));
     }
 
     void insertTestCodeForNumericEqualityCheck(Writer testSourceOut) throws IOException {
@@ -391,9 +389,9 @@ public class TestSuiteParser implements Constants, StringHelper {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
+                COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_AFTER, testCodePrefix)));
+                COBOL_PERFORM_AFTER, testCodePrefix)));
     }
 
     void insertTestCodeFor88LevelEqualityCheck(Writer testSourceOut) throws IOException {
@@ -426,9 +424,9 @@ public class TestSuiteParser implements Constants, StringHelper {
         testSourceOut.write(fixedLength(
                 COBOL_SET_EXPECTED_88_VALUE_5));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_ASSERT_EQUAL, testCodePrefix)));
+                COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_UT_AFTER, testCodePrefix)));
+                COBOL_PERFORM_AFTER, testCodePrefix)));
     }
 
     /**
