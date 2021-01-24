@@ -16,6 +16,7 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Helper class for parsing tokens from the test suite. Users may embed standard Cobol statements in test
@@ -62,7 +63,7 @@ public class CobolVerbs {
     );
 
     public static boolean isCobolVerb(String token) {
-        return cobolVerbs.contains(token);
+        return cobolVerbs.contains(token.toUpperCase(Locale.ROOT));
     }
 
 }

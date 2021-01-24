@@ -120,7 +120,7 @@
            .
 
        8000-HOUSEKEEPING.
-           CLOSE OUTPUT-FILE
+           CLOSE OUTPUT-FILE.
            CLOSE INPUT-FILE
            MOVE WS-COUNT TO WS-COUNT-FORMATTED
            DISPLAY "Records processed: " WS-COUNT-FORMATTED

@@ -141,13 +141,6 @@
            MOVE "It blah blah blah"                                             
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            PERFORM 100-DONT-JUST-STAND-THERE                                   
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-COMPARE-NUMERIC TO TRUE                                       
-           MOVE WS-COUNT TO CC-ACTUAL-NUMERIC                                   
-           MOVE 5 TO CC-EXPECTED-NUMERIC                                        
-           PERFORM CC-ASSERT-EQUAL                                              
-           PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       
@@ -468,7 +461,7 @@
            GOBACK                                                               
            .                                                                    
        1000-INITIALIZE.                                                         
-           OPEN INPUT INPUT-FILE                                                
+      *    OPEN INPUT INPUT-FILE                                                
            EVALUATE TRUE                                                        
                WHEN INPUT-OK                                                    
                    CONTINUE                                                     
@@ -483,8 +476,7 @@
                      INTO WS-ERROR-MESSAGE                                      
                    PERFORM 9999-ABORT                                           
            END-EVALUATE                                                         
-                                                                                
-           OPEN OUTPUT OUTPUT-FILE                                              
+      *    OPEN OUTPUT OUTPUT-FILE                                              
            EVALUATE TRUE                                                        
                WHEN OUTPUT-OK                                                   
                    CONTINUE                                                     
@@ -496,29 +488,25 @@
                      INTO WS-ERROR-MESSAGE                                      
                    PERFORM 9999-ABORT                                           
            END-EVALUATE                                                         
-                                                                                
            MOVE ZERO TO WS-COUNT                                                
            .                                                                    
-                                                                                
        5000-PROCESS.                                                            
-           READ INPUT-FILE                                                      
+      *    READ INPUT-FILE                                                      
            PERFORM WITH TEST BEFORE                                             
                    UNTIL END-OF-FILE                                            
                PERFORM 5200-PREPARE-OUTPUT-RECORD                               
                PERFORM 5400-WRITE-OUTPUT-RECORD                                 
-               READ INPUT-FILE                                                  
+      *        READ INPUT-FILE                                                  
            END-PERFORM                                                          
            .                                                                    
-                                                                                
        5200-PREPARE-OUTPUT-RECORD.                                              
            MOVE SPACES TO OUTPUT-RECORD                                         
            MOVE IN-FIELD-1 TO OUT-FIELD-1                                       
            MOVE IN-FIELD-2 TO OUT-FIELD-2                                       
            MOVE "Good" TO OUT-FIELD-3                                           
            .                                                                    
-                                                                                
        5400-WRITE-OUTPUT-RECORD.                                                
-           WRITE OUTPUT-RECORD                                                  
+      *    WRITE OUTPUT-RECORD                                                  
            IF NOT OUTPUT-OK                                                     
                STRING "Unexpected output file status on write "                 
                    DELIMITED BY SIZE                                            
@@ -529,10 +517,9 @@
            END-IF                                                               
            ADD 1 TO WS-COUNT                                                    
            .                                                                    
-                                                                                
        8000-HOUSEKEEPING.                                                       
-           CLOSE OUTPUT-FILE                                                    
-           CLOSE INPUT-FILE                                                     
+      *    CLOSE OUTPUT-FILE.                                                   
+      *    CLOSE INPUT-FILE                                                     
            MOVE WS-COUNT TO WS-COUNT-FORMATTED                                  
            DISPLAY "Records processed: " WS-COUNT-FORMATTED                     
            .                                                                    

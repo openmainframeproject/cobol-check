@@ -1,6 +1,3 @@
            TestSuite "Tests for a sequential file copy program"
 
            TestCase "It blah blah blah"
-
-           Perform 100-Dont-Just-Stand-There
-           expect ws-count to be 5

@@ -118,14 +118,6 @@ public class GeneratorTest implements Constants {
     }
 
     @Test
-    public void it_comments_out_a_source_line() {
-        assertEquals(
-                "      *    MOVE ALPHA TO BETA",
-                generator.makeComment("           MOVE ALPHA TO BETA")
-        );
-    }
-
-    @Test
     public void it_recognizes_a_batch_file_IO_verb_on_a_source_line() {
 
     }

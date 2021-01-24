@@ -92,6 +92,8 @@ public class Generator implements Constants, StringHelper {
     private boolean processingCopyStatement;
     private boolean processingProcedureDivision;
     private boolean processingBatchFileIOStatement;
+    private boolean commentThisLine;
+    private boolean previousLineContainedOnlyAPeriod;
 
     public Generator(
             KeywordExtractor keywordExtractor,
@@ -136,6 +138,12 @@ public class Generator implements Constants, StringHelper {
         try {
             while ((sourceLine = cobolSourceInReader.readLine()) != null) {
                 emptyInputStream = false;
+                if (sourceLine.trim().equals(PERIOD)) {
+                    skipThisLine = false;
+                    previousLineContainedOnlyAPeriod = true;
+                    testSourceOut.write(fixedLength(sourceLine));
+                    continue;
+                }
                 sourceLine = fixedLength(sourceLine);
                 List<String> tokens = tokenExtractor.extractTokensFrom(sourceLine);
 
@@ -143,7 +151,12 @@ public class Generator implements Constants, StringHelper {
                         tokens, sourceLine, cobolSourceInReader, testSourceOut);
 
                 if (!skipThisLine) {
-                    testSourceOut.write(sourceLine);
+                    if (commentThisLine) {
+                        testSourceOut.write("      *" + sourceLine.substring(commentIndicatorOffset + 1));
+                        commentThisLine = false;
+                    } else {
+                        testSourceOut.write(sourceLine);
+                    }
                 }
 
                 processingAfterEchoingSourceLineToOutput(
@@ -187,10 +200,6 @@ public class Generator implements Constants, StringHelper {
             String sourceLine,
             Reader reader,
             Writer testSourceOut) throws IOException {
-
-
-        System.out.println("just read sourceLine: <" + sourceLine + ">");
-
         skipThisLine = false;
 
         if (state.getFlags().get(FILE_CONTROL).isSet()) {
@@ -279,9 +288,9 @@ public class Generator implements Constants, StringHelper {
             if (!workingStorageTestCodeHasBeenInserted) {
                 testSourceOut.write(workingStorageHeader);
                 insertWorkingStorageTestCode(testSourceOut);
-                processingProcedureDivision = true;
-                skipThisLine = true;
             }
+            processingProcedureDivision = true;
+            skipThisLine = false;
         }
 
         if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) {
@@ -439,25 +448,32 @@ public class Generator implements Constants, StringHelper {
 
     void commentOutBatchFileIOStatements(List<String> tokens, String sourceLine, Writer testSourceOut) {
         if (processingBatchFileIOStatement) {
-            ;
-        } else {
-            for (String ioVerb : batchFileIOVerbs) {
-                if (isBatchFileIOStatement(tokens, ioVerb)) {
-                    processingBatchFileIOStatement = true;
-                    sourceLine = makeComment(sourceLine);
-                    skipThisLine = false;
+            if (endOfStatement(tokens, sourceLine)) {
+                //2+ file io statements in a row, 2nd (or nth) lands here
+                if (!checkForBatchFileIOStatement(tokens)) {
+                    processingBatchFileIOStatement = false;
                 }
             }
+        } else {
+            checkForBatchFileIOStatement(tokens);
         }
 
     }
 
-    boolean isBatchFileIOStatement(List<String> tokens, String ioVerb) {
-        return tokens.contains(ioVerb);
+    boolean checkForBatchFileIOStatement(List<String> tokens) {
+        for (String ioVerb : batchFileIOVerbs) {
+            if (isBatchFileIOStatement(tokens, ioVerb)) {
+                processingBatchFileIOStatement = true;
+                commentThisLine = true;
+                skipThisLine = false;
+                return true;
+            }
+        }
+        return false;
     }
 
-    String makeComment(String sourceLine) {
-        return "      *" + sourceLine.substring(7);
+    boolean isBatchFileIOStatement(List<String> tokens, String ioVerb) {
+        return tokens.contains(ioVerb);
     }
 
     List<String> accumulateTokensFromCopyStatement(List<String> copyTokens, String sourceLine) {
@@ -536,6 +552,30 @@ public class Generator implements Constants, StringHelper {
      */
     private boolean isTooShortToBeMeaningful(String sourceLine) {
         return sourceLine == null || sourceLine.length() < minimumMeaningfulSourceLineLength;
+    }
+
+    /**
+     * Recognizes end of statement when
+     * (a) - sourceLine ends with a period
+     * (b) - previous line contains just a period
+     * (c) - first token on this line is a Cobol verb
+     *
+     * @param sourceLine - current source line being processed
+     * @return - true if end of statement is recognized
+     */
+    private boolean endOfStatement(List<String> tokens, String sourceLine) {
+        if (sourceLine.trim().endsWith(PERIOD)) {
+            return true;
+        }
+        if (previousLineContainedOnlyAPeriod) {
+            previousLineContainedOnlyAPeriod = false;
+            return true;
+        }
+        if (CobolVerbs.isCobolVerb(tokens.get(0))) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

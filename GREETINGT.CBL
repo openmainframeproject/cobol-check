@@ -536,9 +536,7 @@
        CC-END.                                                                  
                                                                                 
       * ZUTZCPD.CPY END                                                         
-                                                                                
            ACCEPT WS-FRIEND.                                                    
-                                                                                
        2000-SPEAK.                                                              
            IF MESSAGE-IS-GREETING                                               
                IF WS-FRIEND EQUALS SPACES                                       
@@ -555,6 +553,5 @@
                END-IF                                                           
            END-IF                                                               
            .                                                                    
-                                                                                
        9999-END.                                                                
            .                                                                    
