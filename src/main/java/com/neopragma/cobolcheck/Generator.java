@@ -49,6 +49,11 @@ public class Generator implements Constants, StringHelper {
     // Tokens collected from COPY statements that may span multiple lines
     private List<String> copyTokens;
 
+    // Source tokens from Procedure Division that begin batch I/O statements
+    private List<String> batchFileIOVerbs = List.of(
+            "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
+    );
+
     // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
     // in case of conflict with prefixes used in programs to be tested.
     // This is set in config.properties, cobolcheck.prefix entry.
@@ -85,6 +90,8 @@ public class Generator implements Constants, StringHelper {
     private boolean processingFD;
     private boolean processing01ItemUnderFD;
     private boolean processingCopyStatement;
+    private boolean processingProcedureDivision;
+    private boolean processingBatchFileIOStatement;
 
     public Generator(
             KeywordExtractor keywordExtractor,
@@ -263,13 +270,20 @@ public class Generator implements Constants, StringHelper {
             readingFileControl = false;
         }
 
+        if (processingProcedureDivision) {
+            processProcedureDivisionSource(tokens, sourceLine, testSourceOut);
+        }
+
         if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
             entering(PROCEDURE_DIVISION);
             if (!workingStorageTestCodeHasBeenInserted) {
                 testSourceOut.write(workingStorageHeader);
                 insertWorkingStorageTestCode(testSourceOut);
+                processingProcedureDivision = true;
+                skipThisLine = true;
             }
         }
+
         if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) {
             entering(WORKING_STORAGE_SECTION);
             skipThisLine = false;
@@ -408,6 +422,42 @@ public class Generator implements Constants, StringHelper {
                 expectFileIdentifier = true;
             }
         }
+    }
+
+    void processProcedureDivisionSource(List<String> tokens, String sourceLine, Writer testSourceOut) {
+        if (tokens.isEmpty() || sourceLine == null || isTooShortToBeMeaningful(sourceLine)) {
+            skipThisLine = true;
+            return;
+        }
+        if (isComment(sourceLine)) {
+            skipThisLine = false;
+            return;
+        }
+        commentOutBatchFileIOStatements(tokens, sourceLine, testSourceOut);
+
+    }
+
+    void commentOutBatchFileIOStatements(List<String> tokens, String sourceLine, Writer testSourceOut) {
+        if (processingBatchFileIOStatement) {
+            ;
+        } else {
+            for (String ioVerb : batchFileIOVerbs) {
+                if (isBatchFileIOStatement(tokens, ioVerb)) {
+                    processingBatchFileIOStatement = true;
+                    sourceLine = makeComment(sourceLine);
+                    skipThisLine = false;
+                }
+            }
+        }
+
+    }
+
+    boolean isBatchFileIOStatement(List<String> tokens, String ioVerb) {
+        return tokens.contains(ioVerb);
+    }
+
+    String makeComment(String sourceLine) {
+        return "      *" + sourceLine.substring(7);
     }
 
     List<String> accumulateTokensFromCopyStatement(List<String> copyTokens, String sourceLine) {

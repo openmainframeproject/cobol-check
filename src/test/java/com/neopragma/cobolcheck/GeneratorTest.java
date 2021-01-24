@@ -117,6 +117,19 @@ public class GeneratorTest implements Constants {
         assertTrue(ex.getMessage().contains("ERR024:"));
     }
 
+    @Test
+    public void it_comments_out_a_source_line() {
+        assertEquals(
+                "      *    MOVE ALPHA TO BETA",
+                generator.makeComment("           MOVE ALPHA TO BETA")
+        );
+    }
+
+    @Test
+    public void it_recognizes_a_batch_file_IO_verb_on_a_source_line() {
+
+    }
+
     private void loadInputData(String... lines) {
         for (String line : lines) {
             cobolSourceData.append(line);
@@ -130,5 +143,6 @@ public class GeneratorTest implements Constants {
         Writer mergedCobolData = generator.mergeTestSuite(testSuite, cobolProgramSource, testProgramSource);
         assertEquals(cobolSourceData.toString(), mergedCobolData.toString());
     }
+
 }
 

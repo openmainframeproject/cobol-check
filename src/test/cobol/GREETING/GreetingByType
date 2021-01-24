@@ -4,7 +4,7 @@
            TestCase "When message type is greeting it returns 'Hello, World!'"
            SET MESSAGE-IS-GREETING TO TRUE
            PERFORM 2000-SPEAK
-           EXPECT WS-GREETING TO BE "Hello, World     !"
+           EXPECT WS-GREETING TO BE "Hello, World!"
 
            TESTCASE "try numerical compare"
            ADD 1 TO WS-COUNT

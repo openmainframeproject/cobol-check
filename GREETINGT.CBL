@@ -142,7 +142,7 @@
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
            MOVE WS-GREETING TO CC-ACTUAL                                        
-           MOVE "Hello, World     !"                                            
+           MOVE "Hello, World!"                                                 
                TO CC-EXPECTED                                                   
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
@@ -202,7 +202,7 @@
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
            MOVE WS-GREETING TO CC-ACTUAL                                        
-           MOVE "Hello, James !"                                                
+           MOVE "Hello, James!"                                                 
                TO CC-EXPECTED                                                   
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
@@ -217,7 +217,7 @@
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
            MOVE WS-FAREWELL TO CC-ACTUAL                                        
-           MOVE "See you later, James!"                                         
+           MOVE "Goodbye, James!"                                               
                TO CC-EXPECTED                                                   
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
