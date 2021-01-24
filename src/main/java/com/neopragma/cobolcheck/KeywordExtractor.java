@@ -127,7 +127,9 @@ public class KeywordExtractor implements TokenExtractor, Constants {
      * and a period as a Cobol statement delimiter.
      */
     private boolean startNumericLiteral(StringBuilder buffer, char currentCharacter) {
-        return (getPreviousCharacterFromBuffer(buffer) == SPACE && Character.isDigit(currentCharacter));
+        return ( getPreviousCharacterFromBuffer(buffer) == SPACE
+                && ( Character.isDigit(currentCharacter)
+                    || currentCharacter == '-' || currentCharacter == '+') );
     }
 
     /**

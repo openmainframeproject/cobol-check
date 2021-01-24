@@ -83,6 +83,8 @@ public class KeywordExtractorTest {
                 Arguments.of("  TO BE 135.", 1, "135", 2),
             Arguments.of("135.64", 0, "135.64", 1),
             Arguments.of("135.64.", 0, "135.64", 1),
+            Arguments.of("-52.7", 0, "-52.7", 1),
+            Arguments.of("+8.06", 0, "+8.06", 1),
             Arguments.of("  \"number 537.52 inside string literal\"  ", 0, "\"number 537.52 inside string literal\"", 1)
         );
     }
