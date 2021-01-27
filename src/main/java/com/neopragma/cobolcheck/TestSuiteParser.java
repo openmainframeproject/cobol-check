@@ -31,6 +31,10 @@ public class TestSuiteParser implements Constants, StringHelper {
     private final Messages messages;
     private List<String> testSuiteTokens;
 
+    // Source tokens used in fully-qualified data item names
+    private List<String> qualifiedNameKeywords = List.of("IN", "OF");
+
+
     // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
     // in case of conflict with prefixes used in programs to be tested.
     // This is set in config.properties, cobolcheck.prefix entry.
@@ -48,6 +52,8 @@ public class TestSuiteParser implements Constants, StringHelper {
     private boolean expectTestsuiteName;
     private boolean expectTestcaseName;
     private String fieldNameForExpect;
+    private boolean possibleQualifiedName;
+    private boolean expectQualifiedName;
     private String expectedValueToCompare;
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = EMPTY_STRING;
@@ -174,9 +180,21 @@ public class TestSuiteParser implements Constants, StringHelper {
                     break;
 
                 case COBOL_TOKEN:
+                    if (expectQualifiedName) {
+                        fieldNameForExpect += testSuiteToken;
+                        expectQualifiedName = false;
+                    }
+                    if (possibleQualifiedName) {
+                        if (qualifiedNameKeywords.contains(testSuiteToken)) {
+                            fieldNameForExpect += SPACE + testSuiteToken + SPACE;
+                            expectQualifiedName = true;
+                            possibleQualifiedName = false;
+                        }
+                    }
                     if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
                         expectInProgress = false;
+                        possibleQualifiedName = true;
                     }
                     break;
 

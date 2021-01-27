@@ -222,6 +222,20 @@
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
            PERFORM CC-AFTER                                                     
+           MOVE "User name for greeting and farewell are consistent"            
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            SET MESSAGE-IS-GREETING TO TRUE                                     
+            MOVE "Henry" TO WS-FRIEND                                           
+            PERFORM 2000-SPEAK                                                  
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-USER-NAME OF WS-GREETING TO CC-ACTUAL                        
+           MOVE "Henry"                                                         
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       

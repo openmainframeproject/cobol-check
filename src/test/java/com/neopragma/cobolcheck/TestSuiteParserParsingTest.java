@@ -97,4 +97,20 @@ public class TestSuiteParserParsingTest {
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
+    @Test
+    public void it_captures_a_simple_item_name_from_an_EXPECT() throws Exception {
+        String expectedResult = "            WS-FIELDNAME";
+        testSuite.append("           EXPECT WS-FIELDNAME TO BE \"some value\"");
+        testSuiteParser.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
+                mockTestProgramSource);
+        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+    }
+    @Test
+    public void it_captures_a_qualified_item_name_from_an_EXPECT() throws Exception {
+        String expectedResult = "            WS-FIELDNAME OF WS-GROUP";
+        testSuite.append("           EXPECT WS-FIELDNAME OF WS-GROUP TO BE \"some value\"");
+        testSuiteParser.parseTestSuite(new BufferedReader(new StringReader(testSuite.toString())),
+                mockTestProgramSource);
+        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+    }
 }
