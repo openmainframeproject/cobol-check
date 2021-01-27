@@ -1,3 +1,5 @@
+import static org.apache.tools.ant.taskdefs.condition.Os.*
+
 plugins {
     id 'java-library'
 }
@@ -5,6 +7,9 @@ plugins {
 version = '0.0.1'
 group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
+
+def approvalExpectedOutput = "approval-test-expected.txt"
+def approvalActualOutput = "approval-test-actual.txt"
 
 ext {
     mainClassName = 'com.neopragma.cobolcheck.Driver'
@@ -58,9 +63,28 @@ def unitTest = tasks.register("unitTest", Test) {
 }
 def integrationTest = tasks.register("integrationTest", Test) {
     description 'Run integration tests only'
+    dependsOn unitTest
     useJUnitPlatform()
     filter {
         includeTestsMatching "com.neopragma.cobolcheck.*IT"
+    }
+}
+def approvalTest = tasks.register("approvalTest", Test) {
+    description 'Run approval test only'
+    dependsOn integrationTest
+    if ("${OS_NAME}" == "linux") {
+        println "Linux detected"
+        def proc = "approvaltest".execute()
+        proc.waitForProcessOutput(System.out, System.err)
+        proc = "diff ${approvalExpectedOutput} ${approvalActualOutput}".execute()
+        proc.waitForProcessOutput(System.out, System.err)
+
+        println "exit code from diff: ${proc.exitValue()}"
+        if (proc.exitValue() > 0) {
+            throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+        } else {
+            println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+        }
     }
 }
 
@@ -68,7 +92,6 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': "${mainClassName}"
     }
-//    baseName = "${rootProject.name}"
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
@@ -82,5 +105,13 @@ task defaultProperties {
     println "Version: $version"
     println "Group: $project.group"
     println "Description: $project.description"
-//    println "AntBuilder: $ant"
+}
+
+task osInfo {
+    description 'Show information about the operating system'
+    doLast {
+        println "Family:       ${OS_NAME}"
+        println "Version:      ${OS_VERSION}"
+        println "Architecture: ${OS_ARCH}"
+    }
 }

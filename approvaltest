@@ -1,0 +1,1 @@
+cobolcheck -p GREETING > approval-test-actual.txt
