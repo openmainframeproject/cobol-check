@@ -115,6 +115,11 @@ public class GetOpt implements Constants, StringHelper {
                 );
                 multipleArgumentsPossible = false;
                 optionValue = lookupOption(stripPrefix(argValue));
+                if (optionValue == null) {
+                    throw new CommandLineArgumentException(
+                            messages.get("ERR025", argValue)
+                    );
+                }
                 optionValue.isSet = true;
                 expectValueNext = optionValue.hasArgument;
                 lastOption = argValue;

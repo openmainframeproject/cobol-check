@@ -1,3 +1,6 @@
            TestSuite "Tests for a sequential file copy program"
 
-           TestCase "It blah blah blah"
+           TestCase "Output fields are populated from the input record"
+           Perform 5200-PREPARE-OUTPUT-RECORD
+           Expect OUT-FIELD-2 TO EQUAL IN-FIELD-2
+

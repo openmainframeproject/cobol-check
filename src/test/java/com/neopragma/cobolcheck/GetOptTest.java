@@ -65,8 +65,17 @@ public class GetOptTest {
 
     @Test
     public void it_correctly_stores_the_argument_that_goes_with_an_option() {
-        GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" }, optionSpecsWithLongOptions, new Messages());
+        GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" },
+                optionSpecsWithLongOptions, new Messages());
         assertEquals("info", getOpt.getValueFor("log-level"));
+    }
+
+    @Test
+    public void it_logs_and_throws_when_an_undefined_option_is_detected() {
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
+            GetOpt getOpt = new GetOpt(new String[] { "-f"},
+                    optionSpecsWithOnlyShortOptions, new Messages());
+        });
     }
 
 }
