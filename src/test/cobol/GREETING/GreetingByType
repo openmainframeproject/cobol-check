@@ -17,3 +17,8 @@
            SET MESSAGE-IS-FAREWELL TO TRUE
            PERFORM 2000-SPEAK
            Expect WS-FAREWELL To Be "See you later, alligator!"
+
+           TESTCASE "Message type greeting is not true"
+           SET MESSAGE-IS-GREETING TO TRUE
+           Expect MESSAGE-IS-GREETING NOT TO BE TRUE
+

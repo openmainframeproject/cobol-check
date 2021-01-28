@@ -144,6 +144,32 @@ public class TestSuiteParserCodeInsertionTest {
     }
 
     @Test
+    public void it_inserts_cobol_statements_for_an_alphanumeric_literal_inequality_check_in_an_EXPECT() throws IOException {
+        StringBuilder expectedResult = new StringBuilder();
+        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           SET UT-REVERSE-COMPARE TO TRUE                                       ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           MOVE \"Hello\"                                                         ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("               TO UT-EXPECTED                                                   ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           PERFORM UT-AFTER                                                     ");
+        expectedResult.append(Constants.NEWLINE);
+        StringBuilder testSuite = new StringBuilder();
+        testSuite.append("           EXPECT WS-MESSAGE NOT TO BE \"Hello\"");
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        assertEquals(expectedResult.toString(), testSourceOut.toString());
+    }
+
+    @Test
     public void it_inserts_cobol_statements_for_a_numeric_literal_equality_check_in_an_EXPECT() throws IOException {
         StringBuilder expectedResult = new StringBuilder();
         expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");

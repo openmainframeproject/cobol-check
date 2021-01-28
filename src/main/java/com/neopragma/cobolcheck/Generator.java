@@ -29,7 +29,6 @@ import java.util.*;
  * @since 14
  */
 public class Generator implements StringHelper {
-    //TODO simplify this:the injected Config object contains an instance of Messages; no need for another one
     private final Messages messages;
     private final Config config;
     private final TokenExtractor tokenExtractor;
@@ -44,13 +43,13 @@ public class Generator implements StringHelper {
     private List<String> fileSectionStatements;
 
     // Internal file identifiers and status field names
-    private Map<String, String> fileIdentifiersAndStatuses;
+    private final Map<String, String> fileIdentifiersAndStatuses;
 
     // Tokens collected from COPY statements that may span multiple lines
     private List<String> copyTokens;
 
     // Source tokens from Procedure Division that begin batch I/O statements
-    private List<String> batchFileIOVerbs = List.of(
+    private final List<String> batchFileIOVerbs = List.of(
             "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
     );
 

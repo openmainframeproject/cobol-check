@@ -160,6 +160,32 @@
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
            PERFORM CC-AFTER                                                     
+           MOVE "Alphanumeric fields can be compared for inequality"            
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE "Alpha" TO IN-FIELD-1                                          
+            MOVE "Beta" TO IN-FIELD-2                                           
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-REVERSE-COMPARE TO TRUE                                       
+           MOVE IN-FIELD-1 TO CC-ACTUAL                                         
+           MOVE IN-FIELD-2                                                      
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
+           MOVE "A field can be compared for inequality with an alphanum        
+      -    "eric literal"                                                       
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE "Gamma" TO IN-FIELD-1                                          
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-REVERSE-COMPARE TO TRUE                                       
+           MOVE IN-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "Alpha"                                                         
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       

@@ -102,7 +102,9 @@ public class KeywordExtractorTest {
             Arguments.of("           EXPECT WS-FIELD-1 TO EQUAL WS-FIELD-2   ",
                           List.of("EXPECT", "WS-FIELD-1", "TO EQUAL", "WS-FIELD-2")),
             Arguments.of("        EXPECT WS-FIELD-1 TO BE WS-FIELD-2.",
-                          List.of("EXPECT", "WS-FIELD-1", "TO BE", "WS-FIELD-2"))
+                          List.of("EXPECT", "WS-FIELD-1", "TO BE", "WS-FIELD-2")),
+            Arguments.of("      EXPECT WS-FIELD-1 NOT TO EQUAL WS-FIELD-2 ",
+                          List.of("EXPECT", "WS-FIELD-1", "NOT", "TO EQUAL", "WS-FIELD-2"))
         );
     }
 

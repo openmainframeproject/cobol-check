@@ -191,6 +191,28 @@
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
            PERFORM CC-AFTER                                                     
+           MOVE "Message type greeting is not true"                             
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            SET MESSAGE-IS-GREETING TO TRUE                                     
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-88-LEVEL TO TRUE                                      
+           SET CC-REVERSE-COMPARE TO TRUE                                       
+           IF MESSAGE-IS-GREETING                                               
+               SET CC-ACTUAL-88-VALUE TO TRUE                                   
+               MOVE 'TRUE' TO CC-ACTUAL                                         
+           ELSE                                                                 
+               SET CC-ACTUAL-88-VALUE TO FALSE                                  
+               MOVE 'FALSE' TO CC-ACTUAL                                        
+           END-IF                                                               
+           SET CC-EXPECTED-88-VALUE TO FALSE                                    
+           IF CC-EXPECTED-88-VALUE                                              
+               MOVE 'TRUE' TO CC-EXPECTED                                       
+           ELSE                                                                 
+               MOVE 'FALSE' TO CC-EXPECTED                                      
+           END-IF                                                               
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
            DISPLAY "TESTSUITE:"                                                 
            DISPLAY "Greeting includes the user name when it is provided"        
            MOVE "When message type is greeting it returns Hello, James!"        

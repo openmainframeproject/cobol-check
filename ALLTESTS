@@ -1,9 +1,44 @@
-           TestSuite "Tests for a sequential file copy program"
+           TESTSUITE
+           "Greeting returns the appropriate message based on message type"
 
-           TestCase "Output fields are populated from the input record"
-           Move "Alpha" TO IN-FIELD-1
-           Move "Beta" TO IN-FIELD-2
-           Perform 5200-PREPARE-OUTPUT-RECORD
-           Expect IN-FIELD-1 OF INPUT-RECORD TO EQUAL OUT-FIELD-1
-           Expect OUT-FIELD-2 OF OUTPUT-RECORD TO EQUAL IN-FIELD-2
+           TestCase "When message type is greeting it returns 'Hello, World!'"
+           SET MESSAGE-IS-GREETING TO TRUE
+           PERFORM 2000-SPEAK
+           EXPECT WS-GREETING TO BE "Hello, World!"
 
+           TESTCASE "try numerical compare"
+           ADD 1 TO WS-COUNT
+           EXPECT WS-COUNT TO BE 1
+
+           TESTCASE "try 88 level compare"
+           EXPECT MESSAGE-IS-GREETING TO BE FALSE
+
+           TESTCASE "When message type is farewell it returns See you later, alligator!"
+           SET MESSAGE-IS-FAREWELL TO TRUE
+           PERFORM 2000-SPEAK
+           Expect WS-FAREWELL To Be "See you later, alligator!"
+
+           TESTCASE "Message type greeting is not true"
+           SET MESSAGE-IS-GREETING TO TRUE
+           Expect MESSAGE-IS-GREETING NOT TO BE TRUE
+
+           TESTSUITE
+           "Greeting includes the user name when it is provided"
+
+           TESTCASE "When message type is greeting it returns Hello, James!"
+           SET MESSAGE-IS-GREETING TO TRUE
+           MOVE "James" TO WS-FRIEND
+           PERFORM 2000-SPEAK
+           EXPECT WS-GREETING TO BE "Hello, James!"
+
+           TESTCASE "When message type is farewell it returns Goodbye, James!"
+           SET MESSAGE-IS-FAREWELL TO TRUE
+           MOVE "James" TO WS-FRIEND
+           PERFORM 2000-SPEAK
+           EXPECT WS-FAREWELL TO BE "Goodbye, James!"
+
+           TESTCASE "User name for greeting and farewell are consistent"
+           SET MESSAGE-IS-GREETING TO TRUE
+           Move "Henry" TO WS-FRIEND
+           PERFORM 2000-SPEAK
+           EXPECT WS-USER-NAME OF WS-GREETING TO BE "Henry"

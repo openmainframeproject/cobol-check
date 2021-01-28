@@ -7,3 +7,12 @@
            Expect IN-FIELD-1 OF INPUT-RECORD TO EQUAL OUT-FIELD-1
            Expect OUT-FIELD-2 OF OUTPUT-RECORD TO EQUAL IN-FIELD-2
 
+           TestCase "Alphanumeric fields can be compared for inequality"
+           Move "Alpha" to IN-FIELD-1
+           Move "Beta" to IN-FIELD-2
+           Expect IN-FIELD-1 NOT TO EQUAL IN-FIELD-2
+
+           TestCase "A field can be compared for inequality with an alphanumeric literal"
+           Move "Gamma" to IN-FIELD-1
+           Expect IN-FIELD-1 NOT TO BE "Alpha"
+

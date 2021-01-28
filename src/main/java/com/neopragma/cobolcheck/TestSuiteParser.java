@@ -55,6 +55,7 @@ public class TestSuiteParser implements StringHelper {
     private boolean possibleQualifiedName;
     private boolean expectQualifiedName;
     private String expectedValueToCompare;
+    private boolean reverseCompare;
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = Constants.EMPTY_STRING;
     private String currentTestCaseName = Constants.EMPTY_STRING;
@@ -74,6 +75,8 @@ public class TestSuiteParser implements StringHelper {
             "           PERFORM %sBEFORE";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
             "           ADD 1 TO %sTEST-CASE-COUNT";
+    private static final String COBOL_SET_REVERSE_COMPARE =
+            "           SET %1$sREVERSE-COMPARE TO %2$s";
     private static final String COBOL_SET_NORMAL_COMPARE =
             "           SET %1$sNORMAL-COMPARE TO %2$s";
     private static final String COBOL_SET_COMPARE_NUMERIC =
@@ -175,7 +178,12 @@ public class TestSuiteParser implements StringHelper {
                     initializeCobolStatement();
                     insertIncrementTestCaseCount(testSourceOut);
                     expectInProgress = true;
+                    reverseCompare = false;
                     fieldNameForExpect = Constants.EMPTY_STRING;
+                    break;
+
+                case Constants.NOT_KEYWORD:
+                    reverseCompare = true;
                     break;
 
                 case Constants.COBOL_TOKEN:
@@ -389,8 +397,13 @@ public class TestSuiteParser implements StringHelper {
     }
 
     void insertTestCodeForAlphanumericEqualityCheck(Writer testSourceOut) throws IOException {
-        testSourceOut.write(fixedLength(String.format(
+        if (reverseCompare) {
+            testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_REVERSE_COMPARE, testCodePrefix, Constants.TRUE)));
+        } else {
+            testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_NORMAL_COMPARE, testCodePrefix, Constants.TRUE)));
+        }
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
         String cobolLine = String.format(
@@ -422,6 +435,10 @@ public class TestSuiteParser implements StringHelper {
     void insertTestCodeFor88LevelEqualityCheck(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_COMPARE_88_LEVEL, testCodePrefix, Constants.TRUE)));
+        if (reverseCompare) {
+            testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_REVERSE_COMPARE, testCodePrefix, Constants.TRUE)));
+        }
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_ACTUAL_88_VALUE_1, fieldNameForExpect)));
         testSourceOut.write(fixedLength(String.format(
@@ -436,6 +453,13 @@ public class TestSuiteParser implements StringHelper {
                 COBOL_SET_ACTUAL_88_VALUE_6, testCodePrefix)));
         testSourceOut.write(fixedLength(
                 COBOL_SET_ACTUAL_88_VALUE_7));
+        if (reverseCompare) {
+            if (expectedValueToCompare.equals(Constants.TRUE)) {
+                expectedValueToCompare = Constants.FALSE;
+            } else {
+                expectedValueToCompare = Constants.TRUE;
+            }
+        }
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_EXPECTED_88_VALUE, testCodePrefix, expectedValueToCompare)));
         testSourceOut.write(fixedLength(String.format(
