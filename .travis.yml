@@ -7,11 +7,6 @@ addons:
       - libdb-dev
       - libgmp3-dev
       - libncurses5-dev
-before_install:
-  - sudo make install-gnucobol
-install:
-  - make build
-script:
-  - make test
+      - gnucobol
 
 
