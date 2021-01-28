@@ -72,18 +72,20 @@ def integrationTest = tasks.register("integrationTest", Test) {
 def approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
     dependsOn integrationTest
-    if ("${OS_NAME}" == "linux") {
-        println "Linux detected"
-        def proc = "approvaltest".execute()
-        proc.waitForProcessOutput(System.out, System.err)
-        proc = "diff ${approvalExpectedOutput} ${approvalActualOutput}".execute()
-        proc.waitForProcessOutput(System.out, System.err)
+    doLast {
+        if ("${OS_NAME}" == "linux") {
+            println "Linux detected"
+            def proc = "approvaltest".execute()
+            proc.waitForProcessOutput(System.out, System.err)
+            proc = "diff ${approvalExpectedOutput} ${approvalActualOutput}".execute()
+            proc.waitForProcessOutput(System.out, System.err)
 
-        println "exit code from diff: ${proc.exitValue()}"
-        if (proc.exitValue() > 0) {
-            throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
-        } else {
-            println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+            println "exit code from diff: ${proc.exitValue()}"
+            if (proc.exitValue() > 0) {
+                throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+            } else {
+                println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+            }
         }
     }
 }
