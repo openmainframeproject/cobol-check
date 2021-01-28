@@ -186,6 +186,30 @@
            SET CC-COMPARE-DEFAULT TO TRUE                                       
            PERFORM CC-ASSERT-EQUAL                                              
            PERFORM CC-AFTER                                                     
+           MOVE "A numeric field can be compared for equality with a lit        
+      -    "eral"                                                               
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE 5 TO WS-COUNT                                                  
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-NUMERIC TO TRUE                                       
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-COUNT TO CC-ACTUAL-NUMERIC                                   
+           MOVE 5 TO CC-EXPECTED-NUMERIC                                        
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
+           MOVE "A numeric field can be compared for inequality with a l        
+      -    "iteral"                                                             
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE 5 TO WS-COUNT                                                  
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-NUMERIC TO TRUE                                       
+           SET CC-REVERSE-COMPARE TO TRUE                                       
+           MOVE WS-COUNT TO CC-ACTUAL-NUMERIC                                   
+           MOVE 6 TO CC-EXPECTED-NUMERIC                                        
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       

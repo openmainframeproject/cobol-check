@@ -153,6 +153,7 @@
             ADD 1 TO WS-COUNT                                                   
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-COMPARE-NUMERIC TO TRUE                                       
+           SET CC-NORMAL-COMPARE TO TRUE                                        
            MOVE WS-COUNT TO CC-ACTUAL-NUMERIC                                   
            MOVE 1 TO CC-EXPECTED-NUMERIC                                        
            PERFORM CC-ASSERT-EQUAL                                              

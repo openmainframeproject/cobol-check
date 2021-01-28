@@ -1,0 +1,21 @@
+TESTSUITE:
+Greeting returns the appropriate message based on message type
+**** FAIL:   1. When message type is greeting it returns 'Hello, World!'                        
+    EXPECTED <Hello, World!>, WAS <Hello, World !>
+     PASS:   2. try numerical compare                                                           
+**** FAIL:   3. try 88 level compare                                                            
+    EXPECTED <FALSE>, WAS <TRUE>
+     PASS:   4. When message type is farewell it returns See you later, alligator!              
+     PASS:   5. Message type greeting is not true                                               
+TESTSUITE:
+Greeting includes the user name when it is provided
+**** FAIL:   6. When message type is greeting it returns Hello, James!                          
+    EXPECTED <Hello, James!>, WAS <Hello, James !>
+**** FAIL:   7. When message type is farewell it returns Goodbye, James!                        
+    EXPECTED <Goodbye, James!>, WAS <See you later, James    !>
+     PASS:   8. User name for greeting and farewell are consistent                              
+ 
+  8 TEST CASES WERE EXECUTED
+  4 PASSED
+  4 FAILED
+=================================================

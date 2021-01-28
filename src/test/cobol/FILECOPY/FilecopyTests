@@ -16,3 +16,13 @@
            Move "Gamma" to IN-FIELD-1
            Expect IN-FIELD-1 NOT TO BE "Alpha"
 
+           TestCase "A numeric field can be compared for equality with a literal"
+           Move 5 to WS-COUNT
+           Expect WS-COUNT TO BE 5
+
+           TestCase "A numeric field can be compared for inequality with a literal"
+           Move 5 to WS-COUNT
+           Expect WS-COUNT NOT TO BE 6
+
+
+

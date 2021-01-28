@@ -422,6 +422,13 @@ public class TestSuiteParser implements StringHelper {
     void insertTestCodeForNumericEqualityCheck(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_COMPARE_NUMERIC, testCodePrefix, Constants.TRUE)));
+        if (reverseCompare) {
+            testSourceOut.write(fixedLength(String.format(
+                    COBOL_SET_REVERSE_COMPARE, testCodePrefix, Constants.TRUE)));
+        } else {
+            testSourceOut.write(fixedLength(String.format(
+                    COBOL_SET_NORMAL_COMPARE, testCodePrefix, Constants.TRUE)));
+        }
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
         testSourceOut.write(fixedLength(String.format(

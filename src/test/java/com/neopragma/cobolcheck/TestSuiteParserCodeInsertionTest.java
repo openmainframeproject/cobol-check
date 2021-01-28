@@ -176,6 +176,8 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
         expectedResult.append(Constants.NEWLINE);
+        expectedResult.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
+        expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           MOVE WS-VALUE TO UT-ACTUAL-NUMERIC                                   ");
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           MOVE 18.92 TO UT-EXPECTED-NUMERIC                                    ");
