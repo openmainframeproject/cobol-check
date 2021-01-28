@@ -78,8 +78,19 @@ def integrationTest = tasks.register("integrationTest", Test) {
         includeTestsMatching "com.neopragma.cobolcheck.*IT"
     }
 }
+
+task fatJar(type: Jar) {
+    dependsOn integrationTest
+    manifest {
+        attributes 'Main-Class': "${mainClassName}"
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 def approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
+    dependsOn fatJar
     doLast {
         if ("${OS_NAME}" == "linux") {
             println "Linux detected"
@@ -96,14 +107,6 @@ def approvalTest = tasks.register("approvalTest", Test) {
             }
         }
     }
-}
-
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Main-Class': "${mainClassName}"
-    }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }
 
 task defaultProperties {
