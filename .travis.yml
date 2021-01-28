@@ -3,15 +3,5 @@ matrix:
     - language: java
       jdk:
       - openjdk14
-    - language: c
-      addons:
-        apt:
-          packages:
-          - libdb-dev
-          - libgmp3-dev
-          - libncurses5-dev
-      before_install:
-      - sudo make install-gnucobol
-      install:
-      - make build
-  
+    - language: cobol
+
