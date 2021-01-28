@@ -52,16 +52,7 @@ public class CopybookExpanderIT implements StringHelper {
 
     @BeforeAll
     public static void oneTimeSetup() {
-//TODO: Solve the mystery - mock messages object is always null
-//  We don't need a real Messages object for this test class
-//        when(messages.get(anyString())).thenReturn(EMPTY_STRING);
-//        doReturn(EMPTY_STRING).when(messages).get(anyString(), anyString());
-//        config = new Config(messages);
-
-        System.out.println("********** CopybookExpanderIT **********");
-
         config = new Config(new Messages());
-
         config.load("testconfig.properties");
         copybookFilenameSuffix = config.getApplicationFilenameSuffix();
         pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "src/main/cobol/copy");
