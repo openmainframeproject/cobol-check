@@ -143,6 +143,13 @@
            PERFORM CC-BEFORE                                                    
             PERFORM 5200-PREPARE-OUTPUT-RECORD                                  
            ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE OUT-FIELD-2 TO CC-ACTUAL                                        
+           MOVE IN-FIELD-2                                                      
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       

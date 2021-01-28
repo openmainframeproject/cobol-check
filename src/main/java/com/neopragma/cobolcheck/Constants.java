@@ -46,6 +46,7 @@ public interface Constants {
     String EXPECT_KEYWORD = "EXPECT";
     String FIELDNAME_KEYWORD = "fieldname";
     String TO_BE_KEYWORD = "TO BE";
+    String TO_EQUAL_KEYWORD = "TO EQUAL";
     String NOT_KEYWORD = "NOT";
     String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
     String NUMERIC_LITERAL_KEYWORD = "numeric-literal";

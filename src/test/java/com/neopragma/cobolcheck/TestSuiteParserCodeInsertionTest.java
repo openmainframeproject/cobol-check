@@ -74,8 +74,40 @@ public class TestSuiteParserCodeInsertionTest implements Constants {
     }
 
     @Test
+    public void it_inserts_cobol_statements_for_an_88_level_equality_check_in_an_EXPECT() throws IOException {
+        StringBuilder expectedResult = new StringBuilder();
+        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           SET UT-COMPARE-88-LEVEL TO TRUE                                      ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           IF WS-88-LEVEL-ITEM                                                  ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               SET UT-ACTUAL-88-VALUE TO TRUE                                   ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               MOVE 'TRUE' TO UT-ACTUAL                                         ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           ELSE                                                                 ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               SET UT-ACTUAL-88-VALUE TO FALSE                                  ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               MOVE 'FALSE' TO UT-ACTUAL                                        ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           END-IF                                                               ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           PERFORM UT-AFTER                                                     ");
+        expectedResult.append(NEWLINE);
+        StringBuilder testSuite = new StringBuilder();
+        testSuite.append("           EXPECT WS-88-LEVEL-ITEM TO BE TRUE");
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        assertEquals(expectedResult.toString(), testSourceOut.toString());
+    }
+
+    @Test
     public void it_inserts_cobol_statements_for_an_alphanumeric_literal_equality_check_in_an_EXPECT() throws IOException {
-        StringBuffer expectedResult = new StringBuffer();
+        StringBuilder expectedResult = new StringBuilder();
         expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
         expectedResult.append(NEWLINE);
         expectedResult.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
@@ -92,8 +124,56 @@ public class TestSuiteParserCodeInsertionTest implements Constants {
         expectedResult.append(NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");
         expectedResult.append(NEWLINE);
-        StringBuffer testSuite = new StringBuffer();
+        StringBuilder testSuite = new StringBuilder();
         testSuite.append("           EXPECT WS-MESSAGE TO BE \"Hello\"");
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        assertEquals(expectedResult.toString(), testSourceOut.toString());
+    }
+
+    @Test
+    public void it_inserts_cobol_statements_for_a_numeric_literal_equality_check_in_an_EXPECT() throws IOException {
+        StringBuilder expectedResult = new StringBuilder();
+        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           MOVE WS-VALUE TO UT-ACTUAL-NUMERIC                                   ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           MOVE 18.92 TO UT-EXPECTED-NUMERIC                                    ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           PERFORM UT-AFTER                                                     ");
+        expectedResult.append(NEWLINE);
+        StringBuilder testSuite = new StringBuilder();
+        testSuite.append("           EXPECT WS-VALUE TO BE 18.92");
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        assertEquals(expectedResult.toString(), testSourceOut.toString());
+    }
+
+    @Test
+    public void it_inserts_cobol_statements_for_an_equality_check_between_fields_in_an_EXPECT() throws IOException {
+        StringBuilder expectedResult = new StringBuilder();
+        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           MOVE WS-FIELD-1 TO UT-ACTUAL                                         ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           MOVE WS-FIELD-2                                                      ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               TO UT-EXPECTED                                                   ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           PERFORM UT-AFTER                                                     ");
+        expectedResult.append(NEWLINE);
+        StringBuilder testSuite = new StringBuilder();
+        testSuite.append("           EXPECT WS-FIELD-1 TO EQUAL WS-FIELD-2");
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
         testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
         assertEquals(expectedResult.toString(), testSourceOut.toString());

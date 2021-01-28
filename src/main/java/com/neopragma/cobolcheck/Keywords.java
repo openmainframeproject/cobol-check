@@ -62,6 +62,14 @@ public class Keywords implements Constants {
                                 TRUE,
                                 FALSE),
                         KeywordAction.EXPECTED_VALUE));
+        keywordInfo.put(TO_EQUAL_KEYWORD,
+                new Keyword(TO_EQUAL_KEYWORD,
+                        List.of(FIELDNAME_KEYWORD,
+                                ALPHANUMERIC_LITERAL_KEYWORD,
+                                NUMERIC_LITERAL_KEYWORD,
+                                TRUE,
+                                FALSE),
+                        KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(ALPHANUMERIC_LITERAL_KEYWORD,
                         List.of(EXPECT_KEYWORD, COBOL_TOKEN),

@@ -46,7 +46,7 @@ public class TestSuiteParser implements Constants, StringHelper {
     private boolean cobolStatementInProgress;
     private boolean expectInProgress;
     private boolean toBeInProgress;
-    private boolean alphanumericLiteralCompare;
+    private boolean alphanumericCompare;
     private boolean numericLiteralCompare;
     private boolean boolean88LevelCompare;
     private boolean expectTestsuiteName;
@@ -148,10 +148,15 @@ public class TestSuiteParser implements Constants, StringHelper {
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
+
+            System.out.println("********** parseTestSuite: token is <" + testSuiteToken + ">");
+
             if (!testSuiteToken.startsWith(QUOTE) && !testSuiteToken.startsWith(APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
+
+            System.out.println("****** keyword.value(): <" + keyword.value() + ">");
 
             if (Log.level() == LogLevel.DEBUG) {
                 System.out.println("Generator.parseTestSuite(), " +
@@ -196,6 +201,16 @@ public class TestSuiteParser implements Constants, StringHelper {
                         expectInProgress = false;
                         possibleQualifiedName = true;
                     }
+                    if (toBeInProgress) {
+
+                        System.out.println("**** COBOL_TOKEN, toBeInProgress is true");
+
+                        alphanumericCompare = true;
+                        expectedValueToCompare = testSuiteToken;
+                        insertTestCodeForAssertion(testSourceOut);
+                        toBeInProgress = false;
+                        alphanumericCompare = false;
+                    }
                     break;
 
                 case ALPHANUMERIC_LITERAL_KEYWORD:
@@ -213,10 +228,10 @@ public class TestSuiteParser implements Constants, StringHelper {
                     }
                     if (toBeInProgress) {
                         if (testSuiteToken.startsWith(QUOTE) || testSuiteToken.startsWith(APOSTROPHE)) {
-                            alphanumericLiteralCompare = true;
+                            alphanumericCompare = true;
                             expectedValueToCompare = testSuiteToken;
                             insertTestCodeForAssertion(testSourceOut);
-                            alphanumericLiteralCompare = false;
+                            alphanumericCompare = false;
                         }
                         toBeInProgress = false;
                     }
@@ -250,6 +265,7 @@ public class TestSuiteParser implements Constants, StringHelper {
                     break;
 
                 case TO_BE_KEYWORD:
+                case TO_EQUAL_KEYWORD:
                     toBeInProgress = true;
                     break;
             }
@@ -372,7 +388,7 @@ public class TestSuiteParser implements Constants, StringHelper {
     }
 
     void insertTestCodeForAssertion(Writer testSourceOut) throws IOException {
-        if (alphanumericLiteralCompare) {
+        if (alphanumericCompare) {
             insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
         } else if (numericLiteralCompare) {
             insertTestCodeForNumericEqualityCheck(testSourceOut);
