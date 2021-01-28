@@ -1,4 +1,2 @@
 rootProject.name = 'cobol-check'
-include 'src:intTest'
-findProject(':src:intTest')?.name = 'intTest'
 

@@ -29,7 +29,7 @@ import java.util.Locale;
  * @since 1.8
  */
 public class CobolVerbs {
-    private static final List<String> cobolVerbs = List.of(
+    private static final List<String> values = List.of(
             "ACCEPT",
             "ADD",
             "CALL",
@@ -63,7 +63,10 @@ public class CobolVerbs {
     );
 
     public static boolean isCobolVerb(String token) {
-        return cobolVerbs.contains(token.toUpperCase(Locale.ROOT));
+        return values.contains(token.toUpperCase(Locale.ROOT));
     }
 
+    private CobolVerbs() {
+        throw new IllegalStateException("Can't instantiate static class");
+    }
 }
