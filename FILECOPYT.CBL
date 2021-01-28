@@ -138,9 +138,11 @@
            PERFORM CC-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
            DISPLAY "Tests for a sequential file copy program"                   
-           MOVE "It blah blah blah"                                             
+           MOVE "Output fields are populated from the input record"             
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
+            PERFORM 5200-PREPARE-OUTPUT-RECORD                                  
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
       * ZUTZCPD.CPY                                                             
            DISPLAY SPACE                                                        
            MOVE CC-TEST-CASE-COUNT TO CC-TEST-CASE-NUMBER                       

@@ -19,21 +19,22 @@ import java.util.*;
 
 public class KeywordExtractor implements TokenExtractor, Constants {
 
-    private Map<String, String> twoWordTokens;
+    private Map<String, List<String>> multiWordTokens;
     private StringBuilder buffer;
     private final char PERIOD = '.';
     private final char COMMA = ',';
     private final char DOUBLE_QUOTE = '"';
     private final char SINGLE_QUOTE = '\'';
     private final char SPACE = ' ';
-    private String nextExpectedToken = EMPTY_STRING;
+    private List<String> nextExpectedTokens;
     private boolean openQuote = false;
     private char quoteDelimiter = '"';
     private boolean processingNumericLiteral = false;
 
     public KeywordExtractor() {
-        twoWordTokens = new HashMap<>();
-        twoWordTokens.put("TO", "BE");
+        nextExpectedTokens = new ArrayList<>();
+        multiWordTokens = new HashMap<>();
+        multiWordTokens.put("TO", List.of("BE", "EQUAL"));
     }
 
     @Override
@@ -78,24 +79,29 @@ public class KeywordExtractor implements TokenExtractor, Constants {
                     if (openQuote) {
                         buffer.append(SPACE);
                     } else {
-                        if (twoWordTokens.containsKey(buffer.toString().toUpperCase(Locale.ROOT))) {
-                            nextExpectedToken = twoWordTokens.get(buffer.toString().toUpperCase(Locale.ROOT));
+                        if (multiWordTokens.containsKey(buffer.toString().toUpperCase(Locale.ROOT))) {
+                            nextExpectedTokens = multiWordTokens.get(buffer.toString().toUpperCase(Locale.ROOT));
                             buffer.append(SPACE);
 
                             int startOfLookahead = tokenOffset + 1;
-                            int endOfLookahead = startOfLookahead + nextExpectedToken.length();
-                            if (nextExpectedToken.equalsIgnoreCase(sourceLine.substring(startOfLookahead, endOfLookahead))
-                                    && (endOfLookahead >= sourceLine.length()
-                                    || sourceLine.charAt(endOfLookahead) == SPACE)) {
-                                    buffer.append(nextExpectedToken);
-                                    tokenOffset += nextExpectedToken.length();
-                                    nextExpectedToken = EMPTY_STRING;
-                            } else {
-                                buffer = addTokenAndClearBuffer(buffer, tokens);
-                                nextExpectedToken = EMPTY_STRING;
+                            for (String expectedToken : nextExpectedTokens) {
+                                int endOfLookahead = startOfLookahead + expectedToken.length();
+                                if (sourceLine.length() >= endOfLookahead) {
+                                    if (expectedToken.equalsIgnoreCase(sourceLine.substring(startOfLookahead, endOfLookahead))
+                                            && (endOfLookahead == sourceLine.length()
+                                            || sourceLine.charAt(endOfLookahead) == SPACE)) {
+                                        buffer.append(expectedToken);
+                                        tokenOffset += expectedToken.length();
+                                        expectedToken = EMPTY_STRING;
+                                        break;
+                                    }
+                                }
+
                             }
+                            buffer = addTokenAndClearBuffer(buffer, tokens);
+                            nextExpectedTokens = new ArrayList<>();
                         } else {
-                            nextExpectedToken = EMPTY_STRING;
+                            nextExpectedTokens = new ArrayList<>();
                             if (buffer.length() > 0) {
                                 buffer = addTokenAndClearBuffer(buffer, tokens);
                             }

@@ -89,6 +89,22 @@ public class KeywordExtractorTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("fieldNameProvider")
+    public void it_handles_expect_field_to_equal_field(
+            String sourceLine, List<String> expectedTokens
+    ) {
+        tokens = extractor.extractTokensFrom(sourceLine);
+        assertEquals(expectedTokens, tokens);
+    }
+    private static Stream<Arguments> fieldNameProvider() {
+        return Stream.of(
+            Arguments.of("           EXPECT WS-FIELD-1 TO EQUAL WS-FIELD-2   ",
+                          List.of("EXPECT", "WS-FIELD-1", "TO EQUAL", "WS-FIELD-2")),
+            Arguments.of("        EXPECT WS-FIELD-1 TO BE WS-FIELD-2.",
+                          List.of("EXPECT", "WS-FIELD-1", "TO BE", "WS-FIELD-2"))
+        );
+    }
 
     @Test
     public void given_a_mixture_of_different_types_of_tokens_it_extracts_them_correctly() {
