@@ -36,7 +36,7 @@ public class Config implements Constants {
     }
 
     private final Messages messages;
-    private Properties config = null;
+    private Properties settings = null;
     private static final String configFileExceptionMessage = "Name: %s";
 
     void load() {
@@ -47,8 +47,8 @@ public class Config implements Constants {
     void load(String configResourceName) {
         Log.info(messages.get("INF001", configResourceName));
         try {
-            config = new Properties();
-            config.load(new FileInputStream(configResourceName));
+            settings = new Properties();
+            settings.load(new FileInputStream(configResourceName));
         } catch (IOException ioe) {
             throw new IOExceptionProcessingConfigFile(
                     messages.get("ERR003", configResourceName), ioe);
@@ -70,21 +70,21 @@ public class Config implements Constants {
     }
 
     String getString(String key, String defaultValue) {
-        return (String) config.getOrDefault(key, defaultValue);
+        return (String) settings.getOrDefault(key, defaultValue);
     }
 
     void remove(String key) {
-        config.remove(key);
+        settings.remove(key);
     }
 
-    Locale getDefaultLocale() { return (Locale) config.get("default.locale"); }
+    Locale getDefaultLocale() { return (Locale) settings.get("default.locale"); }
 
     Messages getMessages() {
         return messages;
     }
 
     String getApplicationFilenameSuffix() {
-        return config.getProperty("resolved.application.source.filename.suffix");
+        return settings.getProperty("resolved.application.source.filename.suffix");
     }
 
     private void setApplicationFilenameSuffix() {
@@ -95,11 +95,11 @@ public class Config implements Constants {
         if (!suffix.equalsIgnoreCase("none")) {
             propertyValue = PERIOD + suffix;
         }
-        config.put("resolved.application.source.filename.suffix", propertyValue);
+        settings.put("resolved.application.source.filename.suffix", propertyValue);
     }
 
     String getCopybookFilenameSuffix() {
-        return config.getProperty("resolved.application.copybook.filename.suffix");
+        return settings.getProperty("resolved.application.copybook.filename.suffix");
     }
 
     private void setCopybookFilenameSuffix() {
@@ -110,25 +110,25 @@ public class Config implements Constants {
         if (!suffix.equalsIgnoreCase("none")) {
             propertyValue = PERIOD + suffix;
         }
-        config.put("resolved.application.copybook.filename.suffix", propertyValue);
+        settings.put("resolved.application.copybook.filename.suffix", propertyValue);
     }
 
     private void setDefaultLocaleOverride() {
-        if (!config.containsKey("locale.language")) {
+        if (!settings.containsKey("locale.language")) {
             return;
         }
         Locale locale;
-        if (!config.containsKey("locale.country")) {
-            locale = new Locale(config.getProperty("locale.language"));
-        } else if (!config.containsKey("locale.variant")) {
+        if (!settings.containsKey("locale.country")) {
+            locale = new Locale(settings.getProperty("locale.language"));
+        } else if (!settings.containsKey("locale.variant")) {
             locale = new Locale(
-                    config.getProperty("locale.language"),
-                    config.getProperty("locale.country"));
+                    settings.getProperty("locale.language"),
+                    settings.getProperty("locale.country"));
         } else {
-            locale = new Locale(config.getProperty("locale.language"),
-                    config.getProperty("locale.country"),
-                    config.getProperty("locale.variant"));
+            locale = new Locale(settings.getProperty("locale.language"),
+                    settings.getProperty("locale.country"),
+                    settings.getProperty("locale.variant"));
         }
-        config.put("default.locale", locale);
+        settings.put("default.locale", locale);
     }
 }
