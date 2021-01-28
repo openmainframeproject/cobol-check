@@ -148,16 +148,10 @@ public class TestSuiteParser implements Constants, StringHelper {
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
-
-            System.out.println("********** parseTestSuite: token is <" + testSuiteToken + ">");
-
             if (!testSuiteToken.startsWith(QUOTE) && !testSuiteToken.startsWith(APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
-
-            System.out.println("****** keyword.value(): <" + keyword.value() + ">");
-
             if (Log.level() == LogLevel.DEBUG) {
                 System.out.println("Generator.parseTestSuite(), " +
                         "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
@@ -202,9 +196,6 @@ public class TestSuiteParser implements Constants, StringHelper {
                         possibleQualifiedName = true;
                     }
                     if (toBeInProgress) {
-
-                        System.out.println("**** COBOL_TOKEN, toBeInProgress is true");
-
                         alphanumericCompare = true;
                         expectedValueToCompare = testSuiteToken;
                         insertTestCodeForAssertion(testSourceOut);

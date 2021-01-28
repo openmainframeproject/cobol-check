@@ -94,6 +94,18 @@ public class TestSuiteParserCodeInsertionTest implements Constants {
         expectedResult.append(NEWLINE);
         expectedResult.append("           END-IF                                                               ");
         expectedResult.append(NEWLINE);
+        expectedResult.append("           SET UT-EXPECTED-88-VALUE TO TRUE                                     ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           IF UT-EXPECTED-88-VALUE                                              ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               MOVE 'TRUE' TO UT-EXPECTED                                       ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           ELSE                                                                 ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("               MOVE 'FALSE' TO UT-EXPECTED                                      ");
+        expectedResult.append(NEWLINE);
+        expectedResult.append("           END-IF                                                               ");
+        expectedResult.append(NEWLINE);
         expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
         expectedResult.append(NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");

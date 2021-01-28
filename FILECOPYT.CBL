@@ -141,10 +141,20 @@
            MOVE "Output fields are populated from the input record"             
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
+            MOVE "Alpha" TO IN-FIELD-1                                          
+            MOVE "Beta" TO IN-FIELD-2                                           
             PERFORM 5200-PREPARE-OUTPUT-RECORD                                  
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
-           MOVE OUT-FIELD-2 TO CC-ACTUAL                                        
+           MOVE IN-FIELD-1 OF INPUT-RECORD TO CC-ACTUAL                         
+           MOVE OUT-FIELD-1                                                     
+               TO CC-EXPECTED                                                   
+           SET CC-COMPARE-DEFAULT TO TRUE                                       
+           PERFORM CC-ASSERT-EQUAL                                              
+           PERFORM CC-AFTER                                                     
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE OUT-FIELD-2 OF OUTPUT-RECORD TO CC-ACTUAL                       
            MOVE IN-FIELD-2                                                      
                TO CC-EXPECTED                                                   
            SET CC-COMPARE-DEFAULT TO TRUE                                       
