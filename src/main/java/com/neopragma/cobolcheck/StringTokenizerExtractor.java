@@ -26,7 +26,7 @@ import java.util.*;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class StringTokenizerExtractor implements TokenExtractor, Constants {
+public class StringTokenizerExtractor implements TokenExtractor {
 
     public StringTokenizerExtractor(Messages messages) {
         this.messages = messages;
@@ -74,11 +74,11 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
         }
         List<String> tokens = new ArrayList<>();
         List<String> expectedNext = new ArrayList<>();
-        String saved = EMPTY_STRING;
+        String saved = Constants.EMPTY_STRING;
         StringTokenizer tokenizer = new StringTokenizer(sourceLine, delimiters);
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            if (token.startsWith(COMMENT_INDICATOR)) {
+            if (token.startsWith(Constants.COMMENT_INDICATOR)) {
                 break;
             }
             if (!expectedNext.isEmpty()) {
@@ -86,7 +86,7 @@ public class StringTokenizerExtractor implements TokenExtractor, Constants {
                     if (token.equals(expectedValue)) {
                         token = saved + " " + token;
                         expectedNext = new ArrayList<>();
-                        saved = EMPTY_STRING;
+                        saved = Constants.EMPTY_STRING;
                     }
                 }
             }

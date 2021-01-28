@@ -20,55 +20,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class State implements Constants {
+public class State {
     private final Map<String, Flag> flags;
 
     public State() {
         flags = new HashMap<>();
 
-        flags.put(IDENTIFICATION_DIVISION, new Flag());
+        flags.put(Constants.IDENTIFICATION_DIVISION, new Flag());
 
-        flags.put(FILE_SECTION, new Flag());
-        flags.put(LINKAGE_SECTION, new Flag());
-        flags.put(LOCAL_STORAGE_SECTION, new Flag());
-        flags.put(WORKING_STORAGE_SECTION, new Flag());
-        mutuallyExclusiveFlagsFor(FILE_SECTION,
-                LINKAGE_SECTION, LOCAL_STORAGE_SECTION, WORKING_STORAGE_SECTION);
-        mutuallyExclusiveFlagsFor(LINKAGE_SECTION,
-                FILE_SECTION, LOCAL_STORAGE_SECTION, WORKING_STORAGE_SECTION);
-        mutuallyExclusiveFlagsFor(LOCAL_STORAGE_SECTION,
-                LINKAGE_SECTION, FILE_SECTION, WORKING_STORAGE_SECTION);
-        mutuallyExclusiveFlagsFor(WORKING_STORAGE_SECTION,
-                LINKAGE_SECTION, LOCAL_STORAGE_SECTION, FILE_SECTION);
+        flags.put(Constants.FILE_SECTION, new Flag());
+        flags.put(Constants.LINKAGE_SECTION, new Flag());
+        flags.put(Constants.LOCAL_STORAGE_SECTION, new Flag());
+        flags.put(Constants.WORKING_STORAGE_SECTION, new Flag());
+        mutuallyExclusiveFlagsFor(Constants.FILE_SECTION,
+                Constants.LINKAGE_SECTION, Constants.LOCAL_STORAGE_SECTION, Constants.WORKING_STORAGE_SECTION);
+        mutuallyExclusiveFlagsFor(Constants.LINKAGE_SECTION,
+                Constants.FILE_SECTION, Constants.LOCAL_STORAGE_SECTION, Constants.WORKING_STORAGE_SECTION);
+        mutuallyExclusiveFlagsFor(Constants.LOCAL_STORAGE_SECTION,
+                Constants.LINKAGE_SECTION, Constants.FILE_SECTION, Constants.WORKING_STORAGE_SECTION);
+        mutuallyExclusiveFlagsFor(Constants.WORKING_STORAGE_SECTION,
+                Constants.LINKAGE_SECTION, Constants.LOCAL_STORAGE_SECTION, Constants.FILE_SECTION);
 
-        flags.put(CONFIGURATION_SECTION, new Flag());
-        flags.put(FILE_CONTROL, new Flag());
-        flags.put(INPUT_OUTPUT_SECTION, new Flag());
-        dependentFlagsFor(INPUT_OUTPUT_SECTION,
-                FILE_CONTROL);
-        mutuallyExclusiveFlagsFor(CONFIGURATION_SECTION,
-                INPUT_OUTPUT_SECTION);
-        mutuallyExclusiveFlagsFor(INPUT_OUTPUT_SECTION,
-                CONFIGURATION_SECTION);
+        flags.put(Constants.CONFIGURATION_SECTION, new Flag());
+        flags.put(Constants.FILE_CONTROL, new Flag());
+        flags.put(Constants.INPUT_OUTPUT_SECTION, new Flag());
+        dependentFlagsFor(Constants.INPUT_OUTPUT_SECTION,
+                Constants.FILE_CONTROL);
+        mutuallyExclusiveFlagsFor(Constants.CONFIGURATION_SECTION,
+                Constants.INPUT_OUTPUT_SECTION);
+        mutuallyExclusiveFlagsFor(Constants.INPUT_OUTPUT_SECTION,
+                Constants.CONFIGURATION_SECTION);
 
-        flags.put(ENVIRONMENT_DIVISION, new Flag());
-        dependentFlagsFor(ENVIRONMENT_DIVISION,
-                CONFIGURATION_SECTION, INPUT_OUTPUT_SECTION);
+        flags.put(Constants.ENVIRONMENT_DIVISION, new Flag());
+        dependentFlagsFor(Constants.ENVIRONMENT_DIVISION,
+                Constants.CONFIGURATION_SECTION, Constants.INPUT_OUTPUT_SECTION);
 
-        flags.put(DATA_DIVISION, new Flag());
-        dependentFlagsFor(DATA_DIVISION,
-                FILE_SECTION, LINKAGE_SECTION, LOCAL_STORAGE_SECTION, WORKING_STORAGE_SECTION);
+        flags.put(Constants.DATA_DIVISION, new Flag());
+        dependentFlagsFor(Constants.DATA_DIVISION,
+                Constants.FILE_SECTION, Constants.LINKAGE_SECTION, Constants.LOCAL_STORAGE_SECTION, Constants.WORKING_STORAGE_SECTION);
 
-        flags.put(PROCEDURE_DIVISION, new Flag());
+        flags.put(Constants.PROCEDURE_DIVISION, new Flag());
 
-        mutuallyExclusiveFlagsFor(IDENTIFICATION_DIVISION,
-                DATA_DIVISION, ENVIRONMENT_DIVISION, PROCEDURE_DIVISION);
-        mutuallyExclusiveFlagsFor(ENVIRONMENT_DIVISION,
-                IDENTIFICATION_DIVISION, DATA_DIVISION, PROCEDURE_DIVISION);
-        mutuallyExclusiveFlagsFor(DATA_DIVISION,
-                IDENTIFICATION_DIVISION, ENVIRONMENT_DIVISION, PROCEDURE_DIVISION);
-        mutuallyExclusiveFlagsFor(PROCEDURE_DIVISION,
-                IDENTIFICATION_DIVISION, ENVIRONMENT_DIVISION, DATA_DIVISION);
+        mutuallyExclusiveFlagsFor(Constants.IDENTIFICATION_DIVISION,
+                Constants.DATA_DIVISION, Constants.ENVIRONMENT_DIVISION, Constants.PROCEDURE_DIVISION);
+        mutuallyExclusiveFlagsFor(Constants.ENVIRONMENT_DIVISION,
+                Constants.IDENTIFICATION_DIVISION, Constants.DATA_DIVISION, Constants.PROCEDURE_DIVISION);
+        mutuallyExclusiveFlagsFor(Constants.DATA_DIVISION,
+                Constants.IDENTIFICATION_DIVISION, Constants.ENVIRONMENT_DIVISION, Constants.PROCEDURE_DIVISION);
+        mutuallyExclusiveFlagsFor(Constants.PROCEDURE_DIVISION,
+                Constants.IDENTIFICATION_DIVISION, Constants.ENVIRONMENT_DIVISION, Constants.DATA_DIVISION);
     }
 
     Map<String, Flag> getFlags() {

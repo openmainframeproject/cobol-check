@@ -25,7 +25,7 @@ import java.io.IOException;
  * @author Dave Nicolette
  * @since 1.5
  */
-public class LinuxProcessLauncher implements ProcessLauncher, StringHelper, Constants {
+public class LinuxProcessLauncher implements ProcessLauncher, StringHelper {
 
     private Config config;
     private Messages messages;
@@ -41,32 +41,32 @@ public class LinuxProcessLauncher implements ProcessLauncher, StringHelper, Cons
             Log.error(messages.get("ERR020"));
             throw new PossibleInternalLogicErrorException(messages.get("ERR020"));
         }
-        String processConfigKey = "linux" + PROCESS_CONFIG_KEY;
+        String processConfigKey = "linux" + Constants.PROCESS_CONFIG_KEY;
         String scriptName = config.getString(processConfigKey);
         if (isBlank(scriptName)) {
             Log.error(messages.get("ERR021", processConfigKey));
             throw new PossibleInternalLogicErrorException(messages.get("ERR021", processConfigKey));
         }
-        String scriptDirectory = config.getString(COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
+        String scriptDirectory = config.getString(Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
                 Constants.DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY);
         if (isBlank(scriptDirectory)) {
-            Log.error(messages.get("ERR022", COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
-            throw new PossibleInternalLogicErrorException(messages.get("ERR022", COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+            Log.error(messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+            throw new PossibleInternalLogicErrorException(messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
         }
 
-        if (!scriptDirectory.endsWith(FILE_SEPARATOR)) {
-            scriptDirectory += FILE_SEPARATOR;
+        if (!scriptDirectory.endsWith(Constants.FILE_SEPARATOR)) {
+            scriptDirectory += Constants.FILE_SEPARATOR;
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
         processBuilder.inheritIO();
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
-        String delim = EMPTY_STRING;
+        String delim = Constants.EMPTY_STRING;
         for (String argument : processBuilder.command()) {
             processArguments.append(delim);
             processArguments.append(argument);
-            delim = COMMA;
+            delim = Constants.COMMA;
         }
         Log.info(messages.get("INF008", processArguments.toString()));
         try {

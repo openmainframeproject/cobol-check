@@ -24,14 +24,14 @@ import java.util.Locale;
  * @author Dave Nicolette
  * @since 1.5
  */
-public class PlatformLookup implements Constants {
+public class PlatformLookup {
 
     public static Platform get() {
         return get(System.getProperty("os.name"));
     }
 
     public static Platform get(String osNameValue) {
-        String value = osNameValue == null ? EMPTY_STRING : osNameValue.toLowerCase(Locale.ROOT);
+        String value = osNameValue == null ? Constants.EMPTY_STRING : osNameValue.toLowerCase(Locale.ROOT);
         if (value.startsWith("linux"))   return Platform.LINUX;
         if (value.startsWith("macosx"))  return Platform.OSX;
         if (value.startsWith("windows")) return Platform.WINDOWS;

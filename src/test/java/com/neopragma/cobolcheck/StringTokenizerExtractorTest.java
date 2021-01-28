@@ -26,7 +26,7 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class StringTokenizerExtractorTest implements Constants {
+public class StringTokenizerExtractorTest {
 
     private StringTokenizerExtractor extractor;
 
@@ -44,12 +44,12 @@ public class StringTokenizerExtractorTest implements Constants {
 
     @Test
     public void when_the_line_contains_only_a_newline_it_returns_an_empty_collection() {
-        assertEquals(0, extractor.extractTokensFrom(NEWLINE).size());
+        assertEquals(0, extractor.extractTokensFrom(Constants.NEWLINE).size());
     }
 
     @Test
     public void when_the_line_contains_only_an_empty_string_it_returns_an_empty_collection() {
-        assertEquals(0, extractor.extractTokensFrom(EMPTY_STRING).size());
+        assertEquals(0, extractor.extractTokensFrom(Constants.EMPTY_STRING).size());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class StringTokenizerExtractorTest implements Constants {
 
     @Test
     public void when_the_line_contains_only_a_period_it_returns_an_empty_collection() {
-        assertEquals(0, extractor.extractTokensFrom(PERIOD).size());
+        assertEquals(0, extractor.extractTokensFrom(Constants.PERIOD).size());
     }
 
     @Test

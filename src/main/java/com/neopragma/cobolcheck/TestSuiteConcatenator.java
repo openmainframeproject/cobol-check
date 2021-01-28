@@ -33,7 +33,7 @@ import java.util.List;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class TestSuiteConcatenator implements Constants, StringHelper {
+public class TestSuiteConcatenator implements StringHelper {
 
     private Config config;
     private Messages messages;
@@ -78,8 +78,8 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
      * @throws PossibleInternalLogicErrorException
      */
     Reader concatenateTestSuites(String programTestSuiteSubdirectory) {
-        String testFileNames = options.getValueFor(TESTS_OPTION);
-        String[] testFileNamesSeparated = testFileNames.split(COLON);
+        String testFileNames = options.getValueFor(Constants.TESTS_OPTION);
+        String[] testFileNamesSeparated = testFileNames.split(Constants.COLON);
 
         // find files under subdirectory
         List<String> matchingFiles = new ArrayList<>();
@@ -100,8 +100,8 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
 
         // concatenate matching test suite files into a single test input file for the Generator to consume
         String concatenatedTestSuiteFileName =
-                config.getString(CONCATENATED_TEST_SUITES_CONFIG_KEY,
-                        DEFAULT_CONCATENATED_TEST_SUITES_PATH);
+                config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
+                        Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH);
         FileWriter concatenatedTestSuitesWriter;
         try {
             concatenatedTestSuitesWriter = new FileWriter(concatenatedTestSuiteFileName);
@@ -114,9 +114,9 @@ public class TestSuiteConcatenator implements Constants, StringHelper {
         try {
             for (String matchingFile : matchingFiles) {
                 BufferedReader testFileReader = new BufferedReader(new FileReader(matchingFile));
-                String line = EMPTY_STRING;
+                String line = Constants.EMPTY_STRING;
                 while((line = testFileReader.readLine()) != null) {
-                    concatenatedTestSuitesWriter.write(line + NEWLINE);
+                    concatenatedTestSuitesWriter.write(line + Constants.NEWLINE);
                 }
                 testFileReader.close();
             }

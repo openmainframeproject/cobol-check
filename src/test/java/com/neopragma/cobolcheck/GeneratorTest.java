@@ -29,7 +29,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneratorTest implements Constants {
+public class GeneratorTest {
 
     private StringBuilder cobolSourceData;
     private StringWriter testProgramSource;
@@ -78,7 +78,7 @@ public class GeneratorTest implements Constants {
     void it_formats_a_Cobol_line_based_on_a_String_value() throws IOException {
         String originalText = "           MOVE ALPHA TO BETA.";
         String expectedLine = "           MOVE ALPHA TO BETA.                                                  ";
-        expectedLine += NEWLINE;
+        expectedLine += Constants.NEWLINE;
         Writer cobolOutWriter = new StringWriter();
         testSuiteParser.writeCobolLine(originalText, cobolOutWriter);
         assertEquals(expectedLine, cobolOutWriter.toString());
@@ -88,9 +88,9 @@ public class GeneratorTest implements Constants {
     void it_formats_a_Cobol_continuation_line_based_on_a_long_String_value() throws IOException {
         String originalText = "           TESTCASE: ''This testcase name makes the line far, far too long for Cobol.''";
         String expectedLine1 = "           TESTCASE: ''This testcase name makes the line far, far too lo        ";
-        expectedLine1 += NEWLINE;
+        expectedLine1 += Constants.NEWLINE;
         String expectedLine2 = "      -    \"ng for Cobol.''                                                     ";
-        expectedLine2 += NEWLINE;
+        expectedLine2 += Constants.NEWLINE;
         Writer cobolOutWriter = new StringWriter();
         testSuiteParser.writeCobolLine(originalText, cobolOutWriter);
         assertEquals(expectedLine1 + expectedLine2, cobolOutWriter.toString());

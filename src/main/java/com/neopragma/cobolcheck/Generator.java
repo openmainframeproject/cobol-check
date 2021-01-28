@@ -28,7 +28,7 @@ import java.util.*;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Generator implements Constants, StringHelper {
+public class Generator implements StringHelper {
     //TODO simplify this:the injected Config object contains an instance of Messages; no need for another one
     private final Messages messages;
     private final Config config;
@@ -69,7 +69,7 @@ public class Generator implements Constants, StringHelper {
     private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
     private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
     // Comes from config.properties, cobolcheck.copybook.directory entry.
-    private static String copybookDirectoryName = EMPTY_STRING;
+    private static String copybookDirectoryName = Constants.EMPTY_STRING;
     // Used to read source lines from cobol-check copybooks (as opposed to reading the program under test)
     private Reader secondarySourceReader;
 
@@ -78,7 +78,7 @@ public class Generator implements Constants, StringHelper {
     private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
 
     // used while processing SELECT statements in the program under test
-    String fileIdentifier = EMPTY_STRING;
+    String fileIdentifier = Constants.EMPTY_STRING;
     boolean expectFileIdentifier;
 
     // Flags to keep track of context while reading input source files.
@@ -103,7 +103,7 @@ public class Generator implements Constants, StringHelper {
         this.tokenExtractor = new StringTokenizerExtractor(messages);
         testSuiteParser = new TestSuiteParser(keywordExtractor, config);
         copybookDirectoryName = setCopybookDirectoryName(config);
-        testCodePrefix = config.getString(COBOLCHECK_PREFIX_CONFIG_KEY, DEFAULT_COBOLCHECK_PREFIX);
+        testCodePrefix = config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         fileIdentifiersAndStatuses = new HashMap<>();
     }
 
@@ -138,7 +138,7 @@ public class Generator implements Constants, StringHelper {
         try {
             while ((sourceLine = cobolSourceInReader.readLine()) != null) {
                 emptyInputStream = false;
-                if (sourceLine.trim().equals(PERIOD)) {
+                if (sourceLine.trim().equals(Constants.PERIOD)) {
                     skipThisLine = false;
                     previousLineContainedOnlyAPeriod = true;
                     testSourceOut.write(fixedLength(sourceLine));
@@ -202,7 +202,7 @@ public class Generator implements Constants, StringHelper {
             Writer testSourceOut) throws IOException {
         skipThisLine = false;
 
-        if (state.getFlags().get(FILE_CONTROL).isSet()) {
+        if (state.getFlags().get(Constants.FILE_CONTROL).isSet()) {
             if (expectFileStatusFieldName) {
                 if (tokens.size() > 0) {
                     fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(0));
@@ -212,15 +212,15 @@ public class Generator implements Constants, StringHelper {
 
             // When the current source line contains FILE STATUS, the next tokens will be [IS] FIELDNAME.
             // Those tokens may be coded on the same line or on subsequent lines in the source program.
-            if (sourceLineContains(tokens, FILE_STATUS_TOKEN)) {
+            if (sourceLineContains(tokens, Constants.FILE_STATUS_TOKEN)) {
                 if (tokens.size() > 2) {
-                    if (tokens.get(1).equalsIgnoreCase(IS_TOKEN)) {
+                    if (tokens.get(1).equalsIgnoreCase(Constants.IS_TOKEN)) {
                         fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(2));
                     }
                 } else {
                     if (tokens.size() > 1) {
 
-                        if (tokens.get(1).equalsIgnoreCase(IS_TOKEN)) {
+                        if (tokens.get(1).equalsIgnoreCase(Constants.IS_TOKEN)) {
                             expectFileStatusFieldName = true;
                         } else {
                             fileIdentifiersAndStatuses.put(fileIdentifier, tokens.get(1));
@@ -238,23 +238,23 @@ public class Generator implements Constants, StringHelper {
         if (expectFileIdentifier) {
             if (tokens.size() > 0) {
                 fileIdentifier = tokens.get(0);
-                fileIdentifiersAndStatuses.put(fileIdentifier, EMPTY_STRING);
+                fileIdentifiersAndStatuses.put(fileIdentifier, Constants.EMPTY_STRING);
                 expectFileIdentifier = false;
             }
         }
 
-        if (sourceLineContains(tokens, ENVIRONMENT_DIVISION)) entering(ENVIRONMENT_DIVISION);
+        if (sourceLineContains(tokens, Constants.ENVIRONMENT_DIVISION)) entering(Constants.ENVIRONMENT_DIVISION);
 
-        if (sourceLineContains(tokens, CONFIGURATION_SECTION)) {
-            entering(CONFIGURATION_SECTION);
+        if (sourceLineContains(tokens, Constants.CONFIGURATION_SECTION)) {
+            entering(Constants.CONFIGURATION_SECTION);
             readingFileControl = false;
             skipThisLine = false;
         }
 
-        if (sourceLineContains(tokens, INPUT_OUTPUT_SECTION)) entering(INPUT_OUTPUT_SECTION);
+        if (sourceLineContains(tokens, Constants.INPUT_OUTPUT_SECTION)) entering(Constants.INPUT_OUTPUT_SECTION);
 
-        if (sourceLineContains(tokens, FILE_CONTROL)) {
-            entering(FILE_CONTROL);
+        if (sourceLineContains(tokens, Constants.FILE_CONTROL)) {
+            entering(Constants.FILE_CONTROL);
             readingFileControl = true;
             fileControlStatements = new ArrayList<>();
         }
@@ -263,8 +263,8 @@ public class Generator implements Constants, StringHelper {
             processFileControlSource(tokens, sourceLine);
         }
 
-        if (sourceLineContains(tokens, FILE_SECTION)) {
-            entering(FILE_SECTION);
+        if (sourceLineContains(tokens, Constants.FILE_SECTION)) {
+            entering(Constants.FILE_SECTION);
             readingFileSection = true;
             fileSectionStatements = new ArrayList<>();
         }
@@ -273,8 +273,8 @@ public class Generator implements Constants, StringHelper {
             processFileSectionSource(tokens, sourceLine);
         }
 
-        if (sourceLineContains(tokens, DATA_DIVISION)) {
-            entering(DATA_DIVISION);
+        if (sourceLineContains(tokens, Constants.DATA_DIVISION)) {
+            entering(Constants.DATA_DIVISION);
             skipThisLine = false;
             readingFileControl = false;
         }
@@ -283,8 +283,8 @@ public class Generator implements Constants, StringHelper {
             processProcedureDivisionSource(tokens, sourceLine, testSourceOut);
         }
 
-        if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
-            entering(PROCEDURE_DIVISION);
+        if (sourceLineContains(tokens, Constants.PROCEDURE_DIVISION)) {
+            entering(Constants.PROCEDURE_DIVISION);
             if (!workingStorageTestCodeHasBeenInserted) {
                 testSourceOut.write(workingStorageHeader);
                 insertWorkingStorageTestCode(testSourceOut);
@@ -293,8 +293,8 @@ public class Generator implements Constants, StringHelper {
             skipThisLine = false;
         }
 
-        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) {
-            entering(WORKING_STORAGE_SECTION);
+        if (sourceLineContains(tokens, Constants.WORKING_STORAGE_SECTION)) {
+            entering(Constants.WORKING_STORAGE_SECTION);
             skipThisLine = false;
             readingFileSection = false;
         }
@@ -317,11 +317,11 @@ public class Generator implements Constants, StringHelper {
             Reader reader,
             Writer testSourceOut) throws IOException {
 
-        if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)) {
+        if (sourceLineContains(tokens, Constants.WORKING_STORAGE_SECTION)) {
             insertWorkingStorageTestCode(testSourceOut);
         }
 
-        if (sourceLineContains(tokens, PROCEDURE_DIVISION)) {
+        if (sourceLineContains(tokens, Constants.PROCEDURE_DIVISION)) {
             insertProcedureDivisionTestCode(testSuiteReader, testSourceOut);
         }
     }
@@ -345,15 +345,15 @@ public class Generator implements Constants, StringHelper {
             skipThisLine = true;
             return;
         }
-        if (sourceLineContains(tokens, FD_TOKEN)) {
+        if (sourceLineContains(tokens, Constants.FD_TOKEN)) {
             processingFD = true;
         }
         if (processingFD) {
-            if (sourceLineContains(tokens, LEVEL_01_TOKEN)) {
+            if (sourceLineContains(tokens, Constants.LEVEL_01_TOKEN)) {
                 processing01ItemUnderFD = true;
                 processingCopyStatement = false;
             } else {
-                if (sourceLineContains(tokens, COPY_TOKEN)) {
+                if (sourceLineContains(tokens, Constants.COPY_TOKEN)) {
                     // Collect the tokens that constitute the Copy statement
                     copyTokens = accumulateTokensFromCopyStatement(copyTokens, sourceLine);
                     if (sourceLine.trim().endsWith(".")) {
@@ -369,14 +369,14 @@ public class Generator implements Constants, StringHelper {
                 }
             }
             if (processing01ItemUnderFD) {
-                if (sourceLineContains(tokens, WORKING_STORAGE_SECTION)
-                        || sourceLineContains(tokens, LOCAL_STORAGE_SECTION)
-                        || sourceLineContains(tokens, LINKAGE_SECTION)
-                        || sourceLineContains(tokens, PROCEDURE_DIVISION)) {
+                if (sourceLineContains(tokens, Constants.WORKING_STORAGE_SECTION)
+                        || sourceLineContains(tokens, Constants.LOCAL_STORAGE_SECTION)
+                        || sourceLineContains(tokens, Constants.LINKAGE_SECTION)
+                        || sourceLineContains(tokens, Constants.PROCEDURE_DIVISION)) {
                     processingFD = false;
                     processing01ItemUnderFD = false;
                 } else {
-                    if (sourceLineContains(tokens, FD_TOKEN)) {
+                    if (sourceLineContains(tokens, Constants.FD_TOKEN)) {
                         processing01ItemUnderFD = false;
                         skipThisLine = true;
                         return;
@@ -422,11 +422,11 @@ public class Generator implements Constants, StringHelper {
         // If the current line contains SELECT, then the next token on the same line or the first token on the
         // next line will be the file identifier. We will store the file identifier as the key in a map of
         // file identifiers and file status field names.
-        if (sourceLineContains(tokens, SELECT_TOKEN)) {
-            fileIdentifier = EMPTY_STRING;
+        if (sourceLineContains(tokens, Constants.SELECT_TOKEN)) {
+            fileIdentifier = Constants.EMPTY_STRING;
             if (tokens.size() > 1) {
                 fileIdentifier = tokens.get(1);
-                fileIdentifiersAndStatuses.put(fileIdentifier, EMPTY_STRING);
+                fileIdentifiersAndStatuses.put(fileIdentifier, Constants.EMPTY_STRING);
             } else {
                 expectFileIdentifier = true;
             }
@@ -480,9 +480,9 @@ public class Generator implements Constants, StringHelper {
         if (copyTokens == null) {
             copyTokens = new ArrayList<>();
         }
-        String[] lineTokens = sourceLine.trim().split(SPACE);
+        String[] lineTokens = sourceLine.trim().split(Constants.SPACE);
         for (String lineToken : lineTokens) {
-            if (lineToken != null && !lineToken.equals(EMPTY_STRING)) {
+            if (lineToken != null && !lineToken.equals(Constants.EMPTY_STRING)) {
                 copyTokens.add(lineToken);
             }
         }
@@ -491,25 +491,25 @@ public class Generator implements Constants, StringHelper {
 
     List<String> collectExpandedCopyStatements(List<String> copyTokens) {
         for (int i = 0 ; i < copyTokens.size() ; i++) {
-            if (copyTokens.get(i).equals(EMPTY_STRING)) {
+            if (copyTokens.get(i).equals(Constants.EMPTY_STRING)) {
                 copyTokens.remove(i);
             }
         }
         if (copyTokens.isEmpty()
-                || !copyTokens.get(0).equalsIgnoreCase(COPY_TOKEN)
+                || !copyTokens.get(0).equalsIgnoreCase(Constants.COPY_TOKEN)
                 || copyTokens.size() < 2) {
             throw new PossibleInternalLogicErrorException(messages.get("ERR024"));
         }
         List<String> copyLines = new ArrayList<>();
 
         // 2nd entry is the name of the copybook. The value might end with a period.
-        String copybookName = copyTokens.get(1).replace(PERIOD, EMPTY_STRING);
+        String copybookName = copyTokens.get(1).replace(Constants.PERIOD, Constants.EMPTY_STRING);
 
         // 3rd entry might be the word "REPLACING" followed by "x" "BY" "y"
         StringTuple replacingValues = new StringTuple(null, null);
         if (copyTokens.size() > 4) {
-            if (copyTokens.get(2).equalsIgnoreCase(REPLACING_KEYWORD)
-            || copyTokens.get(4).equalsIgnoreCase(BY_KEYWORD)) {
+            if (copyTokens.get(2).equalsIgnoreCase(Constants.REPLACING_KEYWORD)
+            || copyTokens.get(4).equalsIgnoreCase(Constants.BY_KEYWORD)) {
                 replacingValues = new StringTuple(copyTokens.get(3), copyTokens.get(5));
             }
         }
@@ -520,9 +520,9 @@ public class Generator implements Constants, StringHelper {
             expandedLines = (StringWriter) copybookExpander.expand(
                     expandedLines,
                     copybookName,
-                    PERIOD + config.getString(
-                            APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY,
-                            DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX),
+                    Constants.PERIOD + config.getString(
+                            Constants.APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY,
+                            Constants.DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX),
                     replacingValues);
             BufferedReader reader = new BufferedReader(new StringReader(expandedLines.toString()));
             String line = reader.readLine();
@@ -564,7 +564,7 @@ public class Generator implements Constants, StringHelper {
      * @return - true if end of statement is recognized
      */
     private boolean endOfStatement(List<String> tokens, String sourceLine) {
-        if (sourceLine.trim().endsWith(PERIOD)) {
+        if (sourceLine.trim().endsWith(Constants.PERIOD)) {
             return true;
         }
         if (previousLineContainedOnlyAPeriod) {
@@ -628,10 +628,10 @@ public class Generator implements Constants, StringHelper {
      */
     private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
         BufferedReader secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
-        String secondarySourceLine = EMPTY_STRING;
+        String secondarySourceLine = Constants.EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
             secondarySourceLine = secondarySourceLine
-                    .replaceAll(TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
+                    .replaceAll(Constants.TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
             testSourceOut.write(fixedLength(secondarySourceLine));
         }
         secondarySourceBufferedReader.close();
@@ -645,9 +645,9 @@ public class Generator implements Constants, StringHelper {
      */
     String quoted(String value) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(QUOTE);
+        buffer.append(Constants.QUOTE);
         buffer.append(value);
-        buffer.append(QUOTE);
+        buffer.append(Constants.QUOTE);
         return buffer.toString();
     }
 
@@ -660,11 +660,11 @@ public class Generator implements Constants, StringHelper {
     }
 
     private String setCopybookDirectoryName(Config config) {
-        return config.getString(RESOURCES_DIRECTORY_CONFIG_KEY)
+        return config.getString(Constants.RESOURCES_DIRECTORY_CONFIG_KEY)
                 + Constants.FILE_SEPARATOR
                 + this.getClass().getPackageName().replace(".", "/")
                 + Constants.FILE_SEPARATOR
-                + config.getString(COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY)
+                + config.getString(Constants.COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY)
                 + Constants.FILE_SEPARATOR;
     }
 

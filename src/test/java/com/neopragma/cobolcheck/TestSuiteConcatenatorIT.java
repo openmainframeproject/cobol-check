@@ -10,7 +10,7 @@ import java.io.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TestSuiteConcatenatorIT implements Constants {
+public class TestSuiteConcatenatorIT {
     private StringReader concatenatedTestSuites;
     private TestSuiteConcatenator concat;
     private static final String pathToResults = "testsuites/concatenatedTestsuites";
@@ -24,8 +24,8 @@ public class TestSuiteConcatenatorIT implements Constants {
 
     @Test
     public void it_concatenates_two_test_suite_files_specified_with_full_filenames() throws IOException {
-        when(config.getString(CONCATENATED_TEST_SUITES_CONFIG_KEY,
-                DEFAULT_CONCATENATED_TEST_SUITES_PATH))
+        when(config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
+                Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH))
                 .thenReturn(pathToResults);
 //        when(config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY))
 //                .thenReturn("src/test/cobol");
@@ -35,7 +35,7 @@ public class TestSuiteConcatenatorIT implements Constants {
 //                .thenReturn("GREETING");
 //        when(options.isSet(TESTS_OPTION))
 //                .thenReturn(true);
-        when(options.getValueFor(TESTS_OPTION))
+        when(options.getValueFor(Constants.TESTS_OPTION))
                 .thenReturn("GreetingByType");
         when(config.getMessages())
                 .thenReturn(messages);

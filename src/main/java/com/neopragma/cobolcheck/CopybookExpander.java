@@ -41,7 +41,7 @@ import java.util.StringTokenizer;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class CopybookExpander implements Constants, StringHelper {
+public class CopybookExpander implements StringHelper {
 
     private final Config config;
     private final Messages messages;
@@ -83,14 +83,15 @@ public class CopybookExpander implements Constants, StringHelper {
             // COPY REPLACING
             if (!textReplacement[0].isEmpty()) {
                 for (StringTuple replace : textReplacement) {
-                    for (String pseudoTextDelimiter : List.of (PSEUDO_TEXT_DELIMITER_EQUALS, PSEUDO_TEXT_DELIMITER_COLON)) {
+                    for (String pseudoTextDelimiter : List.of (
+                            Constants.PSEUDO_TEXT_DELIMITER_EQUALS, Constants.PSEUDO_TEXT_DELIMITER_COLON)) {
                         if (sourceLine.contains(pseudoTextDelimiter)) {
                             sourceLine = sourceLine.replaceAll(replace.getFirst(), replace.getSecond());
                         }
                     }
-                    for (String followingCharacter : List.of(PERIOD, SPACE)) {
-                        String textToReplace = SPACE + replace.getFirst() + followingCharacter;
-                        String replacementText = SPACE + replace.getSecond() + followingCharacter;
+                    for (String followingCharacter : List.of(Constants.PERIOD, Constants.SPACE)) {
+                        String textToReplace = Constants.SPACE + replace.getFirst() + followingCharacter;
+                        String replacementText = Constants.SPACE + replace.getSecond() + followingCharacter;
                         if (sourceLine.contains(textToReplace)) {
                             sourceLine = sourceLine.replaceAll(textToReplace, replacementText);
                         }
@@ -121,7 +122,7 @@ public class CopybookExpander implements Constants, StringHelper {
         String copyVerb = st.nextToken();
         if (st.hasMoreTokens()) {
             copybookName = st.nextToken();
-            if (copybookName.endsWith(PERIOD)) {
+            if (copybookName.endsWith(Constants.PERIOD)) {
                 copybookName = copybookName.substring(0, copybookName.length() - 1);
             }
         } else {
@@ -137,10 +138,10 @@ public class CopybookExpander implements Constants, StringHelper {
     private String getPathToCopybooks() {
         StringBuilder directoryName = new StringBuilder();
         directoryName.append(new File("./").getAbsolutePath());
-        directoryName.append(FILE_SEPARATOR);
+        directoryName.append(Constants.FILE_SEPARATOR);
         directoryName.append(config.getString("application.copybook.directory", "src/main/cobol/copy"));
-        if (!directoryName.toString().endsWith(FILE_SEPARATOR)) {
-            directoryName.append(FILE_SEPARATOR);
+        if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
+            directoryName.append(Constants.FILE_SEPARATOR);
         }
         return directoryName.toString();
     }

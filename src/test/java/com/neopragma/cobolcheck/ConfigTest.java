@@ -26,7 +26,7 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfigTest implements Constants {
+public class ConfigTest {
 
     private Config config;
 
@@ -74,12 +74,13 @@ public class ConfigTest implements Constants {
 
     private Path findFileNamed(String filename) {
         String resourcesDirectory = config.getString("resources.directory");
-        String packagePathSegment = this.getClass().getPackageName().replace(PERIOD, FILE_SEPARATOR);
+        String packagePathSegment = this.getClass()
+                .getPackageName().replace(Constants.PERIOD, Constants.FILE_SEPARATOR);
         String copybookPathSegment = config.getString("cobolcheck.copybook.directory");
         return Path.of(
-                resourcesDirectory + FILE_SEPARATOR
-                        + packagePathSegment + FILE_SEPARATOR
-                        + copybookPathSegment + FILE_SEPARATOR
+                resourcesDirectory + Constants.FILE_SEPARATOR
+                        + packagePathSegment + Constants.FILE_SEPARATOR
+                        + copybookPathSegment + Constants.FILE_SEPARATOR
                         + filename);
     }
 
@@ -92,7 +93,7 @@ public class ConfigTest implements Constants {
     @Test
     public void it_sets_a_convenience_value_for_application_copybook_filenames_without_suffix() {
         config.load("testconfigNoCopybookSuffix.properties");
-        assertEquals(EMPTY_STRING, config.getApplicationFilenameSuffix());
+        assertEquals(Constants.EMPTY_STRING, config.getApplicationFilenameSuffix());
     }
 
     @Test

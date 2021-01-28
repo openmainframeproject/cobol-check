@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class CopybookExpanderIT implements Constants, StringHelper {
+public class CopybookExpanderIT implements StringHelper {
     private CopybookExpander copybookExpander;
     private String expectedResult;
     private String testCopybookFilename;
@@ -70,8 +70,8 @@ public class CopybookExpanderIT implements Constants, StringHelper {
     @BeforeEach
     public void commonSetup() {
         copybookExpander = new CopybookExpander(config, messages);
-        testCopybookFilename = EMPTY_STRING;
-        expectedResult = EMPTY_STRING;
+        testCopybookFilename = Constants.EMPTY_STRING;
+        expectedResult = Constants.EMPTY_STRING;
 
     }
 
@@ -163,10 +163,10 @@ public class CopybookExpanderIT implements Constants, StringHelper {
     private static String getPathFor(String configPropertyName, String defaultValue) {
         StringBuilder directoryName = new StringBuilder();
         directoryName.append(new File("./").getAbsolutePath());
-        directoryName.append(FILE_SEPARATOR);
+        directoryName.append(Constants.FILE_SEPARATOR);
         directoryName.append(config.getString(configPropertyName, "src/main/cobol/copy"));
-        if (!directoryName.toString().endsWith(FILE_SEPARATOR)) {
-            directoryName.append(FILE_SEPARATOR);
+        if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
+            directoryName.append(Constants.FILE_SEPARATOR);
         }
         return directoryName.toString();
     }

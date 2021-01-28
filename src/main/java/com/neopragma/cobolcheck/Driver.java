@@ -29,7 +29,7 @@ import java.util.Locale;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Driver implements Constants, StringHelper {
+public class Driver implements StringHelper {
 
     private final Config config;
     private static Messages messages;
@@ -38,7 +38,7 @@ public class Driver implements Constants, StringHelper {
     private Reader cobolSourceIn;
     private Writer testSourceOut;
     private static final String optionSpec = "c:l:p:t:v:h --long config-file:,log-level:,programs:,tests:,version:,help";
-    private String configFileFromCommandLine = EMPTY_STRING;
+    private String configFileFromCommandLine = Constants.EMPTY_STRING;
 
     private final String[] helpText = {
             "cobolcheck",
@@ -89,13 +89,13 @@ public class Driver implements Constants, StringHelper {
     void runTestSuites() {
         // all test suites are located under this directory
         String testSuiteDirectory =
-                config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
-        if (!testSuiteDirectory.endsWith(FILE_SEPARATOR)) {
-            testSuiteDirectory += FILE_SEPARATOR;
+                config.getString(Constants.TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        if (!testSuiteDirectory.endsWith(Constants.FILE_SEPARATOR)) {
+            testSuiteDirectory += Constants.FILE_SEPARATOR;
         }
 
-        String programNames = options.getValueFor(PROGRAMS_OPTION);
-        String[] programNamesSeparated = programNames.split(COLON);
+        String programNames = options.getValueFor(Constants.PROGRAMS_OPTION);
+        String[] programNamesSeparated = programNames.split(Constants.COLON);
 
         // find subdirectories that match program names
         List<String> matchingDirectories;
@@ -120,13 +120,13 @@ public class Driver implements Constants, StringHelper {
                 // create READER for the Cobol source program to be tested
                 StringBuilder cobolSourceInPath = new StringBuilder();
                 cobolSourceInPath.append(config.getString(
-                        APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
-                        DEFAULT_APPLICATION_SOURCE_DIRECTORY));
-                if (!cobolSourceInPath.toString().endsWith(FILE_SEPARATOR)) {
-                    cobolSourceInPath.append(FILE_SEPARATOR);
+                        Constants.APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
+                        Constants.DEFAULT_APPLICATION_SOURCE_DIRECTORY));
+                if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
+                    cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 }
                 cobolSourceInPath.append(programName);
-                cobolSourceInPath.append(FILE_SEPARATOR);
+                cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 cobolSourceInPath.append(programName);
                 cobolSourceInPath.append(config.getApplicationFilenameSuffix());
                 try {
@@ -138,12 +138,12 @@ public class Driver implements Constants, StringHelper {
 
                 // create WRITER for the test source program (copy of program to be tested plus test code)
                 StringBuilder testSourceOutPath = new StringBuilder();
-                testSourceOutPath.append(new File(EMPTY_STRING).getAbsolutePath());
-                testSourceOutPath.append(FILE_SEPARATOR);
+                testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
+                testSourceOutPath.append(Constants.FILE_SEPARATOR);
                 testSourceOutPath.append(programName);
                 testSourceOutPath.append(
-                        config.getString(TEST_PROGRAM_SUFFIX_CONFIG_KEY,
-                                DEFAULT_TEST_PROGRAM_SUFFIX));
+                        config.getString(Constants.TEST_PROGRAM_SUFFIX_CONFIG_KEY,
+                                Constants.DEFAULT_TEST_PROGRAM_SUFFIX));
                 try {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
                 } catch (IOException testSourceOutException) {
@@ -184,7 +184,7 @@ public class Driver implements Constants, StringHelper {
                         //launcher = new UnixProcessLauncher(config);
                         break;
                 }
-                String processConfigKey = processConfigKeyPrefix + PROCESS_CONFIG_KEY;
+                String processConfigKey = processConfigKeyPrefix + Constants.PROCESS_CONFIG_KEY;
                 String processName = config.getString(processConfigKey);
                 if (isBlank(processName)) {
                     String errorMessage = messages.get("ERR021", processConfigKey);
@@ -194,8 +194,8 @@ public class Driver implements Constants, StringHelper {
                 StringBuilder testProgramName = new StringBuilder();
                 testProgramName.append(programName);
                 testProgramName.append(
-                        config.getString(TEST_PROGRAM_SUFFIX_CONFIG_KEY,
-                                DEFAULT_TEST_PROGRAM_SUFFIX));
+                        config.getString(Constants.TEST_PROGRAM_SUFFIX_CONFIG_KEY,
+                                Constants.DEFAULT_TEST_PROGRAM_SUFFIX));
                 Process process = launcher.run(testProgramName.toString());
                 int exitCode = 1;
                 try {

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TestSuiteParser implements Constants, StringHelper {
+public class TestSuiteParser implements StringHelper {
     private final KeywordExtractor keywordExtractor;
 //    private Config config;
     private final Messages messages;
@@ -56,8 +56,8 @@ public class TestSuiteParser implements Constants, StringHelper {
     private boolean expectQualifiedName;
     private String expectedValueToCompare;
     private KeywordAction nextAction = KeywordAction.NONE;
-    private String currentTestSuiteName = EMPTY_STRING;
-    private String currentTestCaseName = EMPTY_STRING;
+    private String currentTestSuiteName = Constants.EMPTY_STRING;
+    private String currentTestCaseName = Constants.EMPTY_STRING;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE =
@@ -134,7 +134,7 @@ public class TestSuiteParser implements Constants, StringHelper {
         this.messages = config.getMessages();
         testSuiteTokens = new ArrayList<>();
         emptyTestSuite = true;
-        testCodePrefix = config.getString(COBOLCHECK_PREFIX_CONFIG_KEY, DEFAULT_COBOLCHECK_PREFIX);
+        testCodePrefix = config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         initializeCobolStatement();
     }
 
@@ -148,7 +148,7 @@ public class TestSuiteParser implements Constants, StringHelper {
     void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
-            if (!testSuiteToken.startsWith(QUOTE) && !testSuiteToken.startsWith(APOSTROPHE)) {
+            if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
@@ -159,15 +159,15 @@ public class TestSuiteParser implements Constants, StringHelper {
 
             // take actions triggered by the type of the current token
             switch (keyword.value()) {
-                case TESTSUITE_KEYWORD:
+                case Constants.TESTSUITE_KEYWORD:
                     expectTestsuiteName = true;
                     break;
 
-                case TESTCASE_KEYWORD:
+                case Constants.TESTCASE_KEYWORD:
                     expectTestcaseName = true;
                     break;
 
-                case EXPECT_KEYWORD:
+                case Constants.EXPECT_KEYWORD:
                     if (cobolStatementInProgress) {
                         insertUserWrittenCobolStatement(testSourceOut);
                     }
@@ -175,17 +175,17 @@ public class TestSuiteParser implements Constants, StringHelper {
                     initializeCobolStatement();
                     insertIncrementTestCaseCount(testSourceOut);
                     expectInProgress = true;
-                    fieldNameForExpect = EMPTY_STRING;
+                    fieldNameForExpect = Constants.EMPTY_STRING;
                     break;
 
-                case COBOL_TOKEN:
+                case Constants.COBOL_TOKEN:
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
                     }
                     if (possibleQualifiedName) {
                         if (qualifiedNameKeywords.contains(testSuiteToken)) {
-                            fieldNameForExpect += SPACE + testSuiteToken + SPACE;
+                            fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                             expectQualifiedName = true;
                             possibleQualifiedName = false;
                         }
@@ -204,7 +204,7 @@ public class TestSuiteParser implements Constants, StringHelper {
                     }
                     break;
 
-                case ALPHANUMERIC_LITERAL_KEYWORD:
+                case Constants.ALPHANUMERIC_LITERAL_KEYWORD:
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
@@ -218,7 +218,7 @@ public class TestSuiteParser implements Constants, StringHelper {
                         initializeCobolStatement();
                     }
                     if (toBeInProgress) {
-                        if (testSuiteToken.startsWith(QUOTE) || testSuiteToken.startsWith(APOSTROPHE)) {
+                        if (testSuiteToken.startsWith(Constants.QUOTE) || testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                             alphanumericCompare = true;
                             expectedValueToCompare = testSuiteToken;
                             insertTestCodeForAssertion(testSourceOut);
@@ -228,7 +228,7 @@ public class TestSuiteParser implements Constants, StringHelper {
                     }
                     break;
 
-                case NUMERIC_LITERAL_KEYWORD:
+                case Constants.NUMERIC_LITERAL_KEYWORD:
                     if (toBeInProgress) {
                         numericLiteralCompare = true;
                         expectedValueToCompare = testSuiteToken;
@@ -238,7 +238,7 @@ public class TestSuiteParser implements Constants, StringHelper {
                     }
                     break;
 
-                case BOOLEAN_VALUE:
+                case Constants.BOOLEAN_VALUE:
                     if (toBeInProgress) {
                         boolean88LevelCompare = true;
                         expectedValueToCompare = testSuiteToken;
@@ -255,8 +255,8 @@ public class TestSuiteParser implements Constants, StringHelper {
                     }
                     break;
 
-                case TO_BE_KEYWORD:
-                case TO_EQUAL_KEYWORD:
+                case Constants.TO_BE_KEYWORD:
+                case Constants.TO_EQUAL_KEYWORD:
                     toBeInProgress = true;
                     break;
             }
@@ -390,7 +390,7 @@ public class TestSuiteParser implements Constants, StringHelper {
 
     void insertTestCodeForAlphanumericEqualityCheck(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_NORMAL_COMPARE, testCodePrefix, TRUE)));
+                COBOL_SET_NORMAL_COMPARE, testCodePrefix, Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
         String cobolLine = String.format(
@@ -399,7 +399,7 @@ public class TestSuiteParser implements Constants, StringHelper {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_COMPARE_DEFAULT, testCodePrefix, TRUE)));
+                COBOL_SET_COMPARE_DEFAULT, testCodePrefix, Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
@@ -408,7 +408,7 @@ public class TestSuiteParser implements Constants, StringHelper {
 
     void insertTestCodeForNumericEqualityCheck(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_COMPARE_NUMERIC, testCodePrefix, TRUE)));
+                COBOL_SET_COMPARE_NUMERIC, testCodePrefix, Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
         testSourceOut.write(fixedLength(String.format(
@@ -421,7 +421,7 @@ public class TestSuiteParser implements Constants, StringHelper {
 
     void insertTestCodeFor88LevelEqualityCheck(Writer testSourceOut) throws IOException {
         testSourceOut.write(fixedLength(String.format(
-                COBOL_SET_COMPARE_88_LEVEL, testCodePrefix, TRUE)));
+                COBOL_SET_COMPARE_88_LEVEL, testCodePrefix, Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_ACTUAL_88_VALUE_1, fieldNameForExpect)));
         testSourceOut.write(fixedLength(String.format(
@@ -463,7 +463,7 @@ public class TestSuiteParser implements Constants, StringHelper {
      * @param testSuiteToken - token extracted from test suit input
      */
     void appendTokenToCobolStatement(String testSuiteToken) {
-        if (cobolStatement.length() > 0) cobolStatement.append(SPACE);
+        if (cobolStatement.length() > 0) cobolStatement.append(Constants.SPACE);
         cobolStatement.append(testSuiteToken);
     }
 
@@ -508,7 +508,7 @@ public class TestSuiteParser implements Constants, StringHelper {
     void writeCobolLine(String line, Writer testSourceOut) throws IOException {
         //TODO: Enhance this to work with an arbitrary number of continuation lines
         String line1 = line;
-        String line2 = EMPTY_STRING;
+        String line2 = Constants.EMPTY_STRING;
         if (line.length() > 72) {
             line1 = line.substring(0,72);
             line2 = line.substring(72);

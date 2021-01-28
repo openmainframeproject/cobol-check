@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class GetOpt implements Constants, StringHelper {
+public class GetOpt implements StringHelper {
 
     private Map<OptionKey, OptionValue> options;
     private static final String LONG_OPT_PREFIX = "--";
@@ -57,7 +57,7 @@ public class GetOpt implements Constants, StringHelper {
 
     public String getValueFor(String key) {
         OptionValue optionValue = lookupOption(key);
-        return optionValue == null ? EMPTY_STRING : optionValue.argumentValue;
+        return optionValue == null ? Constants.EMPTY_STRING : optionValue.argumentValue;
     }
 
     public boolean isSet(String key) {
@@ -75,10 +75,10 @@ public class GetOpt implements Constants, StringHelper {
             throw new PossibleInternalLogicErrorException(messages.get("ERR005"));
 
         // "a:bg: --long alpha:,beta,gamma:" -> [0] "a:bg:", [1] "--long", [2] "alpha:,beta,gamma:"
-        String[] optionSpecs = optionsString.split(SPACE);
+        String[] optionSpecs = optionsString.split(Constants.SPACE);
         boolean longOptionsWereSpecified = optionSpecs.length > 2 && optionSpecs[1].equals(LONG_OPT_KEYWORD);
-        String[] longOptionSpecs = new String[]{ EMPTY_STRING };
-        if (longOptionsWereSpecified) longOptionSpecs = optionSpecs[2].split(COMMA);
+        String[] longOptionSpecs = new String[]{ Constants.EMPTY_STRING };
+        if (longOptionsWereSpecified) longOptionSpecs = optionSpecs[2].split(Constants.COMMA);
 
         String shortOptions = optionSpecs[0];
         int optionOffset = 0;
@@ -86,7 +86,7 @@ public class GetOpt implements Constants, StringHelper {
         while (optionOffset < shortOptions.length()) {
             OptionKey optionKey = new OptionKey();
             optionKey.shortKey = String.valueOf(shortOptions.charAt(optionOffset));
-            optionKey.longKey = longOptionsWereSpecified ? longOptionSpecs[optionIndex] : EMPTY_STRING;
+            optionKey.longKey = longOptionsWereSpecified ? longOptionSpecs[optionIndex] : Constants.EMPTY_STRING;
             OptionValue optionValue = new OptionValue();
             if (optionOffset+1 < shortOptions.length() && shortOptions.charAt(optionOffset+1) == ARGUMENT_REQUIRED_INDICATOR) {
                 optionValue.hasArgument = true;
@@ -107,7 +107,7 @@ public class GetOpt implements Constants, StringHelper {
         boolean multipleArgumentsPossible = false;
         boolean atLeastOneArgumentWasPassed = false;
         OptionValue optionValue = new OptionValue();
-        String lastOption = EMPTY_STRING;
+        String lastOption = Constants.EMPTY_STRING;
         for (String argValue : args) {
             if (isKey(argValue)) {
                 if (!atLeastOneArgumentWasPassed && expectValueNext) throw new CommandLineArgumentException(
@@ -163,14 +163,14 @@ public class GetOpt implements Constants, StringHelper {
     }
 
     static class OptionKey {
-        public String shortKey = EMPTY_STRING;
-        public String longKey = EMPTY_STRING;
+        public String shortKey = Constants.EMPTY_STRING;
+        public String longKey = Constants.EMPTY_STRING;
     }
 
     static class OptionValue {
         public boolean hasArgument = false;
         public boolean isSet = false;
-        public String argumentValue = EMPTY_STRING;
+        public String argumentValue = Constants.EMPTY_STRING;
     }
 
 }

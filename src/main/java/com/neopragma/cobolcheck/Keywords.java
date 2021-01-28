@@ -26,68 +26,68 @@ import java.util.Map;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Keywords implements Constants {
+public class Keywords {
     private static final Messages messages = new Messages();
     private static final Map<String, Keyword> keywordInfo;
 
     static {
         keywordInfo = new HashMap<>();
-        keywordInfo.put(TESTSUITE_KEYWORD,
-                new Keyword(TESTSUITE_KEYWORD,
-                        List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+        keywordInfo.put(Constants.TESTSUITE_KEYWORD,
+                new Keyword(Constants.TESTSUITE_KEYWORD,
+                        List.of(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.TESTSUITE_NAME));
-        keywordInfo.put(TESTCASE_KEYWORD,
-                new Keyword(TESTCASE_KEYWORD,
-                        List.of(ALPHANUMERIC_LITERAL_KEYWORD),
+        keywordInfo.put(Constants.TESTCASE_KEYWORD,
+                new Keyword(Constants.TESTCASE_KEYWORD,
+                        List.of(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.NEW_TESTCASE));
-        keywordInfo.put(EXPECT_KEYWORD,
-                new Keyword(EXPECT_KEYWORD,
-                        List.of(FIELDNAME_KEYWORD),
+        keywordInfo.put(Constants.EXPECT_KEYWORD,
+                new Keyword(Constants.EXPECT_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME));
-        keywordInfo.put(FIELDNAME_KEYWORD,
-                new Keyword(EMPTY_STRING,
-                        List.of(TO_BE_KEYWORD,
-                                NOT_KEYWORD,
-                                COBOL_TOKEN),
+        keywordInfo.put(Constants.FIELDNAME_KEYWORD,
+                new Keyword(Constants.EMPTY_STRING,
+                        List.of(Constants.TO_BE_KEYWORD,
+                                Constants.NOT_KEYWORD,
+                                Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
-        keywordInfo.put(NOT_KEYWORD,
-                new Keyword(NOT_KEYWORD,
-                        List.of(TO_BE_KEYWORD),
+        keywordInfo.put(Constants.NOT_KEYWORD,
+                new Keyword(Constants.NOT_KEYWORD,
+                        List.of(Constants.TO_BE_KEYWORD),
                         KeywordAction.REVERSE_LOGIC));
-        keywordInfo.put(TO_BE_KEYWORD,
-                new Keyword(TO_BE_KEYWORD,
-                        List.of(FIELDNAME_KEYWORD,
-                                ALPHANUMERIC_LITERAL_KEYWORD,
-                                NUMERIC_LITERAL_KEYWORD,
-                                TRUE,
-                                FALSE),
+        keywordInfo.put(Constants.TO_BE_KEYWORD,
+                new Keyword(Constants.TO_BE_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.TRUE,
+                                Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE));
-        keywordInfo.put(TO_EQUAL_KEYWORD,
-                new Keyword(TO_EQUAL_KEYWORD,
-                        List.of(FIELDNAME_KEYWORD,
-                                ALPHANUMERIC_LITERAL_KEYWORD,
-                                NUMERIC_LITERAL_KEYWORD,
-                                TRUE,
-                                FALSE),
+        keywordInfo.put(Constants.TO_EQUAL_KEYWORD,
+                new Keyword(Constants.TO_EQUAL_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.TRUE,
+                                Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE));
-        keywordInfo.put(ALPHANUMERIC_LITERAL_KEYWORD,
-                new Keyword(ALPHANUMERIC_LITERAL_KEYWORD,
-                        List.of(EXPECT_KEYWORD, COBOL_TOKEN),
+        keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                        List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
-        keywordInfo.put(NUMERIC_LITERAL_KEYWORD,
-                new Keyword(NUMERIC_LITERAL_KEYWORD,
-                        List.of(EXPECT_KEYWORD, COBOL_TOKEN),
+        keywordInfo.put(Constants.NUMERIC_LITERAL_KEYWORD,
+                new Keyword(Constants.NUMERIC_LITERAL_KEYWORD,
+                        List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
-        keywordInfo.put(COBOL_TOKEN,
-                new Keyword(COBOL_TOKEN,
-                        List.of(COBOL_TOKEN,
-                                ALPHANUMERIC_LITERAL_KEYWORD,
-                                FIELDNAME_KEYWORD,
-                                EXPECT_KEYWORD),
+        keywordInfo.put(Constants.COBOL_TOKEN,
+                new Keyword(Constants.COBOL_TOKEN,
+                        List.of(Constants.COBOL_TOKEN,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.FIELDNAME_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
-        keywordInfo.put(BOOLEAN_VALUE,
-                new Keyword(BOOLEAN_VALUE,
-                        List.of(EXPECT_KEYWORD, COBOL_TOKEN),
+        keywordInfo.put(Constants.BOOLEAN_VALUE,
+                new Keyword(Constants.BOOLEAN_VALUE,
+                        List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.BOOLEAN_COMPARE));
     }
 
@@ -95,7 +95,7 @@ public class Keywords implements Constants {
         Keyword result = null;
         if (key != null) {
             if (key.startsWith("\"") || key.startsWith("'")) {
-                key = ALPHANUMERIC_LITERAL_KEYWORD;
+                key = Constants.ALPHANUMERIC_LITERAL_KEYWORD;
             } else {
                 if (Character.isDigit(key.charAt(0))) {
                     boolean isNumeric = true;
@@ -108,16 +108,16 @@ public class Keywords implements Constants {
                         }
                     }
                     if (isNumeric) {
-                        key = NUMERIC_LITERAL_KEYWORD;
+                        key = Constants.NUMERIC_LITERAL_KEYWORD;
                     }
                 } else {
                     if (key.equals("TRUE") || key.equals("FALSE")) {
-                        key = BOOLEAN_VALUE;
+                        key = Constants.BOOLEAN_VALUE;
                     }
                 }
             }
         }
-        result = keywordInfo.getOrDefault(key, keywordInfo.get(COBOL_TOKEN));
+        result = keywordInfo.getOrDefault(key, keywordInfo.get(Constants.COBOL_TOKEN));
         return result;
     }
 }

@@ -17,7 +17,7 @@ package com.neopragma.cobolcheck;
 
 import java.util.*;
 
-public class KeywordExtractor implements TokenExtractor, Constants {
+public class KeywordExtractor implements TokenExtractor {
 
     private Map<String, List<String>> multiWordTokens;
     private StringBuilder buffer;
@@ -92,7 +92,7 @@ public class KeywordExtractor implements TokenExtractor, Constants {
                                             || sourceLine.charAt(endOfLookahead) == SPACE)) {
                                         buffer.append(expectedToken);
                                         tokenOffset += expectedToken.length();
-                                        expectedToken = EMPTY_STRING;
+                                        expectedToken = Constants.EMPTY_STRING;
                                         break;
                                     }
                                 }
