@@ -2,6 +2,7 @@ import static org.apache.tools.ant.taskdefs.condition.Os.*
 
 plugins {
     id 'java-library'
+    id "org.sonarqube" version "3.0"
 }
 
 version = '0.0.1'
@@ -10,6 +11,14 @@ description = 'Unit testing framework for Cobol'
 
 def approvalExpectedOutput = "approval-test-expected.txt"
 def approvalActualOutput = "approval-test-actual.txt"
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "neopragma_cobol-check"
+        property "sonar.organization", "neopragma-github"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
 
 ext {
     mainClassName = 'com.neopragma.cobolcheck.Driver'
@@ -71,7 +80,6 @@ def integrationTest = tasks.register("integrationTest", Test) {
 }
 def approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn integrationTest
     doLast {
         if ("${OS_NAME}" == "linux") {
             println "Linux detected"
