@@ -1,5 +1,9 @@
 # Cobol Check 
 
+https://travis-ci.com/neopragma/cobol-check.svg?branch=main
+
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.neopragma.cobolcheck:cobol-check&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.neopragma.cobolcheck:cobol-check)
+
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
 
 ## Immediate needs 
@@ -20,6 +24,28 @@ As much of the work in this space will involve support for existing code bases, 
 ## Installing, Using, Contributing
 
 Please see [the wiki](https://github.com/neopragma/cobol-check/wiki/) for more information.
+
+## Target platforms 
+
+We want to enable Cobol developers to write and run fine-grained unit checks on: 
+
+| Platform | Version | Tested? | Other |
+| -------- | ------- | ------- | ----- |
+| Ubuntu Linux | 18.04.05 | Jan 21 | Note 1 |
+/ Ubuntu Linux | 20.04 | No | Note 2 |
+| IBM z/OS | 2.4 | No | Note 3 |
+/ MS Windows | 10 | No | Note 3 |
+/ Fedora Linux / 33 | No | Note 4 |
+/ Fedora Linux / 34 | No | Note 4 |
+| FreeBSD | 12 | No | Note 4 |
+| OpenBSD | 68 | No | Note 4 |
+/ Apple OSX / 10 | No | Note 4 |
+| Apple OSX | 11 | No | Note 4
+
+Note 1: Current development platform 
+Note 2: New development platform (coming) 
+Note 3: Primary target platform 
+Note 4: Secondary (nice to have) target platform
 
 ## Related projects
 
