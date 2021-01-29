@@ -20,7 +20,6 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -59,7 +58,6 @@ public class Config {
         Log.info(messages.get("INF001", configResourceName));
         try {
             settings = new Properties();
-            InputStream configFile;
             settings.load(new FileInputStream(configResourceName));
         } catch (IOException ioe) {
             throw new IOExceptionProcessingConfigFile(
