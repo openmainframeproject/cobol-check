@@ -40,10 +40,10 @@ We want to enable Cobol developers to write and run fine-grained unit checks on:
 | Apple OSX | 10 | No | Note 4 |
 | Apple OSX | 11 | No | Note 4 |
 
-Note 1: Current development platform 
-Note 2: New development platform (coming) 
-Note 3: Primary target platform 
-Note 4: Secondary (nice to have) target platform
+- Note 1: Current development platform 
+- Note 2: New development platform (coming) 
+- Note 3: Primary target platform 
+- Note 4: Secondary (nice to have) target platform
 
 ## Related projects
 
