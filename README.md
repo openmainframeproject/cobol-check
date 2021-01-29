@@ -1,8 +1,6 @@
 # Cobol Check 
 
-[![Build Status](https://travis-ci.com/neopragma/cobol-check.svg?branch=main)](https://travis-ci.com/neopragma/cobol-check)
-
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=neopragma_cobol-check&metric=alert_status)](https://sonarcloud.io/dashboard?id=neopragma_cobol-check)
+[![Build Status](https://travis-ci.com/neopragma/cobol-check.svg?branch=main)](https://travis-ci.com/neopragma/cobol-check) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=neopragma_cobol-check&metric=alert_status)](https://sonarcloud.io/dashboard?id=neopragma_cobol-check)
 
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
 
@@ -30,17 +28,17 @@ Please see [the wiki](https://github.com/neopragma/cobol-check/wiki/) for more i
 We want to enable Cobol developers to write and run fine-grained unit checks on: 
 
 | Platform | Version | Tested? | Other |
-| -------- | ------- | ------- | ----- |
+| ------------ | ------- | ------- | ----- |
 | Ubuntu Linux | 18.04.05 | Jan 21 | Note 1 |
-/ Ubuntu Linux | 20.04 | No | Note 2 |
+| Ubuntu Linux | 20.04 | No | Note 2 |
 | IBM z/OS | 2.4 | No | Note 3 |
-/ MS Windows | 10 | No | Note 3 |
-/ Fedora Linux / 33 | No | Note 4 |
-/ Fedora Linux / 34 | No | Note 4 |
+| MS Windows | 10 | No | Note 3 |
+| Fedora Linux | 33 | No | Note 4 |
+| Fedora Linux | 34 | No | Note 4 |
 | FreeBSD | 12 | No | Note 4 |
 | OpenBSD | 68 | No | Note 4 |
-/ Apple OSX / 10 | No | Note 4 |
-| Apple OSX | 11 | No | Note 4
+| Apple OSX | 10 | No | Note 4 |
+| Apple OSX | 11 | No | Note 4 |
 
 Note 1: Current development platform 
 Note 2: New development platform (coming) 
