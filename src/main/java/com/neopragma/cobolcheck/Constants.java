@@ -15,7 +15,16 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+
 public final class Constants {
+
+    Messages messages = new Messages();
+
+    private Constants() {
+        throw new PossibleInternalLogicErrorException(
+                messages.get("ERR026"));
+    }
 
     // File read status values
     public static final int END_OF_STREAM = -1;
