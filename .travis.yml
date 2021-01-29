@@ -1,12 +1,11 @@
 language: java
 jdk:
   - openjdk14
-addons:
-  apt:
-    packages:
-      - libdb-dev
-      - libgmp3-dev
-      - libncurses5-dev
-      - gnucobol
+before_install:
+  - sudo apt update
+  - sudo apt -y install libdb-dev
+  - sudo apt -y install libgmp3-dev
+  - sudo apt -y install libncurses5-dev
+  - sudo apt -y install gnucobol
 
 
