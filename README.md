@@ -1,7 +1,6 @@
 # Cobol Check 
 
-https://travis-ci.com/neopragma/cobol-check.svg?branch=main
-
+[![Build Status](https://travis-ci.com/neopragma/cobol-check.svg?branch=main)](https://travis-ci.com/neopragma/cobol-check)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.neopragma.cobolcheck:cobol-check&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.neopragma.cobolcheck:cobol-check)
 
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
