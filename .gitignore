@@ -9,8 +9,7 @@
 
 *.hprof
 envvars
-build/*
-target/*
+target/
 src/test/cobol/TESTPRG.CBL
 *.so
 
