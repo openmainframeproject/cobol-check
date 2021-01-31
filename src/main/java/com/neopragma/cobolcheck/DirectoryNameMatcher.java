@@ -42,7 +42,8 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  */
 public class DirectoryNameMatcher extends SimpleFileVisitor<Path> {
         private final PathMatcher matcher;
-        private List<String> matchingDirectories;
+        private final List<String> matchingDirectories;
+        private final Messages messages = new Messages();
 
         DirectoryNameMatcher(String pattern) {
             matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
@@ -78,7 +79,7 @@ public class DirectoryNameMatcher extends SimpleFileVisitor<Path> {
 
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) {
-            System.err.println(exc);
+            Log.warn(messages.get(String.format("WRN003", file.getFileName())));
             return CONTINUE;
         }
     }
