@@ -63,7 +63,7 @@ public class Driver implements StringHelper {
         this.options = options;
     }
 
-    void run() {
+    void run() throws InterruptedException {
         if (options.isSet("help")) {
             emitHelp();
             return;
@@ -86,7 +86,7 @@ public class Driver implements StringHelper {
      * code into the program under test to produce a test program. Finally, launch an OS process to compile the test
      * program and execute it.
      */
-    void runTestSuites() {
+    void runTestSuites() throws InterruptedException {
         // all test suites are located under this directory
         String testSuiteDirectory =
                 config.getString(Constants.TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
@@ -199,11 +199,11 @@ public class Driver implements StringHelper {
                 if (launcher != null){
                     Process process = launcher.run(testProgramName.toString());
                     int exitCode = 1;
-                    try {
+//                    try {
                         exitCode = process.waitFor();
-                    } catch (InterruptedException interruptedException) {
-                        exitCode = 1;
-                    }
+//                    } catch (InterruptedException interruptedException) {
+//                        exitCode = 1;
+//                    }
                     Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
                 }
             }
@@ -255,7 +255,7 @@ public class Driver implements StringHelper {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         messages = new Messages();
         Driver app = new Driver(
                 new Config(messages),
