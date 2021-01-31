@@ -66,14 +66,11 @@ public class CopybookExpander implements StringHelper {
                          String copybookFilename,
                          String copybookFilenameSuffix,
                          StringTuple... textReplacement) throws IOException {
-        BufferedReader copybookReader = null;
-        try {
-            copybookReader
-                    = new BufferedReader(new FileReader(
-                    Path.of(pathToCopybooks
-                            + copybookFilename
-                            + copybookFilenameSuffix)
-                            .toFile()));
+        try(BufferedReader copybookReader = new BufferedReader(new FileReader(
+                Path.of(pathToCopybooks
+                        + copybookFilename
+                        + copybookFilenameSuffix)
+                        .toFile()))) {
             String sourceLine;
             while ((sourceLine = copybookReader.readLine()) != null) {
                 // Nested COPY
@@ -102,10 +99,6 @@ public class CopybookExpander implements StringHelper {
                 }
                 sourceLine = fixedLength(sourceLine);
                 expandedSource.write(sourceLine);
-            }
-        } finally {
-            if (copybookReader != null) {
-                copybookReader.close();
             }
         }
         return expandedSource;

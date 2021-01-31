@@ -196,13 +196,16 @@ public class Driver implements StringHelper {
                 testProgramName.append(
                         config.getString(Constants.TEST_PROGRAM_SUFFIX_CONFIG_KEY,
                                 Constants.DEFAULT_TEST_PROGRAM_SUFFIX));
-                Process process = launcher.run(testProgramName.toString());
-                int exitCode = 1;
-                try {
-                    exitCode = process.waitFor();
-                } catch (InterruptedException ignored) {
+                if (launcher != null){
+                    Process process = launcher.run(testProgramName.toString());
+                    int exitCode = 1;
+                    try {
+                        exitCode = process.waitFor();
+                    } catch (InterruptedException interruptedException) {
+                        exitCode = 1;
+                    }
+                    Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
                 }
-                Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
             }
         }
     }
