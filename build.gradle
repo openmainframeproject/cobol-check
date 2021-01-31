@@ -2,7 +2,8 @@ import static org.apache.tools.ant.taskdefs.condition.Os.*
 
 plugins {
     id 'java-library'
-    id "org.sonarqube" version "3.0"
+    id 'org.sonarqube' version '3.0'
+    id 'jacoco'
 }
 
 version = '0.0.1'
@@ -17,6 +18,39 @@ sonarqube {
         property "sonar.projectKey", "neopragma_cobol-check"
         property "sonar.organization", "neopragma-github"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.exclusions", "**/EIBResponseCodes.java,**/Keyword.java"
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.8
+            }
+            excludes = ['*Constants',
+                        '*Exception',
+                        '*DirectoryNameMatcher',
+                        '*Driver',
+                        '*EIBResponseCodes',
+                        '*Exception*',
+                        '*Generator',
+                        '*Keyword',
+                        '*LinuxProcessLauncher',
+                        '*Log',
+                        '*Flag',
+                        '*StringHelper',
+                        '*TestSuiteConcatenator']
+        }
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.2
+            }
+            includes = ['*LinuxProcessLauncher',
+                        '*TestSuiteConcatenator']
+        }
     }
 }
 

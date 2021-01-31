@@ -1,0 +1,1 @@
+./gradlew -Dsonar.login=e1338b64579c5f8b6e2556b9d42c3f86e69914c7 -DXX:MaxMetaspaceSize=64M sonarqube
