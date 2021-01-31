@@ -66,42 +66,48 @@ public class CopybookExpander implements StringHelper {
                          String copybookFilename,
                          String copybookFilenameSuffix,
                          StringTuple... textReplacement) throws IOException {
-        BufferedReader copybookReader
-                = new BufferedReader(new FileReader(
-                        Path.of(pathToCopybooks
-                                + copybookFilename
-                                + copybookFilenameSuffix)
-                                .toFile()));
-        String sourceLine;
-        while ((sourceLine = copybookReader.readLine()) != null) {
-            // Nested COPY
-            if (copyStatementIsPresentIn(sourceLine)) {
-                String copybookName = extractCopybookNameFrom(sourceLine);
-                sourceLine = commentOut(sourceLine);
-                expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textReplacement);
-            }
-            // COPY REPLACING
-            if (!textReplacement[0].isEmpty()) {
-                for (StringTuple replace : textReplacement) {
-                    for (String pseudoTextDelimiter : List.of (
-                            Constants.PSEUDO_TEXT_DELIMITER_EQUALS, Constants.PSEUDO_TEXT_DELIMITER_COLON)) {
-                        if (sourceLine.contains(pseudoTextDelimiter)) {
-                            sourceLine = sourceLine.replaceAll(replace.getFirst(), replace.getSecond());
+        BufferedReader copybookReader = null;
+        try {
+            copybookReader
+                    = new BufferedReader(new FileReader(
+                    Path.of(pathToCopybooks
+                            + copybookFilename
+                            + copybookFilenameSuffix)
+                            .toFile()));
+            String sourceLine;
+            while ((sourceLine = copybookReader.readLine()) != null) {
+                // Nested COPY
+                if (copyStatementIsPresentIn(sourceLine)) {
+                    String copybookName = extractCopybookNameFrom(sourceLine);
+                    sourceLine = commentOut(sourceLine);
+                    expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textReplacement);
+                }
+                // COPY REPLACING
+                if (!textReplacement[0].isEmpty()) {
+                    for (StringTuple replace : textReplacement) {
+                        for (String pseudoTextDelimiter : List.of(
+                                Constants.PSEUDO_TEXT_DELIMITER_EQUALS, Constants.PSEUDO_TEXT_DELIMITER_COLON)) {
+                            if (sourceLine.contains(pseudoTextDelimiter)) {
+                                sourceLine = sourceLine.replaceAll(replace.getFirst(), replace.getSecond());
+                            }
                         }
-                    }
-                    for (String followingCharacter : List.of(Constants.PERIOD, Constants.SPACE)) {
-                        String textToReplace = Constants.SPACE + replace.getFirst() + followingCharacter;
-                        String replacementText = Constants.SPACE + replace.getSecond() + followingCharacter;
-                        if (sourceLine.contains(textToReplace)) {
-                            sourceLine = sourceLine.replaceAll(textToReplace, replacementText);
+                        for (String followingCharacter : List.of(Constants.PERIOD, Constants.SPACE)) {
+                            String textToReplace = Constants.SPACE + replace.getFirst() + followingCharacter;
+                            String replacementText = Constants.SPACE + replace.getSecond() + followingCharacter;
+                            if (sourceLine.contains(textToReplace)) {
+                                sourceLine = sourceLine.replaceAll(textToReplace, replacementText);
+                            }
                         }
                     }
                 }
+                sourceLine = fixedLength(sourceLine);
+                expandedSource.write(sourceLine);
             }
-            sourceLine = fixedLength(sourceLine);
-            expandedSource.write(sourceLine);
+        } finally {
+            if (copybookReader != null) {
+                copybookReader.close();
+            }
         }
-        copybookReader.close();
         return expandedSource;
     }
 
