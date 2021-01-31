@@ -1,7 +1,4 @@
 # Cobol- and cobol-check-related gitignore entries
-TESTPRG*
-envvars
-
 *~
 *.lock
 *.DS_Store
@@ -10,6 +7,9 @@ envvars
 
 # project specific
 
+*.hprof
+envvars
+build/*
 target/*
 src/test/cobol/TESTPRG.CBL
 *.so
