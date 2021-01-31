@@ -56,9 +56,9 @@ public class Config {
 
     void load(String configResourceName) {
         Log.info(messages.get("INF001", configResourceName));
-        try {
+        try(FileInputStream configSettings = new FileInputStream(configResourceName)){
             settings = new Properties();
-            settings.load(new FileInputStream(configResourceName));
+            settings.load(configSettings);
         } catch (IOException ioe) {
             throw new IOExceptionProcessingConfigFile(
                     messages.get("ERR003", configResourceName), ioe);
