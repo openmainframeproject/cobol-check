@@ -108,6 +108,30 @@ public class KeywordExtractorTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("symbolicRelationsProvider")
+    public void it_handles_symbolic_relations_keywords(
+            String sourceLine, List<String> expectedTokens) {
+        tokens = extractor.extractTokensFrom(sourceLine);
+        assertEquals(expectedTokens, tokens);
+    }
+    private static Stream<Arguments> symbolicRelationsProvider() {
+        return Stream.of(
+            Arguments.of("      EXPECT WS-FIELD-1 = WS-FIELD-2",
+                        List.of("EXPECT", "WS-FIELD-1", "=", "WS-FIELD-2")),
+                Arguments.of("      EXPECT WS-FIELD-1 != WS-FIELD-2",
+                        List.of("EXPECT", "WS-FIELD-1", "!=", "WS-FIELD-2")),
+                Arguments.of("      EXPECT WS-FIELD-1 > WS-FIELD-2",
+                        List.of("EXPECT", "WS-FIELD-1", ">", "WS-FIELD-2")),
+                Arguments.of("      EXPECT WS-FIELD-1 < WS-FIELD-2",
+                        List.of("EXPECT", "WS-FIELD-1", "<", "WS-FIELD-2")),
+                Arguments.of("      EXPECT WS-FIELD-1 >= WS-FIELD-2",
+                        List.of("EXPECT", "WS-FIELD-1", ">=", "WS-FIELD-2")),
+                Arguments.of("      EXPECT WS-FIELD-1 <= WS-FIELD-2",
+                        List.of("EXPECT", "WS-FIELD-1", "<=", "WS-FIELD-2"))
+                );
+    }
+
     @Test
     public void given_a_mixture_of_different_types_of_tokens_it_extracts_them_correctly() {
         tokens = extractor.extractTokensFrom("  EXPECT WS-FOO TO BE \"something\"");

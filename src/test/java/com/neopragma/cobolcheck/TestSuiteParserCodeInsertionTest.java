@@ -269,7 +269,8 @@ public class TestSuiteParserCodeInsertionTest {
         return Stream.of(
                 Arguments.of("           EXPECT WS-VALUE NOT TO BE 18.92"),
                 Arguments.of("           EXPECT WS-VALUE NOT TO EQUAL 18.92"),
-                Arguments.of("           EXPECT WS-VALUE NOT = 18.92")
+                Arguments.of("           EXPECT WS-VALUE NOT = 18.92"),
+                Arguments.of("           EXPECT WS-VALUE != 18.92")
         );
     }
 

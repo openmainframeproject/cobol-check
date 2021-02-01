@@ -186,6 +186,11 @@ public class TestSuiteParser implements StringHelper {
                     reverseCompare = true;
                     break;
 
+                case Constants.NOT_EQUAL_SIGN_KEYWORD:
+                    toBeInProgress = true;
+                    reverseCompare = true;
+                    break;
+
                 case Constants.COBOL_TOKEN:
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;

@@ -54,6 +54,12 @@ public class Keywords {
                 new Keyword(Constants.NOT_KEYWORD,
                         List.of(Constants.TO_BE_KEYWORD),
                         KeywordAction.REVERSE_LOGIC));
+        keywordInfo.put(Constants.NOT_EQUAL_SIGN_KEYWORD,
+                new Keyword(Constants.NOT_EQUAL_SIGN_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.REVERSE_LOGIC));
         keywordInfo.put(Constants.TO_BE_KEYWORD,
                 new Keyword(Constants.TO_BE_KEYWORD,
                         List.of(Constants.FIELDNAME_KEYWORD,
