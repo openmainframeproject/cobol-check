@@ -265,6 +265,7 @@ public class TestSuiteParser implements StringHelper {
 
                 case Constants.TO_BE_KEYWORD:
                 case Constants.TO_EQUAL_KEYWORD:
+                case Constants.EQUAL_SIGN_KEYWORD:
                     toBeInProgress = true;
                     break;
             }

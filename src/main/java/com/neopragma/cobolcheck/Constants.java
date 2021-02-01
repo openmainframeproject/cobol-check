@@ -63,6 +63,7 @@ public final class Constants {
     public static final String BOOLEAN_VALUE = "boolean-value";
     public static final String REPLACING_KEYWORD = "REPLACING";
     public static final String BY_KEYWORD = "BY";
+    public static final String EQUAL_SIGN_KEYWORD = "=";
 
     // Configuration key values
     public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";

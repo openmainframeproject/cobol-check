@@ -70,6 +70,14 @@ public class Keywords {
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE));
+        keywordInfo.put(Constants.EQUAL_SIGN_KEYWORD,
+                new Keyword(Constants.EQUAL_SIGN_KEYWORD,
+                List.of(Constants.FIELDNAME_KEYWORD,
+                        Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                        Constants.NUMERIC_LITERAL_KEYWORD,
+                        Constants.TRUE,
+                        Constants.FALSE),
+                KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                         List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
