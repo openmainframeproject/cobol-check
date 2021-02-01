@@ -123,8 +123,8 @@ public class TestSuiteParser implements StringHelper {
             "           SET %1$sEXPECTED-88-VALUE TO %2$s";
     private static final String COBOL_SET_COMPARE_DEFAULT =
             "           SET %1$sCOMPARE-DEFAULT TO %2$s";
-    private static final String COBOL_PERFORM_ASSERT_EQUAL =
-            "           PERFORM %sASSERT-EQUAL";
+    private static final String COBOL_CHECK_EXPECTATION =
+            "           PERFORM %sCHECK-EXPECTATION";
     private static final String COBOL_PERFORM_AFTER =
             "           PERFORM %sAFTER";
     private static final String ELEVEN_LEADING_SPACES = "           ";
@@ -414,7 +414,7 @@ public class TestSuiteParser implements StringHelper {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_COMPARE_DEFAULT, testCodePrefix, Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
+                COBOL_CHECK_EXPECTATION, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_PERFORM_AFTER, testCodePrefix)));
     }
@@ -434,7 +434,7 @@ public class TestSuiteParser implements StringHelper {
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
+                COBOL_CHECK_EXPECTATION, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_PERFORM_AFTER, testCodePrefix)));
     }
@@ -480,7 +480,7 @@ public class TestSuiteParser implements StringHelper {
         testSourceOut.write(fixedLength(
                 COBOL_SET_EXPECTED_88_VALUE_5));
         testSourceOut.write(fixedLength(String.format(
-                COBOL_PERFORM_ASSERT_EQUAL, testCodePrefix)));
+                COBOL_CHECK_EXPECTATION, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_PERFORM_AFTER, testCodePrefix)));
     }

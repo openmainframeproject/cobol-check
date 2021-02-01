@@ -10,7 +10,7 @@
            MOVE ==UT==RETCODE TO RETURN-CODE
            GOBACK.
 
-       ==UT==ASSERT-EQUAL.
+       ==UT==CHECK-EXPECTATION.
       *****************************************************************
       * COMPARE EXPECTED AND ACTUAL VALUES FOR EQUALITY.
       *****************************************************************

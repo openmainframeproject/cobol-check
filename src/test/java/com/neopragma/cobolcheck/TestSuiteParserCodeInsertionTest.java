@@ -106,7 +106,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           END-IF                                                               ");
         expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");
         expectedResult.append(Constants.NEWLINE);
@@ -132,7 +132,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
         expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");
         expectedResult.append(Constants.NEWLINE);
@@ -158,7 +158,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
         expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");
         expectedResult.append(Constants.NEWLINE);
@@ -182,7 +182,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           MOVE 18.92 TO UT-EXPECTED-NUMERIC                                    ");
         expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");
         expectedResult.append(Constants.NEWLINE);
@@ -208,7 +208,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
         expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-ASSERT-EQUAL                                              ");
+        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
         expectedResult.append(Constants.NEWLINE);
         expectedResult.append("           PERFORM UT-AFTER                                                     ");
         expectedResult.append(Constants.NEWLINE);
