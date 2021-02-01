@@ -114,6 +114,7 @@ def integrationTest = tasks.register("integrationTest", Test) {
 }
 
 task fatJar(type: Jar) {
+    description 'Create executable jar'
     dependsOn integrationTest
     manifest {
         attributes 'Main-Class': "${mainClassName}"
@@ -144,6 +145,7 @@ def approvalTest = tasks.register("approvalTest", Test) {
 }
 
 task defaultProperties {
+    description 'Show the default properties for this project'
     println "Project: $project"
     println "Name: $name"
     println "Path: $path"
