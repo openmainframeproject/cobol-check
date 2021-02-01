@@ -1,4 +1,4 @@
-      * ZUTZCPD.CPY
+      * CCHECKPD.CPY
            DISPLAY SPACE
            MOVE ==UT==TEST-CASE-COUNT TO ==UT==TEST-CASE-NUMBER
            DISPLAY ==UT==TEST-CASE-NUMBER ' TEST CASES WERE EXECUTED'
@@ -311,4 +311,4 @@
            .
        ==UT==END.
 
-      * ZUTZCPD.CPY END
+      * CCHECKPD.CPY END

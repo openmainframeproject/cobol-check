@@ -1,6 +1,5 @@
-      * ZUTZCWS.CPY
-       01  FILLER PIC X(16) VALUE '******* COBCHECK'.
-       01  FILLER PIC X(16) VALUE '******* 0.1.0'.
+      * CCHECKWS.CPY
+       01  FILLER PIC X(32) VALUE '******* COBOLCHECK 0.0.1 *******'.
        01  ==UT==FIELDS.
            05  ==UT==CONST-ES               PIC X(02) VALUE 'ES'.
            05  ==UT==LABEL-EXPECTED-ACCESS.
@@ -104,4 +103,4 @@
                    15  ==UT==RECORD-FIELD-NAME      PIC X(31).
                    15  ==UT==FILE-STATUS-FIELD-NAME PIC X(31).
 
-      * ZUTZCWS.CPY END
+      * CCHECKWS.CPY END

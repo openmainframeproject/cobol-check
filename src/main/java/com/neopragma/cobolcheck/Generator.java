@@ -65,8 +65,8 @@ public class Generator implements StringHelper {
 
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
     // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
-    private static final String workingStorageCopybookFilename = "ZUTZCWS.CPY";
-    private static final String procedureDivisionCopybookFilename = "ZUTZCPD.CPY";
+    private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
+    private static final String procedureDivisionCopybookFilename = "CCHECKPD.CPY";
     // Comes from config.properties, cobolcheck.copybook.directory entry.
     private static String copybookDirectoryName = Constants.EMPTY_STRING;
     // Used to read source lines from cobol-check copybooks (as opposed to reading the program under test)
