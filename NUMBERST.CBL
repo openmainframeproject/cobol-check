@@ -41,8 +41,10 @@
                88  CC-COMPARE-FAILED     VALUE SPACES.                          
            05  CC-EXPECTED               PIC X(256) VALUE SPACES.               
            05  CC-ACTUAL                 PIC X(256) VALUE SPACES.               
-           05  CC-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.                 
-           05  CC-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
+           05  CC-EXPECTED-NUMERIC-X.                                           
+               10  CC-EXPECTED-NUMERIC   PIC S9(11)V9(7) VALUE ZERO.            
+           05  CC-ACTUAL-NUMERIC-X.                                             
+               10  CC-ACTUAL-NUMERIC     PIC S9(11)V9(7) VALUE ZERO.            
            05  FILLER                    PIC X     VALUE 'F'.                   
                88 CC-EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.        
            05  FILLER                    PIC X     VALUE 'F'.                   
@@ -121,7 +123,9 @@
       * CCHECKWS.CPY END                                                        
        01  FILLER.                                                              
            05  WS-FIELD-1           PIC S9(5)V99 COMP-3.                        
-           05  WS-FIELD-2           PIC S9(5)V99 COMP-3.                        
+           05  WS-FIELD-2           PIC S9(5)V99 comp-3.                        
+           05  ws-field-3           pic s9(16) comp.                            
+           05  ws-field-4           pic s9(16) comp-4.                          
        PROCEDURE DIVISION.                                                      
            PERFORM CC-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
@@ -138,7 +142,7 @@
            MOVE 25.74 TO CC-EXPECTED-NUMERIC                                    
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "It handles unequal sign properly with literal compare"         
+           MOVE "It handles unequal sign with literal compare"                  
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
             MOVE 13.6 TO WS-FIELD-1                                             
@@ -147,6 +151,30 @@
            SET CC-REVERSE-COMPARE TO TRUE                                       
            MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
            MOVE 25.74 TO CC-EXPECTED-NUMERIC                                    
+           PERFORM CC-CHECK-EXPECTATION                                         
+           PERFORM CC-AFTER                                                     
+           MOVE "It handles equal sign with field to field compare"             
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE 25.75 TO WS-FIELD-2                                            
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-NUMERIC TO TRUE                                       
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
+           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
+           PERFORM CC-CHECK-EXPECTATION                                         
+           PERFORM CC-AFTER                                                     
+           MOVE "It handles unequal sign with field to field compare"           
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE 25.75 TO WS-FIELD-2                                            
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-COMPARE-NUMERIC TO TRUE                                       
+           SET CC-REVERSE-COMPARE TO TRUE                                       
+           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
+           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
       * CCHECKPD.CPY                                                            

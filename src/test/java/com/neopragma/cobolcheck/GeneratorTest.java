@@ -37,6 +37,7 @@ public class GeneratorTest {
     private TestSuiteParser testSuiteParser;
     private static final Messages messages = new Messages();
     private static final Config config = new Config(messages);
+    private NumericFields numericFields;
 
     @Mock
     Reader mockTestSuite;

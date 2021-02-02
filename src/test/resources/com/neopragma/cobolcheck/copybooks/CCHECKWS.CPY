@@ -32,8 +32,10 @@
                88  ==UT==COMPARE-FAILED     VALUE SPACES.
            05  ==UT==EXPECTED               PIC X(256) VALUE SPACES.
            05  ==UT==ACTUAL                 PIC X(256) VALUE SPACES.
-           05  ==UT==EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.
-           05  ==UT==ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.
+           05  ==UT==EXPECTED-NUMERIC-X.
+               10  ==UT==EXPECTED-NUMERIC   PIC S9(11)V9(7) VALUE ZERO.
+           05  ==UT==ACTUAL-NUMERIC-X.
+               10  ==UT==ACTUAL-NUMERIC     PIC S9(11)V9(7) VALUE ZERO.
            05  FILLER                    PIC X     VALUE 'F'.
                88 ==UT==EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.
            05  FILLER                    PIC X     VALUE 'F'.

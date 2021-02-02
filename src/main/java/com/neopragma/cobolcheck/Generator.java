@@ -33,6 +33,9 @@ public class Generator implements StringHelper {
     private final Config config;
     private final TokenExtractor tokenExtractor;
     private final TestSuiteParser testSuiteParser;
+    private NumericFields numericFields;
+    private static final String COMP_3_VALUE = "COMP-3";
+    private static final String COMP_VALUE = "COMP";
 
     private final State state = new State();
 
@@ -82,6 +85,7 @@ public class Generator implements StringHelper {
 
     // Flags to keep track of context while reading input source files.
     // We want to make a single pass of all inputs, so we need to know what we are looking for at any given point.
+    private boolean readingDataDivision;
     private boolean readingFileControl;
     private boolean readingFileSection;
     private boolean skipThisLine;
@@ -101,6 +105,7 @@ public class Generator implements StringHelper {
         this.messages = config.getMessages();
         this.tokenExtractor = new StringTokenizerExtractor(messages);
         testSuiteParser = new TestSuiteParser(keywordExtractor, config);
+        numericFields = new NumericFields();
         copybookDirectoryName = setCopybookDirectoryName(config);
         testCodePrefix = config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         fileIdentifiersAndStatuses = new HashMap<>();
@@ -242,6 +247,21 @@ public class Generator implements StringHelper {
             }
         }
 
+        // Need to save field names of numeric data items in case a test case references them.
+        // There's no way to distinguish numeric fields while reading the Procedure Division.
+        if (readingDataDivision) {
+            if (tokens.size() > 1) {
+                if (sourceLineContains(tokens, COMP_3_VALUE)) {
+                    numericFields.setDataTypeOf(tokens.get(1), DataType.PACKED_DECIMAL);
+                } else {
+                    if (sourceLine.contains(COMP_VALUE)) {
+                        numericFields.setDataTypeOf(tokens.get(1), DataType.FLOATING_POINT);
+                    }
+                }
+            }
+        }
+
+
         if (sourceLineContains(tokens, Constants.ENVIRONMENT_DIVISION)) entering(Constants.ENVIRONMENT_DIVISION);
 
         if (sourceLineContains(tokens, Constants.CONFIGURATION_SECTION)) {
@@ -276,6 +296,8 @@ public class Generator implements StringHelper {
             entering(Constants.DATA_DIVISION);
             skipThisLine = false;
             readingFileControl = false;
+            readingDataDivision = true;
+            numericFields = new NumericFields();
         }
 
         if (processingProcedureDivision) {
@@ -289,6 +311,7 @@ public class Generator implements StringHelper {
                 insertWorkingStorageTestCode(testSourceOut);
             }
             processingProcedureDivision = true;
+            readingDataDivision = false;
             skipThisLine = false;
         }
 
@@ -610,7 +633,7 @@ public class Generator implements StringHelper {
         testSuiteParser.insertTestInitializationLineIntoTestSource(testSourceOut);
 
         // Parse the concatenated test suite and insert generated Cobol test statements
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));

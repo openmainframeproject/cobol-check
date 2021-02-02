@@ -1,3 +1,8 @@
+********** Generator readingDataDivision
+**** sourceLine:            05  WS-COUNT           PIC S9(5) COMP-3.                             
+
+**** tokens.size(): 5
+**** numericFields: com.neopragma.cobolcheck.NumericFields@5eb5c224
 TESTSUITE:
 Greeting returns the appropriate message based on message type
 **** FAIL:   1. When message type is greeting it returns 'Hello, World!'                        

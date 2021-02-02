@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,12 +22,16 @@ public class TestSuiteParserCodeInsertionTest {
 
     Writer testSourceOut;
     TestSuiteParser testSuiteParser;
-
+    @Mock
+    NumericFields numericFields;
 
     private static StringBuilder ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT;
     private static StringBuilder ALPHANUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT;
     private static StringBuilder NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT;
     private static StringBuilder NUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT;
+    private static StringBuilder ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT;
+    private static StringBuilder ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT;
+    private static StringBuilder NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT;
 
     @BeforeAll
     public static void initializeExpectedResults() {
@@ -66,6 +71,42 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
         ALPHANUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
 
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT = new StringBuilder();
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-TEXT                                                         ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("               TO UT-EXPECTED                                                   ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT = new StringBuilder();
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           SET UT-REVERSE-COMPARE TO TRUE                                       ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           MOVE WS-TEXT                                                         ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("               TO UT-EXPECTED                                                   ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
+        ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT = new StringBuilder();
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -98,7 +139,21 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
         NUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
 
-
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT = new StringBuilder();
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-EXPECTED TO UT-EXPECTED-NUMERIC                              ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
     }
 
     @Mock
@@ -114,19 +169,17 @@ public class TestSuiteParserCodeInsertionTest {
 
     @Test
     public void it_recognizes_the_end_of_a_user_written_cobol_statement_when_it_encounters_a_cobolcheck_keyword_that_can_follow_a_user_written_statement() throws IOException {
-        StringBuffer expectedResult = new StringBuffer();
-        expectedResult.append("            MOVE \"alpha\" TO WS-FIELDNAME                                        ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        expectedResult.append(Constants.NEWLINE);
-        StringBuffer testSuite = new StringBuffer();
-        testSuite.append("            MOVE \"alpha\" TO WS-FIELDNAME                                           ");
-        testSuite.append(Constants.NEWLINE);
-        testSuite.append("           EXPECT                                                                    ");
-        testSuite.append(Constants.NEWLINE);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
-        assertEquals(expectedResult.toString(), testSourceOut.toString());
+        String testSuite = "            MOVE \"alpha\" TO WS-FIELDNAME                                           " +
+                Constants.NEWLINE +
+                "           EXPECT                                                                    " +
+                Constants.NEWLINE;
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        String expectedResult = "            MOVE \"alpha\" TO WS-FIELDNAME                                        " +
+                Constants.NEWLINE +
+                "           ADD 1 TO UT-TEST-CASE-COUNT                                          " +
+                Constants.NEWLINE;
+        assertEquals(expectedResult, testSourceOut.toString());
     }
 
     @Test
@@ -159,56 +212,51 @@ public class TestSuiteParserCodeInsertionTest {
 
     @Test
     public void it_inserts_cobol_statements_for_an_88_level_equality_check_in_an_EXPECT() throws IOException {
-        StringBuilder expectedResult = new StringBuilder();
-        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           SET UT-COMPARE-88-LEVEL TO TRUE                                      ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           IF WS-88-LEVEL-ITEM                                                  ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               SET UT-ACTUAL-88-VALUE TO TRUE                                   ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               MOVE 'TRUE' TO UT-ACTUAL                                         ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           ELSE                                                                 ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               SET UT-ACTUAL-88-VALUE TO FALSE                                  ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               MOVE 'FALSE' TO UT-ACTUAL                                        ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           END-IF                                                               ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           SET UT-EXPECTED-88-VALUE TO TRUE                                     ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           IF UT-EXPECTED-88-VALUE                                              ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               MOVE 'TRUE' TO UT-EXPECTED                                       ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           ELSE                                                                 ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               MOVE 'FALSE' TO UT-EXPECTED                                      ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           END-IF                                                               ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-AFTER                                                     ");
-        expectedResult.append(Constants.NEWLINE);
-        StringBuilder testSuite = new StringBuilder();
-        testSuite.append("           EXPECT WS-88-LEVEL-ITEM TO BE TRUE");
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
-        assertEquals(expectedResult.toString(), testSourceOut.toString());
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader("           EXPECT WS-88-LEVEL-ITEM TO BE TRUE"));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        String expectedResult = "           ADD 1 TO UT-TEST-CASE-COUNT                                          " +
+                Constants.NEWLINE +
+                "           SET UT-COMPARE-88-LEVEL TO TRUE                                      " +
+                Constants.NEWLINE +
+                "           IF WS-88-LEVEL-ITEM                                                  " +
+                Constants.NEWLINE +
+                "               SET UT-ACTUAL-88-VALUE TO TRUE                                   " +
+                Constants.NEWLINE +
+                "               MOVE 'TRUE' TO UT-ACTUAL                                         " +
+                Constants.NEWLINE +
+                "           ELSE                                                                 " +
+                Constants.NEWLINE +
+                "               SET UT-ACTUAL-88-VALUE TO FALSE                                  " +
+                Constants.NEWLINE +
+                "               MOVE 'FALSE' TO UT-ACTUAL                                        " +
+                Constants.NEWLINE +
+                "           END-IF                                                               " +
+                Constants.NEWLINE +
+                "           SET UT-EXPECTED-88-VALUE TO TRUE                                     " +
+                Constants.NEWLINE +
+                "           IF UT-EXPECTED-88-VALUE                                              " +
+                Constants.NEWLINE +
+                "               MOVE 'TRUE' TO UT-EXPECTED                                       " +
+                Constants.NEWLINE +
+                "           ELSE                                                                 " +
+                Constants.NEWLINE +
+                "               MOVE 'FALSE' TO UT-EXPECTED                                      " +
+                Constants.NEWLINE +
+                "           END-IF                                                               " +
+                Constants.NEWLINE +
+                "           PERFORM UT-CHECK-EXPECTATION                                         " +
+                Constants.NEWLINE +
+                "           PERFORM UT-AFTER                                                     " +
+                Constants.NEWLINE;
+        assertEquals(expectedResult, testSourceOut.toString());
     }
 
     @ParameterizedTest
     @MethodSource("alphanumericLiteralEqualityCheckProvider")
     public void it_inserts_cobol_statements_for_an_alphanumeric_literal_equality_check_in_an_EXPECT(
             String testSuiteInput) throws IOException {
-        StringBuilder testSuite = new StringBuilder();
-        testSuite.append(testSuiteInput);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
         assertEquals(ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
     }
     private static Stream<Arguments> alphanumericLiteralEqualityCheckProvider() {
@@ -223,17 +271,49 @@ public class TestSuiteParserCodeInsertionTest {
     @MethodSource("alphanumericLiteralInequalityCheckProvider")
     public void it_inserts_cobol_statements_for_an_alphanumeric_literal_inequality_check_in_an_EXPECT(
             String testSuiteInput) throws IOException {
-        StringBuilder testSuite = new StringBuilder();
-        testSuite.append("           EXPECT WS-MESSAGE NOT TO BE \"Hello\"");
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader("           EXPECT WS-MESSAGE NOT TO BE \"Hello\""));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
         assertEquals(ALPHANUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
     }
     private static Stream<Arguments> alphanumericLiteralInequalityCheckProvider() {
         return Stream.of(
                 Arguments.of("           EXPECT WS-MESSAGE NOT TO BE \"Hello\""),
                 Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL \"Hello\""),
-                Arguments.of("           EXPECT WS-MESSAGE NOT = \"Hello\"")
+                Arguments.of("           EXPECT WS-MESSAGE NOT = \"Hello\""),
+                Arguments.of("           EXPECT WS-MESSAGE != \"Hello\"")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("alphanumericFieldEqualityCheckProvider")
+    public void it_inserts_cobol_statements_for_an_alphanumeric_field_equality_check_in_an_EXPECT(
+            String testSuiteInput) throws IOException {
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        assertEquals(ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
+    }
+    private static Stream<Arguments> alphanumericFieldEqualityCheckProvider() {
+        return Stream.of(
+                Arguments.of("           EXPECT WS-MESSAGE TO BE WS-TEXT"),
+                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL WS-TEXT"),
+                Arguments.of("           EXPECT WS-MESSAGE = WS-TEXT")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("alphanumericFieldInequalityCheckProvider")
+    public void it_inserts_cobol_statements_for_an_alphanumeric_field_inequality_check_in_an_EXPECT(
+            String testSuiteInput) throws IOException {
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        assertEquals(ALPHANUMERIC_FIELD_INEQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
+    }
+    private static Stream<Arguments> alphanumericFieldInequalityCheckProvider() {
+        return Stream.of(
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE WS-TEXT"),
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL WS-TEXT"),
+                Arguments.of("           EXPECT WS-MESSAGE NOT = WS-TEXT"),
+                Arguments.of("           EXPECT WS-MESSAGE != WS-TEXT")
         );
     }
 
@@ -241,10 +321,8 @@ public class TestSuiteParserCodeInsertionTest {
     @MethodSource("numericLiteralEqualityCheckProvider")
     public void it_inserts_cobol_statements_for_a_numeric_literal_equality_check_in_an_EXPECT(
             String testSuiteInput) throws IOException {
-        StringBuilder testSuite = new StringBuilder();
-        testSuite.append(testSuiteInput);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
         assertEquals(NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
     }
     private static Stream<Arguments> numericLiteralEqualityCheckProvider() {
@@ -259,10 +337,8 @@ public class TestSuiteParserCodeInsertionTest {
     @MethodSource("numericLiteralInequalityCheckProvider")
     public void it_inserts_cobol_statements_for_a_numeric_literal_inequality_check_in_an_EXPECT(
             String testSuiteInput) throws IOException {
-        StringBuilder testSuite = new StringBuilder();
-        testSuite.append(testSuiteInput);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
         assertEquals(NUMERIC_LITERAL_INEQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
     }
     private static Stream<Arguments> numericLiteralInequalityCheckProvider() {
@@ -274,29 +350,23 @@ public class TestSuiteParserCodeInsertionTest {
         );
     }
 
-    @Test
-    public void it_inserts_cobol_statements_for_an_equality_check_between_fields_in_an_EXPECT() throws IOException {
-        StringBuilder expectedResult = new StringBuilder();
-        expectedResult.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           MOVE WS-FIELD-1 TO UT-ACTUAL                                         ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           MOVE WS-FIELD-2                                                      ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("               TO UT-EXPECTED                                                   ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        expectedResult.append(Constants.NEWLINE);
-        expectedResult.append("           PERFORM UT-AFTER                                                     ");
-        expectedResult.append(Constants.NEWLINE);
-        StringBuilder testSuite = new StringBuilder();
-        testSuite.append("           EXPECT WS-FIELD-1 TO EQUAL WS-FIELD-2");
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite.toString()));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut);
-        assertEquals(expectedResult.toString(), testSourceOut.toString());
+    @ParameterizedTest
+    @MethodSource("numericFieldEqualityCheckProvider")
+    public void it_inserts_cobol_statements_for_a_numeric_field_equality_check_in_an_EXPECT(
+            String testSuiteInput, String fieldName, DataType dataType) throws IOException {
+        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
+        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        assertEquals(NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
+    }
+    private static Stream<Arguments> numericFieldEqualityCheckProvider() {
+        return Stream.of(
+                Arguments.of("           EXPECT WS-ACTUAL TO BE WS-EXPECTED",
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL),
+                Arguments.of("           EXPECT WS-ACTUAL TO EQUAL WS-EXPECTED",
+                        "WS-ACTUAL", DataType.PACKED_DECIMAL),
+                Arguments.of("           EXPECT WS-ACTUAL = WS-EXPECTED",
+                "WS-ACTUAL", DataType.PACKED_DECIMAL)
+        );
     }
 }

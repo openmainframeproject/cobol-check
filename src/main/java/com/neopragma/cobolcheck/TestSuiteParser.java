@@ -25,14 +25,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Parses the concatenated test suite and writes Cobol test code to the output stream for the generated test program.
+ *
+ * @author Dave Nicolette (neopragma)
+ * @since 14
+ */
 public class TestSuiteParser implements StringHelper {
     private final KeywordExtractor keywordExtractor;
-//    private Config config;
     private final Messages messages;
     private List<String> testSuiteTokens;
 
     // Source tokens used in fully-qualified data item names
-    private List<String> qualifiedNameKeywords = List.of("IN", "OF");
+    private final List<String> qualifiedNameKeywords = List.of("IN", "OF");
 
 
     // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
@@ -148,7 +153,9 @@ public class TestSuiteParser implements StringHelper {
      * @param testSuiteReader - reader attached to the concatenated test suite files.
      * @param testSourceOut - writer attached to the test program being generated.
      */
-    void parseTestSuite(BufferedReader testSuiteReader, Writer testSourceOut) throws IOException {
+    void parseTestSuite(BufferedReader testSuiteReader,
+                        Writer testSourceOut,
+                        NumericFields numericFields) throws IOException {
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
             if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
@@ -211,7 +218,7 @@ public class TestSuiteParser implements StringHelper {
                     if (toBeInProgress) {
                         alphanumericCompare = true;
                         expectedValueToCompare = testSuiteToken;
-                        insertTestCodeForAssertion(testSourceOut);
+                        insertTestCodeForAssertion(testSourceOut, numericFields);
                         toBeInProgress = false;
                         alphanumericCompare = false;
                     }
@@ -234,7 +241,7 @@ public class TestSuiteParser implements StringHelper {
                         if (testSuiteToken.startsWith(Constants.QUOTE) || testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                             alphanumericCompare = true;
                             expectedValueToCompare = testSuiteToken;
-                            insertTestCodeForAssertion(testSourceOut);
+                            insertTestCodeForAssertion(testSourceOut, numericFields);
                             alphanumericCompare = false;
                         }
                         toBeInProgress = false;
@@ -245,7 +252,7 @@ public class TestSuiteParser implements StringHelper {
                     if (toBeInProgress) {
                         numericLiteralCompare = true;
                         expectedValueToCompare = testSuiteToken;
-                        insertTestCodeForAssertion(testSourceOut);
+                        insertTestCodeForAssertion(testSourceOut, numericFields);
                         numericLiteralCompare = false;
                         toBeInProgress = false;
                     }
@@ -255,7 +262,7 @@ public class TestSuiteParser implements StringHelper {
                     if (toBeInProgress) {
                         boolean88LevelCompare = true;
                         expectedValueToCompare = testSuiteToken;
-                        insertTestCodeForAssertion(testSourceOut);
+                        insertTestCodeForAssertion(testSourceOut, numericFields);
                         boolean88LevelCompare = false;
                         toBeInProgress = false;
                     } else {
@@ -392,9 +399,14 @@ public class TestSuiteParser implements StringHelper {
         testSourceOut.write(fixedLength(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix)));
     }
 
-    void insertTestCodeForAssertion(Writer testSourceOut) throws IOException {
+    void insertTestCodeForAssertion(Writer testSourceOut, NumericFields numericFields) throws IOException {
         if (alphanumericCompare) {
-            insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
+            if (numericFields.dataTypeOf(fieldNameForExpect) == DataType.PACKED_DECIMAL
+            || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.FLOATING_POINT)) {
+                insertTestCodeForNumericEqualityCheck(testSourceOut);
+            } else {
+                insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
+            }
         } else if (numericLiteralCompare) {
             insertTestCodeForNumericEqualityCheck(testSourceOut);
         } else if (boolean88LevelCompare) {
