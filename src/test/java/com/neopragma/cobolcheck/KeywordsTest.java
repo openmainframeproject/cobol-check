@@ -66,6 +66,13 @@ public class KeywordsTest {
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
+                        KeywordAction.EXPECTED_VALUE),
+        Arguments.of(Constants.LESS_THAN_SIGN_KEYWORD, Constants.LESS_THAN_SIGN_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.TRUE,
+                                Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE));
     }
 
