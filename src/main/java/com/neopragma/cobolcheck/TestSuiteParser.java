@@ -165,10 +165,8 @@ public class TestSuiteParser implements StringHelper {
             }
 
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
-            if (Log.level() == LogLevel.DEBUG) {
-                System.out.println("Generator.parseTestSuite(), " +
+                Log.debug("Generator.parseTestSuite(), " +
                         "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
-            }
 
             // take actions triggered by the type of the current token
             switch (keyword.value()) {
