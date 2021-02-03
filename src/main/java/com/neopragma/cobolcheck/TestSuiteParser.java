@@ -51,8 +51,6 @@ public class TestSuiteParser implements StringHelper {
     private boolean cobolStatementInProgress;
     private boolean expectInProgress;
     private boolean toBeInProgress;
-    private boolean alphanumericCompare;
-    private boolean numericLiteralCompare;
     private boolean boolean88LevelCompare;
     private boolean expectTestsuiteName;
     private boolean expectTestcaseName;
@@ -94,7 +92,7 @@ public class TestSuiteParser implements StringHelper {
             "           SET %1$s%2$s-COMPARE TO %3$s";
 
     private static final String COBOL_SET_COMPARE_NUMERIC =
-            "           SET %1$sCOMPARE-NUMERIC TO %2$s";
+            "           SET %1$sNUMERIC-COMPARE TO %2$s";
     private static final String COBOL_SET_COMPARE_88_LEVEL =
             "           SET %1$sCOMPARE-88-LEVEL TO %2$s";
 
@@ -144,8 +142,8 @@ public class TestSuiteParser implements StringHelper {
             "           END-IF";
     private static final String COBOL_SET_EXPECTED_88_VALUE =
             "           SET %1$sEXPECTED-88-VALUE TO %2$s";
-    private static final String COBOL_SET_COMPARE_DEFAULT =
-            "           SET %1$sCOMPARE-DEFAULT TO %2$s";
+    private static final String COBOL_SET_ALPHANUMERIC_COMPARE =
+            "           SET %1$sALPHANUMERIC-COMPARE TO %2$s";
     private static final String COBOL_CHECK_EXPECTATION =
             "           PERFORM %sCHECK-EXPECTATION";
     private static final String COBOL_PERFORM_AFTER =
@@ -254,11 +252,9 @@ public class TestSuiteParser implements StringHelper {
                         possibleQualifiedName = true;
                     }
                     if (toBeInProgress) {
-                        alphanumericCompare = true;
                         expectedValueToCompare = testSuiteToken;
                         insertTestCodeForAssertion(testSourceOut, numericFields);
                         toBeInProgress = false;
-                        alphanumericCompare = false;
                     }
                     break;
 
@@ -277,10 +273,8 @@ public class TestSuiteParser implements StringHelper {
                     }
                     if (toBeInProgress) {
                         if (testSuiteToken.startsWith(Constants.QUOTE) || testSuiteToken.startsWith(Constants.APOSTROPHE)) {
-                            alphanumericCompare = true;
                             expectedValueToCompare = testSuiteToken;
                             insertTestCodeForAssertion(testSourceOut, numericFields);
-                            alphanumericCompare = false;
                         }
                         toBeInProgress = false;
                     }
@@ -288,10 +282,8 @@ public class TestSuiteParser implements StringHelper {
 
                 case Constants.NUMERIC_LITERAL_KEYWORD:
                     if (toBeInProgress) {
-                        numericLiteralCompare = true;
                         expectedValueToCompare = testSuiteToken;
                         insertTestCodeForAssertion(testSourceOut, numericFields);
-                        numericLiteralCompare = false;
                         toBeInProgress = false;
                     }
                     break;
@@ -450,7 +442,7 @@ public class TestSuiteParser implements StringHelper {
                         COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
             } else {
                 testSourceOut.write(fixedLength(String.format(
-                        COBOL_SET_COMPARE_DEFAULT, testCodePrefix, Constants.TRUE)));
+                        COBOL_SET_ALPHANUMERIC_COMPARE, testCodePrefix, Constants.TRUE)));
                 testSourceOut.write(fixedLength(String.format(
                         COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
                 String cobolLine = String.format(

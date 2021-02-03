@@ -24,8 +24,8 @@
                88  ==UT==VERIFY-PASSED      VALUE 'Y'.
                88  ==UT==VERIFY-FAILED      VALUE SPACES.    
            05  FILLER                    PIC X(01) VALUE SPACES.
-               88  ==UT==COMPARE-DEFAULT    VALUE SPACE.
-               88  ==UT==COMPARE-NUMERIC    VALUE 'N'.
+               88  ==UT==ALPHANUMERIC-COMPARE VALUE SPACE.
+               88  ==UT==NUMERIC-COMPARE    VALUE 'N'.
                88  ==UT==COMPARE-88-LEVEL   VALUE '8'.
            05  FILLER                    PIC X(01) VALUE SPACES.
                88  ==UT==COMPARE-PASSED     VALUE 'Y'.

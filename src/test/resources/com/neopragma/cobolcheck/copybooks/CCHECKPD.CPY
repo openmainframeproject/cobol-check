@@ -40,52 +40,52 @@
                END-IF
            ELSE
                EVALUATE TRUE ALSO TRUE
-                   WHEN ==UT==COMPARE-NUMERIC ALSO ==UT==RELATION-EQ
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-EQ
                        IF ==UT==ACTUAL-NUMERIC
                                EQUAL ==UT==EXPECTED-NUMERIC
                            SET ==UT==COMPARE-PASSED TO TRUE
                        END-IF
-                   WHEN ==UT==COMPARE-NUMERIC ALSO ==UT==RELATION-GT
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-GT
                        IF ==UT==ACTUAL-NUMERIC
                                GREATER ==UT==EXPECTED-NUMERIC
                            SET ==UT==COMPARE-PASSED TO TRUE
                        END-IF
-                   WHEN ==UT==COMPARE-NUMERIC ALSO ==UT==RELATION-GE
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-GE
                        IF ==UT==ACTUAL-NUMERIC
                                GREATER OR EQUAL ==UT==EXPECTED-NUMERIC
                            SET ==UT==COMPARE-PASSED TO TRUE
                        END-IF
-                   WHEN ==UT==COMPARE-NUMERIC ALSO ==UT==RELATION-LT
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-LT
                        IF ==UT==ACTUAL-NUMERIC
                                LESS ==UT==EXPECTED-NUMERIC
                            SET ==UT==COMPARE-PASSED TO TRUE
                        END-IF
-                   WHEN ==UT==COMPARE-NUMERIC ALSO ==UT==RELATION-LE
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-LE
                        IF ==UT==ACTUAL-NUMERIC
                                LESS OR EQUAL ==UT==EXPECTED-NUMERIC
                            SET ==UT==COMPARE-PASSED TO TRUE
                        END-IF
-                   WHEN ==UT==COMPARE-DEFAULT ALSO ==UT==RELATION-EQ
+                   WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-EQ
                        IF ==UT==ACTUAL
                                EQUAL ==UT==EXPECTED
                            SET ==UT==COMPARE-PASSED TO TRUE
                         END-IF
-                    WHEN ==UT==COMPARE-DEFAULT ALSO ==UT==RELATION-GT
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-GT
                         IF ==UT==ACTUAL
                                 GREATER ==UT==EXPECTED
                             SET ==UT==COMPARE-PASSED TO TRUE
                         END-IF
-                    WHEN ==UT==COMPARE-DEFAULT ALSO ==UT==RELATION-GE
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-GE
                         IF ==UT==ACTUAL
                                 GREATER OR EQUAL ==UT==EXPECTED
                             SET ==UT==COMPARE-PASSED TO TRUE
                         END-IF
-                    WHEN ==UT==COMPARE-DEFAULT ALSO ==UT==RELATION-LT
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-LT
                         IF ==UT==ACTUAL
                                 LESS ==UT==EXPECTED
                             SET ==UT==COMPARE-PASSED TO TRUE
                         END-IF
-                    WHEN ==UT==COMPARE-DEFAULT ALSO ==UT==RELATION-LE
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-LE
                         IF ==UT==ACTUAL
                                 LESS OR EQUAL ==UT==EXPECTED
                             SET ==UT==COMPARE-PASSED TO TRUE
@@ -121,7 +121,7 @@
            DISPLAY ==UT==FAILED 
                    ==UT==TEST-CASE-NUMBER '. ' 
                    ==UT==TEST-CASE-NAME
-           IF ==UT==COMPARE-NUMERIC
+           IF ==UT==NUMERIC-COMPARE
                DISPLAY '    EXPECTED ' ==UT==EXPECTED-NUMERIC
                        ', WAS ' ==UT==ACTUAL-NUMERIC
            ELSE

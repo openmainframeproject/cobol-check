@@ -37,12 +37,10 @@ public class TestSuiteParserCodeInsertionTest {
 
     @BeforeAll
     public static void initializeExpectedResults() {
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  ");
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -52,17 +50,12 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT);
 
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-REVERSE-COMPARE TO TRUE                                       ");
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  ");
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -72,17 +65,12 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT);
 
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -92,17 +80,12 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT);
 
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-REVERSE-COMPARE TO TRUE                                       ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-DEFAULT TO TRUE                                       ");
+        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -112,17 +95,12 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT);
 
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-NUMERIC-COMPARE TO TRUE                                       ");
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-VALUE TO UT-ACTUAL-NUMERIC                                   ");
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -130,17 +108,12 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT);
 
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-REVERSE-COMPARE TO TRUE                                       ");
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-NUMERIC-COMPARE TO TRUE                                       ");
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-VALUE TO UT-ACTUAL-NUMERIC                                   ");
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -148,17 +121,12 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT);
 
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT = new StringBuilder();
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT = appendCommonFirstLines();
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           SET UT-NUMERIC-COMPARE TO TRUE                                       ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -166,17 +134,12 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           SET UT-RELATION-GT TO TRUE                                           ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT);
 
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT = new StringBuilder();
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT = appendCommonFirstLines();
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           SET UT-NUMERIC-COMPARE TO TRUE                                       ");
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -184,17 +147,12 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           SET UT-RELATION-LT TO TRUE                                           ");
         NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT);
 
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-NUMERIC-COMPARE TO TRUE                                       ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -202,17 +160,12 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT);
 
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT = new StringBuilder();
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-REVERSE-COMPARE TO TRUE                                       ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-NUMERIC TO TRUE                                       ");
+        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-NUMERIC-COMPARE TO TRUE                                       ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -220,10 +173,21 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           PERFORM UT-AFTER                                                     ");
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
+        appendCommonLastLines(NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT);
+    }
+
+    private static StringBuilder appendCommonFirstLines() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("           ADD 1 TO UT-TEST-CASE-COUNT                                          ");
+        sb.append(Constants.NEWLINE);
+        return sb;
+    }
+
+    private static void appendCommonLastLines(StringBuilder sb) {
+        sb.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
+        sb.append(Constants.NEWLINE);
+        sb.append("           PERFORM UT-AFTER                                                     ");
+        sb.append(Constants.NEWLINE);
     }
 
     @Mock
