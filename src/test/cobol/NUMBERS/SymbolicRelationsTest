@@ -13,9 +13,13 @@
            Move 25.75 to WS-FIELD-2
            Expect WS-FIELD-1 = WS-FIELD-2
 
-           TestCase "It handles unequal sign with field to field compare"
+           TestCase "It handles not-equal sign with field to field compare"
            Move 25.74 to WS-FIELD-1
            Move 25.75 to WS-FIELD-2
            Expect WS-FIELD-1 != WS-FIELD-2
+
+           TestCase "It handles greater-than sign with literal compare"
+           Move 18.067 to WS-FIELD-1
+           Expect WS-FIELD-1 > 17.01
 
 

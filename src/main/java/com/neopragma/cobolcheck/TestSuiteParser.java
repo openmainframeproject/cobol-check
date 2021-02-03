@@ -61,6 +61,7 @@ public class TestSuiteParser implements StringHelper {
     private boolean expectQualifiedName;
     private String expectedValueToCompare;
     private boolean reverseCompare;
+    private boolean greaterThanComparison;
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = Constants.EMPTY_STRING;
     private String currentTestCaseName = Constants.EMPTY_STRING;
@@ -88,6 +89,8 @@ public class TestSuiteParser implements StringHelper {
             "           SET %1$sCOMPARE-NUMERIC TO %2$s";
     private static final String COBOL_SET_COMPARE_88_LEVEL =
             "           SET %1$sCOMPARE-88-LEVEL TO %2$s";
+    private static final String COBOL_SET_RELATION =
+            "           SET %1$s%2$s TO %3$s";
     private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL =
             "           MOVE %2$s TO %1$sACTUAL";
     private static final String COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC =
@@ -123,7 +126,6 @@ public class TestSuiteParser implements StringHelper {
             "               MOVE 'FALSE' TO %1$sEXPECTED";
     private static final String COBOL_SET_EXPECTED_88_VALUE_5 =
             "           END-IF";
-
     private static final String COBOL_SET_EXPECTED_88_VALUE =
             "           SET %1$sEXPECTED-88-VALUE TO %2$s";
     private static final String COBOL_SET_COMPARE_DEFAULT =
@@ -161,6 +163,7 @@ public class TestSuiteParser implements StringHelper {
             if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
+
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
             if (Log.level() == LogLevel.DEBUG) {
                 System.out.println("Generator.parseTestSuite(), " +
@@ -196,6 +199,11 @@ public class TestSuiteParser implements StringHelper {
                 case Constants.NOT_EQUAL_SIGN_KEYWORD:
                     toBeInProgress = true;
                     reverseCompare = true;
+                    break;
+
+                case Constants.GREATER_THAN_SIGN_KEYWORD:
+                    toBeInProgress = true;
+                    greaterThanComparison = true;
                     break;
 
                 case Constants.COBOL_TOKEN:
@@ -403,12 +411,20 @@ public class TestSuiteParser implements StringHelper {
         if (alphanumericCompare) {
             if (numericFields.dataTypeOf(fieldNameForExpect) == DataType.PACKED_DECIMAL
             || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.FLOATING_POINT)) {
-                insertTestCodeForNumericEqualityCheck(testSourceOut);
+                if (greaterThanComparison) {
+                    insertTestCodeForNumericGreaterThanCheck(testSourceOut);
+                } else {
+                    insertTestCodeForNumericEqualityCheck(testSourceOut);
+                }
             } else {
                 insertTestCodeForAlphanumericEqualityCheck(testSourceOut);
             }
         } else if (numericLiteralCompare) {
-            insertTestCodeForNumericEqualityCheck(testSourceOut);
+            if (greaterThanComparison) {
+                insertTestCodeForNumericGreaterThanCheck(testSourceOut);
+            } else {
+                insertTestCodeForNumericEqualityCheck(testSourceOut);
+            }
         } else if (boolean88LevelCompare) {
             insertTestCodeFor88LevelEqualityCheck(testSourceOut);
         }
@@ -429,6 +445,8 @@ public class TestSuiteParser implements StringHelper {
         writeCobolLine(cobolLine, testSourceOut);
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix)));
+
+
         testSourceOut.write(fixedLength(String.format(
                 COBOL_SET_COMPARE_DEFAULT, testCodePrefix, Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
@@ -451,6 +469,28 @@ public class TestSuiteParser implements StringHelper {
                 COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_CHECK_EXPECTATION, testCodePrefix)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_PERFORM_AFTER, testCodePrefix)));
+    }
+
+    void insertTestCodeForNumericGreaterThanCheck(Writer testSourceOut) throws IOException {
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_COMPARE_NUMERIC, testCodePrefix, Constants.TRUE)));
+        if (reverseCompare) {
+            testSourceOut.write(fixedLength(String.format(
+                    COBOL_SET_REVERSE_COMPARE, testCodePrefix, Constants.TRUE)));
+        } else {
+            testSourceOut.write(fixedLength(String.format(
+                    COBOL_SET_NORMAL_COMPARE, testCodePrefix, Constants.TRUE)));
+        }
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
+        testSourceOut.write(fixedLength(String.format(
+                COBOL_SET_RELATION, testCodePrefix, "RELATION-GT", Constants.TRUE)));
         testSourceOut.write(fixedLength(String.format(
                 COBOL_CHECK_EXPECTATION, testCodePrefix)));
         testSourceOut.write(fixedLength(String.format(

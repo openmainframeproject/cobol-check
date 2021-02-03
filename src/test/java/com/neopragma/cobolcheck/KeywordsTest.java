@@ -45,8 +45,28 @@ public class KeywordsTest {
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.TESTSUITE_KEYWORD, Constants.TESTSUITE_KEYWORD,
                         List.of(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
-                        KeywordAction.TESTSUITE_NAME)
-        );
+                        KeywordAction.TESTSUITE_NAME),
+                Arguments.of(Constants.EQUAL_SIGN_KEYWORD, Constants.EQUAL_SIGN_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.TRUE,
+                                Constants.FALSE),
+                        KeywordAction.EXPECTED_VALUE),
+                Arguments.of(Constants.NOT_EQUAL_SIGN_KEYWORD, Constants.NOT_EQUAL_SIGN_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.TRUE,
+                                Constants.FALSE),
+                        KeywordAction.EXPECTED_VALUE),
+                Arguments.of(Constants.GREATER_THAN_SIGN_KEYWORD, Constants.GREATER_THAN_SIGN_KEYWORD,
+                        List.of(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.TRUE,
+                                Constants.FALSE),
+                        KeywordAction.EXPECTED_VALUE));
     }
 
     @Test

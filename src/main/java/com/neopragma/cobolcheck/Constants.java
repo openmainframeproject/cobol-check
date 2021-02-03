@@ -65,6 +65,7 @@ public final class Constants {
     public static final String BY_KEYWORD = "BY";
     public static final String EQUAL_SIGN_KEYWORD = "=";
     public static final String NOT_EQUAL_SIGN_KEYWORD = "!=";
+    public static final String GREATER_THAN_SIGN_KEYWORD = ">";
 
     // Configuration key values
     public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
