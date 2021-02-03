@@ -68,8 +68,8 @@ public class ConfigTest {
     @Test
     public void it_can_find_the_copybooks_for_ZUTZCPC_based_on_config_settings() {
         config.load("testconfig.properties");
-        assertEquals("ZUTZCWS.CBL", findFileNamed("ZUTZCWS.CBL").toFile().getName());
-        assertEquals("ZUTZCPD.CBL", findFileNamed("ZUTZCPD.CBL").toFile().getName());
+        assertEquals("CCHECKWS.CBL", findFileNamed("CCHECKWS.CBL").toFile().getName());
+        assertEquals("CCHECKPD.CBL", findFileNamed("CCHECKPD.CBL").toFile().getName());
     }
 
     private Path findFileNamed(String filename) {
