@@ -130,7 +130,7 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           MOVE 18 TO UT-EXPECTED-NUMERIC                                       ");
+        NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           MOVE 18.004 TO UT-EXPECTED-NUMERIC                                   ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append("           SET UT-RELATION-GT TO TRUE                                           ");
         NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -286,186 +286,96 @@ public class TestSuiteParserCodeInsertionTest {
     }
 
     @ParameterizedTest
-    @MethodSource("alphanumericLiteralEqualityCheckProvider")
-    public void it_inserts_cobol_statements_for_an_alphanumeric_literal_equality_check_in_an_EXPECT(
-            String testSuiteInput) throws IOException {
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> alphanumericLiteralEqualityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-MESSAGE TO BE \"Hello\""),
-                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL \"Hello\""),
-                Arguments.of("           EXPECT WS-MESSAGE = \"Hello\"")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("alphanumericLiteralInequalityCheckProvider")
-    public void it_inserts_cobol_statements_for_an_alphanumeric_literal_inequality_check_in_an_EXPECT(
-            String testSuiteInput) throws IOException {
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader("           EXPECT WS-MESSAGE NOT TO BE \"Hello\""));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> alphanumericLiteralInequalityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE \"Hello\""),
-                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL \"Hello\""),
-                Arguments.of("           EXPECT WS-MESSAGE NOT = \"Hello\""),
-                Arguments.of("           EXPECT WS-MESSAGE != \"Hello\"")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("alphanumericFieldEqualityCheckProvider")
-    public void it_inserts_cobol_statements_for_an_alphanumeric_field_equality_check_in_an_EXPECT(
-            String testSuiteInput) throws IOException {
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> alphanumericFieldEqualityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-MESSAGE TO BE WS-TEXT"),
-                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL WS-TEXT"),
-                Arguments.of("           EXPECT WS-MESSAGE = WS-TEXT")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("alphanumericFieldInequalityCheckProvider")
-    public void it_inserts_cobol_statements_for_an_alphanumeric_field_inequality_check_in_an_EXPECT(
-            String testSuiteInput) throws IOException {
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> alphanumericFieldInequalityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE WS-TEXT"),
-                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL WS-TEXT"),
-                Arguments.of("           EXPECT WS-MESSAGE NOT = WS-TEXT"),
-                Arguments.of("           EXPECT WS-MESSAGE != WS-TEXT")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("numericLiteralEqualityCheckProvider")
-    public void it_inserts_cobol_statements_for_a_numeric_literal_equality_check_in_an_EXPECT(
-            String testSuiteInput, String fieldName, DataType dataType) throws IOException {
-        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> numericLiteralEqualityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-VALUE TO BE 18.92",
-                             "WS-VALUE", DataType.FLOATING_POINT),
-                Arguments.of("           EXPECT WS-VALUE TO EQUAL 18.92",
-                             "WS-VALUE", DataType.PACKED_DECIMAL),
-                Arguments.of("           EXPECT WS-VALUE = 18.92",
-                             "WS-VALUE", DataType.PACKED_DECIMAL)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("numericLiteralInequalityCheckProvider")
-    public void it_inserts_cobol_statements_for_a_numeric_literal_inequality_check_in_an_EXPECT(
-            String testSuiteInput, String fieldName, DataType dataType) throws IOException {
-        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> numericLiteralInequalityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-VALUE NOT TO BE 18.92",
-                             "WS-VALUE", DataType.FLOATING_POINT),
-                Arguments.of("           EXPECT WS-VALUE NOT TO EQUAL 18.92",
-                             "WS-VALUE", DataType.FLOATING_POINT),
-                Arguments.of("           EXPECT WS-VALUE NOT = 18.92",
-                             "WS-VALUE", DataType.PACKED_DECIMAL),
-                Arguments.of("           EXPECT WS-VALUE != 18.92",
-                             "WS-VALUE", DataType.FLOATING_POINT)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("numericLiteralGreaterThanCheckProvider")
-    public void it_inserts_cobol_statements_for_a_numeric_literal_greater_than_check_in_an_EXPECT(
-            String testSuiteInput, String fieldName, DataType dataType) throws IOException {
-        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> numericLiteralGreaterThanCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-ACTUAL > 18",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("numericLiteralLessThanCheckProvider")
-    public void it_inserts_cobol_statements_for_a_numeric_literal_less_than_check_in_an_EXPECT(
-            String testSuiteInput, String fieldName, DataType dataType) throws IOException {
-        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(NUMERIC_LITERAL_LESS_THAN_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> numericLiteralLessThanCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-ACTUAL < 18",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("numericFieldEqualityCheckProvider")
-    public void it_inserts_cobol_statements_for_a_numeric_field_equality_check_in_an_EXPECT(
-            String testSuiteInput, String fieldName, DataType dataType) throws IOException {
-        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
-        BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
-    }
-    private static Stream<Arguments> numericFieldEqualityCheckProvider() {
-        return Stream.of(
-                Arguments.of("           EXPECT WS-ACTUAL TO BE WS-EXPECTED",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL),
-                Arguments.of("           EXPECT WS-ACTUAL TO EQUAL WS-EXPECTED",
-                        "WS-ACTUAL", DataType.PACKED_DECIMAL),
-                Arguments.of("           EXPECT WS-ACTUAL = WS-EXPECTED",
-                "WS-ACTUAL", DataType.PACKED_DECIMAL)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("numericFieldInequalityCheckProvider")
-    public void it_inserts_cobol_statements_for_a_numeric_field_inequality_check_in_an_EXPECT(
+    @MethodSource("expectationCheckProvider")
+    public void it_inserts_cobol_statements_corresponding_to_an_EXPECT_specification(
             String testSuiteInput,
             String fieldName,
-            DataType dataType) throws IOException {
-        lenient().doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
+            DataType dataType,
+            String expectedResult) throws IOException {
+        doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
         testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString(), testSourceOut.toString());
+        assertEquals(expectedResult, testSourceOut.toString());
     }
-    private static Stream<Arguments> numericFieldInequalityCheckProvider() {
+    private static Stream<Arguments> expectationCheckProvider() {
         return Stream.of(
+                Arguments.of("           EXPECT WS-MESSAGE TO BE \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE = \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE NOT = \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE != \"Hello\"",
+                             "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE TO BE WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE = WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE NOT = WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE != WS-TEXT",
+                             "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE TO BE 18.92",
+                             "WS-VALUE", DataType.FLOATING_POINT,
+                                                 NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE TO EQUAL 18.92",
+                             "WS-VALUE", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE = 18.92",
+                             "WS-VALUE", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE NOT TO BE 18.92",
+                             "WS-VALUE", DataType.FLOATING_POINT,
+                                                 NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE NOT TO EQUAL 18.92",
+                             "WS-VALUE", DataType.FLOATING_POINT,
+                                                 NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE NOT = 18.92",
+                             "WS-VALUE", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-VALUE != 18.92",
+                             "WS-VALUE", DataType.FLOATING_POINT,
+                                                 NUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-ACTUAL > 18.004",
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-ACTUAL > 18.004",
+                             "WS-ACTUAL", DataType.FLOATING_POINT,
+                                                 NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-ACTUAL TO BE WS-EXPECTED",
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-ACTUAL TO EQUAL WS-EXPECTED",
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-ACTUAL = WS-EXPECTED",
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-ACTUAL NOT TO BE WS-EXPECTED",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL),
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-ACTUAL NOT TO EQUAL WS-EXPECTED",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL),
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-ACTUAL NOT = WS-EXPECTED",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL),
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-ACTUAL != WS-EXPECTED",
-                             "WS-ACTUAL", DataType.PACKED_DECIMAL)
+                             "WS-ACTUAL", DataType.PACKED_DECIMAL,
+                                                 NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString())
         );
     }
+
 }
