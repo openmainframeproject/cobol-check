@@ -27,18 +27,18 @@ Please see [the wiki](https://github.com/neopragma/cobol-check/wiki/) for more i
 
 We want to enable Cobol developers to write and run fine-grained unit checks on: 
 
-| Platform | Version | Tested? | Other |
-| ------------ | ------- | ------- | ----- |
-| Ubuntu Linux | 18.04.05 | Jan 21 | Note 1 |
-| Ubuntu Linux | 20.04 | No | Note 2 |
-| IBM z/OS | 2.4 | No | Note 3 |
-| MS Windows | 10 | No | Note 3 |
-| Fedora Linux | 33 | No | Note 4 |
-| Fedora Linux | 34 | No | Note 4 |
-| FreeBSD | 12 | No | Note 4 |
-| OpenBSD | 68 | No | Note 4 |
-| Apple OSX | 10 | No | Note 4 |
-| Apple OSX | 11 | No | Note 4 |
+| Platform     | Version  | For Use | For Dev | Tested? | Other  |
+| ------------ | -------- | ------- | ------- | ------- | ------ |
+| Ubuntu Linux | 18.04.05 | Yes     | Yes     | Jan 21  | Note 1 |
+| Ubuntu Linux | 20.04    | Yes     | Yes     | No      | Note 2 |
+| IBM z/OS     | 2.4      | Yes     | No      | No      | Note 3 |
+| MS Windows   | 10       | Yes     | Yes     | No      | Note 3 |
+| Fedora Linux | 33       | Yes     | Yes     | No      | Note 4 |
+| Fedora Linux | 34       | Yes     | Yes     | No      | Note 4 |
+| FreeBSD      | 12       | Yes     | Yes     | No      | Note 4 |
+| OpenBSD      | 68       | Yes     | TBD     | No      | Note 4 |
+| Apple OSX    | 10       | Yes     | TBD     | No      | Note 4 |
+| Apple OSX    | 11       | Yes     | TBD     | No      | Note 4 |
 
 - Note 1: Current development platform 
 - Note 2: New development platform (coming) 
