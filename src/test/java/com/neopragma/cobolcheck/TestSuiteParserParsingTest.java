@@ -7,7 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.Writer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -120,6 +123,7 @@ public class TestSuiteParserParsingTest {
                 numericFields);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
+
     @Test
     public void it_captures_a_qualified_item_name_from_an_EXPECT() throws Exception {
         String expectedResult = "            WS-FIELDNAME OF WS-GROUP";

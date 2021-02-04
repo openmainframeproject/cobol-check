@@ -24,7 +24,7 @@ package com.neopragma.cobolcheck;
 public class Version {
     private static final Integer MAJOR = 0;
     private static final Integer MINOR = 0;
-    private static final String PATCH = "1";
+    private static final String PATCH = "0";
 
     public static String current() {
         return String.format("Version: %s.%s.%s", MAJOR.toString(), MINOR.toString(), PATCH);

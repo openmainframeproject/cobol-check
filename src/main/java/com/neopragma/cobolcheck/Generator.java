@@ -20,6 +20,8 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class merges a Test Suite (a text file) with the source of the Cobol program to be tested,
@@ -29,6 +31,9 @@ import java.util.*;
  * @since 14
  */
 public class Generator implements StringHelper {
+
+    public static final String PIC_VALUE = "PIC";
+    public static final String PICTURE_VALUE = "PICTURE";
     private final Messages messages;
     private final Config config;
     private final TokenExtractor tokenExtractor;
@@ -36,6 +41,7 @@ public class Generator implements StringHelper {
     private NumericFields numericFields;
     private static final String COMP_3_VALUE = "COMP-3";
     private static final String COMP_VALUE = "COMP";
+    public static final String NUMERIC_PICTURE_CLAUSE_PATTERN = "^[\\d\\(\\)SsVv]+$";
 
     private final State state = new State();
 
@@ -252,15 +258,30 @@ public class Generator implements StringHelper {
         if (readingDataDivision) {
             if (tokens.size() > 1) {
                 if (sourceLineContains(tokens, COMP_3_VALUE)) {
-                    numericFields.setDataTypeOf(tokens.get(1), DataType.PACKED_DECIMAL);
+                    numericFields.setDataTypeOf(tokens.get(1).toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
                 } else {
                     if (sourceLine.contains(COMP_VALUE)) {
-                        numericFields.setDataTypeOf(tokens.get(1), DataType.FLOATING_POINT);
+                        numericFields.setDataTypeOf(tokens.get(1).toUpperCase(Locale.ROOT), DataType.FLOATING_POINT);
+                    } else {
+                            int ix = 0;
+                            for (String token : tokens) {
+                                if (token.equalsIgnoreCase(PIC_VALUE)
+                                || (token.equalsIgnoreCase(PICTURE_VALUE))) {
+                                    Pattern pattern = Pattern.compile(NUMERIC_PICTURE_CLAUSE_PATTERN);
+                                    Matcher matcher = pattern.matcher(tokens.get(ix + 1));
+                                    boolean matched = matcher.find();
+                                    if (matched) {
+                                        numericFields.setDataTypeOf(tokens.get(1).toUpperCase(Locale.ROOT), DataType.DISPLAY_NUMERIC);
+                                    }
+                                    break;
+                                }
+                                ix++;
+                            }
+//                        }
                     }
                 }
             }
         }
-
 
         if (sourceLineContains(tokens, Constants.ENVIRONMENT_DIVISION)) entering(Constants.ENVIRONMENT_DIVISION);
 

@@ -570,7 +570,8 @@ public class TestSuiteParser implements StringHelper {
      */
     boolean fieldIsANumericDataType(String fieldNameForExpect) {
         return numericFields.dataTypeOf(fieldNameForExpect) == DataType.PACKED_DECIMAL
-                || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.FLOATING_POINT);
+                || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.FLOATING_POINT)
+                || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.DISPLAY_NUMERIC);
     }
 
     /**

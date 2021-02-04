@@ -16,5 +16,5 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 public enum DataType {
-    ALPHANUMERIC, PACKED_DECIMAL, FLOATING_POINT;
+    ALPHANUMERIC, PACKED_DECIMAL, FLOATING_POINT, DISPLAY_NUMERIC;
 }

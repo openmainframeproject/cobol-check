@@ -21,5 +21,6 @@
                        indexed by table-2-ix.
                    15  ws-thing-3   pic x(5).
                    15  ws-thing-4   pic x(5).
+           05  ws-display-numeric   pic 999.
        PROCEDURE DIVISION.
            GOBACK.

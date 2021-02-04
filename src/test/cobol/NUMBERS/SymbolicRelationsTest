@@ -230,6 +230,10 @@
            move 475.063 to ws-field-2
            expect ws-field-1 not <= ws-field-2
 
+           TestCase "Display Numeric field equals literal"
+           move 123.45 to ws-display-field
+           expect ws-display-field to be 123.45
+
 
 
 

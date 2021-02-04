@@ -52,6 +52,10 @@
            move "Alpha" to ws-field-2
            Expect ws-field-1 not < ws-field-2
 
+           TestCase "Display numeric"
+           move 6 to ws-display-numeric
+           expect ws-display-numeric to be 6
+
 
 
 
