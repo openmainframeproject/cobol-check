@@ -5,15 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## \[1.0.0\]
 
-- Implement the proof-of-concept functionality with minor changes and enhancements in a "cleaner" way in a language that is well supported on all target platforms.
-- Set up an appropriate project infrastructure (static analysis, continuous integration, etc.).
-- Apply to the Open Mainframe Project.
-- Establish resources for community engagement.
+### Planned
 
-## [0.0.1] - 2020-12-08
+- Before/After Each, Before/After All
+- Parameterized tests
 
-### Added
+## \[0.3.0\]
+
+### Planned
+
+- Mock CICS resources
+- Mock SQL tables
+
+## \[0.2.0\] 
+
+### Planned
+
+- Mock paragraph
+- Mock Call statement
+- Mock batch file I/O
+
+## \[0.1.0\] 2021-03-01
+
+### Planned
+
+- Basic test case functionality 
+
+## \[0.0.0\]
+
+### Added 2020-12-08
 
 - Started the cobol-check project as a follow-on to https://github.com/neopragma/cobol-unit-test, which was a proof-of-concept effort to produce a unit testing tool for Cobol that could exercise individual Cobol paragraphs in isolation.
+
