@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,21 +28,10 @@ public class TestSuiteConcatenatorIT {
         when(config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
                 Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH))
                 .thenReturn(pathToResults);
-//        when(config.getString(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY))
-//                .thenReturn("src/test/cobol");
-//        when(options.isSet(PROGRAMS_OPTION))
-//                .thenReturn(true);
-//        when(options.getValueFor(PROGRAMS_OPTION))
-//                .thenReturn("GREETING");
-//        when(options.isSet(TESTS_OPTION))
-//                .thenReturn(true);
         when(options.getValueFor(Constants.TESTS_OPTION))
                 .thenReturn("GreetingByType");
         when(config.getMessages())
                 .thenReturn(messages);
-//        when(messages.get(any(),any()))
-//                .thenReturn(EMPTY_STRING);
-
         StringBuilder expectedResult = new StringBuilder();
         String line;
         BufferedReader testSuiteReader;
@@ -63,9 +53,6 @@ public class TestSuiteConcatenatorIT {
             actualResult.append(line);
         }
         testSuiteReader.close();
-
-//TODO: Reinstate this after test suite concatenation logic has been revamped. Until then nothing will be written
-// and there's no sense keeping the test suite broken in the meantime just because of this one assertion.
-//        assertEquals(expectedResult.toString(), actualResult.toString());
+        assertEquals(expectedResult.toString(), actualResult.toString());
     }
 }
