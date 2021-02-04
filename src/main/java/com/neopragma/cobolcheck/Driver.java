@@ -19,6 +19,7 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
@@ -100,6 +101,9 @@ public class Driver implements StringHelper {
         // find subdirectories that match program names
         List<String> matchingDirectories;
         for (String programName : programNamesSeparated) {
+            Path path = Paths.get(programName);
+            String fname = path.getFileName().toString();
+            programName = fname;
             DirectoryNameMatcher directoryFinder = new DirectoryNameMatcher(programName);
             try {
                 Files.walkFileTree(Paths.get(testSuiteDirectory), directoryFinder);

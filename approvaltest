@@ -1,1 +1,4 @@
-cobolcheck -p GREETING > approval-test-actual.txt
+cobolcheck -p NUMBERS > approval-test-actual.txt
+cobolcheck -p ALPHA >> approval-test-actual.txt
+cobolcheck -p GREETING >> approval-test-actual.txt
+cobolcheck -p FILECOPY >> approval-test-actual.txt

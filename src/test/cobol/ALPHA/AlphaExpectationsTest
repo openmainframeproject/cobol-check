@@ -32,6 +32,26 @@
            move "Hello, World!" to ws-field-2
            Expect ws-field-2(8:6) not to be "World"
 
+           TestCase "Greater-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-1 > ws-field-2
+
+           TestCase "Less-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-2 < ws-field-1
+
+           TestCase "Not greater-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-2 not > ws-field-1
+
+           TestCase "Not less-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-1 not < ws-field-2
+
 
 
 

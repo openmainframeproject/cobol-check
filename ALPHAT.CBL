@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.                                                 
-       PROGRAM-ID.  NUMBERS.                                                    
+       PROGRAM-ID.  ALPHA.                                                      
       *****************************************************************         
-      * Program to exercise symbolic relations like ">=" and "!=".              
+      * Program to exercise EXPECT statements.                                  
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
        INPUT-OUTPUT SECTION.                                                    
@@ -124,662 +124,183 @@
                                                                                 
       * CCHECKWS.CPY END                                                        
        01  FILLER.                                                              
-           05  WS-FIELD-1           PIC S9(11)V9(07) COMP-3.                    
-           05  WS-FIELD-2           PIC S9(11)V9(07) comp-3.                    
-           05  ws-field-3           pic s9(16) comp.                            
-           05  ws-field-4           pic s9(16) comp-4.                          
+           05  WS-FIELD-1           PIC X(80).                                  
+           05  ws-Field-2           PIC X(80).                                  
+           05  ws-table-1.                                                      
+               10  ws-table-1-entry occurs 5                                    
+                       indexed by table-1-ix.                                   
+                   15  ws-thing-1   pic x(5).                                   
+                   15  ws-thing-2   pic x(5).                                   
+           05  ws-table-2.                                                      
+               10  ws-table-2-entry occurs 5                                    
+                       indexed by table-2-ix.                                   
+                   15  ws-thing-3   pic x(5).                                   
+                   15  ws-thing-4   pic x(5).                                   
        PROCEDURE DIVISION.                                                      
            PERFORM CC-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Verify Cobol Check handles numeric relations properl        
-      -    "y"                                                                  
-           MOVE "Equal sign with literal compare"                               
+           DISPLAY "Tests of alphanumeric expectations"                         
+           MOVE "Equality with an alphanumeric literal using TO BE"             
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE "value1" TO WS-FIELD-1                                         
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 25.74 TO CC-EXPECTED-NUMERIC                                    
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "value1"                                                        
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Equal sign with literal compare (should fail)"                 
+           MOVE "Equality with an alphanumeric literal using TO EQUAL"          
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE "value2" TO WS-FIELD-1                                         
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 25.75 TO CC-EXPECTED-NUMERIC                                    
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "value2"                                                        
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Not equal sign with literal compare"                           
+           MOVE "Equality with an alphanumeric literal using '='"               
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE "value3" TO WS-FIELD-1                                         
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "value3"                                                        
+               TO CC-EXPECTED                                                   
+           SET CC-RELATION-EQ TO TRUE                                           
+           PERFORM CC-CHECK-EXPECTATION                                         
+           PERFORM CC-AFTER                                                     
+           MOVE "Equality with an alphanumeric literal and reference mod        
+      -    "ification"                                                          
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE "Hello, World!" TO WS-FIELD-2                                  
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-2(8:5) TO CC-ACTUAL                                    
+           MOVE "World"                                                         
+               TO CC-EXPECTED                                                   
+           SET CC-RELATION-EQ TO TRUE                                           
+           PERFORM CC-CHECK-EXPECTATION                                         
+           PERFORM CC-AFTER                                                     
+           MOVE "Non-equality with an alphanumeric literal using TO BE"         
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE "value4" TO WS-FIELD-1                                         
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 25.75 TO CC-EXPECTED-NUMERIC                                    
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "value1"                                                        
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Not equal sign with literal compare (should fail)"             
+           MOVE "Non-equality with an alphanumeric literal using TO EQUA        
+      -    "L"                                                                  
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE "value5" TO WS-FIELD-1                                         
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 25.74 TO CC-EXPECTED-NUMERIC                                    
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "value1"                                                        
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Not-equal sign with literal compare"                           
+           MOVE "Non-equality with an alphanumeric literal using '!='"          
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 13.6 TO WS-FIELD-1                                             
+            MOVE "value6" TO WS-FIELD-1                                         
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 25.74 TO CC-EXPECTED-NUMERIC                                    
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE "value1"                                                        
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Not-equal sign with literal compare (should fail)"             
+           MOVE "Non-equality with an alphanumeric literal and reference        
+      -    " modification"                                                      
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 13.6 TO WS-FIELD-1                                             
+            MOVE "Hello, World!" TO WS-FIELD-2                                  
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 13.6 TO CC-EXPECTED-NUMERIC                                     
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-2(8:6) TO CC-ACTUAL                                    
+           MOVE "World"                                                         
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Not not-equal sign with literal compare"                       
+           MOVE "Greater-than sign with an alphanumeric literal"                
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 13.6 TO WS-FIELD-1                                             
+            MOVE "Beta" TO WS-FIELD-1                                           
+            MOVE "Alpha" TO WS-FIELD-2                                          
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 13.6 TO CC-EXPECTED-NUMERIC                                     
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not not-equal sign with literal compare (should fail)"         
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 13.7 TO WS-FIELD-1                                             
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 13.6 TO CC-EXPECTED-NUMERIC                                     
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Equal sign with ield compare"                                  
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Equal sign with field compare (should fail)"                   
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.75 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not equal sign with field compare"                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.75 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not equal sign with field compare (should fail)"               
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not-equal sign with field compare"                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.75 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not-equal sign with field compare (should fail)"               
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not not-equal sign with field compare"                         
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not not-equal sign with field compare (should fail)"           
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 25.75 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-EQ TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Less-than sign with literal compare"                           
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.068 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Less-than sign with literal compare (should fail)"             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.066 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not less-than sign with literal compare"                       
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.068 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.068 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not less-than sign with literal compare (should fail)"         
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.066 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Less-than sign with field compare"                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 416.071 TO WS-FIELD-1                                          
-            MOVE 416.072 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Less-than sign with field compare (should fail)"               
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 416.072 TO WS-FIELD-1                                          
-            MOVE 416.072 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not less-than sign with field compare"                         
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 416.072 TO WS-FIELD-1                                          
-            MOVE 416.071 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not less-than sign with field compare (should fail)"           
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 416.071 TO WS-FIELD-1                                          
-            MOVE 416.072 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than sign with literal compare"                        
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 17.01 TO CC-EXPECTED-NUMERIC                                    
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE WS-FIELD-2                                                      
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-GT TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Greater-than sign with literal compare (should fail)"          
+           MOVE "Less-than sign with an alphanumeric literal"                   
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 9.805 TO WS-FIELD-1                                            
+            MOVE "Beta" TO WS-FIELD-1                                           
+            MOVE "Alpha" TO WS-FIELD-2                                          
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 10 TO CC-EXPECTED-NUMERIC                                       
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than sign with literal compare"                    
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 107.701 TO WS-FIELD-1                                          
-            MOVE 107.701 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than sign with literal compare (should fail        
-      -    ")"                                                                  
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 107.702 TO WS-FIELD-1                                          
-            MOVE 107.701 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than sign with field compare"                          
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 1766.03145 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than sign with field compare (should fail)"            
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 1766.03143 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than sign with field to field compare"             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 1766.03144 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than sign with field compare (should fail)"        
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 1766.03145 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare when        
-      -    " greater"                                                           
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.066 TO CC-EXPECTED-NUMERIC                                   
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-2 TO CC-ACTUAL                                         
+           MOVE WS-FIELD-1                                                      
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-LT TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare when        
-      -    " equal"                                                             
+           MOVE "Not greater-than sign with an alphanumeric literal"            
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
+            MOVE "Beta" TO WS-FIELD-1                                           
+            MOVE "Alpha" TO WS-FIELD-2                                          
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare (sho        
-      -    "uld fail)"                                                          
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 9.805 TO WS-FIELD-1                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 10 TO CC-EXPECTED-NUMERIC                                       
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to sign with literal compare         
-      -    "when less"                                                          
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.066 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to sign with literal compare         
-      -    "when equal (should fail)"                                           
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO CC-EXPECTED-NUMERIC                                   
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare when        
-      -    " greater (should fail)"                                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 13.45 TO WS-FIELD-1                                            
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE 13.44 TO CC-EXPECTED-NUMERIC                                    
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to-sign with field compare when e        
-      -    "qual"                                                               
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to-sign with field compare when g        
-      -    "reater"                                                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Greater-than-or-equal-to-sign with field compare when l        
-      -    "ess (should fail)"                                                  
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.061 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en less"                                                            
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.063 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en equal (should fail)"                                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en greater (should fail)"                                           
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-LT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Less-than-or-equal-to-sign with field compare when equa        
-      -    "l"                                                                  
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-2 TO CC-ACTUAL                                         
+           MOVE WS-FIELD-1                                                      
+               TO CC-EXPECTED                                                   
            SET CC-RELATION-GT TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
-           MOVE "Less-than-or-equal-to-sign with field compare when less        
-      -    ""                                                                   
+           MOVE "Not less-than sign with an alphanumeric literal"               
                TO CC-TEST-CASE-NAME                                             
            PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.063 TO WS-FIELD-2                                          
+            MOVE "Beta" TO WS-FIELD-1                                           
+            MOVE "Alpha" TO WS-FIELD-2                                          
            ADD 1 TO CC-TEST-CASE-COUNT                                          
            SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Less-than-or-equal-to-sign with field compare when grea        
-      -    "ter (should fail)"                                                  
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-REVERSE-COMPARE TO TRUE                                       
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not less-than-or-equal-to-sign with field compare when         
-      -    "greater"                                                            
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en equal (should fail)"                                             
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
-           PERFORM CC-CHECK-EXPECTATION                                         
-           PERFORM CC-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en less (should fail)"                                              
-               TO CC-TEST-CASE-NAME                                             
-           PERFORM CC-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.063 TO WS-FIELD-2                                          
-           ADD 1 TO CC-TEST-CASE-COUNT                                          
-           SET CC-NORMAL-COMPARE TO TRUE                                        
-           SET CC-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
-           SET CC-RELATION-GT TO TRUE                                           
+           SET CC-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE WS-FIELD-1 TO CC-ACTUAL                                         
+           MOVE WS-FIELD-2                                                      
+               TO CC-EXPECTED                                                   
+           SET CC-RELATION-LT TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
       * CCHECKPD.CPY                                                            

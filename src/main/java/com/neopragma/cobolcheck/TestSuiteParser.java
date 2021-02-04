@@ -219,7 +219,12 @@ public class TestSuiteParser implements StringHelper {
 
                 case Constants.NOT_EQUAL_SIGN_KEYWORD:
                     toBeInProgress = true;
-                    reverseCompare = true;
+                    // this means the user wrote "NOT !="
+                    if (reverseCompare) {
+                        reverseCompare = false;
+                    } else {
+                        reverseCompare = true;
+                    }
                     break;
 
                 case Constants.GREATER_THAN_SIGN_KEYWORD:
@@ -232,6 +237,28 @@ public class TestSuiteParser implements StringHelper {
                     toBeInProgress = true;
                     relationComparison = true;
                     lessThanComparison = true;
+                    break;
+
+                case Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD:
+                    toBeInProgress = true;
+                    relationComparison = true;
+                    lessThanComparison = true;
+                    if (reverseCompare) {
+                        reverseCompare = false;
+                    } else {
+                        reverseCompare = true;
+                    }
+                    break;
+
+                case Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD:
+                    toBeInProgress = true;
+                    relationComparison = true;
+                    greaterThanComparison = true;
+                    if (reverseCompare) {
+                        reverseCompare = false;
+                    } else {
+                        reverseCompare = true;
+                    }
                     break;
 
                 case Constants.COBOL_TOKEN:
