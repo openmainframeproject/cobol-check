@@ -395,7 +395,8 @@ public class TestSuiteParser implements StringHelper {
             if (testSuiteLine == null) {
                 return null;
             }
-            if (testSuiteLine.length() > 5 && testSuiteLine.charAt(6) != '*') {
+            if (testSuiteLine.length() > 0 && !testSuiteLine.trim().startsWith("*")) {
+//            if (testSuiteLine.length() > 5 && testSuiteLine.charAt(6) != '*') {
                 testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
             }
         }

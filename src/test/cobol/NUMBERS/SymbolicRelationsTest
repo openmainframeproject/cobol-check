@@ -8,9 +8,13 @@
            Move 25.74 to WS-FIELD-1
            Expect WS-FIELD-1 = 25.75
 
+* comment 1
+
            TestCase "Not equal sign with literal compare"
            Move 25.74 to WS-FIELD-1
            Expect WS-FIELD-1 NOT = 25.75
+
+           *comment 2
 
            TestCase "Not equal sign with literal compare (should fail)"
            Move 25.74 to WS-FIELD-1
