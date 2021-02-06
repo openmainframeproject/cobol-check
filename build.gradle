@@ -3,7 +3,7 @@ import static org.apache.tools.ant.taskdefs.condition.Os.*
 plugins {
     id 'java-library'
     id 'org.sonarqube' version '3.0'
-    id 'jacoco'
+//    id 'jacoco'
 }
 
 version = '0.0.1'
@@ -22,45 +22,49 @@ sonarqube {
     }
 }
 
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            element = 'CLASS'
-            limit {
-                minimum = 0.8
-            }
-            excludes = ['*Constants',
-                        '*Exception',
-                        '*DirectoryNameMatcher',
-                        '*Driver',
-                        '*EIBResponseCodes',
-                        '*Exception*',
-                        '*Generator',
-                        '*Keyword',
-                        '*LinuxProcessLauncher',
-                        '*Log',
-                        '*Flag',
-                        '*StringHelper',
-                        '*TestSuiteConcatenator']
-        }
-        rule {
-            element = 'CLASS'
-            limit {
-                minimum = 0.2
-            }
-            includes = ['*LinuxProcessLauncher',
-                        '*TestSuiteConcatenator']
-        }
-    }
-}
+//jacoco {
+//    toolVersion = "0.8.7"
+//}
+//
+//jacocoTestCoverageVerification {
+//    violationRules {
+//        rule {
+//            element = 'CLASS'
+//            limit {
+//                minimum = 0.8
+//            }
+//            excludes = ['*Constants',
+//                        '*Exception',
+//                        '*DirectoryNameMatcher',
+//                        '*Driver',
+//                        '*EIBResponseCodes',
+//                        '*Exception*',
+//                        '*Generator',
+//                        '*Keyword',
+//                        '*LinuxProcessLauncher',
+//                        '*Log',
+//                        '*Flag',
+//                        '*StringHelper',
+//                        '*TestSuiteConcatenator']
+//        }
+//        rule {
+//            element = 'CLASS'
+//            limit {
+//                minimum = 0.2
+//            }
+//            includes = ['*LinuxProcessLauncher',
+//                        '*TestSuiteConcatenator']
+//        }
+//    }
+//}
 
 ext {
     mainClassName = 'com.neopragma.cobolcheck.Driver'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_14
-    targetCompatibility = JavaVersion.VERSION_14
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 }
 
 repositories {
