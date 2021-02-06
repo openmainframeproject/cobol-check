@@ -75,9 +75,10 @@ Verify Cobol Check handles numeric relations properly
     EXPECTED +00000000475.0620000, WAS +00000000475.0620000
 **** FAIL:  50. Not greater-than-or-equal-to-sign with field compare when less (should fail)    
     EXPECTED +00000000475.0630000, WAS +00000000475.0620000
+     PASS:  51. Display Numeric field equals literal                                            
  
- 50 TEST CASES WERE EXECUTED
- 25 PASSED
+ 51 TEST CASES WERE EXECUTED
+ 26 PASSED
  25 FAILED
 =================================================
 TESTSUITE:
@@ -94,9 +95,10 @@ Tests of alphanumeric expectations
      PASS:  10. Less-than sign with an alphanumeric literal                                     
      PASS:  11. Not greater-than sign with an alphanumeric literal                              
      PASS:  12. Not less-than sign with an alphanumeric literal                                 
+     PASS:  13. Display numeric                                                                 
  
- 12 TEST CASES WERE EXECUTED
- 12 PASSED
+ 13 TEST CASES WERE EXECUTED
+ 13 PASSED
   0 FAILED
 =================================================
 TESTSUITE:
