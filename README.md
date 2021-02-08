@@ -6,10 +6,14 @@ Cobol Check provides fine-grained unit testing/checking for Cobol at the same co
 
 ## Immediate needs 
 
-As of January 2021 we could use help with: 
+As of February 2021 we could use help with: 
 
 - access to a z/OS system including MVS and USS for testing cobol-check on-platform
 - review of localized messages by native speakers and creation of additional localized message files
+
+## Pre-release download available 
+
+You can try a very early pre-release version of Cobol Check. We'd appreciate feedback! Find the download on the project home page on the [Neo Pragma site](https://neopragma.com/projects/Cobol%20Check/).
 
 ## Why?
 
