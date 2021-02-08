@@ -6,7 +6,9 @@ plugins {
 //    id 'jacoco'
 }
 
-version = '0.0.1'
+version = '0.0.0'
+def productVersion = '0.0.0'
+def productName = 'cobolcheck'
 group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
 
@@ -133,6 +135,29 @@ task fatJar(type: Jar) {
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+task copyJar(type: Copy) {
+    description 'Copy executable jar to bin directory prior to distribution'
+    dependsOn fatJar
+    from('build/libs/')
+      include '**/*.jar'
+    into 'bin/'
+}
+
+task prepareDistribution(type: Zip) {
+    description 'Prepare distribution archive'
+    dependsOn copyJar
+    from "${projectDir}"
+    include([ "config.properties",
+              "scripts/*",
+              "bin/cobol-check-*.jar",
+              "src/main/cobol/ALPHA/*",
+              "src/main/cobol/NUMBERS/*",
+              "src/test/cobol/ALPHA/*",
+              "src/test/cobol/NUMBERS/*",
+              "cobolcheck" ])
+    rename("build/libs/(.*)", "\$1")
 }
 
 def approvalTest = tasks.register("approvalTest", Test) {
