@@ -1,4 +1,4 @@
-      * ZUTZCPD.CPY
+      * CCHECKPD.CPY
            DISPLAY SPACE
            MOVE ==UT==TEST-CASE-COUNT TO ==UT==TEST-CASE-NUMBER
            DISPLAY ==UT==TEST-CASE-NUMBER ' TEST CASES WERE EXECUTED'
@@ -10,7 +10,7 @@
            MOVE ==UT==RETCODE TO RETURN-CODE
            GOBACK.
 
-       ==UT==ASSERT-EQUAL.
+       ==UT==CHECK-EXPECTATION.
       *****************************************************************
       * COMPARE EXPECTED AND ACTUAL VALUES FOR EQUALITY.
       *****************************************************************
@@ -25,11 +25,7 @@
 
        ==UT==COMPARE.
            SET ==UT==COMPARE-FAILED TO TRUE
-           IF ==UT==COMPARE-NUMERIC
-               IF ==UT==ACTUAL-NUMERIC IS EQUAL TO ==UT==EXPECTED-NUMERIC
-                   SET ==UT==COMPARE-PASSED TO TRUE
-               END-IF    
-           ELSE
+           IF ==UT==COMPARE-88-LEVEL
                IF ==UT==COMPARE-88-LEVEL
                    IF (==UT==ACTUAL-88-VALUE
                        AND ==UT==EXPECTED-88-VALUE)
@@ -42,7 +38,64 @@
                        SET ==UT==COMPARE-PASSED TO TRUE
                    END-IF
                END-IF
-           END-IF        
+           ELSE
+               EVALUATE TRUE ALSO TRUE
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-EQ
+                       IF ==UT==ACTUAL-NUMERIC
+                               EQUAL ==UT==EXPECTED-NUMERIC
+                           SET ==UT==COMPARE-PASSED TO TRUE
+                       END-IF
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-GT
+                       IF ==UT==ACTUAL-NUMERIC
+                               GREATER ==UT==EXPECTED-NUMERIC
+                           SET ==UT==COMPARE-PASSED TO TRUE
+                       END-IF
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-GE
+                       IF ==UT==ACTUAL-NUMERIC
+                               GREATER OR EQUAL ==UT==EXPECTED-NUMERIC
+                           SET ==UT==COMPARE-PASSED TO TRUE
+                       END-IF
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-LT
+                       IF ==UT==ACTUAL-NUMERIC
+                               LESS ==UT==EXPECTED-NUMERIC
+                           SET ==UT==COMPARE-PASSED TO TRUE
+                       END-IF
+                   WHEN ==UT==NUMERIC-COMPARE ALSO ==UT==RELATION-LE
+                       IF ==UT==ACTUAL-NUMERIC
+                               LESS OR EQUAL ==UT==EXPECTED-NUMERIC
+                           SET ==UT==COMPARE-PASSED TO TRUE
+                       END-IF
+                   WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-EQ
+                       IF ==UT==ACTUAL
+                               EQUAL ==UT==EXPECTED
+                           SET ==UT==COMPARE-PASSED TO TRUE
+                        END-IF
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-GT
+                        IF ==UT==ACTUAL
+                                GREATER ==UT==EXPECTED
+                            SET ==UT==COMPARE-PASSED TO TRUE
+                        END-IF
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-GE
+                        IF ==UT==ACTUAL
+                                GREATER OR EQUAL ==UT==EXPECTED
+                            SET ==UT==COMPARE-PASSED TO TRUE
+                        END-IF
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-LT
+                        IF ==UT==ACTUAL
+                                LESS ==UT==EXPECTED
+                            SET ==UT==COMPARE-PASSED TO TRUE
+                        END-IF
+                    WHEN ==UT==ALPHANUMERIC-COMPARE ALSO ==UT==RELATION-LE
+                        IF ==UT==ACTUAL
+                                LESS OR EQUAL ==UT==EXPECTED
+                            SET ==UT==COMPARE-PASSED TO TRUE
+                        END-IF
+                    WHEN OTHER
+                        IF ==UT==ACTUAL EQUAL ==UT==EXPECTED
+                            SET ==UT==COMPARE-PASSED TO TRUE
+                        END-IF
+               END-EVALUATE
+           END-IF
            PERFORM ==UT==REVERSE-RESULT
            .
 
@@ -68,7 +121,7 @@
            DISPLAY ==UT==FAILED 
                    ==UT==TEST-CASE-NUMBER '. ' 
                    ==UT==TEST-CASE-NAME
-           IF ==UT==COMPARE-NUMERIC
+           IF ==UT==NUMERIC-COMPARE
                DISPLAY '    EXPECTED ' ==UT==EXPECTED-NUMERIC
                        ', WAS ' ==UT==ACTUAL-NUMERIC
            ELSE
@@ -311,4 +364,4 @@
            .
        ==UT==END.
 
-      * ZUTZCPD.CPY END
+      * CCHECKPD.CPY END

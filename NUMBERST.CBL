@@ -124,10 +124,11 @@
                                                                                 
       * CCHECKWS.CPY END                                                        
        01  FILLER.                                                              
-           05  WS-FIELD-1           PIC S9(11)V9(07) COMP-3.                    
+           05  ws-field-1           PIC S9(11)V9(07) COMP-3.                    
            05  WS-FIELD-2           PIC S9(11)V9(07) comp-3.                    
            05  ws-field-3           pic s9(16) comp.                            
            05  ws-field-4           pic s9(16) comp-4.                          
+           05  ws-display-field     pic s9(5)v99.                               
        PROCEDURE DIVISION.                                                      
            PERFORM CC-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
@@ -780,6 +781,18 @@
            MOVE WS-FIELD-1 TO CC-ACTUAL-NUMERIC                                 
            MOVE WS-FIELD-2 TO CC-EXPECTED-NUMERIC                               
            SET CC-RELATION-GT TO TRUE                                           
+           PERFORM CC-CHECK-EXPECTATION                                         
+           PERFORM CC-AFTER                                                     
+           MOVE "Display Numeric field equals literal"                          
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE 123.45 TO WS-DISPLAY-FIELD                                     
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           SET CC-NUMERIC-COMPARE TO TRUE                                       
+           MOVE WS-DISPLAY-FIELD TO CC-ACTUAL-NUMERIC                           
+           MOVE 123.45 TO CC-EXPECTED-NUMERIC                                   
+           SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
       * CCHECKPD.CPY                                                            

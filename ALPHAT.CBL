@@ -136,6 +136,7 @@
                        indexed by table-2-ix.                                   
                    15  ws-thing-3   pic x(5).                                   
                    15  ws-thing-4   pic x(5).                                   
+           05  ws-display-numeric   pic 999.                                    
        PROCEDURE DIVISION.                                                      
            PERFORM CC-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
@@ -301,6 +302,18 @@
            MOVE WS-FIELD-2                                                      
                TO CC-EXPECTED                                                   
            SET CC-RELATION-LT TO TRUE                                           
+           PERFORM CC-CHECK-EXPECTATION                                         
+           PERFORM CC-AFTER                                                     
+           MOVE "Display numeric"                                               
+               TO CC-TEST-CASE-NAME                                             
+           PERFORM CC-BEFORE                                                    
+            MOVE 6 TO WS-DISPLAY-NUMERIC                                        
+           ADD 1 TO CC-TEST-CASE-COUNT                                          
+           SET CC-NORMAL-COMPARE TO TRUE                                        
+           SET CC-NUMERIC-COMPARE TO TRUE                                       
+           MOVE WS-DISPLAY-NUMERIC TO CC-ACTUAL-NUMERIC                         
+           MOVE 6 TO CC-EXPECTED-NUMERIC                                        
+           SET CC-RELATION-EQ TO TRUE                                           
            PERFORM CC-CHECK-EXPECTATION                                         
            PERFORM CC-AFTER                                                     
       * CCHECKPD.CPY                                                            

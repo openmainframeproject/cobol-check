@@ -1,34 +1,43 @@
-      * ZUTZCWS.CPY
-       01  FILLER PIC X(16) VALUE '******* COBCHECK'.
-       01  FILLER PIC X(16) VALUE '******* 0.1.0'.
+      * CCHECKWS.CPY
+       01  FILLER PIC X(32) VALUE '******* COBOLCHECK 0.0.1 *******'.
        01  ==UT==FIELDS.
            05  ==UT==CONST-ES               PIC X(02) VALUE 'ES'.
            05  ==UT==LABEL-EXPECTED-ACCESS.
                10  FILLER                PIC X(06) VALUE 'ACCESS'.
                10  ==UT==LABEL-EXPECTED-ACCESS-PL 
                                          PIC X(02) VALUE SPACES.
-           05  ==UT==DISPLAY-MESSAGE        PIC X(256) VALUE SPACES.
+           05  ==UT==DISPLAY-MESSAGE     PIC X(256) VALUE SPACES.
+           05  FILLER                    PIC X(02) VALUE SPACES.
+               88  ==UT==RELATION-EQ               VALUE SPACES, 'EQ'.
+               88  ==UT==RELATION-GE               VALUE 'GE'.
+               88  ==UT==RELATION-GT               VALUE 'GT'.
+               88  ==UT==RELATION-LE               VALUE 'LE'.
+               88  ==UT==RELATION-LT               VALUE 'LT'.
            05  FILLER                    PIC X(01) VALUE SPACES.
-               88  ==UT==NORMAL-COMPARE     VALUE 'N'.
-               88  ==UT==REVERSE-COMPARE    VALUE 'Y'.
+               88  ==UT==NORMAL-COMPARE            VALUE 'N'.
+               88  ==UT==REVERSE-COMPARE           VALUE 'Y'.
            05  FILLER                    PIC X(01) VALUE '1'.
-               88  ==UT==VERIFY-EXACT                 VALUE '1'.
-               88  ==UT==VERIFY-AT-LEAST              VALUE '2'.
-               88  ==UT==VERIFY-NO-MORE-THAN          VALUE '3'.   
+               88  ==UT==VERIFY-EXACT              VALUE '1'.
+               88  ==UT==VERIFY-AT-LEAST           VALUE '2'.
+               88  ==UT==VERIFY-NO-MORE-THAN       VALUE '3'.
            05  FILLER                    PIC X(01) VALUE SPACES.
                88  ==UT==VERIFY-PASSED      VALUE 'Y'.
                88  ==UT==VERIFY-FAILED      VALUE SPACES.    
            05  FILLER                    PIC X(01) VALUE SPACES.
-               88  ==UT==COMPARE-DEFAULT    VALUE SPACE.
-               88  ==UT==COMPARE-NUMERIC    VALUE 'N'.
+               88  ==UT==ALPHANUMERIC-COMPARE VALUE SPACE.
+               88  ==UT==NUMERIC-COMPARE    VALUE 'N'.
                88  ==UT==COMPARE-88-LEVEL   VALUE '8'.
            05  FILLER                    PIC X(01) VALUE SPACES.
                88  ==UT==COMPARE-PASSED     VALUE 'Y'.
                88  ==UT==COMPARE-FAILED     VALUE SPACES.
            05  ==UT==EXPECTED               PIC X(256) VALUE SPACES.
            05  ==UT==ACTUAL                 PIC X(256) VALUE SPACES.
-           05  ==UT==EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.
-           05  ==UT==ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.
+           05  ==UT==EXPECTED-NUMERIC-X.
+               10  ==UT==EXPECTED-NUMERIC   PIC S9(11)V9(7)
+                                            COMP-3 VALUE ZERO.
+           05  ==UT==ACTUAL-NUMERIC-X.
+               10  ==UT==ACTUAL-NUMERIC     PIC S9(11)V9(7)
+                                            COMP-3 VALUE ZERO.
            05  FILLER                    PIC X     VALUE 'F'.
                88 ==UT==EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.
            05  FILLER                    PIC X     VALUE 'F'.
@@ -104,4 +113,4 @@
                    15  ==UT==RECORD-FIELD-NAME      PIC X(31).
                    15  ==UT==FILE-STATUS-FIELD-NAME PIC X(31).
 
-      * ZUTZCWS.CPY END
+      * CCHECKWS.CPY END

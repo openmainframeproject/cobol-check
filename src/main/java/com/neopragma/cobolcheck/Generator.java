@@ -112,7 +112,6 @@ public class Generator implements StringHelper {
         this.tokenExtractor = new StringTokenizerExtractor(messages);
         testSuiteParser = new TestSuiteParser(keywordExtractor, config);
         numericFields = new NumericFields();
-        copybookDirectoryName = setCopybookDirectoryName(config);
         testCodePrefix = config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         fileIdentifiersAndStatuses = new HashMap<>();
     }
@@ -635,8 +634,7 @@ public class Generator implements StringHelper {
         }
 
         // Inject boilerplate test code from cobol-check Working-Storage copybook
-        secondarySourceReader = new FileReader(copybookFile(workingStorageCopybookFilename));
-        insertSecondarySourceIntoTestSource(testSourceOut);
+        insertSecondarySourceIntoTestSource(workingStorageCopybookFilename, testSourceOut);
         workingStorageTestCodeHasBeenInserted = true;
     }
 
@@ -656,8 +654,8 @@ public class Generator implements StringHelper {
         testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
-        secondarySourceReader = new FileReader(copybookFile(procedureDivisionCopybookFilename));
-        insertSecondarySourceIntoTestSource(testSourceOut);
+        insertSecondarySourceIntoTestSource(procedureDivisionCopybookFilename, testSourceOut);
+
     }
 
     /**
@@ -668,8 +666,9 @@ public class Generator implements StringHelper {
      * @param testSourceOut - writer attached to the test program being generated.
      * @throws IOException - pass any IOExceptions to the caller.
      */
-    private void insertSecondarySourceIntoTestSource(Writer testSourceOut) throws IOException {
-        BufferedReader secondarySourceBufferedReader = new BufferedReader(secondarySourceReader);
+    private void insertSecondarySourceIntoTestSource(String copybookFilename, Writer testSourceOut) throws IOException {
+        InputStream is = this.getClass().getResourceAsStream(Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename);
+        BufferedReader secondarySourceBufferedReader = new BufferedReader(new InputStreamReader(is));
         String secondarySourceLine = Constants.EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
             secondarySourceLine = secondarySourceLine
@@ -696,18 +695,4 @@ public class Generator implements StringHelper {
     private boolean sourceLineContains(List<String> tokens, String tokenValue) {
         return tokens.size() > 0 && tokens.contains(tokenValue.toUpperCase(Locale.ROOT));
     }
-
-    private File copybookFile(String fileName) {
-        return new File(copybookDirectoryName + fileName);
-    }
-
-    private String setCopybookDirectoryName(Config config) {
-        return config.getString(Constants.RESOURCES_DIRECTORY_CONFIG_KEY)
-                + Constants.FILE_SEPARATOR
-                + this.getClass().getPackageName().replace(".", "/")
-                + Constants.FILE_SEPARATOR
-                + config.getString(Constants.COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY)
-                + Constants.FILE_SEPARATOR;
-    }
-
 }

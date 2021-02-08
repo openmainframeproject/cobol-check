@@ -71,6 +71,14 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources", "src/test/resources"
+        }
+    }
+}
+
 test {
     description 'Runs all tests'
     testLogging {
