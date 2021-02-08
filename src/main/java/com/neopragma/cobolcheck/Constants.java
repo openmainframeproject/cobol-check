@@ -89,8 +89,6 @@ public final class Constants {
     public static final String COBOLCHECK_PREFIX_CONFIG_KEY = "cobolcheck.prefix";
     public static final String DEFAULT_COBOLCHECK_PREFIX = "UT-";
     public static final String TEST_CODE_PREFIX_PLACEHOLDER = "==UT==";
-    public static final String RESOURCES_DIRECTORY_CONFIG_KEY = "resources.directory";
-    public static final String COBOLCHECK_COPYBOOK_DIRECTORY_CONFIG_KEY = "cobolcheck.copybook.directory";
 
     // Command line option key values
     public static final String TESTS_OPTION = "tests";
