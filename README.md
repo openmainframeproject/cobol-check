@@ -31,23 +31,26 @@ Please see [the wiki](https://github.com/neopragma/cobol-check/wiki/) for more i
 
 We want to enable Cobol developers to write and run fine-grained unit checks on: 
 
-| Platform     | Version  | For Use | For Dev | Tested? | Other  |
-| ------------ | -------- | ------- | ------- | ------- | ------ |
-| Ubuntu Linux | 18.04.05 | Yes     | Yes     | Jan 21  | Note 1 |
-| Ubuntu Linux | 20.04    | Yes     | Yes     | No      | Note 2 |
-| IBM z/OS     | 2.4      | Yes     | No      | No      | Note 3 |
-| MS Windows   | 10       | Yes     | Yes     | No      | Note 3 |
-| Fedora Linux | 33       | Yes     | Yes     | No      | Note 4 |
-| Fedora Linux | 34       | Yes     | Yes     | No      | Note 4 |
-| FreeBSD      | 12       | Yes     | Yes     | No      | Note 4 |
-| OpenBSD      | 68       | Yes     | TBD     | No      | Note 4 |
-| Apple OSX    | 10       | Yes     | TBD     | No      | Note 4 |
-| Apple OSX    | 11       | Yes     | TBD     | No      | Note 4 |
+| Platform     | Version  | For Use | Tested? | For Dev | Tested? | Other  |
+| ------------ | -------- | ------- | ------- | ------- | ------- | ------ |
+| Ubuntu Linux | 18.04.05 | Yes     | Jan 21  | Yes     | Jan 21  | Note 1 |
+| Ubuntu Linux | 20.04    | Yes     | No      | Yes     | No      | Note 2 |
+| IBM z/OS     | 2.4      | Yes     | No      | TBD     | No      | Note 3 |
+| MS Windows   | 10       | Yes     | No      | Yes     | No      | Note 3 |
+| Fedora Linux | 33       | Yes     | No      | Yes     | Feb 21  | Note 4 |
+| Fedora Linux | 34       | Yes     | No      | Yes     | No      | Note 4 |
+| FreeBSD      | 13       | Yes     | No      | Yes     | No      | Note 4 |
+| FreeBSD      | 12       | No      | No      | No      | No      | Note 5 |
+| FreeBSD      | 11       | Yes     | No      | Yes     | Feb 21  | Note 4 |
+| OpenBSD      | 68       | Yes     | No      | No      | No      | Note 4 |
+| Apple OSX    | 10       | Yes     | Feb 21  | Yes     | Feb 21  | Note 4 |
+| Apple OSX    | 11       | Yes     | No      | TBD     | No      | Note 4 |
 
 - Note 1: Current development platform 
 - Note 2: New development platform (coming) 
 - Note 3: Primary target platform 
 - Note 4: Secondary (nice to have) target platform
+- Note 5: Setup issues - not suitable
 
 ## Related projects
 
