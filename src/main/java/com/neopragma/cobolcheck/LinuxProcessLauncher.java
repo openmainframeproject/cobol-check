@@ -37,9 +37,17 @@ public class LinuxProcessLauncher implements ProcessLauncher, StringHelper {
 
     @Override
     public Process run(String programName) {
+        if (Log.level() == LogLevel.DEBUG) {
+            System.out.println("Entering LinuxProcessLauncher.run() method, programName is <" + programName + ">");
+        }
         if (isBlank(programName)) {
             Log.error(messages.get("ERR020"));
             throw new PossibleInternalLogicErrorException(messages.get("ERR020"));
+        }
+        // Hack for Mac
+        if (!programName.toUpperCase().endsWith("CBL")
+        && !programName.toUpperCase().endsWith("COB")) {
+            programName += ".CBL";
         }
         String processConfigKey = "linux" + Constants.PROCESS_CONFIG_KEY;
         String scriptName = config.getString(processConfigKey);

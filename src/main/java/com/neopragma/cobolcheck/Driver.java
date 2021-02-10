@@ -185,7 +185,7 @@ public class Driver implements StringHelper {
                         break;
                     default :
                         processConfigKeyPrefix = "unix";
-                        //launcher = new UnixProcessLauncher(config);
+                        launcher = new LinuxProcessLauncher(config);
                         break;
                 }
                 String processConfigKey = processConfigKeyPrefix + Constants.PROCESS_CONFIG_KEY;
