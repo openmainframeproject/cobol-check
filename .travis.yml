@@ -1,12 +1,13 @@
 dist: focal
 language: java
-jdk:
-  - openjdk8
 before_install:
   - sudo apt update
   - sudo apt -y install libdb-dev
   - sudo apt -y install libgmp3-dev
   - sudo apt -y install libncurses5-dev
   - sudo apt -y install gnucobol
-
-
+  - sudo add-apt-repository ppa:openjdk-r/ppa
+  - sudo apt-get -qq update
+  - sudo apt-get install -y openjdk-8-jdk
+  - sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
+sudo: required
