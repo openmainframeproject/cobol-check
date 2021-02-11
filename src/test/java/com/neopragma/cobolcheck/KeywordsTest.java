@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,61 +29,61 @@ public class KeywordsTest {
     private static Stream<Arguments> KeywordProvider() {
         return Stream.of(
                 Arguments.of(Constants.EXPECT_KEYWORD, Constants.EXPECT_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME),
                 Arguments.of(Constants.FIELDNAME_KEYWORD, Constants.EMPTY_STRING,
-                        List.of(Constants.TO_BE_KEYWORD, Constants.NOT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.TO_BE_KEYWORD, Constants.NOT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME),
                 Arguments.of(Constants.NOT_KEYWORD, Constants.NOT_KEYWORD,
-                        List.of(Constants.TO_BE_KEYWORD),
+                        Arrays.asList(Constants.TO_BE_KEYWORD),
                         KeywordAction.REVERSE_LOGIC),
                 Arguments.of(Constants.TO_BE_KEYWORD, Constants.TO_BE_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.TESTSUITE_KEYWORD, Constants.TESTSUITE_KEYWORD,
-                        List.of(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
+                        Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.TESTSUITE_NAME),
                 Arguments.of(Constants.EQUAL_SIGN_KEYWORD, Constants.EQUAL_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.NOT_EQUAL_SIGN_KEYWORD, Constants.NOT_EQUAL_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.GREATER_THAN_SIGN_KEYWORD, Constants.GREATER_THAN_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.LESS_THAN_SIGN_KEYWORD, Constants.LESS_THAN_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD, Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD, Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -95,7 +96,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("\"alphanumeric literal value\"");
         assertEquals(Constants.ALPHANUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
-        assertEquals(List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
+        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
     }
 
     @Test
@@ -103,7 +104,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("5473.19");
         assertEquals(Constants.NUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
-        assertEquals(List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
+        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
     }
 
     @Test
@@ -111,7 +112,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("2000-PARAGRAPH-NAME");
         assertEquals(Constants.COBOL_TOKEN, keyword.value());
         assertEquals(KeywordAction.COBOL_STATEMENT, keyword.keywordAction());
-        assertEquals(List.of(Constants.COBOL_TOKEN,
+        assertEquals(Arrays.asList(Constants.COBOL_TOKEN,
                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 Constants.FIELDNAME_KEYWORD,
                 Constants.EXPECT_KEYWORD), keyword.validNextKey());
@@ -122,7 +123,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("TRUE");
         assertEquals(Constants.BOOLEAN_VALUE, keyword.value());
         assertEquals(KeywordAction.BOOLEAN_COMPARE, keyword.keywordAction());
-        assertEquals(List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
+        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
     }
 
     @Test
@@ -130,7 +131,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("FALSE");
         assertEquals(Constants.BOOLEAN_VALUE, keyword.value());
         assertEquals(KeywordAction.BOOLEAN_COMPARE, keyword.keywordAction());
-        assertEquals(List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
+        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
     }
 
 }

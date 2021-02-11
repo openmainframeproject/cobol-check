@@ -34,7 +34,7 @@ public class KeywordExtractor implements TokenExtractor {
     public KeywordExtractor() {
         nextExpectedTokens = new ArrayList<>();
         multiWordTokens = new HashMap<>();
-        multiWordTokens.put("TO", List.of("BE", "EQUAL"));
+        multiWordTokens.put("TO", Arrays.asList("BE", "EQUAL"));
     }
 
     @Override
@@ -92,7 +92,6 @@ public class KeywordExtractor implements TokenExtractor {
                                             || sourceLine.charAt(endOfLookahead) == SPACE)) {
                                         buffer.append(expectedToken);
                                         tokenOffset += expectedToken.length();
-                                        expectedToken = Constants.EMPTY_STRING;
                                         break;
                                     }
                                 }

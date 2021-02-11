@@ -27,5 +27,21 @@ package com.neopragma.cobolcheck;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public record EIBResponseCodes(byte EIBFN, byte EIBRCODE, int EIBRCODEOffset, int EIBRESP
-    ) {}
+public class EIBResponseCodes {
+    private final byte EIBFN;
+    private final byte EIBRCODE;
+    private final int EIBRCODEOffset;
+    private final int EIBRESP;
+
+    public EIBResponseCodes(byte EIBFN, byte EIBRCODE, int EIBRCODEOffset, int EIBRESP) {
+        this.EIBFN = EIBFN;
+        this.EIBRCODE = EIBRCODE;
+        this.EIBRCODEOffset = EIBRCODEOffset;
+        this.EIBRESP = EIBRESP;
+    }
+
+    public byte EIBFN()  { return EIBFN; }
+    public byte EIBRCODE() { return EIBRCODE; }
+    public int EIBRCODEOffset() { return EIBRCODEOffset; }
+    public int EIBRESP() { return EIBRESP; }
+}

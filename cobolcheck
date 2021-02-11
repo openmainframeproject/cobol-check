@@ -1,3 +1,2 @@
-
-
-java -jar --enable-preview bin/cobol-check-0.0.0.jar $@
+#!/bin/sh
+java -jar bin/cobol-check-0.0.0.jar $@

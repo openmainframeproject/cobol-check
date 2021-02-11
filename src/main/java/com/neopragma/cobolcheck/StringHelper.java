@@ -34,7 +34,8 @@ public interface StringHelper {
     }
 
     default String fixedLength(String sourceLine) {
-        return String.format("%1$-80s", sourceLine.stripTrailing()) + System.getProperty("line.separator");
+        return String.format("%1$-80s", sourceLine).substring(0, 80) +
+                System.getProperty("line.separator");
     }
 
 }

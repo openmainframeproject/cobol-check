@@ -15,6 +15,7 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +30,7 @@ import java.util.Locale;
  * @since 1.8
  */
 public class CobolVerbs {
-    private static final List<String> values = List.of(
+    private static final List<String> values = Arrays.asList(
             "ACCEPT",
             "ADD",
             "CALL",

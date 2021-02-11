@@ -58,7 +58,7 @@ public class Generator implements StringHelper {
     private List<String> copyTokens;
 
     // Source tokens from Procedure Division that begin batch I/O statements
-    private final List<String> batchFileIOVerbs = List.of(
+    private final List<String> batchFileIOVerbs = Arrays.asList(
             "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
     );
 

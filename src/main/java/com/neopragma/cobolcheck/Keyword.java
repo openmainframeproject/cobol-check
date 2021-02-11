@@ -18,7 +18,7 @@ package com.neopragma.cobolcheck;
 import java.util.List;
 
 /**
- * This record encapsulates information about a cobol-check keyword.
+ * This class encapsulates information about a Cobol Check keyword.
  *
  * value = the value of the keyword as a string (note that some keywords have embedded spaces, like "TO BE")
  * validNextKey = list of keys in Keywords for tokens that may follow the current keyword in the test suite.
@@ -27,7 +27,28 @@ import java.util.List;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public record Keyword(
-        String value,
-        List<String> validNextKey,
-        KeywordAction keywordAction) { }
+public class Keyword {
+    private final String value;
+    private final List<String> validNextKey;
+    private final KeywordAction keywordAction;
+
+    public Keyword(String value,
+                   List<String> validNextKey,
+                   KeywordAction keywordAction) {
+        this.value = value;
+        this.validNextKey = validNextKey;
+        this.keywordAction = keywordAction;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public List<String> validNextKey() {
+        return validNextKey;
+    }
+
+    public KeywordAction keywordAction() {
+        return keywordAction;
+    }
+}

@@ -15,8 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,35 +34,35 @@ public class Keywords {
         keywordInfo = new HashMap<>();
         keywordInfo.put(Constants.TESTSUITE_KEYWORD,
                 new Keyword(Constants.TESTSUITE_KEYWORD,
-                        List.of(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
+                        Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.TESTSUITE_NAME));
         keywordInfo.put(Constants.TESTCASE_KEYWORD,
                 new Keyword(Constants.TESTCASE_KEYWORD,
-                        List.of(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
+                        Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.NEW_TESTCASE));
         keywordInfo.put(Constants.EXPECT_KEYWORD,
                 new Keyword(Constants.EXPECT_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME));
         keywordInfo.put(Constants.FIELDNAME_KEYWORD,
                 new Keyword(Constants.EMPTY_STRING,
-                        List.of(Constants.TO_BE_KEYWORD,
+                        Arrays.asList(Constants.TO_BE_KEYWORD,
                                 Constants.NOT_KEYWORD,
                                 Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NOT_KEYWORD,
                 new Keyword(Constants.NOT_KEYWORD,
-                        List.of(Constants.TO_BE_KEYWORD),
+                        Arrays.asList(Constants.TO_BE_KEYWORD),
                         KeywordAction.REVERSE_LOGIC));
         keywordInfo.put(Constants.NOT_EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.NOT_EQUAL_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD),
                         KeywordAction.REVERSE_LOGIC));
         keywordInfo.put(Constants.TO_BE_KEYWORD,
                 new Keyword(Constants.TO_BE_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -70,7 +70,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.TO_EQUAL_KEYWORD,
                 new Keyword(Constants.TO_EQUAL_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -78,7 +78,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.EQUAL_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -86,7 +86,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.NOT_EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.NOT_EQUAL_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -94,7 +94,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.GREATER_THAN_SIGN_KEYWORD,
                 new Keyword(Constants.GREATER_THAN_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -102,7 +102,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                 new Keyword(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -110,7 +110,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.LESS_THAN_SIGN_KEYWORD,
                 new Keyword(Constants.LESS_THAN_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -118,7 +118,7 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                 new Keyword(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
-                        List.of(Constants.FIELDNAME_KEYWORD,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.TRUE,
@@ -126,22 +126,22 @@ public class Keywords {
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                        List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.NUMERIC_LITERAL_KEYWORD,
-                        List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.COBOL_TOKEN,
                 new Keyword(Constants.COBOL_TOKEN,
-                        List.of(Constants.COBOL_TOKEN,
+                        Arrays.asList(Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.EXPECT_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.BOOLEAN_VALUE,
                 new Keyword(Constants.BOOLEAN_VALUE,
-                        List.of(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.BOOLEAN_COMPARE));
     }
 

@@ -65,8 +65,8 @@ ext {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 repositories {
@@ -91,16 +91,9 @@ test {
 }
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs << "--enable-preview"
     options.compilerArgs << '-Xlint:preview'
     options.compilerArgs << '-Xlint:deprecation'
     options.deprecation = true
-}
-tasks.withType(Test) {
-    jvmArgs += "--enable-preview"
-}
-tasks.withType(JavaExec) {
-    jvmArgs += "--enable-preview"
 }
 
 dependencies {

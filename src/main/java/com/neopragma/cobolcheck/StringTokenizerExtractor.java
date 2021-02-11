@@ -39,17 +39,17 @@ public class StringTokenizerExtractor implements TokenExtractor {
     // Couldn't use Map.of because it has a limitation of 10 entries. (Dec 2020)
     private static final Map<String, List<String>> expectedTokens = new HashMap<>();
     static {
-        expectedTokens.put("PROCEDURE", List.of("DIVISION"));
-        expectedTokens.put("DATA", List.of("DIVISION"));
-        expectedTokens.put("ENVIRONMENT", List.of("DIVISION"));
-        expectedTokens.put("IDENTIFICATION", List.of("DIVISION"));
-        expectedTokens.put("FILE", List.of("SECTION", "CONTROL", "STATUS"));
-        expectedTokens.put("ID", List.of("DIVISION"));
-        expectedTokens.put("CONFIGURATION", List.of("SECTION"));
-        expectedTokens.put("INPUT-OUTPUT", List.of("SECTION"));
-        expectedTokens.put("LINKAGE", List.of("SECTION"));
-        expectedTokens.put("WORKING-STORAGE", List.of("SECTION"));
-        expectedTokens.put("LOCAL-STORAGE", List.of("SECTION"));
+        expectedTokens.put("PROCEDURE", Arrays.asList("DIVISION"));
+        expectedTokens.put("DATA", Arrays.asList("DIVISION"));
+        expectedTokens.put("ENVIRONMENT", Arrays.asList("DIVISION"));
+        expectedTokens.put("IDENTIFICATION", Arrays.asList("DIVISION"));
+        expectedTokens.put("FILE", Arrays.asList("SECTION", "CONTROL", "STATUS"));
+        expectedTokens.put("ID", Arrays.asList("DIVISION"));
+        expectedTokens.put("CONFIGURATION", Arrays.asList("SECTION"));
+        expectedTokens.put("INPUT-OUTPUT", Arrays.asList("SECTION"));
+        expectedTokens.put("LINKAGE", Arrays.asList("SECTION"));
+        expectedTokens.put("WORKING-STORAGE", Arrays.asList("SECTION"));
+        expectedTokens.put("LOCAL-STORAGE", Arrays.asList("SECTION"));
     }
 
     /**

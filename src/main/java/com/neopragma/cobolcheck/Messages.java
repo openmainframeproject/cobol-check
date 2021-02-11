@@ -46,7 +46,7 @@ public class Messages {
     }
 
     public void loadResourceBundle() {
-        messageBundle = ResourceBundle.getBundle(this.getClass().getPackageName() + ".messages.messages",
+        messageBundle = ResourceBundle.getBundle("com.neopragma.cobolcheck.messages.messages",
                 Locale.getDefault());
     }
 }

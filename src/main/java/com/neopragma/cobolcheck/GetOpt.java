@@ -18,6 +18,7 @@ package com.neopragma.cobolcheck;
 import com.neopragma.cobolcheck.exceptions.CommandLineArgumentException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class GetOpt implements StringHelper {
     private static final String LONG_OPT_KEYWORD = "--long";
     private static final char ARGUMENT_REQUIRED_INDICATOR = ':';
     private static final List<String> canTakeMultipleArguments =
-            List.of("t", "tests", "p", "program");
+            Arrays.asList("t", "tests", "p", "program");
 
     private Messages messages;
 

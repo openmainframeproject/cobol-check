@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +38,7 @@ public class TestSuiteParser implements StringHelper {
     private List<String> testSuiteTokens;
 
     // Source tokens used in fully-qualified data item names
-    private final List<String> qualifiedNameKeywords = List.of("IN", "OF");
+    private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
 
 
     // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
@@ -61,7 +62,6 @@ public class TestSuiteParser implements StringHelper {
     private boolean reverseCompare;
     private boolean greaterThanComparison;
     private boolean lessThanComparison;
-    private boolean relationComparison;
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = Constants.EMPTY_STRING;
     private String currentTestCaseName = Constants.EMPTY_STRING;
@@ -220,28 +220,21 @@ public class TestSuiteParser implements StringHelper {
                 case Constants.NOT_EQUAL_SIGN_KEYWORD:
                     toBeInProgress = true;
                     // this means the user wrote "NOT !="
-                    if (reverseCompare) {
-                        reverseCompare = false;
-                    } else {
-                        reverseCompare = true;
-                    }
+                    reverseCompare = !reverseCompare;
                     break;
 
                 case Constants.GREATER_THAN_SIGN_KEYWORD:
                     toBeInProgress = true;
-                    relationComparison = true;
                     greaterThanComparison = true;
                     break;
 
                 case Constants.LESS_THAN_SIGN_KEYWORD:
                     toBeInProgress = true;
-                    relationComparison = true;
                     lessThanComparison = true;
                     break;
 
                 case Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD:
                     toBeInProgress = true;
-                    relationComparison = true;
                     lessThanComparison = true;
                     if (reverseCompare) {
                         reverseCompare = false;
@@ -252,13 +245,8 @@ public class TestSuiteParser implements StringHelper {
 
                 case Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD:
                     toBeInProgress = true;
-                    relationComparison = true;
                     greaterThanComparison = true;
-                    if (reverseCompare) {
-                        reverseCompare = false;
-                    } else {
-                        reverseCompare = true;
-                    }
+                    reverseCompare = !reverseCompare;
                     break;
 
                 case Constants.COBOL_TOKEN:
@@ -341,14 +329,14 @@ public class TestSuiteParser implements StringHelper {
 
             // take actions that were triggered by the previous token's action, pertaining to the current token
             switch (nextAction) {
-                case TESTSUITE_NAME -> {
+                case TESTSUITE_NAME:
                     currentTestSuiteName = testSuiteToken;
                     nextAction = KeywordAction.NONE;
-                }
-                case NEW_TESTCASE -> {
+                    break;
+            case NEW_TESTCASE:
                     currentTestCaseName = testSuiteToken;
                     nextAction = KeywordAction.NONE;
-                }
+                    break;
             }
 
             // take actions that are triggered by the current token's action
@@ -487,7 +475,6 @@ public class TestSuiteParser implements StringHelper {
                             : RELATION_EQ,
                     Constants.TRUE)));
             insertFinalLines(testSourceOut);
-            relationComparison = false;
             greaterThanComparison = false;
             lessThanComparison = false;
         }
