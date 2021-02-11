@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -100,11 +101,11 @@ public class KeywordExtractorTest {
     private static Stream<Arguments> fieldNameProvider() {
         return Stream.of(
             Arguments.of("           EXPECT WS-FIELD-1 TO EQUAL WS-FIELD-2   ",
-                          List.of("EXPECT", "WS-FIELD-1", "TO EQUAL", "WS-FIELD-2")),
+                          Arrays.asList("EXPECT", "WS-FIELD-1", "TO EQUAL", "WS-FIELD-2")),
             Arguments.of("        EXPECT WS-FIELD-1 TO BE WS-FIELD-2.",
-                          List.of("EXPECT", "WS-FIELD-1", "TO BE", "WS-FIELD-2")),
+                          Arrays.asList("EXPECT", "WS-FIELD-1", "TO BE", "WS-FIELD-2")),
             Arguments.of("      EXPECT WS-FIELD-1 NOT TO EQUAL WS-FIELD-2 ",
-                          List.of("EXPECT", "WS-FIELD-1", "NOT", "TO EQUAL", "WS-FIELD-2"))
+                          Arrays.asList("EXPECT", "WS-FIELD-1", "NOT", "TO EQUAL", "WS-FIELD-2"))
         );
     }
 
@@ -118,17 +119,17 @@ public class KeywordExtractorTest {
     private static Stream<Arguments> symbolicRelationsProvider() {
         return Stream.of(
             Arguments.of("      EXPECT WS-FIELD-1 = WS-FIELD-2",
-                        List.of("EXPECT", "WS-FIELD-1", "=", "WS-FIELD-2")),
+                        Arrays.asList("EXPECT", "WS-FIELD-1", "=", "WS-FIELD-2")),
                 Arguments.of("      EXPECT WS-FIELD-1 != WS-FIELD-2",
-                        List.of("EXPECT", "WS-FIELD-1", "!=", "WS-FIELD-2")),
+                        Arrays.asList("EXPECT", "WS-FIELD-1", "!=", "WS-FIELD-2")),
                 Arguments.of("      EXPECT WS-FIELD-1 > WS-FIELD-2",
-                        List.of("EXPECT", "WS-FIELD-1", ">", "WS-FIELD-2")),
+                        Arrays.asList("EXPECT", "WS-FIELD-1", ">", "WS-FIELD-2")),
                 Arguments.of("      EXPECT WS-FIELD-1 < WS-FIELD-2",
-                        List.of("EXPECT", "WS-FIELD-1", "<", "WS-FIELD-2")),
+                        Arrays.asList("EXPECT", "WS-FIELD-1", "<", "WS-FIELD-2")),
                 Arguments.of("      EXPECT WS-FIELD-1 >= WS-FIELD-2",
-                        List.of("EXPECT", "WS-FIELD-1", ">=", "WS-FIELD-2")),
+                        Arrays.asList("EXPECT", "WS-FIELD-1", ">=", "WS-FIELD-2")),
                 Arguments.of("      EXPECT WS-FIELD-1 <= WS-FIELD-2",
-                        List.of("EXPECT", "WS-FIELD-1", "<=", "WS-FIELD-2"))
+                        Arrays.asList("EXPECT", "WS-FIELD-1", "<=", "WS-FIELD-2"))
                 );
     }
 

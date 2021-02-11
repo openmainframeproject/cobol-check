@@ -19,6 +19,7 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -67,10 +68,9 @@ public class CopybookExpander implements StringHelper {
                          String copybookFilenameSuffix,
                          StringTuple... textReplacement) throws IOException {
         try(BufferedReader copybookReader = new BufferedReader(new FileReader(
-                Path.of(pathToCopybooks
+                new File(pathToCopybooks
                         + copybookFilename
-                        + copybookFilenameSuffix)
-                        .toFile()))) {
+                        + copybookFilenameSuffix)))) {
             String sourceLine;
             while ((sourceLine = copybookReader.readLine()) != null) {
                 // Nested COPY
@@ -82,13 +82,13 @@ public class CopybookExpander implements StringHelper {
                 // COPY REPLACING
                 if (!textReplacement[0].isEmpty()) {
                     for (StringTuple replace : textReplacement) {
-                        for (String pseudoTextDelimiter : List.of(
+                        for (String pseudoTextDelimiter : Arrays.asList(
                                 Constants.PSEUDO_TEXT_DELIMITER_EQUALS, Constants.PSEUDO_TEXT_DELIMITER_COLON)) {
                             if (sourceLine.contains(pseudoTextDelimiter)) {
                                 sourceLine = sourceLine.replaceAll(replace.getFirst(), replace.getSecond());
                             }
                         }
-                        for (String followingCharacter : List.of(Constants.PERIOD, Constants.SPACE)) {
+                        for (String followingCharacter : Arrays.asList(Constants.PERIOD, Constants.SPACE)) {
                             String textToReplace = Constants.SPACE + replace.getFirst() + followingCharacter;
                             String replacementText = Constants.SPACE + replace.getSecond() + followingCharacter;
                             if (sourceLine.contains(textToReplace)) {
