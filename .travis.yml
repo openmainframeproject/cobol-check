@@ -1,7 +1,5 @@
 dist: focal
 language: java
-jdk:
-  - openjdk8
 before_install:
   - sudo apt update
   - sudo apt -y install libdb-dev
