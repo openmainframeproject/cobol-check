@@ -30,10 +30,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import static java.nio.file.Files.readAllBytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,7 +147,8 @@ public class CopybookExpanderIT implements StringHelper {
     }
 
     private String getExpectedResult(String copybookFilename) throws IOException {
-        return Files.readString(Path.of(pathToTestCobolCopybooks + copybookFilename));
+        File f = new File(pathToTestCobolCopybooks + copybookFilename);
+        return new String(readAllBytes(f.toPath()));
     }
 
     private static String getPathFor(String configPropertyName, String defaultValue) {
