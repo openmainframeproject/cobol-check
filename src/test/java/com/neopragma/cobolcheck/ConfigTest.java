@@ -20,6 +20,7 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Locale;
 
@@ -74,14 +75,13 @@ public class ConfigTest {
 
     private Path findFileNamed(String filename) {
         String resourcesDirectory = config.getString("resources.directory");
-        String packagePathSegment = this.getClass()
-                .getPackageName().replace(Constants.PERIOD, Constants.FILE_SEPARATOR);
+        String packagePathSegment = "com/neopragma/cobolcheck";
         String copybookPathSegment = config.getString("cobolcheck.copybook.directory");
-        return Path.of(
+        return new File(
                 resourcesDirectory + Constants.FILE_SEPARATOR
                         + packagePathSegment + Constants.FILE_SEPARATOR
                         + copybookPathSegment + Constants.FILE_SEPARATOR
-                        + filename);
+                        + filename).toPath();
     }
 
     @Test
