@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -100,21 +101,21 @@ public class GeneratorTest {
     @Test
     public void it_throws_when_copy_token_list_is_empty_for_copybook_expansion() {
         Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
-                generator.collectExpandedCopyStatements(List.of()));
+                generator.collectExpandedCopyStatements(Arrays.asList()));
         assertTrue(ex.getMessage().contains("ERR024:"));
     }
 
     @Test
     public void it_throws_when_1st_token_in_copy_list_is_not_COPY() {
         Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
-                generator.collectExpandedCopyStatements(List.of("foo", "bar")));
+                generator.collectExpandedCopyStatements(Arrays.asList("foo", "bar")));
         assertTrue(ex.getMessage().contains("ERR024:"));
     }
 
     @Test
     public void it_throws_when_token_list_has_fewer_than_2_entries() {
         Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
-                generator.collectExpandedCopyStatements(List.of("COPY")));
+                generator.collectExpandedCopyStatements(Arrays.asList("COPY")));
         assertTrue(ex.getMessage().contains("ERR024:"));
     }
 
