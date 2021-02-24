@@ -6,8 +6,8 @@ plugins {
     id 'jacoco'
 }
 
-version = '0.0.0'
-def productVersion = '0.0.0'
+version = '0.0.1'
+def productVersion = '0.0.1'
 def productName = 'cobolcheck'
 group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
@@ -148,7 +148,8 @@ task prepareDistribution(type: Zip) {
               "src/main/cobol/NUMBERS/*",
               "src/test/cobol/ALPHA/*",
               "src/test/cobol/NUMBERS/*",
-              "cobolcheck" ])
+              "cobolcheck",
+              "cobolcheck.cmd" ])
     rename("build/libs/(.*)", "\$1")
 }
 
