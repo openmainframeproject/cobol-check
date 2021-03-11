@@ -19,12 +19,12 @@ package com.neopragma.cobolcheck;
  * Current version of the product.
  *
  * @author Dave Nicolette (neopragma)
- * @since 14
+ * @since 1.8
  */
 public class Version {
     private static final Integer MAJOR = 0;
     private static final Integer MINOR = 0;
-    private static final String PATCH = "0";
+    private static final String PATCH = "3";
 
     public static String current() {
         return String.format("Version: %s.%s.%s", MAJOR.toString(), MINOR.toString(), PATCH);
