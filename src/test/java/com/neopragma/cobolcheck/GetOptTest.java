@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GetOptTest {
 
-    private final String optionSpecsWithLongOptions = "c:l:h --long config-file:,log-level:,help";
-    private final String optionSpecsWithOnlyShortOptions = "c:l:h";
+    private static final String optionSpec = "c:l:p:t:v:h --long config-file:,log-level:,programs:,tests:,version:,help";
 
     @Test
     public void it_throws_when_option_specification_string_is_null() {
@@ -35,46 +34,78 @@ public class GetOptTest {
 
     @Test
     public void it_throws_when_required_argument_is_not_present() {
-        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-c", "-l", "warn" }, optionSpecsWithOnlyShortOptions, new Messages()));
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-c", "-l", "warn" }, optionSpec, new Messages()));
         assertEquals("ERR004: Expecting an argument for command line option <-c> but got <-l>.",
                 ex.getMessage());
     }
 
     @Test
     public void it_throws_when_an_option_is_not_present_when_expected() {
-        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-l", "warn", "c" }, optionSpecsWithOnlyShortOptions, new Messages()));
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-l", "warn", "c" }, optionSpec, new Messages()));
         assertEquals("ERR006: Expecting a command line option but got <c>.",
                 ex.getMessage());
     }
 
     @Test
     public void it_does_not_throw_while_processing_a_valid_short_option_specification_string() {
-        GetOpt getOpt = new GetOpt(new String[] { "--h" }, optionSpecsWithOnlyShortOptions, new Messages());
+        GetOpt getOpt = new GetOpt(new String[] { "--h" }, optionSpec, new Messages());
     }
 
     @Test
     public void it_does_not_throw_while_processing_a_valid_long_option_specification_string() {
-        GetOpt getOpt = new GetOpt(new String[] { "--help" }, optionSpecsWithLongOptions, new Messages());
+        GetOpt getOpt = new GetOpt(new String[] { "--help" }, optionSpec, new Messages());
     }
 
     @Test
     public void it_correctly_marks_a_selected_option_as_set() {
-        GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" }, optionSpecsWithLongOptions, new Messages());
+        GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" }, optionSpec, new Messages());
         assertTrue(getOpt.isSet("log-level"), "log-level is expected to be set");
     }
 
     @Test
     public void it_correctly_stores_the_argument_that_goes_with_an_option() {
         GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" },
-                optionSpecsWithLongOptions, new Messages());
+                optionSpec, new Messages());
         assertEquals("info", getOpt.getValueFor("log-level"));
     }
 
     @Test
-    public void it_logs_and_throws_when_an_undefined_option_is_detected() {
+    public void it_handles_option_p_followed_by_one_full_program_name() {
+        GetOpt getOpt = new GetOpt(new String[] { "-p", "PROG1", "-l", "err" },
+                optionSpec, new Messages());
+        assertEquals("PROG1", getOpt.getValueFor("programs"));
+    }
+
+    @Test
+    public void it_handles_option_programs_followed_by_two_full_program_names() {
+        GetOpt getOpt = new GetOpt(new String[] { "--programs", "PROG1", "PROG2", "-l", "err" },
+                optionSpec, new Messages());
+        assertEquals("PROG1:PROG2", getOpt.getValueFor("programs"));
+    }
+
+
+
+    @Test
+    public void it_throws_when_an_undefined_option_is_passed() {
         Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
-            GetOpt getOpt = new GetOpt(new String[] { "-f"},
-                    optionSpecsWithOnlyShortOptions, new Messages());
+            GetOpt getOpt = new GetOpt(new String[] { "-f" },
+                    optionSpec, new Messages());
+        });
+    }
+
+    @Test
+    public void it_throws_when_no_value_is_passed_for_the_only_argument_and_it_requires_a_value() {
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
+            GetOpt getOpt = new GetOpt(new String[] { "-c" },
+                    optionSpec, new Messages());
+        });
+    }
+
+    @Test
+    public void it_throws_when_no_value_is_passed_for_the_last_argument_and_it_requires_a_value() {
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
+            GetOpt getOpt = new GetOpt(new String[] { "-l", "info", "-c" },
+                    optionSpec, new Messages());
         });
     }
 
