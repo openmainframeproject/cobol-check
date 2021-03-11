@@ -37,7 +37,7 @@ public class GetOpt implements StringHelper {
     private static final String LONG_OPT_KEYWORD = "--long";
     private static final char ARGUMENT_REQUIRED_INDICATOR = ':';
     private static final List<String> canTakeMultipleArguments =
-            Arrays.asList("t", "tests", "p", "program");
+            Arrays.asList("t", "tests", "p", "programs");
 
     private Messages messages;
 
@@ -115,6 +115,7 @@ public class GetOpt implements StringHelper {
                         messages.get("ERR004", lastOption, argValue)
                 );
                 multipleArgumentsPossible = false;
+                atLeastOneArgumentWasPassed = false;
                 optionValue = lookupOption(stripPrefix(argValue));
                 if (optionValue == null) {
                     throw new CommandLineArgumentException(
@@ -143,6 +144,15 @@ public class GetOpt implements StringHelper {
                 }
             }
         }
+
+        System.out.println("===> lastArgRequiredValue: " + expectValueNext);
+        System.out.println("===> atLeastOneArgumentWasPassed: "  + atLeastOneArgumentWasPassed);
+
+
+        if (expectValueNext && !atLeastOneArgumentWasPassed) throw new CommandLineArgumentException(
+                messages.get("ERR004", lastOption, "(none)")
+        );
+
     }
 
     private OptionValue lookupOption(String requestedOption) {
@@ -155,7 +165,12 @@ public class GetOpt implements StringHelper {
     }
 
     private boolean isKey(String argValue) {
-        return argValue.startsWith(SHORT_OPT_PREFIX) || argValue.startsWith(LONG_OPT_PREFIX);
+        if (argValue.startsWith(SHORT_OPT_PREFIX) || argValue.startsWith(LONG_OPT_PREFIX)) {
+            if (getValueFor(argValue) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String stripPrefix(String argValue) {
