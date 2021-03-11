@@ -41,7 +41,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  * @since 1.7
  * 
  * String version replacing original PathMatcher implementation
- * Fix for openmainframeproject/cobol-check#100
+ * Fix for openmainframeproject/cobol-check #100
  * Christopher Morgan (Mar-11-2021)
  * 
  */
