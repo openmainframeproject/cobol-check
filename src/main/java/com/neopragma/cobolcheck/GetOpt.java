@@ -40,6 +40,7 @@ public class GetOpt implements StringHelper {
             Arrays.asList("t", "tests", "p", "programs");
 
     private Messages messages;
+    private String applicationSourceDirectory;
 
     /**
      * Parse command-line options using the optionsString to validate.
@@ -48,10 +49,12 @@ public class GetOpt implements StringHelper {
      * @param optionsString - String - Bash-style options specification,
      *                      e.g. "abc:d: --long alpha,bravo,charlie:,delta:"
      */
-    public GetOpt(String[] args, String optionsString, Messages messages) {
+    public GetOpt(String[] args, String optionsString, Config config) {
         options = new HashMap<>();
         if (isEmptyArray(args)) return;
-        this.messages = messages;
+        this.messages = config.getMessages();
+        applicationSourceDirectory = config.getString(
+                Constants.APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY, Constants.DEFAULT_APPLICATION_SOURCE_DIRECTORY);
         storeOptionSettings(optionsString);
         processCommandLineArgumentArray(args);
     }
@@ -107,6 +110,7 @@ public class GetOpt implements StringHelper {
         boolean expectValueNext = false;
         boolean multipleArgumentsPossible = false;
         boolean atLeastOneArgumentWasPassed = false;
+        boolean processingProgramNames = false;
         OptionValue optionValue = new OptionValue();
         String lastOption = Constants.EMPTY_STRING;
         for (String argValue : args) {
@@ -128,7 +132,16 @@ public class GetOpt implements StringHelper {
                 if (canTakeMultipleArguments.contains(stripPrefix(argValue))) {
                     multipleArgumentsPossible = true;
                 }
+                // These arg values may come in as expanded globs - prefix values with application source directory
+                if (argValue.equals("-p") || argValue.equals("--programs")) {
+                    processingProgramNames = true;
+                } else {
+                    processingProgramNames = false;
+                }
             } else {
+                if (processingProgramNames) {
+                    argValue = applicationSourceDirectory + Constants.FILE_SEPARATOR + argValue;
+                }
                 atLeastOneArgumentWasPassed = true;
                 if (multipleArgumentsPossible) {
                     if (optionValue.argumentValue.length() > 0) {
@@ -144,15 +157,9 @@ public class GetOpt implements StringHelper {
                 }
             }
         }
-
-        System.out.println("===> lastArgRequiredValue: " + expectValueNext);
-        System.out.println("===> atLeastOneArgumentWasPassed: "  + atLeastOneArgumentWasPassed);
-
-
         if (expectValueNext && !atLeastOneArgumentWasPassed) throw new CommandLineArgumentException(
                 messages.get("ERR004", lastOption, "(none)")
         );
-
     }
 
     private OptionValue lookupOption(String requestedOption) {

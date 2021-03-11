@@ -50,8 +50,7 @@ public class Config {
     private Properties settings = null;
 
     void load() {
-        String configFilePath = DEFAULT_CONFIG_FILE_PATH;
-        load(configFilePath);
+        load(DEFAULT_CONFIG_FILE_PATH);
     }
 
     void load(String configResourceName) {

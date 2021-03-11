@@ -27,7 +27,7 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfigTest {
+public class ConfigIT {
 
     private Config config;
 
@@ -72,7 +72,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void it_can_find_the_copybooks_for_ZUTZCPC_based_on_config_settings() {
+    public void it_can_find_the_copybooks_for_cobolcheck_based_on_config_settings() {
         config.load("testconfig.properties");
         assertEquals("CCHECKWS.CBL", findFileNamed("CCHECKWS.CBL").toFile().getName());
         assertEquals("CCHECKPD.CBL", findFileNamed("CCHECKPD.CBL").toFile().getName());

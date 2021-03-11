@@ -81,8 +81,8 @@ public final class Constants {
     public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
     public static final String APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY = "application.copybook.filename.suffix";
     public static final String DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX = ".CBL";
-    public static final String TEST_PROGRAM_SUFFIX_CONFIG_KEY = "cobolcheck.test.program.suffix";
-    public static final String DEFAULT_TEST_PROGRAM_SUFFIX = "T.CBL";
+    public static final String TEST_PROGRAM_NAME_CONFIG_KEY = "cobolcheck.test.program.name";
+    public static final String DEFAULT_TEST_PROGRAM_NAME = "CC$$99.CBL";
     public static final String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
     public static final String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
     public static final String PROCESS_CONFIG_KEY = ".process";

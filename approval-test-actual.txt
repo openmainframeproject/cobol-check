@@ -123,3 +123,12 @@ Greeting includes the user name when it is provided
   3 PASSED
   5 FAILED
 =================================================
+TESTSUITE:
+Tests for a sequential file copy program
+     PASS:   1. Output fields are populated from the input record                               
+     PASS:   2. Output fields are populated from the input record                               
+ 
+  2 TEST CASES WERE EXECUTED
+  2 PASSED
+  0 FAILED
+=================================================

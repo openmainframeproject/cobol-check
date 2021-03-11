@@ -159,7 +159,7 @@ def approvalTest = tasks.register("approvalTest", Test) {
     doLast {
         if ("${OS_NAME}" == "linux") {
             println "Linux detected"
-            def proc = "approvaltest".execute()
+            def proc = "./approvaltest".execute()
             proc.waitForProcessOutput(System.out, System.err)
             proc = "diff ${approvalExpectedOutput} ${approvalActualOutput}".execute()
             proc.waitForProcessOutput(System.out, System.err)

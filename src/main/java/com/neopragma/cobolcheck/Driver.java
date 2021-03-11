@@ -144,10 +144,9 @@ public class Driver implements StringHelper {
                 StringBuilder testSourceOutPath = new StringBuilder();
                 testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
                 testSourceOutPath.append(Constants.FILE_SEPARATOR);
-                testSourceOutPath.append(programName);
                 testSourceOutPath.append(
-                        config.getString(Constants.TEST_PROGRAM_SUFFIX_CONFIG_KEY,
-                                Constants.DEFAULT_TEST_PROGRAM_SUFFIX));
+                        config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
+                                Constants.DEFAULT_TEST_PROGRAM_NAME));
                 try {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
                 } catch (IOException testSourceOutException) {
@@ -195,13 +194,8 @@ public class Driver implements StringHelper {
                     Log.error(errorMessage);
                     throw new PossibleInternalLogicErrorException(errorMessage);
                 }
-                StringBuilder testProgramName = new StringBuilder();
-                testProgramName.append(programName);
-                testProgramName.append(
-                        config.getString(Constants.TEST_PROGRAM_SUFFIX_CONFIG_KEY,
-                                Constants.DEFAULT_TEST_PROGRAM_SUFFIX));
                 if (launcher != null){
-                    Process process = launcher.run(testProgramName.toString());
+                    Process process = launcher.run(testSourceOutPath.toString());
                     int exitCode = 1;
 //                    try {
                         exitCode = process.waitFor();
@@ -261,9 +255,11 @@ public class Driver implements StringHelper {
 
     public static void main(String[] args) throws InterruptedException {
         messages = new Messages();
+        Config config = new Config(messages);
+        config.load();
         Driver app = new Driver(
-                new Config(messages),
-                new GetOpt(args, optionSpec, messages));
+                config,
+                new GetOpt(args, optionSpec, config));
         app.run();
         System.exit(Constants.STATUS_NORMAL);
     }

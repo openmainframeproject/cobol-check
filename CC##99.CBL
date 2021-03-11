@@ -1,43 +1,66 @@
        IDENTIFICATION DIVISION.                                                 
-       PROGRAM-ID.  GREETING.                                                   
+       PROGRAM-ID.  FILECOPY.                                                   
       *****************************************************************         
-      * Trivial program to exercise CobolCheck.                                 
+      * Copy one sequential file to another.                                    
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
        INPUT-OUTPUT SECTION.                                                    
-       FILE-CONTROL.                                                            
        DATA DIVISION.                                                           
        WORKING-STORAGE SECTION.                                                 
-      * ZUTZCWS.CPY                                                             
-       01  FILLER PIC X(16) VALUE '******* ZUTZCPC'.                            
-       01  FILLER PIC X(16) VALUE '******* 0.1.0'.                              
+       01  INPUT-RECORD.                                                        
+           05  IN-FIELD-1         PIC X(10).                                    
+           05  FILLER             PIC X(20).                                    
+           05  IN-FIELD-2         PIC X(10).                                    
+       01  OUTPUT-RECORD.                                                       
+           05  OUT-FIELD-1         PIC X(5).                                    
+           05  OUT-FIELD-2     PIC X(16).                                       
+           05  OUT-FIELD-3     PIC X(14).                                       
+      *    COPY OUTREC2.                                                        
+           05  FILLER              PIC X(5).                                    
+      * CCHECKWS.CPY                                                            
+       01  FILLER PIC X(32) VALUE '******* COBOLCHECK 0.0.1 *******'.           
        01  UT-FIELDS.                                                           
            05  UT-CONST-ES               PIC X(02) VALUE 'ES'.                  
            05  UT-LABEL-EXPECTED-ACCESS.                                        
                10  FILLER                PIC X(06) VALUE 'ACCESS'.              
                10  UT-LABEL-EXPECTED-ACCESS-PL                                  
                                          PIC X(02) VALUE SPACES.                
-           05  UT-DISPLAY-MESSAGE        PIC X(256) VALUE SPACES.               
+           05  UT-DISPLAY-MESSAGE     PIC X(256) VALUE SPACES.                  
+           05  FILLER                    PIC X(02) VALUE SPACES.                
+               88  UT-RELATION-EQ               VALUE SPACES, 'EQ'.             
+               88  UT-RELATION-GE               VALUE 'GE'.                     
+               88  UT-RELATION-GT               VALUE 'GT'.                     
+               88  UT-RELATION-LE               VALUE 'LE'.                     
+               88  UT-RELATION-LT               VALUE 'LT'.                     
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-NORMAL-COMPARE     VALUE 'N'.                             
-               88  UT-REVERSE-COMPARE    VALUE 'Y'.                             
+               88  UT-NORMAL-COMPARE            VALUE 'N'.                      
+               88  UT-REVERSE-COMPARE           VALUE 'Y'.                      
            05  FILLER                    PIC X(01) VALUE '1'.                   
-               88  UT-VERIFY-EXACT                 VALUE '1'.                   
-               88  UT-VERIFY-AT-LEAST              VALUE '2'.                   
-               88  UT-VERIFY-NO-MORE-THAN          VALUE '3'.                   
+               88  UT-VERIFY-EXACT              VALUE '1'.                      
+               88  UT-VERIFY-AT-LEAST           VALUE '2'.                      
+               88  UT-VERIFY-NO-MORE-THAN       VALUE '3'.                      
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-VERIFY-PASSED      VALUE 'Y'.                             
                88  UT-VERIFY-FAILED      VALUE SPACES.                          
            05  FILLER                    PIC X(01) VALUE SPACES.                
-               88  UT-COMPARE-DEFAULT    VALUE SPACE.                           
-               88  UT-COMPARE-NUMERIC    VALUE 'N'.                             
+               88  UT-ALPHANUMERIC-COMPARE VALUE SPACE.                         
+               88  UT-NUMERIC-COMPARE    VALUE 'N'.                             
+               88  UT-COMPARE-88-LEVEL   VALUE '8'.                             
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-COMPARE-PASSED     VALUE 'Y'.                             
                88  UT-COMPARE-FAILED     VALUE SPACES.                          
-           05  UT-EXPECTED               PIC X(60) VALUE SPACES.                
-           05  UT-ACTUAL                 PIC X(60) VALUE SPACES.                
-           05  UT-EXPECTED-NUMERIC       PIC S9(08) VALUE ZERO.                 
-           05  UT-ACTUAL-NUMERIC         PIC S9(08) VALUE ZERO.                 
+           05  UT-EXPECTED               PIC X(256) VALUE SPACES.               
+           05  UT-ACTUAL                 PIC X(256) VALUE SPACES.               
+           05  UT-EXPECTED-NUMERIC-X.                                           
+               10  UT-EXPECTED-NUMERIC   PIC S9(11)V9(7)                        
+                                            COMP-3 VALUE ZERO.                  
+           05  UT-ACTUAL-NUMERIC-X.                                             
+               10  UT-ACTUAL-NUMERIC     PIC S9(11)V9(7)                        
+                                            COMP-3 VALUE ZERO.                  
+           05  FILLER                    PIC X     VALUE 'F'.                   
+               88 UT-EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.        
+           05  FILLER                    PIC X     VALUE 'F'.                   
+               88 UT-ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.        
            05  UT-EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.                  
            05  UT-ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.                  
            05  UT-EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.                             
@@ -50,6 +73,8 @@
            05  UT-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.                 
            05  UT-NUMBER-PASSED          PIC 9(4)   VALUE ZERO.                 
            05  UT-NUMBER-FAILED          PIC 9(4)   VALUE ZERO.                 
+           05  UT-EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.           
+           05  UT-ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.           
        01  UT-MOCKS.                                                            
            05  FILLER                    PIC X(01) VALUE SPACES.                
                88  UT-MOCK-FOUND                   VALUE 'Y'.                   
@@ -107,85 +132,46 @@
                    15  UT-RECORD-FIELD-NAME      PIC X(31).                     
                    15  UT-FILE-STATUS-FIELD-NAME PIC X(31).                     
                                                                                 
-      * ZUTZCWS.CPY END                                                         
+      * CCHECKWS.CPY END                                                        
        01  FILLER.                                                              
-           05  FILLER             PIC X VALUE 'G'.                              
-               88  MESSAGE-IS-GREETING  VALUE 'G'.                              
-               88  MESSAGE-IS-FAREWELL  VALUE 'F'.                              
-           05  WS-FRIEND           PIC X(10) VALUE SPACES.                      
-           05  WS-GREETING.                                                     
-               10  FILLER          PIC X(07) VALUE 'Hello, '.                   
-               10  WS-USER-NAME    PIC X(10) VALUE SPACES.                      
-               10  FILLER          PIC X     VALUE '!'.                         
-           05  WS-FAREWELL.                                                     
-               10  FILLER          PIC X(15) VALUE 'See you later, '.           
-               10  WS-USER-NAME    PIC X(09) VALUE SPACES.                      
-               10  FILLER          PIC X     VALUE '!'.                         
+           05  INPUT-FILE-STATUS  PIC XX.                                       
+               88  INPUT-OK       VALUE '00'.                                   
+               88  END-OF-FILE    VALUE '10'.                                   
+               88  FILE-NOT-FOUND VALUE '35'.                                   
+           05  OUTPUT-FILE-STATUS PIC XX.                                       
+               88  OUTPUT-OK      VALUE '00'.                                   
+           05  WS-COUNT           PIC S9(5) COMP-3.                             
+           05  WS-COUNT-FORMATTED PIC ZZ,ZZ9.                                   
+           05  WS-ERROR-MESSAGE   PIC X(60).                                    
        PROCEDURE DIVISION.                                                      
            PERFORM UT-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Greeting returns the appropriate message based on me        
-      -    "ssage type"                                                         
-           MOVE "When message type is greeting it returns 'Hello, World!        
-      -    "'"                                                                  
+           DISPLAY "Tests for a sequential file copy program"                   
+           MOVE "Output fields are populated from the input record"             
                TO UT-TEST-CASE-NAME                                             
            PERFORM UT-BEFORE                                                    
-            SET MESSAGE-IS-GREETING TO TRUE                                     
-            PERFORM 2000-SPEAK                                                  
+            MOVE "Alpha" TO IN-FIELD-1                                          
+            MOVE "Beta" TO IN-FIELD-2                                           
+            PERFORM 5200-PREPARE-OUTPUT-RECORD                                  
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO UT-ACTUAL                                        
-           MOVE "Hello, World     !"                                            
+           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE IN-FIELD-1 OF INPUT-RECORD TO UT-ACTUAL                         
+           MOVE OUT-FIELD-1                                                     
                TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
+           SET UT-RELATION-EQ TO TRUE                                           
+           PERFORM UT-CHECK-EXPECTATION                                         
            PERFORM UT-AFTER                                                     
-           MOVE "When message type is farewell it returns See you later,        
-      -    " alligator!"                                                        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            SET MESSAGE-IS-FAREWELL TO TRUE                                     
-            PERFORM 2000-SPEAK                                                  
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO UT-ACTUAL                                        
-           MOVE "See you later, alligator!"                                     
+           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE OUT-FIELD-2 OF OUTPUT-RECORD TO UT-ACTUAL                       
+           MOVE IN-FIELD-2                                                      
                TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
+           SET UT-RELATION-EQ TO TRUE                                           
+           PERFORM UT-CHECK-EXPECTATION                                         
            PERFORM UT-AFTER                                                     
-           DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Greeting includes the user name when it is provided"        
-           MOVE "When message type is greeting it returns Hello, James!"        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            SET MESSAGE-IS-GREETING TO TRUE                                     
-            MOVE "James" TO WS-FRIEND                                           
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-GREETING TO UT-ACTUAL                                        
-           MOVE "Hello, James!"                                                 
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
-           MOVE "When message type is farewell it returns Goodbye, James        
-      -    "!"                                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            SET MESSAGE-IS-FAREWELL TO TRUE                                     
-            MOVE "James" TO WS-FRIEND                                           
-            PERFORM 2000-SPEAK                                                  
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           MOVE WS-FAREWELL TO UT-ACTUAL                                        
-           MOVE "See you later, James!"                                         
-               TO UT-EXPECTED                                                   
-           SET UT-COMPARE-DEFAULT TO TRUE                                       
-           PERFORM UT-ASSERT-EQUAL                                              
-           PERFORM UT-AFTER                                                     
-      * ZUTZCPD.CPY                                                             
+      * CCHECKPD.CPY                                                            
            DISPLAY SPACE                                                        
            MOVE UT-TEST-CASE-COUNT TO UT-TEST-CASE-NUMBER                       
            DISPLAY UT-TEST-CASE-NUMBER ' TEST CASES WERE EXECUTED'              
@@ -197,7 +183,7 @@
            MOVE UT-RETCODE TO RETURN-CODE                                       
            GOBACK.                                                              
                                                                                 
-       UT-ASSERT-EQUAL.                                                         
+       UT-CHECK-EXPECTATION.                                                    
       *****************************************************************         
       * COMPARE EXPECTED AND ACTUAL VALUES FOR EQUALITY.                        
       *****************************************************************         
@@ -212,14 +198,76 @@
                                                                                 
        UT-COMPARE.                                                              
            SET UT-COMPARE-FAILED TO TRUE                                        
-           IF UT-COMPARE-NUMERIC                                                
-               IF UT-ACTUAL-NUMERIC IS EQUAL TO UT-EXPECTED-NUMERIC             
-                   SET UT-COMPARE-PASSED TO TRUE                                
+           IF UT-COMPARE-88-LEVEL                                               
+               IF UT-COMPARE-88-LEVEL                                           
+                   IF (UT-ACTUAL-88-VALUE                                       
+                       AND UT-EXPECTED-88-VALUE)                                
+                   OR (NOT UT-ACTUAL-88-VALUE                                   
+                       AND NOT UT-EXPECTED-88-VALUE)                            
+                       SET UT-COMPARE-PASSED TO TRUE                            
+                   END-IF                                                       
+               ELSE                                                             
+                   IF UT-ACTUAL IS EQUAL TO UT-EXPECTED                         
+                       SET UT-COMPARE-PASSED TO TRUE                            
+                   END-IF                                                       
                END-IF                                                           
            ELSE                                                                 
-               IF UT-ACTUAL IS EQUAL TO UT-EXPECTED                             
-                   SET UT-COMPARE-PASSED TO TRUE                                
-               END-IF                                                           
+               EVALUATE TRUE ALSO TRUE                                          
+                   WHEN UT-NUMERIC-COMPARE ALSO UT-RELATION-EQ                  
+                       IF UT-ACTUAL-NUMERIC                                     
+                               EQUAL UT-EXPECTED-NUMERIC                        
+                           SET UT-COMPARE-PASSED TO TRUE                        
+                       END-IF                                                   
+                   WHEN UT-NUMERIC-COMPARE ALSO UT-RELATION-GT                  
+                       IF UT-ACTUAL-NUMERIC                                     
+                               GREATER UT-EXPECTED-NUMERIC                      
+                           SET UT-COMPARE-PASSED TO TRUE                        
+                       END-IF                                                   
+                   WHEN UT-NUMERIC-COMPARE ALSO UT-RELATION-GE                  
+                       IF UT-ACTUAL-NUMERIC                                     
+                               GREATER OR EQUAL UT-EXPECTED-NUMERIC             
+                           SET UT-COMPARE-PASSED TO TRUE                        
+                       END-IF                                                   
+                   WHEN UT-NUMERIC-COMPARE ALSO UT-RELATION-LT                  
+                       IF UT-ACTUAL-NUMERIC                                     
+                               LESS UT-EXPECTED-NUMERIC                         
+                           SET UT-COMPARE-PASSED TO TRUE                        
+                       END-IF                                                   
+                   WHEN UT-NUMERIC-COMPARE ALSO UT-RELATION-LE                  
+                       IF UT-ACTUAL-NUMERIC                                     
+                               LESS OR EQUAL UT-EXPECTED-NUMERIC                
+                           SET UT-COMPARE-PASSED TO TRUE                        
+                       END-IF                                                   
+                   WHEN UT-ALPHANUMERIC-COMPARE ALSO UT-RELATION-EQ             
+                       IF UT-ACTUAL                                             
+                               EQUAL UT-EXPECTED                                
+                           SET UT-COMPARE-PASSED TO TRUE                        
+                        END-IF                                                  
+                    WHEN UT-ALPHANUMERIC-COMPARE ALSO UT-RELATION-GT            
+                        IF UT-ACTUAL                                            
+                                GREATER UT-EXPECTED                             
+                            SET UT-COMPARE-PASSED TO TRUE                       
+                        END-IF                                                  
+                    WHEN UT-ALPHANUMERIC-COMPARE ALSO UT-RELATION-GE            
+                        IF UT-ACTUAL                                            
+                                GREATER OR EQUAL UT-EXPECTED                    
+                            SET UT-COMPARE-PASSED TO TRUE                       
+                        END-IF                                                  
+                    WHEN UT-ALPHANUMERIC-COMPARE ALSO UT-RELATION-LT            
+                        IF UT-ACTUAL                                            
+                                LESS UT-EXPECTED                                
+                            SET UT-COMPARE-PASSED TO TRUE                       
+                        END-IF                                                  
+                    WHEN UT-ALPHANUMERIC-COMPARE ALSO UT-RELATION-LE            
+                        IF UT-ACTUAL                                            
+                                LESS OR EQUAL UT-EXPECTED                       
+                            SET UT-COMPARE-PASSED TO TRUE                       
+                        END-IF                                                  
+                    WHEN OTHER                                                  
+                        IF UT-ACTUAL EQUAL UT-EXPECTED                          
+                            SET UT-COMPARE-PASSED TO TRUE                       
+                        END-IF                                                  
+               END-EVALUATE                                                     
            END-IF                                                               
            PERFORM UT-REVERSE-RESULT                                            
            .                                                                    
@@ -246,12 +294,28 @@
            DISPLAY UT-FAILED                                                    
                    UT-TEST-CASE-NUMBER '. '                                     
                    UT-TEST-CASE-NAME                                            
-           IF UT-COMPARE-NUMERIC                                                
+           IF UT-NUMERIC-COMPARE                                                
                DISPLAY '    EXPECTED ' UT-EXPECTED-NUMERIC                      
                        ', WAS ' UT-ACTUAL-NUMERIC                               
            ELSE                                                                 
-               DISPLAY '    EXPECTED <' UT-EXPECTED                             
-                       '>, WAS <' UT-ACTUAL '>'                                 
+               MOVE ZERO TO UT-EXPECTED-TRIM                                    
+               INSPECT FUNCTION REVERSE(UT-EXPECTED)                            
+                   TALLYING UT-EXPECTED-TRIM                                    
+                   FOR LEADING SPACES                                           
+               SUBTRACT UT-EXPECTED-TRIM                                        
+                   FROM LENGTH OF UT-EXPECTED                                   
+                   GIVING UT-EXPECTED-TRIM                                      
+               MOVE ZERO TO UT-ACTUAL-TRIM                                      
+               INSPECT FUNCTION REVERSE(UT-ACTUAL)                              
+                   TALLYING UT-ACTUAL-TRIM                                      
+                   FOR LEADING SPACES                                           
+               SUBTRACT UT-ACTUAL-TRIM                                          
+                   FROM LENGTH OF UT-ACTUAL                                     
+                   GIVING UT-ACTUAL-TRIM                                        
+                                                                                
+               DISPLAY '    EXPECTED <'                                         
+                   UT-EXPECTED(1:UT-EXPECTED-TRIM)                              
+                       '>, WAS <' UT-ACTUAL(1:UT-ACTUAL-TRIM) '>'               
            END-IF                                                               
            MOVE 4 TO UT-RETCODE                                                 
            .                                                                    
@@ -464,10 +528,8 @@
            SET UT-FILE-IX DOWN BY 1                                             
            .                                                                    
        UT-BEFORE.                                                               
-                                                                                
            .                                                                    
        UT-AFTER.                                                                
-                                                                                
            .                                                                    
        UT-INITIALIZE.                                                           
            MOVE SPACES TO UT-FILE-INFORMATION                                   
@@ -475,26 +537,76 @@
            .                                                                    
        UT-END.                                                                  
                                                                                 
-      * ZUTZCPD.CPY END                                                         
-                                                                                
-           ACCEPT WS-FRIEND.                                                    
-                                                                                
-       2000-SPEAK.                                                              
-           IF MESSAGE-IS-GREETING                                               
-               IF WS-FRIEND EQUALS SPACES                                       
-                   MOVE 'World' TO WS-USER-NAME OF WS-GREETING                  
-               ELSE                                                             
-                   MOVE WS-FRIEND TO WS-USER-NAME OF WS-GREETING                
-               END-IF                                                           
-           END-IF                                                               
-           IF MESSAGE-IS-FAREWELL                                               
-               IF WS-FRIEND EQUALS SPACES                                       
-                   MOVE 'alligator!' TO WS-USER-NAME OF WS-FAREWELL             
-               ELSE                                                             
-                   MOVE WS-FRIEND TO WS-USER-NAME OF WS-FAREWELL                
-               END-IF                                                           
-           END-IF                                                               
+      * CCHECKPD.CPY END                                                        
+           PERFORM 1000-INITIALIZE                                              
+           PERFORM 5000-PROCESS                                                 
+           PERFORM 8000-HOUSEKEEPING                                            
+           GOBACK                                                               
            .                                                                    
-                                                                                
-       9999-END.                                                                
+       1000-INITIALIZE.                                                         
+      *    OPEN INPUT INPUT-FILE                                                
+           EVALUATE TRUE                                                        
+               WHEN INPUT-OK                                                    
+                   CONTINUE                                                     
+               WHEN FILE-NOT-FOUND                                              
+                   MOVE 'Input file not found'                                  
+                     TO WS-ERROR-MESSAGE                                        
+               WHEN OTHER                                                       
+                   STRING "Unexpected input file status on open "               
+                       DELIMITED BY SIZE                                        
+                       INPUT-FILE-STATUS                                        
+                       DELIMITED BY SIZE                                        
+                     INTO WS-ERROR-MESSAGE                                      
+                   PERFORM 9999-ABORT                                           
+           END-EVALUATE                                                         
+      *    OPEN OUTPUT OUTPUT-FILE                                              
+           EVALUATE TRUE                                                        
+               WHEN OUTPUT-OK                                                   
+                   CONTINUE                                                     
+               WHEN OTHER                                                       
+                   STRING "Unexpected output file status on open "              
+                       DELIMITED BY SIZE                                        
+                       OUTPUT-FILE-STATUS                                       
+                       DELIMITED BY SIZE                                        
+                     INTO WS-ERROR-MESSAGE                                      
+                   PERFORM 9999-ABORT                                           
+           END-EVALUATE                                                         
+           MOVE ZERO TO WS-COUNT                                                
+           .                                                                    
+       5000-PROCESS.                                                            
+      *    READ INPUT-FILE                                                      
+           PERFORM WITH TEST BEFORE                                             
+                   UNTIL END-OF-FILE                                            
+               PERFORM 5200-PREPARE-OUTPUT-RECORD                               
+               PERFORM 5400-WRITE-OUTPUT-RECORD                                 
+      *        READ INPUT-FILE                                                  
+           END-PERFORM                                                          
+           .                                                                    
+       5200-PREPARE-OUTPUT-RECORD.                                              
+           MOVE SPACES TO OUTPUT-RECORD                                         
+           MOVE IN-FIELD-1 TO OUT-FIELD-1                                       
+           MOVE IN-FIELD-2 TO OUT-FIELD-2                                       
+           MOVE "Good" TO OUT-FIELD-3                                           
+           .                                                                    
+       5400-WRITE-OUTPUT-RECORD.                                                
+      *    WRITE OUTPUT-RECORD                                                  
+           IF NOT OUTPUT-OK                                                     
+               STRING "Unexpected output file status on write "                 
+                   DELIMITED BY SIZE                                            
+                   OUTPUT-FILE-STATUS                                           
+                   DELIMITED BY SIZE                                            
+                 INTO WS-ERROR-MESSAGE                                          
+               PERFORM 9999-ABORT                                               
+           END-IF                                                               
+           ADD 1 TO WS-COUNT                                                    
+           .                                                                    
+       8000-HOUSEKEEPING.                                                       
+      *    CLOSE OUTPUT-FILE.                                                   
+      *    CLOSE INPUT-FILE                                                     
+           MOVE WS-COUNT TO WS-COUNT-FORMATTED                                  
+           DISPLAY "Records processed: " WS-COUNT-FORMATTED                     
+           .                                                                    
+       9999-ABORT.                                                              
+           DISPLAY WS-ERROR-MESSAGE                                             
+           GOBACK                                                               
            .                                                                    
