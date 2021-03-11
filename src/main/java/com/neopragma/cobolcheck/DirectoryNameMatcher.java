@@ -34,19 +34,25 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  *       testname
  *       testname
  *
- *  this class matches directory names with a glob to identify the programname subdirectories.
+ *  this class matches directory names with a string to identify the programname subdirectories.
  *  Then FileNameMatcher is used to match testsuite filenames within each subdirectory.
  *
  * @author Dave Nicolette based on Oracle sample
  * @since 1.7
+ * 
+ * String version replacing original PathMatcher implementation
+ * Fix for openmainframeproject/cobol-check#100
+ * Christopher Morgan (Mar-11-2021)
+ * 
  */
+
 public class DirectoryNameMatcher extends SimpleFileVisitor<Path> {
-        private final PathMatcher matcher;
+        private final String matcher;
         private final List<String> matchingDirectories;
         private final Messages messages = new Messages();
 
         DirectoryNameMatcher(String pattern) {
-            matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            matcher = pattern;
             matchingDirectories = new ArrayList<>();
         }
 
@@ -56,7 +62,7 @@ public class DirectoryNameMatcher extends SimpleFileVisitor<Path> {
 
         void find(Path path) {
             Path name = path.getFileName();
-            if (name != null && matcher.matches(name)) {
+            if (name != null && matcher.toLowerCase().matches(name.toString().toLowerCase())) {
                 if (new File(String.valueOf(path)).isDirectory()) {
                     matchingDirectories.add(path.toString());
                 }
