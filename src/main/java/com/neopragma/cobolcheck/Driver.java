@@ -154,10 +154,7 @@ public class Driver implements StringHelper {
                         config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
                                 Constants.DEFAULT_TEST_PROGRAM_NAME));
 
-
                 Log.debug("Driver.runTestSuites() testSourceOutPath: <" + testSourceOutPath.toString() + ">");
-
-
 
                 try {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
@@ -179,22 +176,27 @@ public class Driver implements StringHelper {
                 ProcessLauncher launcher = null;
                 switch (PlatformLookup.get()) {
                     case LINUX :
+                        Log.debug("Driver launching Linux process");
                         processConfigKeyPrefix = "linux";
                         launcher = new LinuxProcessLauncher(config);
                         break;
                     case WINDOWS :
+                        Log.debug("Driver launching Windows process");
                         processConfigKeyPrefix = "windows";
-                        //launcher = new WindowsProcessLauncher(config);
+                        launcher = new WindowsProcessLauncher(config);
                         break;
                     case OSX :
+                        Log.debug("Driver launching OS X process");
                         processConfigKeyPrefix = "osx";
                         //launcher = new OSXProcessLauncher(config);
                         break;
                     case ZOS :
+                        Log.debug("Driver launching z/OS process");
                         processConfigKeyPrefix = "zos";
                         //launcher = new ZOSProcessLauncher(config);
                         break;
                     default :
+                        Log.debug("Driver launching default process");
                         processConfigKeyPrefix = "unix";
                         launcher = new LinuxProcessLauncher(config);
                         break;

@@ -37,9 +37,7 @@ public class WindowsProcessLauncher implements ProcessLauncher, StringHelper {
 
     @Override
     public Process run(String programName) {
-        if (Log.level() == LogLevel.DEBUG) {
-            System.out.println("Entering WindowsProcessLauncher.run() method, programName is <" + programName + ">");
-        }
+        Log.debug("Entering WindowsProcessLauncher.run() method, programName is <" + programName + ">");
         if (isBlank(programName)) {
             Log.error(messages.get("ERR020"));
             throw new PossibleInternalLogicErrorException(messages.get("ERR020"));
