@@ -40,6 +40,7 @@ public class Driver implements StringHelper {
     private Writer testSourceOut;
     private static final String optionSpec = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
     private String configFileFromCommandLine = Constants.EMPTY_STRING;
+    private static int exitStatus;
 
     private final String[] helpText = {
             "cobolcheck",
@@ -62,15 +63,18 @@ public class Driver implements StringHelper {
         this.config = config;
         Driver.messages = config.getMessages();
         this.options = options;
+        exitStatus = Constants.STATUS_NORMAL;
     }
 
     void run() throws InterruptedException {
         if (options.isSet("help")) {
             emitHelp();
+            exitStatus = Constants.STATUS_HALT;
             return;
         }
         if (options.isSet("version")) {
             System.out.println(Version.current());
+            exitStatus = Constants.STATUS_HALT;
             return;
         }
         initialize();
@@ -129,8 +133,6 @@ public class Driver implements StringHelper {
                 if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
                     cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 }
-//                cobolSourceInPath.append(programName);
-//                cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 cobolSourceInPath.append(programName);
                 cobolSourceInPath.append(config.getApplicationFilenameSuffix());
                 try {
@@ -261,6 +263,6 @@ public class Driver implements StringHelper {
                 config,
                 new GetOpt(args, optionSpec, config));
         app.run();
-        System.exit(Constants.STATUS_NORMAL);
+        System.exit(exitStatus);
     }
 }

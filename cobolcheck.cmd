@@ -1,5 +1,6 @@
 echo off
-java -jar bin\cobol-check-0.0.4.jar %*
+java -jar bin\cobol-check-0.0.5.jar %*
+if errorlevel 8 goto end
 :loop
 cobc -x %2T.CBL && %2T.exe 
 shift

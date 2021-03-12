@@ -29,6 +29,7 @@ public final class Constants {
     // File read status values
     public static final int END_OF_STREAM = -1;
     public static final int STATUS_NORMAL = 0;
+    public static final int STATUS_HALT = 8;
 
     // Cobol Check copybook location (not for users)
     public static final String COBOLCHECK_COPYBOOK_DIRECTORY = "/com/neopragma/cobolcheck/copybooks/";
