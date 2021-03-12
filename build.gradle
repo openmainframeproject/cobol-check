@@ -6,8 +6,8 @@ plugins {
     id 'jacoco'
 }
 
-version = '0.0.3'
-def productVersion = '0.0.3'
+version = '0.0.4'
+def productVersion = '0.0.4'
 def productName = 'cobolcheck'
 group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'

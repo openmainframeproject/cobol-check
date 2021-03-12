@@ -87,12 +87,33 @@ public class GetOptTest {
     }
 
     @Test
+    public void it_handles_option_programs_followed_by_one_full_program_name() {
+        String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
+                + "cobol" + Constants.FILE_SEPARATOR + "PROG1";
+        GetOpt getOpt = new GetOpt(new String[] { "--programs", "PROG1", "-l", "err" },
+                optionSpec, config);
+        assertEquals(expected, getOpt.getValueFor("programs"));
+    }
+
+    @Test
+    public void it_handles_option_p_followed_by_two_full_program_names() {
+        String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
+                + "cobol" + Constants.FILE_SEPARATOR + "PROG1"
+                + Constants.COLON
+                + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
+                + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
+        GetOpt getOpt = new GetOpt(new String[] { "-p", "PROG1", "PROG2", "-l", "err" },
+                optionSpec, config);
+        assertEquals(expected, getOpt.getValueFor("programs"));
+    }
+
+    @Test
     public void it_handles_option_programs_followed_by_two_full_program_names() {
         String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
-                        + "cobol" + Constants.FILE_SEPARATOR + "PROG1"
-                        + Constants.COLON
-                        + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
-                        + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
+                + "cobol" + Constants.FILE_SEPARATOR + "PROG1"
+                + Constants.COLON
+                + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
+                + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
         GetOpt getOpt = new GetOpt(new String[] { "--programs", "PROG1", "PROG2", "-l", "err" },
                 optionSpec, config);
         assertEquals(expected, getOpt.getValueFor("programs"));

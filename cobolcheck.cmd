@@ -1,5 +1,5 @@
 echo off
-java -jar bin\cobol-check-0.0.1.jar %* 
+java -jar bin\cobol-check-0.0.4.jar %*
 :loop
 cobc -x %2T.CBL && %2T.exe 
 shift

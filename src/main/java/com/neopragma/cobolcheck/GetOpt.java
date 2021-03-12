@@ -128,7 +128,7 @@ public class GetOpt implements StringHelper {
                 }
                 optionValue.isSet = true;
                 expectValueNext = optionValue.hasArgument;
-                lastOption = argValue;
+               lastOption = argValue;
                 if (canTakeMultipleArguments.contains(stripPrefix(argValue))) {
                     multipleArgumentsPossible = true;
                 }
