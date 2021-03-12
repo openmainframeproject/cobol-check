@@ -135,8 +135,12 @@ public class Driver implements StringHelper {
                 }
                 cobolSourceInPath.append(programName);
                 cobolSourceInPath.append(config.getApplicationFilenameSuffix());
+                String cobolSourceInPathString = adjustPathString(cobolSourceInPath.toString());
+
+                Log.debug("Driver.runTestSuites() cobolSourceInPath: <" + cobolSourceInPathString + ">");
+
                 try {
-                    cobolSourceIn = new FileReader(cobolSourceInPath.toString());
+                    cobolSourceIn = new FileReader(cobolSourceInPathString);
                 } catch (IOException cobolSourceInException) {
                     throw new PossibleInternalLogicErrorException(
                             messages.get("ERR018", programName));
@@ -149,6 +153,12 @@ public class Driver implements StringHelper {
                 testSourceOutPath.append(
                         config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
                                 Constants.DEFAULT_TEST_PROGRAM_NAME));
+
+
+                Log.debug("Driver.runTestSuites() testSourceOutPath: <" + testSourceOutPath.toString() + ">");
+
+
+
                 try {
                     testSourceOut = new FileWriter(testSourceOutPath.toString());
                 } catch (IOException testSourceOutException) {
