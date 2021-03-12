@@ -15,27 +15,72 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import java.util.Locale;
+
+/**
+ * Helper methods for handling String values specific to this project.
+ */
 public interface StringHelper {
 
+    /**
+     * @param subject - reference to a String
+     * @return true if the subject is null or empty
+     */
     default boolean isBlank(String subject) {
         return subject == null || subject.equals("");
     }
 
+    /**
+     * @param subject - reference to a String
+     * @return true if the subject contains a value other than empty string
+     */
     default boolean notBlank(String subject) {
         return subject != null && !subject.equals("");
     }
 
+    /**
+     * Provide a default value for a String if the String is null or empty
+     *
+     * @param subject - reference to a String
+     * @param defaultValue - the value to use if the String is null or empty
+     * @return the original String value or the specified default value
+     */
     default String defaultIfBlank(String subject, String defaultValue) {
         return isBlank(subject) ? defaultValue : subject;
     }
 
+    /**
+     * Check for empty array
+     *
+     * @param subject - reference to the array
+     * @return true if subject is null or subject array contains no entries
+     */
     default boolean isEmptyArray(String[] subject) {
         return subject == null || subject.length == 0;
     }
 
+    /**
+     * Ensure a string that represents a Cobol source line is exactly 80 bytes long
+     *
+     * @param sourceLine that may be less than 80 bytes long
+     * @return the same source line padded to 80 bytes
+     */
     default String fixedLength(String sourceLine) {
         return String.format("%1$-80s", sourceLine).substring(0, 80) +
                 System.getProperty("line.separator");
     }
 
+    /**
+     * Ensure a path string value contains platform-specific file separator characters
+     *
+     * @param pathString that may not have platform-specific file separator characters
+     * @return path string value with platform-specific file separator characters
+     */
+    default String adjustPathString(String pathString) {
+        if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("win")) {
+            return pathString.replace("/", "\\");
+        } else {
+            return pathString.replace("\\", "/");
+        }
+    }
 }

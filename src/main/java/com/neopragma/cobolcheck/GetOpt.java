@@ -140,7 +140,7 @@ public class GetOpt implements StringHelper {
                 }
             } else {
                 if (processingProgramNames) {
-                    argValue = applicationSourceDirectory + Constants.FILE_SEPARATOR + argValue;
+                    argValue = adjustPathString(applicationSourceDirectory + Constants.FILE_SEPARATOR + argValue);
                 }
                 atLeastOneArgumentWasPassed = true;
                 if (multipleArgumentsPossible) {
