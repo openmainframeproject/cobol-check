@@ -38,7 +38,7 @@ public class Driver implements StringHelper {
     private Reader testSuite;
     private Reader cobolSourceIn;
     private Writer testSourceOut;
-    private static final String optionSpec = "c:l:p:t:v:h --long config-file:,log-level:,programs:,tests:,version:,help";
+    private static final String optionSpec = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
     private String configFileFromCommandLine = Constants.EMPTY_STRING;
 
     private final String[] helpText = {
@@ -129,8 +129,8 @@ public class Driver implements StringHelper {
                 if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
                     cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 }
-                cobolSourceInPath.append(programName);
-                cobolSourceInPath.append(Constants.FILE_SEPARATOR);
+//                cobolSourceInPath.append(programName);
+//                cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 cobolSourceInPath.append(programName);
                 cobolSourceInPath.append(config.getApplicationFilenameSuffix());
                 try {

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GetOptTest {
 
-    private static final String optionSpec = "c:l:p:t:v:h --long config-file:,log-level:,programs:,tests:,version:,help";
+    private static final String optionSpec = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
     private final Config config = new Config(new Messages());
     private final Messages messages = config.getMessages();
 
