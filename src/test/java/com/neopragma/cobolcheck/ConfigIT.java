@@ -22,6 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,14 +99,30 @@ public class ConfigIT {
     }
 
     @Test
-    public void it_sets_a_convenience_value_for_application_copybook_filenames_without_suffix() {
+    public void it_returns_empty_string_when_application_source_filenames_have_no_suffix() {
         config.load("testconfigNoCopybookSuffix.properties");
-        assertEquals(Constants.EMPTY_STRING, config.getApplicationFilenameSuffix());
+        List<String> expected = new ArrayList();
+        assertEquals(expected, config.getApplicationFilenameSuffixes());
     }
 
     @Test
-    public void it_sets_a_convenience_value_for_application_copybook_filenames_with_suffix() {
+    public void it_returns_list_of_specified_application_source_filename_suffixes() {
         config.load("testconfig.properties");
-        assertEquals(".CBL", config.getApplicationFilenameSuffix());
+        List<String> expected = new ArrayList(Arrays.asList( ".CBL", ".cbl", ".COB", ".cob" ));
+        assertEquals(expected, config.getApplicationFilenameSuffixes());
+    }
+
+    @Test
+    public void it_returns_empty_string_when_application_copybook_filenames_have_no_suffix() {
+        config.load("testconfigNoCopybookSuffix.properties");
+        List<String> expected = new ArrayList();
+        assertEquals(expected, config.getCopybookFilenameSuffixes());
+    }
+
+    @Test
+    public void it_returns_list_of_specified_application_copybook_filename_suffixes() {
+        config.load("testconfig.properties");
+        List<String> expected = new ArrayList(Arrays.asList( ".CBL", ".cbl", ".COB", ".cob" ));
+        assertEquals(expected, config.getCopybookFilenameSuffixes());
     }
 }

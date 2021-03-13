@@ -27,7 +27,6 @@ public final class Constants {
     }
 
     // File read status values
-    public static final int END_OF_STREAM = -1;
     public static final int STATUS_NORMAL = 0;
     public static final int STATUS_HALT = 8;
 
@@ -75,13 +74,8 @@ public final class Constants {
     public static final String LESS_THAN_EQUAL_TO_SIGN_KEYWORD = "<=";
 
     // Configuration key values
-    public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
     public static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
-    public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
-    public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
-    public static final String APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY = "application.copybook.filename.suffix";
-    public static final String DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX = ".CBL";
     public static final String TEST_PROGRAM_NAME_CONFIG_KEY = "cobolcheck.test.program.name";
     public static final String DEFAULT_TEST_PROGRAM_NAME = "CC$$99.CBL";
     public static final String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";

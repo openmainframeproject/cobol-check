@@ -18,7 +18,8 @@ package com.neopragma.cobolcheck;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.*;
-import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -47,37 +48,42 @@ public class CopybookExpander implements StringHelper {
     private final Config config;
     private final Messages messages;
     private final String pathToCopybooks;
+    private final List<String> copybookFilenameSuffixes;
+
 
     public CopybookExpander(Config config, Messages messages) {
         this.config = config;
         this.messages = messages;
         pathToCopybooks = getPathToCopybooks();
+        copybookFilenameSuffixes = config.getCopybookFilenameSuffixes();
+
     }
 
     public Writer expand(Writer expandedSource,
-                         String copybookFilename,
-                         String copybookFilenameSuffix) throws IOException {
+                         String copybookFilename) throws IOException {
         return expand(expandedSource,
                 copybookFilename,
-                copybookFilenameSuffix,
                 new StringTuple(null, null));
     }
 
     public Writer expand(Writer expandedSource,
                          String copybookFilename,
-                         String copybookFilenameSuffix,
                          StringTuple... textReplacement) throws IOException {
-        try(BufferedReader copybookReader = new BufferedReader(new FileReader(
-                new File(pathToCopybooks
-                        + copybookFilename
-                        + copybookFilenameSuffix)))) {
+        String fullPath = pathToCopybooks + copybookFilename;
+        for (String suffix : copybookFilenameSuffixes) {
+            if (Files.isRegularFile(Paths.get(fullPath + suffix))) {
+                fullPath += suffix;
+                break;
+            }
+        }
+        try (BufferedReader copybookReader = new BufferedReader(new FileReader(new File(fullPath)))) {
             String sourceLine;
             while ((sourceLine = copybookReader.readLine()) != null) {
                 // Nested COPY
                 if (copyStatementIsPresentIn(sourceLine)) {
                     String copybookName = extractCopybookNameFrom(sourceLine);
                     sourceLine = commentOut(sourceLine);
-                    expandedSource = expand(expandedSource, copybookName, copybookFilenameSuffix, textReplacement);
+                    expandedSource = expand(expandedSource, copybookName, textReplacement);
                 }
                 // COPY REPLACING
                 if (!textReplacement[0].isEmpty()) {

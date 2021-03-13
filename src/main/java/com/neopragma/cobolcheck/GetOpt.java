@@ -53,8 +53,7 @@ public class GetOpt implements StringHelper {
         options = new HashMap<>();
         if (isEmptyArray(args)) return;
         this.messages = config.getMessages();
-        applicationSourceDirectory = config.getString(
-                Constants.APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY, Constants.DEFAULT_APPLICATION_SOURCE_DIRECTORY);
+        applicationSourceDirectory = config.getApplicationSourceDirectoryPathString();
         storeOptionSettings(optionsString);
         processCommandLineArgumentArray(args);
     }

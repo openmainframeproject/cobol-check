@@ -20,6 +20,8 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -29,7 +31,7 @@ import java.util.Properties;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Config {
+public class Config implements StringHelper {
 
     public static final String LOCALE_LANGUAGE_CONFIG_KEY = "locale.language";
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
@@ -41,6 +43,9 @@ public class Config {
     public static final String APPLICATION_COPYBOOK_FILENAME_SUFFIX = "application.copybook.filename.suffix";
     public static final String NONE = "none";
     public static final String DEFAULT_CONFIG_FILE_PATH = "config.properties";
+    public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
+    public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
+    public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
 
     public Config(Messages messages) {
         this.messages = messages;
@@ -70,7 +75,7 @@ public class Config {
         setDefaultLocaleOverride();
         Log.info(messages.get("INF002", configResourceName));
 
-        setApplicationFilenameSuffix();
+        setApplicationFilenameSuffixes();
         setCopybookFilenameSuffix();
     }
 
@@ -92,34 +97,42 @@ public class Config {
         return messages;
     }
 
-    String getApplicationFilenameSuffix() {
-        return settings.getProperty(RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX);
+    String getTestSuiteDirectoryPathString() {
+        return adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
     }
 
-    private void setApplicationFilenameSuffix() {
-        String propertyValue = Constants.EMPTY_STRING;
-        String suffix = getString(
-                APPLICATION_SOURCE_FILENAME_SUFFIX,
-                NONE);
-        if (!suffix.equalsIgnoreCase(NONE)) {
-            propertyValue = Constants.PERIOD + suffix;
-        }
-        settings.put(RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX, propertyValue);
+    String getApplicationSourceDirectoryPathString() {
+        return adjustPathString(settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
+                DEFAULT_APPLICATION_SOURCE_DIRECTORY));
     }
 
-    String getCopybookFilenameSuffix() {
-        return settings.getProperty(RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
+    List<String> getApplicationFilenameSuffixes() {
+        return (List<String>) settings.get(RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX);
+    }
+
+    private void setApplicationFilenameSuffixes() {
+        resolveFilenameSuffixes(APPLICATION_SOURCE_FILENAME_SUFFIX, RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX);
+    }
+
+    List<String> getCopybookFilenameSuffixes() {
+        return (List<String>) settings.get(RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
     }
 
     private void setCopybookFilenameSuffix() {
-        String propertyValue = Constants.EMPTY_STRING;
-        String suffix = getString(
-                APPLICATION_COPYBOOK_FILENAME_SUFFIX,
-                NONE);
-        if (!suffix.equalsIgnoreCase(NONE)) {
-            propertyValue = Constants.PERIOD + suffix;
+        resolveFilenameSuffixes(APPLICATION_COPYBOOK_FILENAME_SUFFIX, RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
+    }
+
+    private void resolveFilenameSuffixes(String configKey, String resolvedConfigKey) {
+        String suffixSpecification = getString(configKey, NONE);
+        List<String> suffixes = new ArrayList();
+        String[] suffixValues = null;
+        if (!suffixSpecification.equalsIgnoreCase(NONE)) {
+            suffixValues = suffixSpecification.split(Constants.COMMA);
+            for (String suffixValue : suffixValues) {
+                suffixes.add(Constants.PERIOD + suffixValue);
+            }
         }
-        settings.put(RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX, propertyValue);
+        settings.put(resolvedConfigKey, suffixes);
     }
 
     private void setDefaultLocaleOverride() {

@@ -93,8 +93,7 @@ public class Driver implements StringHelper {
      */
     void runTestSuites() throws InterruptedException {
         // all test suites are located under this directory
-        String testSuiteDirectory =
-                config.getString(Constants.TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        String testSuiteDirectory = config.getTestSuiteDirectoryPathString();
         if (!testSuiteDirectory.endsWith(Constants.FILE_SEPARATOR)) {
             testSuiteDirectory += Constants.FILE_SEPARATOR;
         }
@@ -102,7 +101,7 @@ public class Driver implements StringHelper {
         String programNames = options.getValueFor(Constants.PROGRAMS_OPTION);
         String[] programNamesSeparated = programNames.split(Constants.COLON);
 
-        // find subdirectories that match program names
+        // Find test subdirectories that match program names
         List<String> matchingDirectories;
         for (String programName : programNamesSeparated) {
             Path path = Paths.get(programName);
@@ -125,19 +124,26 @@ public class Driver implements StringHelper {
                         new TestSuiteConcatenator(config, options);
                 testSuite = concatenator.concatenateTestSuites(matchingDirectory);
 
-                // create READER for the Cobol source program to be tested
+                // Create READER for the Cobol source program to be tested
                 StringBuilder cobolSourceInPath = new StringBuilder();
-                cobolSourceInPath.append(config.getString(
-                        Constants.APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
-                        Constants.DEFAULT_APPLICATION_SOURCE_DIRECTORY));
+                cobolSourceInPath.append(System.getProperty("user.dir"));
+                cobolSourceInPath.append(Constants.FILE_SEPARATOR);
+                cobolSourceInPath.append(config.getApplicationSourceDirectoryPathString());
                 if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
                     cobolSourceInPath.append(Constants.FILE_SEPARATOR);
                 }
                 cobolSourceInPath.append(programName);
-                cobolSourceInPath.append(config.getApplicationFilenameSuffix());
-                String cobolSourceInPathString = adjustPathString(cobolSourceInPath.toString());
 
-                Log.debug("Driver.runTestSuites() cobolSourceInPath: <" + cobolSourceInPathString + ">");
+                List<String> applicationFilenameSuffixes = config.getApplicationFilenameSuffixes();
+                for (String suffix : applicationFilenameSuffixes) {
+                    Log.debug("Driver looking for source file <" + cobolSourceInPath.toString() + suffix + ">");
+                    if (Files.isRegularFile(Paths.get(cobolSourceInPath.toString() + suffix))) {
+                        cobolSourceInPath.append(suffix);
+                        Log.debug("Driver recognized this file as a regular file: <" + cobolSourceInPath.toString() + ">");
+                        break;
+                    }
+                }
+                String cobolSourceInPathString = adjustPathString(cobolSourceInPath.toString());
 
                 try {
                     cobolSourceIn = new FileReader(cobolSourceInPathString);
@@ -146,7 +152,7 @@ public class Driver implements StringHelper {
                             messages.get("ERR018", programName));
                 }
 
-                // create WRITER for the test source program (copy of program to be tested plus test code)
+                // Create WRITER for the test source program (copy of program to be tested plus test code)
                 StringBuilder testSourceOutPath = new StringBuilder();
                 testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
                 testSourceOutPath.append(Constants.FILE_SEPARATOR);
@@ -171,7 +177,7 @@ public class Driver implements StringHelper {
                             messages.get("ERR017", programName));
                 }
 
-                // compile and run the test program
+                // Compile and run the test program
                 String processConfigKeyPrefix;
                 ProcessLauncher launcher = null;
                 switch (PlatformLookup.get()) {

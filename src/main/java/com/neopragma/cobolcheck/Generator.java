@@ -561,9 +561,6 @@ public class Generator implements StringHelper {
             expandedLines = (StringWriter) copybookExpander.expand(
                     expandedLines,
                     copybookName,
-                    Constants.PERIOD + config.getString(
-                            Constants.APPLICATION_COPYBOOK_FILENAME_SUFFIX_KEY,
-                            Constants.DEFAULT_APPLICATION_COPYBOOK_FILENAME_SUFFIX),
                     replacingValues);
             BufferedReader reader = new BufferedReader(new StringReader(expandedLines.toString()));
             String line = reader.readLine();

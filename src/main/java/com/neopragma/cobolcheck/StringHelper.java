@@ -77,12 +77,18 @@ public interface StringHelper {
      * @return path string value with platform-specific file separator characters
      */
     default String adjustPathString(String pathString) {
-        Log.debug("StringHelper.adjustPathString() original string: <" + ">");
+        Log.debug("StringHelper.adjustPathString() original string: <" + pathString + ">");
         Log.debug("StringHelper.adjustPathString() Constants.FILE_SEPARATOR: <" + Constants.FILE_SEPARATOR + ">");
+
+        Log.debug("StringHelper.adjustPathString() os.name is <" + System.getProperty("os.name") + ">");
+
+        String result = pathString;
         if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("win")) {
-            return pathString.replace("/", "\\");
+            result =  pathString.replace("/", "\\");
         } else {
-            return pathString.replace("\\", "/");
+            result = pathString.replace("\\", "/");
         }
+        Log.debug("StringHelper.adjustStringPath() result is <" + result + ">");
+        return result;
     }
 }

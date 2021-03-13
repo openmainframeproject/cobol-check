@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.nio.file.Files.readAllBytes;
@@ -37,11 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class CopybookExpanderIT implements StringHelper {
+    private static final String applicationSourceFilenameSuffix = ".CBL";
     private CopybookExpander copybookExpander;
     private String expectedResult;
     private String testCopybookFilename;
     private String testCopybookBasename;
-    private static String copybookFilenameSuffix;
     private static String pathToTestCobolCopybooks;
 
     @Mock
@@ -53,7 +54,6 @@ public class CopybookExpanderIT implements StringHelper {
     public static void oneTimeSetup() {
         config = new Config(new Messages());
         config.load("testconfig.properties");
-        copybookFilenameSuffix = config.getApplicationFilenameSuffix();
         pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "src/main/cobol/copy");
     }
 
@@ -135,13 +135,12 @@ public class CopybookExpanderIT implements StringHelper {
         private Writer runTestCase(String testCopybookBasename,
                 String expectedExpansionBasename,
                 StringTuple... textReplacement) throws IOException {
-        testCopybookFilename = testCopybookBasename + copybookFilenameSuffix;
-        expectedResult = getExpectedResult(expectedExpansionBasename + copybookFilenameSuffix);
+        testCopybookFilename = testCopybookBasename + applicationSourceFilenameSuffix;
+        expectedResult = getExpectedResult(expectedExpansionBasename + applicationSourceFilenameSuffix);
         Writer expandedSource = new StringWriter();
         expandedSource = copybookExpander.expand(
                 expandedSource,
                 testCopybookBasename,
-                copybookFilenameSuffix,
                 textReplacement);
         return expandedSource;
     }
