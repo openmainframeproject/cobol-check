@@ -1,2 +1,1 @@
-#!/bin/sh
-java -jar bin/cobol-check-0.0.5.jar $@
+java -jar bin/cobol-check-0.1.0.jar $@
