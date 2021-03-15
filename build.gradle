@@ -7,7 +7,7 @@ plugins {
 }
 
 def productVersion = '0.1.0'
-def productName = 'cobolcheck'
+def productName = 'cobol-check'
 group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
 
@@ -119,6 +119,8 @@ def integrationTest = tasks.register("integrationTest", Test) {
 }
 
 task fatJar(type: Jar) {
+//    archiveFileName "${productName}-${productVersion}.jar"
+    archiveName "${productName}-${productVersion}.jar"
     description 'Create executable jar'
     dependsOn integrationTest
     manifest {
@@ -137,12 +139,13 @@ task copyJar(type: Copy) {
 }
 
 task prepareDistribution(type: Zip) {
+    archiveName "${productName}-${productVersion}.zip"
     description 'Prepare distribution archive'
     dependsOn copyJar
     from "${projectDir}"
     include([ "config.properties",
               "scripts/*",
-              "bin/cobol-check-${productVersion}.jar",
+              "bin/${productName}-${productVersion}.jar",
               "src/main/cobol/ALPHA.CBL",
               "src/main/cobol/NUMBERS.CBL",
               "src/test/cobol/ALPHA/*",
