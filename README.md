@@ -4,16 +4,25 @@
 
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
 
+## Thanks! 
+
+A big thank you to [Vicom Infinity](https://www.vicominfinity.com/) for kindly providing a test z/OS environment for the project!
+
 ## Immediate needs 
 
-As of February 2021 we could use help with: 
+As of March 2021 we could use help with: 
 
-- access to a z/OS system including MVS and USS for testing cobol-check on-platform
 - review of localized messages by native speakers and creation of additional localized message files
 
-## Pre-release download available 
+## Downloads 
 
-You can try a very early pre-release version of Cobol Check. We'd appreciate feedback! Find the download on the project home page on the [Neo Pragma site](https://neopragma.com/projects/Cobol%20Check/).
+Version 0.1.0 pre-release is available! 
+
+- Find the download on the project home page on the [Neo Pragma site](https://neopragma.com/projects/cobol-check/).
+- Find general release information in the [changelog](https://github.com/openmainframeproject/cobol-check/blob/main/CHANGELOG.md).
+- Find more information about supported functionality on [the wiki](https://github.com/openmainframeproject/cobol-check/wiki/Common-Test-Case-Patterns).
+
+If you want source code, you can clone the repository or download a compressed archive [from here](https://github.com/openmainframeproject/cobol-check/releases/tag/0.1.0).
 
 ## Why?
 

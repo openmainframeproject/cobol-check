@@ -27,11 +27,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock Call statement
 - Mock batch file I/O
 
-## \[0.1.0\] 2021-03-01
+## \[0.1.0\] 2021-03-15
 
-### Planned
+### Implemented
 
 - Basic test case functionality 
+
+### Known issues 
+
+- On Microsoft Windows, the -p or --programs command-line option only works with a single program name at a time.
 
 ## \[0.0.0\]
 
