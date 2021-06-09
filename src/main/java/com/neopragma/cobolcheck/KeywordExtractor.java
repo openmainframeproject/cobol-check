@@ -62,8 +62,9 @@ public class KeywordExtractor implements TokenExtractor {
             } else {
 
                 if (processingNumericLiteral) {
-                    if (isDecimalPoint(buffer, currentCharacter, sourceLine, tokenOffset)) {
-                        processingNumericLiteral = false;      // prevent next period from being interpreted as end of sentence
+                    if (!isDecimalPoint(buffer, currentCharacter, sourceLine, tokenOffset) 
+                        && !Character.isDigit(currentCharacter)) {
+                            processingNumericLiteral = false;      // prevent next period from being interpreted as end of sentence
                     }
                 } else {
                     if (currentCharacter == PERIOD) {          // Cobol end of sentence
@@ -134,7 +135,7 @@ public class KeywordExtractor implements TokenExtractor {
     private boolean startNumericLiteral(StringBuilder buffer, char currentCharacter) {
         return ( getPreviousCharacterFromBuffer(buffer) == SPACE
                 && ( Character.isDigit(currentCharacter)
-                    || currentCharacter == '-' || currentCharacter == '+') );
+                    || currentCharacter == '-' || currentCharacter == '+' || currentCharacter == '$') );
     }
 
     /**
