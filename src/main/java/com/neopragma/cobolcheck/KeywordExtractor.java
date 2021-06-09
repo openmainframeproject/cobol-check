@@ -64,7 +64,7 @@ public class KeywordExtractor implements TokenExtractor {
                 if (processingNumericLiteral) {
                     if (!isDecimalPoint(buffer, currentCharacter, sourceLine, tokenOffset) 
                         && !Character.isDigit(currentCharacter)) {
-                            processingNumericLiteral = false;      // prevent next period from being interpreted as end of sentence
+                            processingNumericLiteral = false;  // prevent next period from being interpreted as end of sentence
                     }
                 } else {
                     if (currentCharacter == PERIOD) {          // Cobol end of sentence
