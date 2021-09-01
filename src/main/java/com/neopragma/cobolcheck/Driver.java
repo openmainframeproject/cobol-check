@@ -16,6 +16,7 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.exceptions.TestResultsInputFileNotFoundException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -77,7 +78,13 @@ public class Driver implements StringHelper {
             exitStatus = Constants.STATUS_HALT;
             return;
         }
-        initialize();
+        try{
+            initialize();
+        }catch (IOException testResultsFileNotFound){
+            throw new TestResultsInputFileNotFoundException(
+                    messages.get("ERR030", config.getTestResultFilePathString()));
+        }
+
         runTestSuites();
 
         Log.info(messages.get("INF004"));        // We are terminating
@@ -216,6 +223,16 @@ public class Driver implements StringHelper {
                 }
                 if (launcher != null){
                     Process process = launcher.run(testSourceOutPath.toString());
+
+                    String testResultsFilePath = config.getTestResultFilePathString();
+                    try{
+                        writeProcessOutputToFile(process, testResultsFilePath, true);
+                        Log.info(messages.get("INF011", matchingDirectory, testResultsFilePath));
+                    } catch (IOException testResultsFileNotFound){
+                        throw new TestResultsInputFileNotFoundException(
+                                messages.get("ERR030", config.getTestResultFilePathString()));
+                    }
+
                     int exitCode = 1;
 //                    try {
                         exitCode = process.waitFor();
@@ -239,7 +256,7 @@ public class Driver implements StringHelper {
         );
     }
 
-    void initialize() {
+    void initialize() throws IOException{
         configFileFromCommandLine = options.getValueFor("config-file");
         loadConfigurationSettings();
 
@@ -247,6 +264,10 @@ public class Driver implements StringHelper {
         if (notBlank(logLevelFromCommandLine)) {
             Log.set(LogLevel.valueOf(logLevelFromCommandLine.toUpperCase()));
         }
+
+        String testResultsFilePath = config.getTestResultFilePathString();
+        new PrintWriter(testResultsFilePath).close();
+        Log.info(messages.get("INF010", testResultsFilePath));
 
         Log.info(messages.get("INF003"));        // We are starting
         Log.info(messages.get("INF005",          // Log level is x
@@ -271,6 +292,31 @@ public class Driver implements StringHelper {
         for (String line : helpText) {
             System.out.println(line);
         }
+    }
+
+    public static void writeProcessOutputToFile(Process proc, String path, boolean outputToConsole) throws IOException{
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+        FileWriter fw = new FileWriter(path, true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        String s = null;
+
+        while ((s = stdInput.readLine()) != null){
+            bw.write(s);
+            bw.newLine();
+            if (outputToConsole){
+                System.out.println(s);
+            }
+        }
+
+        while ((s = stdError.readLine()) != null){
+            if (outputToConsole){
+                System.out.println(s);
+            }
+
+        }
+        bw.close();
     }
 
     public static void main(String[] args) throws InterruptedException {

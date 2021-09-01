@@ -1,0 +1,103 @@
+TESTSUITE:
+Tests of alphanumeric expectations
+     PASS:   1. Equality with an alphanumeric literal using TO BE                               
+     PASS:   2. Equality with an alphanumeric literal using TO EQUAL                            
+     PASS:   3. Equality with an alphanumeric literal using '='                                 
+     PASS:   4. Equality with an alphanumeric literal and reference modification                
+     PASS:   5. Non-equality with an alphanumeric literal using TO BE                           
+     PASS:   6. Non-equality with an alphanumeric literal using TO EQUAL                        
+     PASS:   7. Non-equality with an alphanumeric literal using '!='                            
+     PASS:   8. Non-equality with an alphanumeric literal and reference modification            
+     PASS:   9. Greater-than sign with an alphanumeric literal                                  
+     PASS:  10. Less-than sign with an alphanumeric literal                                     
+     PASS:  11. Not greater-than sign with an alphanumeric literal                              
+     PASS:  12. Not less-than sign with an alphanumeric literal                                 
+     PASS:  13. Display numeric                                                                 
+ 
+ 13 TEST CASES WERE EXECUTED
+ 13 PASSED
+  0 FAILED
+=================================================
+TESTSUITE:
+Verify Cobol Check handles numeric relations properly
+     PASS:   1. Equal sign with literal compare                                                 
+**** FAIL:   2. Equal sign with literal compare (should fail)                                   
+    EXPECTED +000000000257500000, WAS +000000000257400000
+     PASS:   3. Not equal sign with literal compare                                             
+**** FAIL:   4. Not equal sign with literal compare (should fail)                               
+    EXPECTED +000000000257400000, WAS +000000000257400000
+     PASS:   5. Not-equal sign with literal compare                                             
+**** FAIL:   6. Not-equal sign with literal compare (should fail)                               
+    EXPECTED +000000000136000000, WAS +000000000136000000
+     PASS:   7. Not not-equal sign with literal compare                                         
+**** FAIL:   8. Not not-equal sign with literal compare (should fail)                           
+    EXPECTED +000000000136000000, WAS +000000000137000000
+     PASS:   9. Equal sign with ield compare                                                    
+**** FAIL:  10. Equal sign with field compare (should fail)                                     
+    EXPECTED +000000000257500000, WAS +000000000257400000
+     PASS:  11. Not equal sign with field compare                                               
+**** FAIL:  12. Not equal sign with field compare (should fail)                                 
+    EXPECTED +000000000257400000, WAS +000000000257400000
+     PASS:  13. Not-equal sign with field compare                                               
+**** FAIL:  14. Not-equal sign with field compare (should fail)                                 
+    EXPECTED +000000000257400000, WAS +000000000257400000
+     PASS:  15. Not not-equal sign with field compare                                           
+**** FAIL:  16. Not not-equal sign with field compare (should fail)                             
+    EXPECTED +000000000257400000, WAS +000000000257500000
+     PASS:  17. Less-than sign with literal compare                                             
+**** FAIL:  18. Less-than sign with literal compare (should fail)                               
+    EXPECTED +000000000180660000, WAS +000000000180670000
+     PASS:  19. Not less-than sign with literal compare                                         
+**** FAIL:  20. Not less-than sign with literal compare (should fail)                           
+    EXPECTED +000000000180670000, WAS +000000000180660000
+     PASS:  21. Less-than sign with field compare                                               
+**** FAIL:  22. Less-than sign with field compare (should fail)                                 
+    EXPECTED +000000004160720000, WAS +000000004160720000
+     PASS:  23. Not less-than sign with field compare                                           
+**** FAIL:  24. Not less-than sign with field compare (should fail)                             
+    EXPECTED +000000004160720000, WAS +000000004160710000
+     PASS:  25. Greater-than sign with literal compare                                          
+**** FAIL:  26. Greater-than sign with literal compare (should fail)                            
+    EXPECTED +000000000100000000, WAS +000000000098050000
+     PASS:  27. Not greater-than sign with literal compare                                      
+**** FAIL:  28. Not greater-than sign with literal compare (should fail)                        
+    EXPECTED +000000001077010000, WAS +000000001077020000
+     PASS:  29. Greater-than sign with field compare                                            
+**** FAIL:  30. Greater-than sign with field compare (should fail)                              
+    EXPECTED +000000017660314400, WAS +000000017660314300
+     PASS:  31. Not greater-than sign with field to field compare                               
+**** FAIL:  32. Not greater-than sign with field compare (should fail)                          
+    EXPECTED +000000017660314400, WAS +000000017660314500
+     PASS:  33. Greater-than-or-equal-to sign with literal compare when greater                 
+     PASS:  34. Greater-than-or-equal-to sign with literal compare when equal                   
+**** FAIL:  35. Greater-than-or-equal-to sign with literal compare (should fail)                
+    EXPECTED +000000000100000000, WAS +000000000098050000
+     PASS:  36. Not greater-than-or-equal-to sign with literal compare when less                
+**** FAIL:  37. Not greater-than-or-equal-to sign with literal compare when equal (should fail) 
+    EXPECTED +000000000180670000, WAS +000000000180670000
+**** FAIL:  38. Greater-than-or-equal-to sign with literal compare when greater (should fail)   
+    EXPECTED +000000000134400000, WAS +000000000134500000
+     PASS:  39. Greater-than-or-equal-to-sign with field compare when equal                     
+     PASS:  40. Greater-than-or-equal-to-sign with field compare when greater                   
+**** FAIL:  41. Greater-than-or-equal-to-sign with field compare when less (should fail)        
+    EXPECTED +000000004750620000, WAS +000000004750610000
+     PASS:  42. Not greater-than-or-equal-to-sign with field compare when less                  
+**** FAIL:  43. Not greater-than-or-equal-to-sign with field compare when equal (should fail)   
+    EXPECTED +000000004750620000, WAS +000000004750620000
+**** FAIL:  44. Not greater-than-or-equal-to-sign with field compare when greater (should fail) 
+    EXPECTED +000000004750620000, WAS +000000004750630000
+     PASS:  45. Less-than-or-equal-to-sign with field compare when equal                        
+     PASS:  46. Less-than-or-equal-to-sign with field compare when less                         
+**** FAIL:  47. Less-than-or-equal-to-sign with field compare when greater (should fail)        
+    EXPECTED +000000004750620000, WAS +000000004750630000
+     PASS:  48. Not less-than-or-equal-to-sign with field compare when greater                  
+**** FAIL:  49. Not greater-than-or-equal-to-sign with field compare when equal (should fail)   
+    EXPECTED +000000004750620000, WAS +000000004750620000
+**** FAIL:  50. Not greater-than-or-equal-to-sign with field compare when less (should fail)    
+    EXPECTED +000000004750630000, WAS +000000004750620000
+     PASS:  51. Display Numeric field equals literal                                            
+ 
+ 51 TEST CASES WERE EXECUTED
+ 26 PASSED
+ 25 FAILED
+=================================================

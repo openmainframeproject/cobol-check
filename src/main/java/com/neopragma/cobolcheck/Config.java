@@ -44,6 +44,7 @@ public class Config implements StringHelper {
     public static final String NONE = "none";
     public static final String DEFAULT_CONFIG_FILE_PATH = "config.properties";
     public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
+    public static final String TEST_RESULTS_FILE_CONFIG_KEY = "test.results.file";
     public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
 
@@ -99,6 +100,10 @@ public class Config implements StringHelper {
 
     String getTestSuiteDirectoryPathString() {
         return adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+    }
+
+    String getTestResultFilePathString() {
+        return adjustPathString(settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
     }
 
     String getApplicationSourceDirectoryPathString() {

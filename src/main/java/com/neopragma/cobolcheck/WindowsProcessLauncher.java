@@ -17,7 +17,7 @@ package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Launch a script to compile and execute a generated test program (Cobol)
@@ -61,7 +61,7 @@ public class WindowsProcessLauncher implements ProcessLauncher, StringHelper {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
-        processBuilder.inheritIO();
+
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
         String delim = Constants.EMPTY_STRING;
@@ -80,6 +80,8 @@ public class WindowsProcessLauncher implements ProcessLauncher, StringHelper {
         }
         return process;
     }
+
+
 
 
 }
