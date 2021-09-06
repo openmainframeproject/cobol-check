@@ -37,11 +37,12 @@ public class MessagesTest {
                 messages.get("ERR001", "testSuite", "Generator.runSuite()"));
     }
 
-//    @Test
-//    public void it_retrieves_a_message_with_substitution_values_in_a_different_order() {
-//        Locale.setDefault(new Locale("ja", "JP"));
-//        messages = new Messages();
-//        assertEquals("ERR001: Generator.runSuite()メソッドへのエントリー時にtestSuiteがnullです。",
-//                messages.get("ERR001", "testSuite", "Generator.runSuite()"));
-//    }
+   /*@Test
+   public void it_retrieves_a_message_with_substitution_values_in_a_different_order() {
+       Locale.setDefault(new Locale("ja", "JP"));
+       messages = new Messages();
+       assertEquals("ERR001: Generator.runSuite()メソッドへのエントリー時にtestSuiteがnullです。",
+               messages.get("ERR001", "testSuite", "Generator.runSuite()"));
+       Locale.setDefault(new Locale("en", "US"));
+   }*/
 }
