@@ -36,6 +36,7 @@ public class GeneratorTest {
     private StringWriter testProgramSource;
     private Generator generator;
     private TestSuiteParser testSuiteParser;
+    private TokenExtractor tokenExtractor = new StringTokenizerExtractor(messages);
     private static final Messages messages = new Messages();
     private static final Config config = new Config(messages);
     private NumericFields numericFields;
@@ -122,6 +123,81 @@ public class GeneratorTest {
     @Test
     public void it_recognizes_a_batch_file_IO_verb_on_a_source_line() {
 
+    }
+
+    @Test
+    public void it_recognizes_paragraph_header_format(){
+        String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD.");
+        assertTrue(generator.isParagraphHeaderFormat(paragraphHeader));
+    }
+
+    @Test
+    public void it_recognizes_paragraph_header_format_with_sequence_number(){
+        String paragraphHeader = ("001200 5400-WRITE-OUTPUT-RECORD.");
+        assertTrue(generator.isParagraphHeaderFormat(paragraphHeader));
+    }
+
+    @Test
+    public void it_returns_false_if_not_a_paragraph_header_format(){
+        String sectionHeader = ("       000-START SECTION.");
+        assertFalse(generator.isParagraphHeaderFormat(sectionHeader));
+    }
+
+    @Test
+    public void it_returns_paragraph_name(){
+        String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD.");
+        List<String> tokens = tokenExtractor.extractTokensFrom(paragraphHeader);
+        assertEquals("5400-WRITE-OUTPUT-RECORD", generator.getSectionOrParagraphName(tokens, paragraphHeader));
+    }
+
+    @Test
+    public void it_returns_section_name(){
+        String sectionHeader = ("       000-START SECTION.");
+        List<String> tokens = tokenExtractor.extractTokensFrom(sectionHeader);
+        assertEquals("000-START", generator.getSectionOrParagraphName(tokens, sectionHeader));
+    }
+
+    @Test
+    public void it_returns_section_name_while_containing_sequence_number(){
+        String sectionHeader = ("001200 000-START SECTION.");
+        List<String> tokens = tokenExtractor.extractTokensFrom(sectionHeader);
+        assertEquals("000-START", generator.getSectionOrParagraphName(tokens, sectionHeader));
+    }
+
+    @Test
+    public void it_recognizes_sequence_number_area(){
+        String seqNumber = ("001200 DATA DIVISION.");
+        assertEquals(Area.SEQUENCE_NUMBER, generator.getBeginningArea(seqNumber, false));
+    }
+
+    @Test
+    public void it_recognizes_indicator_area_while_ignoring_sequence_number_area(){
+        String indicator = ("001200-              \"World\"");
+        assertEquals(Area.INDICATOR, generator.getBeginningArea(indicator, true));
+    }
+
+    @Test
+    public void it_recognizes_a_area(){
+        String a         = ("       000-START SECTION.");
+        assertEquals(Area.A, generator.getBeginningArea(a, false));
+    }
+
+    @Test
+    public void it_recognizes_b_area(){
+        String b         = ("           PERFORM 003-DO-SOMETHING");
+        assertEquals(Area.B, generator.getBeginningArea(b, false));
+    }
+
+    @Test
+    public void it_returns_none_if_outside_areas(){
+        String none      = ("                                                                         Too many spaces!");
+        assertEquals(Area.NONE, generator.getBeginningArea(none, false));
+    }
+
+    @Test
+    public void it_returns_none_if_ignoring_sequence_area_but_string_is_too_short(){
+        String none      = ("01");
+        assertEquals(Area.NONE, generator.getBeginningArea(none, true));
     }
 
     private void loadInputData(String... lines) {
