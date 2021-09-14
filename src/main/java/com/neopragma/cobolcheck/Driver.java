@@ -38,7 +38,6 @@ public class Driver implements StringHelper {
     private Reader testSuite;
     private Reader cobolSourceIn;
     private Writer testSourceOut;
-    private static final String optionSpec = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
     private String configFileFromCommandLine = Constants.EMPTY_STRING;
     private static int exitStatus;
 
@@ -64,6 +63,11 @@ public class Driver implements StringHelper {
         Driver.messages = config.getMessages();
         this.options = options;
         exitStatus = Constants.STATUS_NORMAL;
+    }
+
+    public int getExitStatus()
+    {
+        return exitStatus;
     }
 
     void run() throws InterruptedException {
@@ -271,16 +275,5 @@ public class Driver implements StringHelper {
         for (String line : helpText) {
             System.out.println(line);
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        messages = new Messages();
-        Config config = new Config(messages);
-        config.load();
-        Driver app = new Driver(
-                config,
-                new GetOpt(args, optionSpec, config));
-        app.run();
-        System.exit(exitStatus);
     }
 }

@@ -33,6 +33,9 @@ public final class Constants {
     // Cobol Check copybook location (not for users)
     public static final String COBOLCHECK_COPYBOOK_DIRECTORY = "/com/neopragma/cobolcheck/copybooks/";
 
+    //Command line options
+    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
+
     // Frequently-used string values
     public static final String EMPTY_STRING = "";
     public static final String NEWLINE = System.getProperty("line.separator");
