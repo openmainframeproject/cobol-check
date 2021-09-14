@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * @since 14
  */
 public class Generator implements StringHelper {
-
+//Initial
     public static final String PIC_VALUE = "PIC";
     public static final String PICTURE_VALUE = "PICTURE";
     private final Messages messages;
