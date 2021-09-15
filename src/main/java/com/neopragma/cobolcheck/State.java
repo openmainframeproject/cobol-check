@@ -61,13 +61,6 @@ public class State {
 
         flags.put(Constants.PROCEDURE_DIVISION, new Flag());
 
-        flags.put(Constants.SECTION_TOKEN, new Flag());
-        dependentFlagsFor(Constants.SECTION_TOKEN,
-                Constants.PARAGRAPH_TOKEN);
-
-        flags.put(Constants.PARAGRAPH_TOKEN, new Flag());
-
-
         mutuallyExclusiveFlagsFor(Constants.IDENTIFICATION_DIVISION,
                 Constants.DATA_DIVISION, Constants.ENVIRONMENT_DIVISION, Constants.PROCEDURE_DIVISION);
         mutuallyExclusiveFlagsFor(Constants.ENVIRONMENT_DIVISION,
@@ -130,7 +123,7 @@ public class State {
         public void unset() {
             state = false;
             for (Flag flag : dependentFlags) {
-                if (flag != null) flag.unset();
+                flag.unset();
             }
         }
     }
