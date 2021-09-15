@@ -72,6 +72,12 @@ public class Generator implements StringHelper {
     private static final int commentIndicatorOffset = 6;
     private static final char commentIndicator = '*';
 
+    // Used to find areas
+    private static final int sequenceNumberAreaEnd = 6;
+    private static final int indicatorAreaEnd = 7;
+    private static final int A_AreaEnd = 11;
+    private static final int B_AreaEnd = 71;
+
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
     // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
     private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
@@ -84,6 +90,10 @@ public class Generator implements StringHelper {
     // Used to handle programs that don't have a Working-Storage Section
     private boolean workingStorageTestCodeHasBeenInserted = false;
     private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
+
+    // Used to add a section at the beginning of the Procedure Division
+    private final String utSectionHeader = fixedLength("       UT-CHECK SECTION.");
+    private final String exit = fixedLength("       EXIT.");
 
     // used while processing SELECT statements in the program under test
     String fileIdentifier = Constants.EMPTY_STRING;
@@ -103,6 +113,12 @@ public class Generator implements StringHelper {
     private boolean processingBatchFileIOStatement;
     private boolean commentThisLine;
     private boolean previousLineContainedOnlyAPeriod;
+    private boolean enteredNewSection;
+    private boolean enteredNewParagraph;
+
+    private String currentSectionName;
+    private String currentParagraphName;
+
 
     public Generator(
             KeywordExtractor keywordExtractor,
@@ -164,6 +180,12 @@ public class Generator implements StringHelper {
                         testSourceOut.write("      *" + sourceLine.substring(commentIndicatorOffset + 1));
                         commentThisLine = false;
                     } else {
+                        if (enteredNewSection){
+                            enteredNewSection = false;
+                        }
+                        if (enteredNewParagraph){
+                            enteredNewParagraph = false;
+                        }
                         testSourceOut.write(sourceLine);
                     }
                 }
@@ -192,6 +214,16 @@ public class Generator implements StringHelper {
      */
     private void entering(String partOfProgram) {
         state.getFlags().get(partOfProgram).set();
+    }
+
+    /**
+     * Change the state of the merge process depending on which section of the program under test we have reached.
+     * This is how we know which kinds of source statements to look for when parsing the program source.
+     *
+     * @param partOfProgram - the division, section, paragraph, sentence, or clause we are processing at the moment.
+     */
+    private void exiting(String partOfProgram) {
+        state.getFlags().get(partOfProgram).unset();
     }
 
     /**
@@ -483,6 +515,19 @@ public class Generator implements StringHelper {
             skipThisLine = false;
             return;
         }
+        if (sourceLineContains(tokens, Constants.SECTION_TOKEN)){
+            exiting(Constants.SECTION_TOKEN);
+            entering(Constants.SECTION_TOKEN);
+            currentSectionName = getSectionOrParagraphName(tokens, sourceLine);
+            enteredNewSection = true;
+        }
+
+        if (isParagraphHeader(tokens, sourceLine)){
+            exiting(Constants.PARAGRAPH_TOKEN);
+            entering(Constants.PARAGRAPH_TOKEN);
+            currentParagraphName = getSectionOrParagraphName(tokens, sourceLine);
+            enteredNewParagraph = true;
+        }
         commentOutBatchFileIOStatements(tokens, sourceLine, testSourceOut);
 
     }
@@ -592,6 +637,91 @@ public class Generator implements StringHelper {
         return sourceLine == null || sourceLine.length() < minimumMeaningfulSourceLineLength;
     }
 
+    public String getSectionOrParagraphName(List<String> tokens, String sourceLine){
+        if (tokens.size() > 0){
+            if (getBeginningArea(sourceLine, false) == Area.SEQUENCE_NUMBER){
+                if (tokens.size() >= 1){
+                    return tokens.get(1);
+                }
+                else {
+                    return null;
+                }
+            }
+            return tokens.get(0);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * As paragraph headers are not associated with any keyword, the method matches the
+     * source line against specific attributes that makes up a paragraph header.
+     *
+     * @param tokens - extracted from the current source line
+     * @param sourceLine - current source line being processed
+     * @return true if the source line have all the attributes of a paragraph header.
+     */
+    private boolean isParagraphHeader(List<String> tokens, String sourceLine){
+        return (processingProcedureDivision
+                && isParagraphHeaderFormat(sourceLine)
+                && !sourceLineContains(tokens, Constants.DECLARATIVES_TOKEN));
+    }
+
+    /**
+     * Checks if the word, following the initial spaces, is followed by a period
+     * with no spaces parting the word.
+     *
+     * @param sourceLine - current source line being processed
+     * @return true if sourceLine is of the format of a paragraph header
+     */
+    public boolean isParagraphHeaderFormat(String sourceLine){
+        if (getBeginningArea(sourceLine, true) == Area.A){
+            char[] characters = sourceLine.toCharArray();
+            boolean charactersStarted = false;
+            for (int i = sequenceNumberAreaEnd; i<characters.length; i++){
+                if (charactersStarted && characters[i] == ' '){
+                    return false;
+                }
+                if (characters[i] != ' ' && !charactersStarted){
+                    charactersStarted = true;
+                }
+                if (charactersStarted && characters[i] == '.'){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Looks through the prefix-spaces in the source line in order to determine the
+     * beginning area (SEQUENCE_NUMBER, INDICATOR, A or B)
+     *
+     * @param sourceLine - current source line being processed
+     * @return the beginning area of the source line.
+     */
+    public Area getBeginningArea(String sourceLine, boolean ignoreSequenceArea){
+        if (isBlank(sourceLine) || (ignoreSequenceArea && sourceLine.length() <= sequenceNumberAreaEnd + 1)){
+            return Area.NONE;
+        }
+
+        char[] characters = sourceLine.toCharArray();
+        int index = 0;
+        if (ignoreSequenceArea) index = sequenceNumberAreaEnd;
+
+        while (characters[index] == ' '){
+            index++;
+        }
+
+        if (index < sequenceNumberAreaEnd) return Area.SEQUENCE_NUMBER;
+        if (index == indicatorAreaEnd - 1) return Area.INDICATOR;
+        if (index < A_AreaEnd) return Area.A;
+        if (index < B_AreaEnd) return Area.B;
+
+        return Area.NONE;
+    }
+
     /**
      * Recognizes end of statement when
      * (a) - sourceLine ends with a period
@@ -644,6 +774,7 @@ public class Generator implements StringHelper {
     private void insertProcedureDivisionTestCode(
             BufferedReader testSuiteReader,
             Writer testSourceOut) throws IOException {
+        testSourceOut.write(utSectionHeader);
         // Inject test initialization statement
         testSuiteParser.insertTestInitializationLineIntoTestSource(testSourceOut);
 
@@ -652,6 +783,7 @@ public class Generator implements StringHelper {
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         insertSecondarySourceIntoTestSource(procedureDivisionCopybookFilename, testSourceOut);
+        testSourceOut.write(exit);
 
     }
 
