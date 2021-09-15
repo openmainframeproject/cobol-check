@@ -107,4 +107,9 @@ public final class Constants {
     public static final String FD_TOKEN = "FD";
     public static final String LEVEL_01_TOKEN = "01";
     public static final String COPY_TOKEN = "COPY";
+    public static final String SECTION_TOKEN = "SECTION";
+    public static final String DECLARATIVES_TOKEN = "DECLARATIVES";
+
+    //Keywords not in COBOL-Code
+    public static final String PARAGRAPH_TOKEN = "PARAGRAPH";
 }
