@@ -35,9 +35,6 @@ public class Driver implements StringHelper {
     private final Config config;
     private static Messages messages;
     private final GetOpt options;
-    private Reader testSuite;
-    private Reader cobolSourceIn;
-    private Writer testSourceOut;
     private String configFileFromCommandLine = Constants.EMPTY_STRING;
     private static int exitStatus;
 
@@ -55,7 +52,7 @@ public class Driver implements StringHelper {
             "  -v|--version",
             "      Displays the current version of cobol-check"
     };
-
+    // Methods that fall within the responsibility of the Driver class
     public Driver(
             Config config,
             GetOpt options) {
@@ -63,11 +60,6 @@ public class Driver implements StringHelper {
         Driver.messages = config.getMessages();
         this.options = options;
         exitStatus = Constants.STATUS_NORMAL;
-    }
-
-    public int getExitStatus()
-    {
-        return exitStatus;
     }
 
     void run() throws InterruptedException {
@@ -98,9 +90,7 @@ public class Driver implements StringHelper {
     void runTestSuites() throws InterruptedException {
         // all test suites are located under this directory
         String testSuiteDirectory = config.getTestSuiteDirectoryPathString();
-        if (!testSuiteDirectory.endsWith(Constants.FILE_SEPARATOR)) {
-            testSuiteDirectory += Constants.FILE_SEPARATOR;
-        }
+        testSuiteDirectory = endWithFileSeparator(testSuiteDirectory);
 
         String programNames = options.getValueFor(Constants.PROGRAMS_OPTION);
         String[] programNamesSeparated = programNames.split(Constants.COLON);
@@ -109,139 +99,73 @@ public class Driver implements StringHelper {
         List<String> matchingDirectories;
         for (String programName : programNamesSeparated) {
             Path path = Paths.get(programName);
-            String fname = path.getFileName().toString();
-            programName = fname;
-            DirectoryNameMatcher directoryFinder = new DirectoryNameMatcher(programName);
-            try {
-                Files.walkFileTree(Paths.get(testSuiteDirectory), directoryFinder);
-                matchingDirectories = directoryFinder.getMatchingDirectories();
-                if (matchingDirectories.isEmpty()) {
-                    Log.warn(messages.get("WRN001", programName, testSuiteDirectory));
-                }
+            programName = path.getFileName().toString();
+            try{
+                matchingDirectories = getMatchingDirectories(programName, testSuiteDirectory);
             } catch (IOException ioException) {
-                throw new PossibleInternalLogicErrorException(
-                        messages.get("ERR019", programName));
+                throw new PossibleInternalLogicErrorException(messages.get("ERR019", programName));
             }
 
+
             for (String matchingDirectory : matchingDirectories) {
-                TestSuiteConcatenator concatenator =
-                        new TestSuiteConcatenator(config, options);
-                testSuite = concatenator.concatenateTestSuites(matchingDirectory);
+                Reader sourceReader = getSourceReader(programName);
+                Reader testSuiteReader = getTestSuiteReader(matchingDirectory);
+                Writer testSourceWriter = getTestSourceWriter(programName);
+                String testSourceOutPath = getTestSourceOutPath();
 
-                // Create READER for the Cobol source program to be tested
-                StringBuilder cobolSourceInPath = new StringBuilder();
-                cobolSourceInPath.append(System.getProperty("user.dir"));
-                cobolSourceInPath.append(Constants.FILE_SEPARATOR);
-                cobolSourceInPath.append(config.getApplicationSourceDirectoryPathString());
-                if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
-                    cobolSourceInPath.append(Constants.FILE_SEPARATOR);
-                }
-                cobolSourceInPath.append(programName);
+                Log.debug("Driver.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
 
-                List<String> applicationFilenameSuffixes = config.getApplicationFilenameSuffixes();
-                for (String suffix : applicationFilenameSuffixes) {
-                    Log.debug("Driver looking for source file <" + cobolSourceInPath.toString() + suffix + ">");
-                    if (Files.isRegularFile(Paths.get(cobolSourceInPath.toString() + suffix))) {
-                        cobolSourceInPath.append(suffix);
-                        Log.debug("Driver recognized this file as a regular file: <" + cobolSourceInPath.toString() + ">");
-                        break;
-                    }
-                }
-                String cobolSourceInPathString = adjustPathString(cobolSourceInPath.toString());
+                mergeTestSuitesIntoTheTestProgram(sourceReader, testSuiteReader, testSourceWriter, programName);
 
-                try {
-                    cobolSourceIn = new FileReader(cobolSourceInPathString);
-                } catch (IOException cobolSourceInException) {
-                    throw new PossibleInternalLogicErrorException(
-                            messages.get("ERR018", programName));
-                }
-
-                // Create WRITER for the test source program (copy of program to be tested plus test code)
-                StringBuilder testSourceOutPath = new StringBuilder();
-                testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
-                testSourceOutPath.append(Constants.FILE_SEPARATOR);
-                testSourceOutPath.append(
-                        config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
-                                Constants.DEFAULT_TEST_PROGRAM_NAME));
-
-                Log.debug("Driver.runTestSuites() testSourceOutPath: <" + testSourceOutPath.toString() + ">");
-
-                try {
-                    testSourceOut = new FileWriter(testSourceOutPath.toString());
-                } catch (IOException testSourceOutException) {
-                    throw new PossibleInternalLogicErrorException(
-                            messages.get("ERR016", programName));
-                }
-
-                mergeTestSuitesIntoTheTestProgram();
-                try {
-                    testSourceOut.close();
-                } catch (IOException closeTestSourceOutException) {
-                    throw new PossibleInternalLogicErrorException(
-                            messages.get("ERR017", programName));
-                }
-
-                // Compile and run the test program
-                String processConfigKeyPrefix;
-                ProcessLauncher launcher = null;
-                switch (PlatformLookup.get()) {
-                    case LINUX :
-                        Log.debug("Driver launching Linux process");
-                        processConfigKeyPrefix = "linux";
-                        launcher = new LinuxProcessLauncher(config);
-                        break;
-                    case WINDOWS :
-                        Log.debug("Driver launching Windows process");
-                        processConfigKeyPrefix = "windows";
-                        launcher = new WindowsProcessLauncher(config);
-                        break;
-                    case OSX :
-                        Log.debug("Driver launching OS X process");
-                        processConfigKeyPrefix = "osx";
-                        //launcher = new OSXProcessLauncher(config);
-                        break;
-                    case ZOS :
-                        Log.debug("Driver launching z/OS process");
-                        processConfigKeyPrefix = "zos";
-                        //launcher = new ZOSProcessLauncher(config);
-                        break;
-                    default :
-                        Log.debug("Driver launching default process");
-                        processConfigKeyPrefix = "unix";
-                        launcher = new LinuxProcessLauncher(config);
-                        break;
-                }
-                String processConfigKey = processConfigKeyPrefix + Constants.PROCESS_CONFIG_KEY;
-                String processName = config.getString(processConfigKey);
-                if (isBlank(processName)) {
-                    String errorMessage = messages.get("ERR021", processConfigKey);
-                    Log.error(errorMessage);
-                    throw new PossibleInternalLogicErrorException(errorMessage);
-                }
-                if (launcher != null){
-                    Process process = launcher.run(testSourceOutPath.toString());
-                    int exitCode = 1;
-//                    try {
-                        exitCode = process.waitFor();
-//                    } catch (InterruptedException interruptedException) {
-//                        exitCode = 1;
-//                    }
-                    Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
-                }
+                runTestProgram(testSourceOutPath);
             }
         }
     }
 
-    void mergeTestSuitesIntoTheTestProgram() {
-        Generator generator = new Generator(
-                new KeywordExtractor(),
-                config);
-        generator.mergeTestSuite(
-                testSuite,
-                cobolSourceIn,
-                testSourceOut
-        );
+    /**
+     * Merges source input and test suites into a single file
+     *
+     * @param sourceReader - For reading the cobol source.
+     * @param testSuiteReader - For reading the test suites
+     * @param testSourceWriter - For writing the merged output test file.
+     * @param programName - The name of the cobol source program.
+     * @throws InterruptedException - pass any InterruptedException to the caller.
+     */
+    void mergeTestSuitesIntoTheTestProgram(Reader sourceReader, Reader testSuiteReader,
+                                           Writer testSourceWriter, String programName) {
+        Generator generator = new Generator(new KeywordExtractor(), config);
+        generator.mergeTestSuite(testSuiteReader, sourceReader, testSourceWriter);
+
+        try {
+            testSourceWriter.close();
+        } catch (IOException closeTestSourceOutException) {
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR017", programName));
+        }
     }
+
+    /**
+     * Runs the merged test program
+     *
+     * @param testPath - The path to the test.
+     * @throws InterruptedException - pass any InterruptedException to the caller.
+     */
+    void runTestProgram(String testPath) throws InterruptedException {
+        // Compile and run the test program
+        ProcessLauncher launcher = getPlatformSpecificLauncher(PlatformLookup.get());
+        String processConfigKey = launcher.getProcessConfigKeyPrefix() + Constants.PROCESS_CONFIG_KEY;
+        String processName = config.getString(processConfigKey);
+
+        if (isBlank(processName)) {
+            String errorMessage = messages.get("ERR021", processConfigKey);
+            Log.error(errorMessage);
+            throw new PossibleInternalLogicErrorException(errorMessage);
+        }
+
+        int exitCode = launchProgram(launcher, testPath);
+        Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
+    }
+
 
     void initialize() {
         configFileFromCommandLine = options.getValueFor("config-file");
@@ -276,4 +200,185 @@ public class Driver implements StringHelper {
             System.out.println(line);
         }
     }
+
+    //String manipulation methods
+    /**
+     * Appends a file separator, if string doesn't end one
+     *
+     * @param path - String to append to.
+     */
+    String endWithFileSeparator(String path){
+        if (!path.endsWith(Constants.FILE_SEPARATOR)) {
+            path += Constants.FILE_SEPARATOR;
+        }
+        return path;
+    }
+
+    //Launcher methods
+    public int getExitStatus()
+    {
+        return exitStatus;
+    }
+
+    /**
+     * Launches a program and returns the exit code. Returns -1 if launcher is null.
+     *
+     * @param launcher - The launcher used.
+     * @param programPath - Path to the program to be launched.
+     * @throws IOException - pass any InterruptedException to the caller.
+     */
+    int launchProgram(ProcessLauncher launcher, String programPath) throws InterruptedException {
+        if (launcher == null) return -1;
+        Process process = launcher.run(programPath);
+        int exitCode = 1;
+//        try {
+        exitCode = process.waitFor();
+//        } catch (InterruptedException interruptedException) {
+//            exitCode = 1;
+//        }
+        return exitCode;
+    }
+
+    /**
+     * Gets a launcher based on the current platform: Linux, Windows, OSX, ZOS or Unix.
+     * NOTE: Currently not supporting OSX or ZOS.
+     */
+    ProcessLauncher getPlatformSpecificLauncher(Platform platform){
+        ProcessLauncher launcher = null;
+        switch (platform) {
+            case LINUX :
+                Log.debug("Driver launching Linux process");
+                launcher = new LinuxProcessLauncher(config, "linux");
+                break;
+            case WINDOWS :
+                Log.debug("Driver launching Windows process");
+                launcher = new WindowsProcessLauncher(config, "windows");
+                break;
+            case OSX :
+                Log.debug("Driver launching OS X process");
+                //launcher = new OSXProcessLauncher(config, "osx");
+                break;
+            case ZOS :
+                Log.debug("Driver launching z/OS process");
+                //launcher = new ZOSProcessLauncher(config, "zos");
+                break;
+            default :
+                Log.debug("Driver launching default process");
+                launcher = new LinuxProcessLauncher(config, "unix");
+                break;
+        }
+        return launcher;
+    }
+
+    //I/O or File/Path methods
+    /**
+     * Gets the path for the COBOL source directory (the COBOL input).
+     */
+    String getCobolSourceDirectory(){
+        StringBuilder cobolSourceInPath = new StringBuilder();
+        cobolSourceInPath.append(System.getProperty("user.dir"));
+        cobolSourceInPath.append(Constants.FILE_SEPARATOR);
+        cobolSourceInPath.append(config.getApplicationSourceDirectoryPathString());
+        if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
+            cobolSourceInPath.append(Constants.FILE_SEPARATOR);
+        }
+        return cobolSourceInPath.toString();
+    }
+
+    /**
+     * Returns a reader for the cobol source file.
+     *
+     * @param programName - The name of the file its reading from.
+     */
+    Reader getSourceReader(String programName){
+        String cobolSourceInPath = getCobolSourceDirectory() + programName;
+        cobolSourceInPath = appendMatchingFileSuffix(cobolSourceInPath, config.getApplicationFilenameSuffixes());
+        cobolSourceInPath = adjustPathString(cobolSourceInPath);
+
+        Reader sourceReader;
+        try {
+            sourceReader = new FileReader(cobolSourceInPath);
+        } catch (IOException cobolSourceInException) {
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR018", programName));
+        }
+        return sourceReader;
+    }
+
+    /**
+     * Returns a reader for the testSuites in a directory
+     *
+     * @param testDirectory - The directory of the test files.
+     */
+    Reader getTestSuiteReader(String testDirectory){
+        TestSuiteConcatenator concatenator = new TestSuiteConcatenator(config, options);
+        return concatenator.concatenateTestSuites(testDirectory);
+    }
+    /**
+     * Gets the path for the output file.
+     */
+    String getTestSourceOutPath(){
+        StringBuilder testSourceOutPath = new StringBuilder();
+        testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
+        testSourceOutPath.append(Constants.FILE_SEPARATOR);
+        testSourceOutPath.append(
+                config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
+                        Constants.DEFAULT_TEST_PROGRAM_NAME));
+        return testSourceOutPath.toString();
+    }
+
+    /**
+     * Returns a Writer for the output file.
+     *
+     * @param sourceFile - The name of the cobol source.
+     */
+    Writer getTestSourceWriter(String sourceFile){
+        String testSourceOutPath = getTestSourceOutPath();
+        Writer testSourceWriter;
+        try {
+            testSourceWriter = new FileWriter(testSourceOutPath);
+        } catch (IOException testSourceOutException) {
+            throw new PossibleInternalLogicErrorException(
+                    messages.get("ERR016", sourceFile));
+        }
+        return testSourceWriter;
+    }
+
+    /**
+     * Returns a string which has a matched file suffix
+     *
+     * @param filePath - Path to the file without a suffix.
+     * @param applicationSuffixes - Possible suffixes for the file
+     */
+    String appendMatchingFileSuffix(String filePath, List<String> applicationSuffixes){
+        for (String suffix : applicationSuffixes) {
+            Log.debug("Driver looking for source file <" + filePath + suffix + ">");
+            if (Files.isRegularFile(Paths.get(filePath + suffix))) {
+                filePath += suffix;
+                Log.debug("Driver recognized this file as a regular file: <" + filePath.toString() + ">");
+                break;
+            }
+        }
+        return filePath;
+    }
+
+    /**
+     * Gets all directories with a matching name
+     *
+     * @param name - The name of directories to look for.
+     * @param path - Determines what path to look for matching directories.
+     * @throws IOException - pass any InterruptedException to the caller.
+     */
+    List<String> getMatchingDirectories(String name, String path) throws IOException{
+        List<String> matchingDirectories;
+        DirectoryNameMatcher directoryFinder = new DirectoryNameMatcher(name);
+
+        Files.walkFileTree(Paths.get(path), directoryFinder);
+        matchingDirectories = directoryFinder.getMatchingDirectories();
+        if (matchingDirectories.isEmpty()) {
+            Log.warn(messages.get("WRN001", name, path));
+        }
+        return matchingDirectories;
+    }
+
 }

@@ -22,6 +22,8 @@ package com.neopragma.cobolcheck;
  * @since 1.5
  */
 public interface ProcessLauncher {
+    String getProcessConfigKeyPrefix();
     Process run(String programName);
+
 
 }
