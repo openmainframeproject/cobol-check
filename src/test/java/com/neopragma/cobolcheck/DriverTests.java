@@ -68,6 +68,8 @@ public class DriverTests {
                 .thenReturn(true);
         String appended = driver.appendMatchingFileSuffix(pathWithNoSuffix, suffixList);
 
+        mockedFiles.close();
+
         assertEquals(fullPath, appended);
     }
 }
