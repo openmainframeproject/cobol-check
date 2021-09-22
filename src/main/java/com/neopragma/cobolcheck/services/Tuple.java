@@ -13,17 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck;
+package com.neopragma.cobolcheck.services;
 
-import com.neopragma.cobolcheck.services.Version;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
-public class VersionTest {
-
-    @Test
-    public void it_returns_the_current_version_string() {
-        assertTrue(Version.current().matches("^Version: \\d\\.\\d\\..*$"));
-    }
+public interface Tuple<T1, T2> {
+    T1 getFirst();
+    T2 getSecond();
+    boolean isEmpty();
 }

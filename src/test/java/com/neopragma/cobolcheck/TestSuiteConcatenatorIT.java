@@ -1,5 +1,10 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.TestSuiteConcatenator;
+import com.neopragma.cobolcheck.services.Config;
+import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.Messages;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

@@ -16,6 +16,13 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
+import com.neopragma.cobolcheck.features.parser.NumericFields;
+import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
+import com.neopragma.cobolcheck.services.Config;
+import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.Messages;
+import com.neopragma.cobolcheck.workers.Generator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +32,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
