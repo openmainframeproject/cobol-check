@@ -34,23 +34,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConfigIT {
 
-    private Config config;
-
-    @BeforeEach
-    public void commonSetup() {
-        config = new Config(new Messages());
-    }
-
     @Test
     public void it_loads_configuration_settings_from_default_source() {
-        config.load();
-        assertEquals("production", config.getString("config.loaded"));
+        Config.load();
+        assertEquals("production", Config.getString("config.loaded"));
     }
 
     @Test
     public void it_loads_configuration_settings_from_specified_source() {
-        config.load("testconfig.properties");
-        assertEquals("test", config.getString("config.loaded"));
+        Config.load("testconfig.properties");
+        assertEquals("test", Config.getString("config.loaded"));
     }
 
     @Test
@@ -69,7 +62,7 @@ public class ConfigIT {
 
     @Test
     public void it_throws_when_config_file_name_is_null() {
-        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> config.load(null));
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> Config.load(null));
         assertEquals("ERR001: configResourceName is null on entry to Config.load(configResourceName) method.",
                 ex.getMessage());
         assertEquals(NullPointerException.class,
@@ -78,15 +71,15 @@ public class ConfigIT {
 
     @Test
     public void it_can_find_the_copybooks_for_cobolcheck_based_on_config_settings() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
         assertEquals("CCHECKWS.CBL", findFileNamed("CCHECKWS.CBL").toFile().getName());
         assertEquals("CCHECKPD.CBL", findFileNamed("CCHECKPD.CBL").toFile().getName());
     }
 
     private Path findFileNamed(String filename) {
-        String resourcesDirectory = config.getString("resources.directory");
+        String resourcesDirectory = Config.getString("resources.directory");
         String packagePathSegment = "com/neopragma/cobolcheck";
-        String copybookPathSegment = config.getString("cobolcheck.copybook.directory");
+        String copybookPathSegment = Config.getString("cobolcheck.copybook.directory");
         return new File(
                 resourcesDirectory + Constants.FILE_SEPARATOR
                         + packagePathSegment + Constants.FILE_SEPARATOR
@@ -96,35 +89,35 @@ public class ConfigIT {
 
     @Test
     public void it_gets_the_default_locale_override() {
-        config.load("testconfig.properties");
-        assertEquals(Locale.JAPAN, config.getDefaultLocale());
+        Config.load("testconfig.properties");
+        assertEquals(Locale.JAPAN, Config.getDefaultLocale());
     }
 
     @Test
     public void it_returns_empty_string_when_application_source_filenames_have_no_suffix() {
-        config.load("testconfigNoCopybookSuffix.properties");
+        Config.load("testconfigNoCopybookSuffix.properties");
         List<String> expected = new ArrayList();
-        assertEquals(expected, config.getApplicationFilenameSuffixes());
+        assertEquals(expected, Config.getApplicationFilenameSuffixes());
     }
 
     @Test
     public void it_returns_list_of_specified_application_source_filename_suffixes() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
         List<String> expected = new ArrayList(Arrays.asList( ".CBL", ".cbl", ".COB", ".cob" ));
-        assertEquals(expected, config.getApplicationFilenameSuffixes());
+        assertEquals(expected, Config.getApplicationFilenameSuffixes());
     }
 
     @Test
     public void it_returns_empty_string_when_application_copybook_filenames_have_no_suffix() {
-        config.load("testconfigNoCopybookSuffix.properties");
+        Config.load("testconfigNoCopybookSuffix.properties");
         List<String> expected = new ArrayList();
-        assertEquals(expected, config.getCopybookFilenameSuffixes());
+        assertEquals(expected, Config.getCopybookFilenameSuffixes());
     }
 
     @Test
     public void it_returns_list_of_specified_application_copybook_filename_suffixes() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
         List<String> expected = new ArrayList(Arrays.asList( ".CBL", ".cbl", ".COB", ".cob" ));
-        assertEquals(expected, config.getCopybookFilenameSuffixes());
+        assertEquals(expected, Config.getCopybookFilenameSuffixes());
     }
 }

@@ -18,7 +18,7 @@ package com.neopragma.cobolcheck.features;
 import com.neopragma.cobolcheck.exceptions.ConcatenatedTestSuiteIOException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.TestSuiteInputFileNotFoundException;
-import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
@@ -40,15 +40,11 @@ import java.util.List;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class TestSuiteConcatenator implements StringHelper {
+public class TestSuiteConcatenator {
 
-    private Config config;
-    private Messages messages;
-    private GetOpt options;
+    private ArgumentHandler options;
 
-    public TestSuiteConcatenator(Config config, GetOpt options) {
-        this.config = config;
-        this.messages = config.getMessages();
+    public TestSuiteConcatenator(ArgumentHandler options) {
         this.options = options;
     }
 
@@ -96,25 +92,25 @@ public class TestSuiteConcatenator implements StringHelper {
                 Files.walkFileTree(Paths.get(programTestSuiteSubdirectory), fileFinder);
                 matchingFiles = fileFinder.getMatchingFiles();
                 if (matchingFiles.isEmpty()) {
-                    Log.warn(messages.get("WRN002", programTestSuiteSubdirectory));
+                    Log.warn(Messages.get("WRN002", programTestSuiteSubdirectory));
                 }
             } catch (IOException exceptionWalkingFiles) {
                 throw new PossibleInternalLogicErrorException(
-                        messages.get("ERR013", testFileNameGlob),
+                        Messages.get("ERR013", testFileNameGlob),
                         exceptionWalkingFiles);
             }
         }
 
         // concatenate matching test suite files into a single test input file for the Generator to consume
         String concatenatedTestSuiteFileName =
-                config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
+                Config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
                         Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH);
         FileWriter concatenatedTestSuitesWriter;
         try {
             concatenatedTestSuitesWriter = new FileWriter(concatenatedTestSuiteFileName);
         } catch (IOException concatenatedTestSuitesException) {
             throw new ConcatenatedTestSuiteIOException(
-                    messages.get("ERR012", concatenatedTestSuiteFileName),
+                    Messages.get("ERR012", concatenatedTestSuiteFileName),
                     concatenatedTestSuitesException);
         }
 
@@ -130,7 +126,7 @@ public class TestSuiteConcatenator implements StringHelper {
             concatenatedTestSuitesWriter.close();
         } catch (IOException testFileReaderException) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR014", programTestSuiteSubdirectory),
+                    Messages.get("ERR014", programTestSuiteSubdirectory),
                     testFileReaderException);
         }
 
@@ -140,7 +136,7 @@ public class TestSuiteConcatenator implements StringHelper {
             testSuite = new FileReader(concatenatedTestSuiteFileName);
         } catch (IOException exceptionCreatingTestSuiteReader) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR015"));
+                    Messages.get("ERR015"));
         }
 
         return testSuite;

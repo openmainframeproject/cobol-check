@@ -40,12 +40,10 @@ import java.util.regex.Pattern;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Generator implements StringHelper {
+public class Generator {
 
     public static final String PIC_VALUE = "PIC";
     public static final String PICTURE_VALUE = "PICTURE";
-    private final Messages messages;
-    private final Config config;
     private final TokenExtractor tokenExtractor;
     private final TestSuiteParser testSuiteParser;
     private NumericFields numericFields;
@@ -93,7 +91,7 @@ public class Generator implements StringHelper {
 
     // Used to handle programs that don't have a Working-Storage Section
     private boolean workingStorageTestCodeHasBeenInserted = false;
-    private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
+    private final String workingStorageHeader = StringHelper.fixedLength("       WORKING-STORAGE SECTION.");
 
     // used while processing SELECT statements in the program under test
     String fileIdentifier = Constants.EMPTY_STRING;
@@ -114,15 +112,11 @@ public class Generator implements StringHelper {
     private boolean commentThisLine;
     private boolean previousLineContainedOnlyAPeriod;
 
-    public Generator(
-            KeywordExtractor keywordExtractor,
-            Config config) {
-        this.config = config;
-        this.messages = config.getMessages();
-        this.tokenExtractor = new StringTokenizerExtractor(messages);
-        testSuiteParser = new TestSuiteParser(keywordExtractor, config);
+    public Generator(KeywordExtractor keywordExtractor) {
+        this.tokenExtractor = new StringTokenizerExtractor();
+        testSuiteParser = new TestSuiteParser(keywordExtractor);
         numericFields = new NumericFields();
-        testCodePrefix = config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         fileIdentifiersAndStatuses = new HashMap<>();
     }
 
@@ -142,13 +136,13 @@ public class Generator implements StringHelper {
 
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR001", "testSuite", "Generator.runSuite()"));
+                    Messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
         BufferedReader testSuiteReader
                 = new BufferedReader(testSuite);
         if (cobolSourceIn == null) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
+                    Messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
         }
         BufferedReader cobolSourceInReader
                 = new BufferedReader(cobolSourceIn);
@@ -160,10 +154,10 @@ public class Generator implements StringHelper {
                 if (sourceLine.trim().equals(Constants.PERIOD)) {
                     skipThisLine = false;
                     previousLineContainedOnlyAPeriod = true;
-                    testSourceOut.write(fixedLength(sourceLine));
+                    testSourceOut.write(StringHelper.fixedLength(sourceLine));
                     continue;
                 }
-                sourceLine = fixedLength(sourceLine);
+                sourceLine = StringHelper.fixedLength(sourceLine);
                 List<String> tokens = tokenExtractor.extractTokensFrom(sourceLine);
 
                 processingBeforeEchoingSourceLineToOutput(
@@ -189,7 +183,7 @@ public class Generator implements StringHelper {
             throw new PossibleInternalLogicErrorException(ex);
         }
         if (emptyInputStream) {
-            throw new PossibleInternalLogicErrorException(messages.get("ERR007"));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR007"));
         }
         return testSourceOut;
     }
@@ -549,7 +543,7 @@ public class Generator implements StringHelper {
         if (copyTokens.isEmpty()
                 || !copyTokens.get(0).equalsIgnoreCase(Constants.COPY_TOKEN)
                 || copyTokens.size() < 2) {
-            throw new PossibleInternalLogicErrorException(messages.get("ERR024"));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR024"));
         }
         List<String> copyLines = new ArrayList<>();
 
@@ -566,7 +560,7 @@ public class Generator implements StringHelper {
         }
 
         StringWriter expandedLines = new StringWriter();
-        CopybookExpander copybookExpander = new CopybookExpander(config, messages);
+        CopybookExpander copybookExpander = new CopybookExpander();
         try {
             expandedLines = (StringWriter) copybookExpander.expand(
                     expandedLines,
@@ -636,7 +630,7 @@ public class Generator implements StringHelper {
         // If this program had File Section source that we need to move to Working-Storage, inject the lines here.
         if (fileSectionStatements != null) {
             for (String line : fileSectionStatements) {
-                testSourceOut.write(fixedLength(line));
+                testSourceOut.write(StringHelper.fixedLength(line));
             }
         }
 
@@ -680,7 +674,7 @@ public class Generator implements StringHelper {
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
             secondarySourceLine = secondarySourceLine
                     .replaceAll(Constants.TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
-            testSourceOut.write(fixedLength(secondarySourceLine));
+            testSourceOut.write(StringHelper.fixedLength(secondarySourceLine));
         }
         secondarySourceBufferedReader.close();
     }

@@ -32,7 +32,7 @@ import java.util.Properties;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Config implements StringHelper {
+public class Config {
 
     public static final String LOCALE_LANGUAGE_CONFIG_KEY = "locale.language";
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
@@ -48,82 +48,77 @@ public class Config implements StringHelper {
     public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
 
-    public Config(Messages messages) {
-        this.messages = messages;
-    }
+    private static Properties settings = null;
 
-    private final Messages messages;
-    private Properties settings = null;
+    private Config(){ }
 
-    public void load() {
+    public static void load() {
         load(DEFAULT_CONFIG_FILE_PATH);
     }
 
-    public void load(String configResourceName) {
-        Log.info(messages.get("INF001", configResourceName));
+    public static void load(String configResourceName) {
+        Log.info(Messages.get("INF001", configResourceName));
         try(FileInputStream configSettings = new FileInputStream(configResourceName)){
             settings = new Properties();
             settings.load(configSettings);
         } catch (IOException ioe) {
             throw new IOExceptionProcessingConfigFile(
-                    messages.get("ERR003", configResourceName), ioe);
+                    Messages.get("ERR003", configResourceName), ioe);
         } catch (NullPointerException npe) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR001",
+                    Messages.get("ERR001",
                             "configResourceName", "Config.load(configResourceName)"),
                             npe);
         }
         setDefaultLocaleOverride();
-        Log.info(messages.get("INF002", configResourceName));
+        Log.info(Messages.get("INF002", configResourceName));
 
         setApplicationFilenameSuffixes();
         setCopybookFilenameSuffix();
     }
 
-    public String getString(String key) {
+    public static String getString(String key) {
         return getString(key, Constants.EMPTY_STRING);
     }
 
-    public String getString(String key, String defaultValue) {
+    public static String getString(String key, String defaultValue) {
         return (String) settings.getOrDefault(key, defaultValue);
     }
 
-    void remove(String key) {
+    public static void remove(String key) {
         settings.remove(key);
     }
 
-    public Locale getDefaultLocale() { return (Locale) settings.get(DEFAULT_LOCALE_CONFIG_KEY); }
+    public static Locale getDefaultLocale() { return (Locale) settings.get(DEFAULT_LOCALE_CONFIG_KEY); }
 
-    public Messages getMessages() {
-        return messages;
+
+    public static String getTestSuiteDirectoryPathString() {
+        return StringHelper.adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,
+                Constants.CURRENT_DIRECTORY));
     }
 
-    public String getTestSuiteDirectoryPathString() {
-        return adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
-    }
-
-    public String getApplicationSourceDirectoryPathString() {
-        return adjustPathString(settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
+    public static String getApplicationSourceDirectoryPathString() {
+        return StringHelper.adjustPathString(settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
                 DEFAULT_APPLICATION_SOURCE_DIRECTORY));
     }
 
-    public List<String> getApplicationFilenameSuffixes() {
+    public static List<String> getApplicationFilenameSuffixes() {
         return (List<String>) settings.get(RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX);
     }
 
-    private void setApplicationFilenameSuffixes() {
+    private static void setApplicationFilenameSuffixes() {
         resolveFilenameSuffixes(APPLICATION_SOURCE_FILENAME_SUFFIX, RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX);
     }
 
-    public List<String> getCopybookFilenameSuffixes() {
+    public static List<String> getCopybookFilenameSuffixes() {
         return (List<String>) settings.get(RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
     }
 
-    private void setCopybookFilenameSuffix() {
+    private static void setCopybookFilenameSuffix() {
         resolveFilenameSuffixes(APPLICATION_COPYBOOK_FILENAME_SUFFIX, RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
     }
 
-    private void resolveFilenameSuffixes(String configKey, String resolvedConfigKey) {
+    private static void resolveFilenameSuffixes(String configKey, String resolvedConfigKey) {
         String suffixSpecification = getString(configKey, NONE);
         List<String> suffixes = new ArrayList();
         String[] suffixValues = null;
@@ -136,7 +131,7 @@ public class Config implements StringHelper {
         settings.put(resolvedConfigKey, suffixes);
     }
 
-    private void setDefaultLocaleOverride() {
+    private static void setDefaultLocaleOverride() {
         if (!settings.containsKey(LOCALE_LANGUAGE_CONFIG_KEY)) {
             return;
         }

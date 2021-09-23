@@ -31,7 +31,6 @@ import java.util.Map;
  * @since 14
  */
 public class Keywords {
-    private static final Messages messages = new Messages();
     private static final Map<String, Keyword> keywordInfo;
 
     static {

@@ -44,19 +44,15 @@ import java.util.StringTokenizer;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class CopybookExpander implements StringHelper {
+public class CopybookExpander {
 
-    private final Config config;
-    private final Messages messages;
     private final String pathToCopybooks;
     private final List<String> copybookFilenameSuffixes;
 
 
-    public CopybookExpander(Config config, Messages messages) {
-        this.config = config;
-        this.messages = messages;
+    public CopybookExpander() {
         pathToCopybooks = getPathToCopybooks();
-        copybookFilenameSuffixes = config.getCopybookFilenameSuffixes();
+        copybookFilenameSuffixes = Config.getCopybookFilenameSuffixes();
 
     }
 
@@ -104,7 +100,7 @@ public class CopybookExpander implements StringHelper {
                         }
                     }
                 }
-                sourceLine = fixedLength(sourceLine);
+                sourceLine = StringHelper.fixedLength(sourceLine);
                 expandedSource.write(sourceLine);
             }
         }
@@ -133,7 +129,7 @@ public class CopybookExpander implements StringHelper {
             }
         } else {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR008",
+                    Messages.get("ERR008",
                             sourceLine,
                             "CopybookExpander.extractCopybookNameFrom(sourceLine)",
                             sourceLine));
@@ -145,7 +141,7 @@ public class CopybookExpander implements StringHelper {
         StringBuilder directoryName = new StringBuilder();
         directoryName.append(new File("./").getAbsolutePath());
         directoryName.append(Constants.FILE_SEPARATOR);
-        directoryName.append(config.getString("application.copybook.directory", "src/main/cobol/copy"));
+        directoryName.append(Config.getString("application.copybook.directory", "src/main/cobol/copy"));
         if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
             directoryName.append(Constants.FILE_SEPARATOR);
         }

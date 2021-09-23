@@ -6,14 +6,14 @@ import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
@@ -228,15 +228,20 @@ public class TestSuiteParserCodeInsertionTest {
         sb.append(Constants.NEWLINE);
     }
 
-    @Mock
-    Config config;
+    MockedStatic<Config> mockedConfig;
 
     @BeforeEach
     public void commonSetup() {
         testSourceOut = new StringWriter();
-        when(config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
+        mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), config);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
+    }
+
+    @AfterEach
+    public void cleanUp(){
+        mockedConfig.close();
     }
 
     @Test

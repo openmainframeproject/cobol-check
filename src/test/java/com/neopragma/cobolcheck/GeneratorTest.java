@@ -42,8 +42,6 @@ public class GeneratorTest {
     private StringWriter testProgramSource;
     private Generator generator;
     private TestSuiteParser testSuiteParser;
-    private static final Messages messages = new Messages();
-    private static final Config config = new Config(messages);
     private NumericFields numericFields;
 
     @Mock
@@ -54,19 +52,15 @@ public class GeneratorTest {
 
     @BeforeAll
     static void oneTimeSetup() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
     }
 
     @BeforeEach
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(
-                keywordExtractor,
-                config);
-        testSuiteParser = new TestSuiteParser(
-                keywordExtractor,
-                config);
+        generator = new Generator(keywordExtractor);
+        testSuiteParser = new TestSuiteParser(keywordExtractor);
     }
 
     @Test

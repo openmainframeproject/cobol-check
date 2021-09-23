@@ -34,7 +34,6 @@ import java.util.Map;
 public class NumericFields {
 
     private Map<String, DataType> fieldTypes;
-    private Messages messages = new Messages();
 
     public DataType dataTypeOf(String fieldName) {
         argumentCheck(fieldName, "ERR027");
@@ -57,7 +56,7 @@ public class NumericFields {
         if (argumentValue == null ||
                 (argumentValue.getClass().getSimpleName().equals("String") && ((String) argumentValue).length() == 0)) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get(messageId)
+                    Messages.get(messageId)
             );
         }
 

@@ -1,6 +1,6 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
 import com.neopragma.cobolcheck.features.TestSuiteConcatenator;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
@@ -8,6 +8,8 @@ import com.neopragma.cobolcheck.services.Messages;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
@@ -22,21 +24,16 @@ public class TestSuiteConcatenatorIT {
     private static final String pathToResults = "testsuites/concatenatedTestsuites";
 
     @Mock
-    Config config;
-    @Mock
-    Messages messages;
-    @Mock
-    GetOpt options;
+    ArgumentHandler options;
 
     @Test
     public void it_concatenates_two_test_suite_files_specified_with_full_filenames() throws IOException {
-        when(config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
+        MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() -> Config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
                 Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH))
                 .thenReturn(pathToResults);
         when(options.getValueFor(Constants.TESTS_OPTION))
                 .thenReturn("GreetingByType");
-        when(config.getMessages())
-                .thenReturn(messages);
         StringBuilder expectedResult = new StringBuilder();
         String line;
         BufferedReader testSuiteReader;
@@ -48,7 +45,7 @@ public class TestSuiteConcatenatorIT {
             testSuiteReader.close();
         }
 
-        TestSuiteConcatenator concat = new TestSuiteConcatenator(config, options);
+        TestSuiteConcatenator concat = new TestSuiteConcatenator(options);
 
         Reader concatenatedTestSuite =
                 concat.concatenateTestSuites("src/test/cobol/GREETING/");
@@ -58,6 +55,7 @@ public class TestSuiteConcatenatorIT {
             actualResult.append(line);
         }
         testSuiteReader.close();
+        mockedConfig.close();
         assertEquals(expectedResult.toString(), actualResult.toString());
     }
 }

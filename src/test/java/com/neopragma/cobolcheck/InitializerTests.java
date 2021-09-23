@@ -1,12 +1,12 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.GetOpt;
-import com.neopragma.cobolcheck.features.launching.ProcessLauncher;
+import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
+import com.neopragma.cobolcheck.features.launcher.ProcessLauncher;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.platform.Platform;
-import com.neopragma.cobolcheck.workers.Driver;
+import com.neopragma.cobolcheck.workers.Initializer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,21 +21,19 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DriverTests {
-    Driver driver;
-    private static final Messages messages = new Messages();
-    private static final Config config = new Config(messages);
+public class InitializerTests {
+    Initializer driver;
 
     @BeforeAll
     static void oneTimeSetup() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
     }
 
     @BeforeEach
     void commonSetup() {
         String[] args = {"-p", "ALPHA"};
-        GetOpt options = new GetOpt(args, Constants.COMMAND_lINE_OPTIONS, config);
-        driver = new Driver(config, options);
+        ArgumentHandler options = new ArgumentHandler(args, Constants.COMMAND_lINE_OPTIONS);
+        driver = new Initializer(options);
     }
 
     @Test

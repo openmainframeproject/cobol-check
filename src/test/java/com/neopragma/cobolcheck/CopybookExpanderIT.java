@@ -38,7 +38,7 @@ import static java.nio.file.Files.readAllBytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class CopybookExpanderIT implements StringHelper {
+public class CopybookExpanderIT {
     private static final String applicationSourceFilenameSuffix = ".CBL";
     private CopybookExpander copybookExpander;
     private String expectedResult;
@@ -46,21 +46,15 @@ public class CopybookExpanderIT implements StringHelper {
     private String testCopybookBasename;
     private static String pathToTestCobolCopybooks;
 
-    @Mock
-    private static Messages messages;
-    @InjectMocks
-    private static Config config;
-
     @BeforeAll
     public static void oneTimeSetup() {
-        config = new Config(new Messages());
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
         pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "src/main/cobol/copy");
     }
 
     @BeforeEach
     public void commonSetup() {
-        copybookExpander = new CopybookExpander(config, messages);
+        copybookExpander = new CopybookExpander();
         testCopybookFilename = Constants.EMPTY_STRING;
         expectedResult = Constants.EMPTY_STRING;
 
@@ -155,7 +149,7 @@ public class CopybookExpanderIT implements StringHelper {
         StringBuilder directoryName = new StringBuilder();
         directoryName.append(new File("./").getAbsolutePath());
         directoryName.append(Constants.FILE_SEPARATOR);
-        directoryName.append(config.getString(configPropertyName, "src/main/cobol/copy"));
+        directoryName.append(Config.getString(configPropertyName, "src/main/cobol/copy"));
         if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
             directoryName.append(Constants.FILE_SEPARATOR);
         }

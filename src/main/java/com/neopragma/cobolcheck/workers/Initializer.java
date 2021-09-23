@@ -15,13 +15,13 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck.workers;
 
-import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
 import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
 import com.neopragma.cobolcheck.features.TestSuiteConcatenator;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.launching.LinuxProcessLauncher;
-import com.neopragma.cobolcheck.features.launching.ProcessLauncher;
-import com.neopragma.cobolcheck.features.launching.WindowsProcessLauncher;
+import com.neopragma.cobolcheck.features.launcher.LinuxProcessLauncher;
+import com.neopragma.cobolcheck.features.launcher.ProcessLauncher;
+import com.neopragma.cobolcheck.features.launcher.WindowsProcessLauncher;
 import com.neopragma.cobolcheck.services.*;
 import com.neopragma.cobolcheck.services.filehelpers.DirectoryNameMatcher;
 import com.neopragma.cobolcheck.services.log.Log;
@@ -42,11 +42,9 @@ import java.util.Locale;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Driver implements StringHelper {
+public class Initializer {
 
-    private final Config config;
-    private static Messages messages;
-    private final GetOpt options;
+    private final ArgumentHandler options;
     private String configFileFromCommandLine = Constants.EMPTY_STRING;
     private static int exitStatus;
 
@@ -64,12 +62,8 @@ public class Driver implements StringHelper {
             "  -v|--version",
             "      Displays the current version of cobol-check"
     };
-    // Methods that fall within the responsibility of the Driver class
-    public Driver(
-            Config config,
-            GetOpt options) {
-        this.config = config;
-        Driver.messages = config.getMessages();
+    // Methods that fall within the responsibility of the Initializer class
+    public Initializer(ArgumentHandler options) {
         this.options = options;
         exitStatus = Constants.STATUS_NORMAL;
     }
@@ -88,7 +82,7 @@ public class Driver implements StringHelper {
         initialize();
         runTestSuites();
 
-        Log.info(messages.get("INF004"));        // We are terminating
+        Log.info(Messages.get("INF004"));        // We are terminating
     }
 
     /**
@@ -101,7 +95,7 @@ public class Driver implements StringHelper {
      */
     void runTestSuites() throws InterruptedException {
         // all test suites are located under this directory
-        String testSuiteDirectory = config.getTestSuiteDirectoryPathString();
+        String testSuiteDirectory = Config.getTestSuiteDirectoryPathString();
         testSuiteDirectory = endWithFileSeparator(testSuiteDirectory);
 
         String programNames = options.getValueFor(Constants.PROGRAMS_OPTION);
@@ -115,7 +109,7 @@ public class Driver implements StringHelper {
             try{
                 matchingDirectories = getMatchingDirectories(programName, testSuiteDirectory);
             } catch (IOException ioException) {
-                throw new PossibleInternalLogicErrorException(messages.get("ERR019", programName));
+                throw new PossibleInternalLogicErrorException(Messages.get("ERR019", programName));
             }
 
 
@@ -125,7 +119,7 @@ public class Driver implements StringHelper {
                 Writer testSourceWriter = getTestSourceWriter(programName);
                 String testSourceOutPath = getTestSourceOutPath();
 
-                Log.debug("Driver.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
+                Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
 
                 mergeTestSuitesIntoTheTestProgram(sourceReader, testSuiteReader, testSourceWriter, programName);
 
@@ -145,14 +139,14 @@ public class Driver implements StringHelper {
      */
     void mergeTestSuitesIntoTheTestProgram(Reader sourceReader, Reader testSuiteReader,
                                            Writer testSourceWriter, String programName) {
-        Generator generator = new Generator(new KeywordExtractor(), config);
+        Generator generator = new Generator(new KeywordExtractor());
         generator.mergeTestSuite(testSuiteReader, sourceReader, testSourceWriter);
 
         try {
             testSourceWriter.close();
         } catch (IOException closeTestSourceOutException) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR017", programName));
+                    Messages.get("ERR017", programName));
         }
     }
 
@@ -166,16 +160,16 @@ public class Driver implements StringHelper {
         // Compile and run the test program
         ProcessLauncher launcher = getPlatformSpecificLauncher(PlatformLookup.get());
         String processConfigKey = launcher.getProcessConfigKeyPrefix() + Constants.PROCESS_CONFIG_KEY;
-        String processName = config.getString(processConfigKey);
+        String processName = Config.getString(processConfigKey);
 
-        if (isBlank(processName)) {
-            String errorMessage = messages.get("ERR021", processConfigKey);
+        if (StringHelper.isBlank(processName)) {
+            String errorMessage = Messages.get("ERR021", processConfigKey);
             Log.error(errorMessage);
             throw new PossibleInternalLogicErrorException(errorMessage);
         }
 
         int exitCode = launchProgram(launcher, testPath);
-        Log.info(messages.get("INF009", processName, String.valueOf(exitCode)));
+        Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));
     }
 
 
@@ -184,26 +178,26 @@ public class Driver implements StringHelper {
         loadConfigurationSettings();
 
         String logLevelFromCommandLine = options.getValueFor("log-level");
-        if (notBlank(logLevelFromCommandLine)) {
+        if (StringHelper.notBlank(logLevelFromCommandLine)) {
             Log.set(LogLevel.valueOf(logLevelFromCommandLine.toUpperCase()));
         }
 
-        Log.info(messages.get("INF003"));        // We are starting
-        Log.info(messages.get("INF005",          // Log level is x
+        Log.info(Messages.get("INF003"));        // We are starting
+        Log.info(Messages.get("INF005",          // Log level is x
                 Log.level().toString()));
-        Log.info(messages.get("INF006",          // We are using config x
-                config.getString("config.loaded")));
+        Log.info(Messages.get("INF006",          // We are using config x
+                Config.getString("config.loaded")));
     }
 
     void loadConfigurationSettings() {
-        if (notBlank(configFileFromCommandLine)) {
-            config.load(configFileFromCommandLine);
+        if (StringHelper.notBlank(configFileFromCommandLine)) {
+            Config.load(configFileFromCommandLine);
         } else {
-            config.load();
+            Config.load();
         }
-        Locale configDefaultLocale = config.getDefaultLocale();
+        Locale configDefaultLocale = Config.getDefaultLocale();
         if (configDefaultLocale != null) {
-            messages.setLocale(configDefaultLocale);
+            Messages.setLocale(configDefaultLocale);
         }
     }
 
@@ -211,19 +205,6 @@ public class Driver implements StringHelper {
         for (String line : helpText) {
             System.out.println(line);
         }
-    }
-
-    //String manipulation methods
-    /**
-     * Appends a file separator, if string doesn't end one
-     *
-     * @param path - String to append to.
-     */
-    String endWithFileSeparator(String path){
-        if (!path.endsWith(Constants.FILE_SEPARATOR)) {
-            path += Constants.FILE_SEPARATOR;
-        }
-        return path;
     }
 
     //Launcher methods
@@ -259,24 +240,24 @@ public class Driver implements StringHelper {
         ProcessLauncher launcher = null;
         switch (platform) {
             case LINUX :
-                Log.debug("Driver launching Linux process");
-                launcher = new LinuxProcessLauncher(config, "linux");
+                Log.debug("Initializer launching Linux process");
+                launcher = new LinuxProcessLauncher("linux");
                 break;
             case WINDOWS :
-                Log.debug("Driver launching Windows process");
-                launcher = new WindowsProcessLauncher(config, "windows");
+                Log.debug("Initializer launching Windows process");
+                launcher = new WindowsProcessLauncher("windows");
                 break;
             case OSX :
-                Log.debug("Driver launching OS X process");
+                Log.debug("Initializer launching OS X process");
                 //launcher = new OSXProcessLauncher(config, "osx");
                 break;
             case ZOS :
-                Log.debug("Driver launching z/OS process");
+                Log.debug("Initializer launching z/OS process");
                 //launcher = new ZOSProcessLauncher(config, "zos");
                 break;
             default :
-                Log.debug("Driver launching default process");
-                launcher = new LinuxProcessLauncher(config, "unix");
+                Log.debug("Initializer launching default process");
+                launcher = new LinuxProcessLauncher("unix");
                 break;
         }
         return launcher;
@@ -290,11 +271,23 @@ public class Driver implements StringHelper {
         StringBuilder cobolSourceInPath = new StringBuilder();
         cobolSourceInPath.append(System.getProperty("user.dir"));
         cobolSourceInPath.append(Constants.FILE_SEPARATOR);
-        cobolSourceInPath.append(config.getApplicationSourceDirectoryPathString());
+        cobolSourceInPath.append(Config.getApplicationSourceDirectoryPathString());
         if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
             cobolSourceInPath.append(Constants.FILE_SEPARATOR);
         }
         return cobolSourceInPath.toString();
+    }
+
+    /**
+     * Appends a file separator, if string doesn't end one
+     *
+     * @param path - String to append to.
+     */
+    public String endWithFileSeparator(String path){
+        if (!path.endsWith(Constants.FILE_SEPARATOR)) {
+            path += Constants.FILE_SEPARATOR;
+        }
+        return path;
     }
 
     /**
@@ -304,15 +297,15 @@ public class Driver implements StringHelper {
      */
     Reader getSourceReader(String programName){
         String cobolSourceInPath = getCobolSourceDirectory() + programName;
-        cobolSourceInPath = appendMatchingFileSuffix(cobolSourceInPath, config.getApplicationFilenameSuffixes());
-        cobolSourceInPath = adjustPathString(cobolSourceInPath);
+        cobolSourceInPath = appendMatchingFileSuffix(cobolSourceInPath, Config.getApplicationFilenameSuffixes());
+        cobolSourceInPath = StringHelper.adjustPathString(cobolSourceInPath);
 
         Reader sourceReader;
         try {
             sourceReader = new FileReader(cobolSourceInPath);
         } catch (IOException cobolSourceInException) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR018", programName));
+                    Messages.get("ERR018", programName));
         }
         return sourceReader;
     }
@@ -323,7 +316,7 @@ public class Driver implements StringHelper {
      * @param testDirectory - The directory of the test files.
      */
     Reader getTestSuiteReader(String testDirectory){
-        TestSuiteConcatenator concatenator = new TestSuiteConcatenator(config, options);
+        TestSuiteConcatenator concatenator = new TestSuiteConcatenator(options);
         return concatenator.concatenateTestSuites(testDirectory);
     }
     /**
@@ -334,7 +327,7 @@ public class Driver implements StringHelper {
         testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
         testSourceOutPath.append(Constants.FILE_SEPARATOR);
         testSourceOutPath.append(
-                config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
+                Config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
                         Constants.DEFAULT_TEST_PROGRAM_NAME));
         return testSourceOutPath.toString();
     }
@@ -351,7 +344,7 @@ public class Driver implements StringHelper {
             testSourceWriter = new FileWriter(testSourceOutPath);
         } catch (IOException testSourceOutException) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR016", sourceFile));
+                    Messages.get("ERR016", sourceFile));
         }
         return testSourceWriter;
     }
@@ -364,10 +357,10 @@ public class Driver implements StringHelper {
      */
     public String appendMatchingFileSuffix(String filePath, List<String> applicationSuffixes){
         for (String suffix : applicationSuffixes) {
-            Log.debug("Driver looking for source file <" + filePath + suffix + ">");
+            Log.debug("Initializer looking for source file <" + filePath + suffix + ">");
             if (Files.isRegularFile(Paths.get(filePath + suffix))) {
                 filePath += suffix;
-                Log.debug("Driver recognized this file as a regular file: <" + filePath.toString() + ">");
+                Log.debug("Initializer recognized this file as a regular file: <" + filePath.toString() + ">");
                 break;
             }
         }
@@ -388,7 +381,7 @@ public class Driver implements StringHelper {
         Files.walkFileTree(Paths.get(path), directoryFinder);
         matchingDirectories = directoryFinder.getMatchingDirectories();
         if (matchingDirectories.isEmpty()) {
-            Log.warn(messages.get("WRN001", name, path));
+            Log.warn(Messages.get("WRN001", name, path));
         }
         return matchingDirectories;
     }
