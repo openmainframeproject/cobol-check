@@ -23,17 +23,12 @@ public class TestSuiteConcatenatorIT {
     private TestSuiteConcatenator concat;
     private static final String pathToResults = "testsuites/concatenatedTestsuites";
 
-    @Mock
-    ArgumentHandler options;
-
     @Test
     public void it_concatenates_two_test_suite_files_specified_with_full_filenames() throws IOException {
         MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
         mockedConfig.when(() -> Config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
                 Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH))
                 .thenReturn(pathToResults);
-        when(options.getValueFor(Constants.TESTS_OPTION))
-                .thenReturn("GreetingByType");
         StringBuilder expectedResult = new StringBuilder();
         String line;
         BufferedReader testSuiteReader;
@@ -45,7 +40,7 @@ public class TestSuiteConcatenatorIT {
             testSuiteReader.close();
         }
 
-        TestSuiteConcatenator concat = new TestSuiteConcatenator(options);
+        TestSuiteConcatenator concat = new TestSuiteConcatenator("GreetingByType");
 
         Reader concatenatedTestSuite =
                 concat.concatenateTestSuites("src/test/cobol/GREETING/");

@@ -42,10 +42,10 @@ import java.util.List;
  */
 public class TestSuiteConcatenator {
 
-    private ArgumentHandler options;
+    private String testFileNames;
 
-    public TestSuiteConcatenator(ArgumentHandler options) {
-        this.options = options;
+    public TestSuiteConcatenator(String testFileNames) {
+        this.testFileNames = testFileNames;
     }
 
     /**
@@ -81,7 +81,6 @@ public class TestSuiteConcatenator {
      * @throws PossibleInternalLogicErrorException
      */
     public Reader concatenateTestSuites(String programTestSuiteSubdirectory) {
-        String testFileNames = options.getValueFor(Constants.TESTS_OPTION);
         String[] testFileNamesSeparated = testFileNames.split(Constants.COLON);
 
         // find files under subdirectory
