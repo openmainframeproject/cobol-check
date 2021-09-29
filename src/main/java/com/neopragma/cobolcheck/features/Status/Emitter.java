@@ -1,5 +1,7 @@
 package com.neopragma.cobolcheck.features.Status;
 
+import com.neopragma.cobolcheck.services.Version;
+
 public class Emitter {
 
     private final String[] helpText = {
@@ -17,10 +19,25 @@ public class Emitter {
             "      Displays the current version of cobol-check"
     };
 
+    /**
+     * Emmits a help message to the console
+     */
     void emitHelp(){
         emitByLine(helpText);
     }
 
+    /**
+     * Emmits a message to the console showing the current version
+     */
+    void emitVersion(){
+        System.out.println(Version.current());
+    }
+
+    /**
+     * Outputs text to console line by line
+     *
+     * @param text array of lines to output
+     */
     void emitByLine(String[] text) {
         for (String line : text) {
             System.out.println(line);

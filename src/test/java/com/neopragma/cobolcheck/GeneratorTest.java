@@ -59,7 +59,7 @@ public class GeneratorTest {
     void commonSetup() {
         cobolSourceData = new StringBuilder();
         testProgramSource = new StringWriter();
-        generator = new Generator(keywordExtractor);
+        generator = new Generator();
         testSuiteParser = new TestSuiteParser(keywordExtractor);
     }
 

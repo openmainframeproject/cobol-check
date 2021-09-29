@@ -23,15 +23,22 @@ import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
 import com.neopragma.cobolcheck.features.parser.NumericFields;
 import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
+import com.neopragma.cobolcheck.features.prepareMerge.PrepareMergeController;
 import com.neopragma.cobolcheck.services.*;
 import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
+import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.neopragma.cobolcheck.services.filehelpers.PathHelper.endWithFileSeparator;
+import static com.neopragma.cobolcheck.services.filehelpers.PathHelper.getMatchingDirectories;
 
 /**
  * This class merges a Test Suite (a text file) with the source of the Cobol program to be tested,
@@ -112,12 +119,68 @@ public class Generator {
     private boolean commentThisLine;
     private boolean previousLineContainedOnlyAPeriod;
 
-    public Generator(KeywordExtractor keywordExtractor) {
+    public Generator() {
         this.tokenExtractor = new StringTokenizerExtractor();
-        testSuiteParser = new TestSuiteParser(keywordExtractor);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         numericFields = new NumericFields();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         fileIdentifiersAndStatuses = new HashMap<>();
+    }
+
+    /**
+     * For each program name specified in command-line option --programs, walk the directory tree under
+     * test.suite.directory (from config) to find subdirectories that match the program name, and then pick up
+     * all the testsuite files there (or the ones that match the specifications in command-line option --tests)
+     * and concatenate them into a single testsuite source. For each program, invoke the Generator to merge the test
+     * code into the program under test to produce a test program. Finally, launch an OS process to compile the test
+     * program and execute it.
+     */
+    public void prepareAndRunMerge(String programName, String testFileNames) {
+        // all test suites are located under this directory
+        String testSuiteDirectory = Config.getTestSuiteDirectoryPathString();
+        testSuiteDirectory = endWithFileSeparator(testSuiteDirectory);
+
+        // Find test subdirectories that match program names
+        List<String> matchingDirectories;
+        Path path = Paths.get(programName);
+        programName = path.getFileName().toString();
+        try{
+            matchingDirectories = getMatchingDirectories(programName, testSuiteDirectory);
+        } catch (IOException ioException) {
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR019", programName));
+        }
+
+
+        for (String matchingDirectory : matchingDirectories) {
+            Reader sourceReader = PrepareMergeController.getSourceReader(programName);
+            Reader testSuiteReader = PrepareMergeController.getTestSuiteReader(matchingDirectory, testFileNames);
+            Writer testSourceWriter = PrepareMergeController.getTestSourceWriter(programName);
+            String testSourceOutPath = PrepareMergeController.getTestSourceOutPath();
+
+            Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
+
+            mergeTestSuitesIntoTheTestProgram(sourceReader, testSuiteReader, testSourceWriter, programName);
+        }
+    }
+
+    /**
+     * Merges source input and test suites into a single file
+     *
+     * @param sourceReader - For reading the cobol source.
+     * @param testSuiteReader - For reading the test suites
+     * @param testSourceWriter - For writing the merged output test file.
+     * @param programName - The name of the cobol source program.
+     */
+    void mergeTestSuitesIntoTheTestProgram(Reader sourceReader, Reader testSuiteReader,
+                                           Writer testSourceWriter, String programName) {
+        mergeTestSuite(testSuiteReader, sourceReader, testSourceWriter);
+
+        try {
+            testSourceWriter.close();
+        } catch (IOException closeTestSourceOutException) {
+            throw new PossibleInternalLogicErrorException(
+                    Messages.get("ERR017", programName));
+        }
     }
 
     /**

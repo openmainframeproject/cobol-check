@@ -10,6 +10,7 @@ public class CurrentStatus {
 
     int exitStatus;
     String[] sourceProgramNames;
+    String testFileNames;
 
 
 }

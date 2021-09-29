@@ -26,7 +26,7 @@ public class Launcher {
      * Gets a launcher based on the current platform: Linux, Windows, OSX, ZOS or Unix.
      * NOTE: Currently not supporting OSX or ZOS.
      */
-    ProcessLauncher getPlatformSpecificLauncher(Platform platform){
+    public ProcessLauncher getPlatformSpecificLauncher(Platform platform){
         ProcessLauncher launcher = null;
         switch (platform) {
             case LINUX :

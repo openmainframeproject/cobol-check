@@ -14,24 +14,22 @@ class Main {
 
 
     public static void main(String[] args) throws InterruptedException {
-        Config.load();
-
         Initializer initializer = new Initializer(args);
-        Generator generator;
+        Generator generator = new Generator();
         CobolTestRunner testRunner = new CobolTestRunner();
 
-
         initializer.run();
+        if (initializer.isExitStatusHalt()) {
+            initializer.exitProgram();
+        }
 
         for (String programName : initializer.getSourceProgramNames()){
 
-            //TODO: Generate test here
+            generator.prepareAndRunMerge(programName, initializer.getTestFileNames());
 
             testRunner.run();
         }
 
-
-
-        System.exit(initializer.getExitStatus());
+        initializer.exitProgram();
     }
 }

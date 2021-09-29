@@ -9,7 +9,7 @@ import java.io.Reader;
 import java.io.Writer;
 
 public class EnvironmentSetupController {
-    EnvironmentSetup environmentSetup = new EnvironmentSetup();
+    EnvironmentSetup environmentSetup;
 
     public EnvironmentSetupController(){
         environmentSetup = new EnvironmentSetup();
@@ -22,25 +22,9 @@ public class EnvironmentSetupController {
 
         environmentSetup.setLogLevel(logLevelFromCommandLine);
 
-
         Log.info(Messages.get("INF006",          // We are using config x
                 Config.getString("config.loaded")));
     }
 
-    //TODO: Move the four methods below
-    public Reader getSourceReader(String programName){
-        return environmentSetup.getSourceReader(programName);
-    }
 
-    public Reader getTestSuiteReader(String testDirectory, String testFileNames){
-        return environmentSetup.getTestSuiteReader(testDirectory, testFileNames);
-    }
-
-    public Writer getTestSourceWriter(String sourceFile){
-        return environmentSetup.getTestSourceWriter(sourceFile);
-    }
-
-    public String getTestSourceOutPath(){
-        return PathHelper.getTestSourceOutPath();
-    }
 }
