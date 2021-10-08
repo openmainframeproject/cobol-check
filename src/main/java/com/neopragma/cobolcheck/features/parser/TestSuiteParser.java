@@ -17,14 +17,11 @@ package com.neopragma.cobolcheck.features.parser;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
-import com.neopragma.cobolcheck.services.cobolLogic.Keywords;
+import com.neopragma.cobolcheck.services.cobolLogic.*;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringHelper;
-import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
-import com.neopragma.cobolcheck.services.cobolLogic.DataType;
-import com.neopragma.cobolcheck.services.cobolLogic.Keyword;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;

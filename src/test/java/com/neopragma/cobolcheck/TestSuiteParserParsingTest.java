@@ -1,10 +1,9 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
-import com.neopragma.cobolcheck.features.parser.NumericFields;
+import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
 import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
 import com.neopragma.cobolcheck.services.Config;
-import com.neopragma.cobolcheck.services.Messages;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

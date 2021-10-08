@@ -17,11 +17,10 @@ package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
-import com.neopragma.cobolcheck.features.parser.NumericFields;
+import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
 import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
-import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.workers.Generator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,7 +71,8 @@ public class GeneratorTest {
         cobolSourceData = new StringBuilder();
         Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
                 mergeTestSuiteAndVerifyResults(mockTestSuite, cobolSourceData, testProgramSource));
-        assertTrue(ex.getMessage().contains("empty input stream"));
+        String message = ex.getMessage();
+        assertTrue(message.contains("empty input stream"));
     }
 
     @Test
@@ -98,26 +97,26 @@ public class GeneratorTest {
         assertEquals(expectedLine1 + expectedLine2, cobolOutWriter.toString());
     }
 
-    @Test
-    public void it_throws_when_copy_token_list_is_empty_for_copybook_expansion() {
-        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
-                generator.collectExpandedCopyStatements(Arrays.asList()));
-        assertTrue(ex.getMessage().contains("ERR024:"));
-    }
-
-    @Test
-    public void it_throws_when_1st_token_in_copy_list_is_not_COPY() {
-        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
-                generator.collectExpandedCopyStatements(Arrays.asList("foo", "bar")));
-        assertTrue(ex.getMessage().contains("ERR024:"));
-    }
-
-    @Test
-    public void it_throws_when_token_list_has_fewer_than_2_entries() {
-        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
-                generator.collectExpandedCopyStatements(Arrays.asList("COPY")));
-        assertTrue(ex.getMessage().contains("ERR024:"));
-    }
+//    @Test
+//    public void it_throws_when_copy_token_list_is_empty_for_copybook_expansion() {
+//        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+//                generator.collectExpandedCopyStatements(Arrays.asList()));
+//        assertTrue(ex.getMessage().contains("ERR024:"));
+//    }
+//
+//    @Test
+//    public void it_throws_when_1st_token_in_copy_list_is_not_COPY() {
+//        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+//                generator.collectExpandedCopyStatements(Arrays.asList("foo", "bar")));
+//        assertTrue(ex.getMessage().contains("ERR024:"));
+//    }
+//
+//    @Test
+//    public void it_throws_when_token_list_has_fewer_than_2_entries() {
+//        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+//                generator.collectExpandedCopyStatements(Arrays.asList("COPY")));
+//        assertTrue(ex.getMessage().contains("ERR024:"));
+//    }
 
     @Test
     public void it_recognizes_a_batch_file_IO_verb_on_a_source_line() {

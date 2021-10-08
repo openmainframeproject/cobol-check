@@ -63,11 +63,93 @@ public class CobolVerbs {
             "WRITE"
     );
 
+    private static final List<String> allVerbs = Arrays.asList(
+            "ACCEPT",
+            "ADD",
+            "ALTER",
+            "CALL",
+            "CANCEL",
+            "CHAIN",
+            "CLOSE",
+            "COMMIT",
+            "COMPUTE",
+            "CONTINUE",
+            "COPY",
+            "DELETE",
+            "DISABLE",
+            "DISPLAY",
+            "DISPLAY-1",
+            "DIVIDE",
+            "ELSE",
+            "ENABLE",
+            "END",
+            "END-EVALUATE",
+            "END-IF",
+            "END-INVOKE",
+            "END-PERFORM",
+            "END-SET",
+            "ENTER",
+            "ENTRY",
+            "EVALUATE",
+            "EXAMINE",
+            "EXEC",
+            "EXECUTE",
+            "EXHIBIT",
+            "EXIT",
+            "GENERATE",
+            "GO",
+            "GOBACK",
+            "IF",
+            "INITIALIZE",
+            "INITIATE",
+            "INSPECT",
+            "INVOKE",
+            "MERGE",
+            "MOVE",
+            "MULTIPLY",
+            "NEXT",
+            "NOTE",
+            "ON",
+            "OPEN",
+            "OTHERWISE",
+            "PERFORM",
+            "READ",
+            "READY",
+            "RECEIVE",
+            "RECOVER",
+            "RELEASE",
+            "RESET",
+            "RETURN",
+            "REWRITE",
+            "ROLLBACK",
+            "SEARCH",
+            "SEND",
+            "SERVICE",
+            "SET",
+            "SORT",
+            "START",
+            "STOP",
+            "STRING",
+            "SUBTRACT",
+            "SUPPRESS",
+            "TERMINATE",
+            "TRANSFORM",
+            "UNLOCK",
+            "UNSTRING",
+            "WHEN",
+            "WRITE"
+    );
+
     public static boolean isCobolVerb(String token) {
         return values.contains(token.toUpperCase(Locale.ROOT));
+    }
+
+    public static boolean isStartOrEndCobolVerb(String token){
+        return allVerbs.contains(token.toUpperCase(Locale.ROOT));
     }
 
     private CobolVerbs() {
         throw new IllegalStateException("Can't instantiate static class");
     }
+
 }

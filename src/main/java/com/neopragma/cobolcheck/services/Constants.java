@@ -108,4 +108,10 @@ public final class Constants {
     public static final String FD_TOKEN = "FD";
     public static final String LEVEL_01_TOKEN = "01";
     public static final String COPY_TOKEN = "COPY";
+
+    public static final String COMP_3_VALUE = "COMP-3";
+    public static final String COMP_VALUE = "COMP";
+    public static final String PIC_VALUE = "PIC";
+    public static final String PICTURE_VALUE = "PICTURE";
+    public static final String NUMERIC_PICTURE_CLAUSE_PATTERN = "^[\\d\\(\\)SsVv]+$";
 }
