@@ -108,6 +108,7 @@ public class InterpreterController {
     public DataType getNumericFieldDataTypeFor(String fieldName){
         return numericFields.dataTypeOf(fieldName);
     }
+    public NumericFields getNumericFields() { return numericFields; }
 
     public boolean currentLineContains(String str){
         return reader.getCurrentLine().contains(str);

@@ -297,7 +297,7 @@ public class Generator {
         testSuiteParser.insertTestInitializationLineIntoTestSource(testSourceOut);
 
         // Parse the concatenated test suite and insert generated Cobol test statements
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, interpreter.getNumericFields());
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         insertSecondarySourceIntoTestSource(procedureDivisionCopybookFilename, testSourceOut);
