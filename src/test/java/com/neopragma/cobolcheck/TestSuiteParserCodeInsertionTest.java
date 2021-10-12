@@ -1,8 +1,9 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
+import com.neopragma.cobolcheck.features.writer.CobolWriter;
+import com.neopragma.cobolcheck.features.writer.KeywordExtractor;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
-import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
+import com.neopragma.cobolcheck.features.writer.TestSuiteParser;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
 public class TestSuiteParserCodeInsertionTest {
 
     Writer testSourceOut;
+    CobolWriter cobolWriter;
     TestSuiteParser testSuiteParser;
     @Mock
     NumericFields numericFields;
@@ -233,6 +235,7 @@ public class TestSuiteParserCodeInsertionTest {
     @BeforeEach
     public void commonSetup() {
         testSourceOut = new StringWriter();
+        cobolWriter = new CobolWriter(testSourceOut);
         mockedConfig = Mockito.mockStatic(Config.class);
         mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
@@ -251,7 +254,7 @@ public class TestSuiteParserCodeInsertionTest {
                 "           EXPECT                                                                    " +
                 Constants.NEWLINE;
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        testSuiteParser.parseTestSuite(testSuiteReader, cobolWriter, numericFields);
         String expectedResult = "            MOVE \"alpha\" TO WS-FIELDNAME                                        " +
                 Constants.NEWLINE +
                 "           ADD 1 TO UT-TEST-CASE-COUNT                                          " +
@@ -264,7 +267,7 @@ public class TestSuiteParserCodeInsertionTest {
         String expectedResult =
                 "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE
               + "           DISPLAY \"Test Suite Name\"                                            " + Constants.NEWLINE;
-        testSuiteParser.insertTestSuiteNameIntoTestSource("\"Test Suite Name\"", testSourceOut);
+        testSuiteParser.insertTestSuiteNameIntoTestSource("\"Test Suite Name\"", cobolWriter);
         assertEquals(expectedResult, testSourceOut.toString());
     }
 
@@ -275,7 +278,7 @@ public class TestSuiteParserCodeInsertionTest {
               + "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE
               + "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE;
 
-        testSuiteParser.insertTestCaseNameIntoTestSource("\"Test Case Name\"", testSourceOut);
+        testSuiteParser.insertTestCaseNameIntoTestSource("\"Test Case Name\"", cobolWriter);
         assertEquals(expectedResult, testSourceOut.toString());
     }
 
@@ -283,7 +286,7 @@ public class TestSuiteParserCodeInsertionTest {
     public void it_inserts_cobol_statements_to_perform_before_each_logic() throws IOException {
         String expectedResult =
                 "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE;
-        testSuiteParser.insertPerformBeforeEachIntoTestSource(testSourceOut);
+        testSuiteParser.insertPerformBeforeEachIntoTestSource(cobolWriter);
         assertEquals(expectedResult, testSourceOut.toString());
     }
 
@@ -296,7 +299,7 @@ public class TestSuiteParserCodeInsertionTest {
             String expectedResult) throws IOException {
         lenient().doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
+        testSuiteParser.parseTestSuite(testSuiteReader, cobolWriter, numericFields);
         assertEquals(expectedResult, testSourceOut.toString());
     }
     private static Stream<Arguments> expectationCheckProvider() {

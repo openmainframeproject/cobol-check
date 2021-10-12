@@ -1,15 +1,10 @@
 package com.neopragma.cobolcheck.features.environmentSetup;
 
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.TestSuiteConcatenator;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringHelper;
-import com.neopragma.cobolcheck.services.filehelpers.PathHelper;
 import com.neopragma.cobolcheck.services.log.Log;
 import com.neopragma.cobolcheck.services.log.LogLevel;
-
-import java.io.*;
 import java.util.Locale;
 
 public class EnvironmentSetup {

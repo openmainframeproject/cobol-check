@@ -56,14 +56,11 @@ public class CopybookExpander {
 
     }
 
-    public Writer expand(Writer expandedSource,
-                         String copybookFilename) throws IOException {
-        return expand(expandedSource,
-                copybookFilename,
-                new StringTuple(null, null));
+    public List<String> expand(List<String> expandedLines, String copybookFilename) throws IOException {
+        return expand(expandedLines, copybookFilename, new StringTuple(null, null));
     }
 
-    public Writer expand(Writer expandedSource,
+    public List<String> expand(List<String> expandedLines,
                          String copybookFilename,
                          StringTuple... textReplacement) throws IOException {
         String fullPath = pathToCopybooks + copybookFilename;
@@ -80,7 +77,7 @@ public class CopybookExpander {
                 if (copyStatementIsPresentIn(sourceLine)) {
                     String copybookName = extractCopybookNameFrom(sourceLine);
                     sourceLine = commentOut(sourceLine);
-                    expandedSource = expand(expandedSource, copybookName, textReplacement);
+                    expandedLines = expand(expandedLines, copybookName, textReplacement);
                 }
                 // COPY REPLACING
                 if (!textReplacement[0].isEmpty()) {
@@ -100,11 +97,10 @@ public class CopybookExpander {
                         }
                     }
                 }
-                sourceLine = StringHelper.fixedLength(sourceLine);
-                expandedSource.write(sourceLine);
+                expandedLines.add(sourceLine);
             }
         }
-        return expandedSource;
+        return expandedLines;
     }
 
     private String commentOut(String sourceLine) {

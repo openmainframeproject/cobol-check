@@ -15,7 +15,7 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck.services.cobolLogic;
 
-import com.neopragma.cobolcheck.features.parser.KeywordAction;
+import com.neopragma.cobolcheck.features.writer.KeywordAction;
 
 import java.util.List;
 

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck.features;
+package com.neopragma.cobolcheck.features.concatenator;
 
 import com.neopragma.cobolcheck.exceptions.ConcatenatedTestSuiteIOException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
@@ -80,7 +80,7 @@ public class TestSuiteConcatenator {
      * @throws TestSuiteInputFileNotFoundException
      * @throws PossibleInternalLogicErrorException
      */
-    public Reader concatenateTestSuites(String programTestSuiteSubdirectory) {
+    Reader concatenateTestSuites(String programTestSuiteSubdirectory) {
         String[] testFileNamesSeparated = testFileNames.split(Constants.COLON);
 
         // find files under subdirectory

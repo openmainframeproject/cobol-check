@@ -1,13 +1,18 @@
 package com.neopragma.cobolcheck.features.prepareMerge;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.TestSuiteConcatenator;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.services.filehelpers.PathHelper;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static com.neopragma.cobolcheck.services.filehelpers.PathHelper.endWithFileSeparator;
+import static com.neopragma.cobolcheck.services.filehelpers.PathHelper.getMatchingDirectories;
 
 public class IO_FileGetter {
 
@@ -31,16 +36,6 @@ public class IO_FileGetter {
         return sourceReader;
     }
 
-    /**
-     * Returns a reader for the testSuites in a directory
-     *
-     * @param testDirectory - The directory of the test files.
-     */
-    static Reader getTestSuiteReader(String testDirectory, String testFileNames){
-        TestSuiteConcatenator concatenator = new TestSuiteConcatenator(testFileNames);
-        return concatenator.concatenateTestSuites(testDirectory);
-    }
-
 
     /**
      * Returns a Writer for the output file.
@@ -57,5 +52,22 @@ public class IO_FileGetter {
                     Messages.get("ERR016", sourceFile));
         }
         return testSourceWriter;
+    }
+
+    static List<String> getMatchingTestDirectoriesForProgram(String programName){
+        // all test suites are located under this directory
+        String testSuiteDirectory = Config.getTestSuiteDirectoryPathString();
+        testSuiteDirectory = endWithFileSeparator(testSuiteDirectory);
+
+        // Find test subdirectories that match program names
+        List<String> matchingDirectories;
+        Path path = Paths.get(programName);
+        programName = path.getFileName().toString();
+        try{
+            matchingDirectories = getMatchingDirectories(programName, testSuiteDirectory);
+        } catch (IOException ioException) {
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR019", programName));
+        }
+        return matchingDirectories;
     }
 }

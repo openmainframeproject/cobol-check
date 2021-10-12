@@ -111,7 +111,6 @@ public class LineRepository {
                 || copyTokens.size() < 2) {
             throw new PossibleInternalLogicErrorException(Messages.get("ERR024"));
         }
-        List<String> copyLines = new ArrayList<>();
 
         // 2nd entry is the name of the copybook. The value might end with a period.
         String copybookName = copyTokens.get(1).replace(Constants.PERIOD, Constants.EMPTY_STRING);
@@ -125,19 +124,10 @@ public class LineRepository {
             }
         }
 
-        StringWriter expandedLines = new StringWriter();
+        List<String> copyLines = new ArrayList<>();
         CopybookExpander copybookExpander = new CopybookExpander();
         try {
-            expandedLines = (StringWriter) copybookExpander.expand(
-                    expandedLines,
-                    copybookName,
-                    replacingValues);
-            BufferedReader reader = new BufferedReader(new StringReader(expandedLines.toString()));
-            String line = reader.readLine();
-            while(line != null) {
-                copyLines.add(line);
-                line = reader.readLine();
-            }
+            copyLines = copybookExpander.expand(copyLines, copybookName, replacingValues);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

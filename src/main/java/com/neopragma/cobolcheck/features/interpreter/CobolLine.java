@@ -11,7 +11,6 @@ public class CobolLine {
     private String originalString;
 
     private String trimmedString;
-    private String fixedLengthString;
     private List<String> tokens;
 
     //Line interpretation variables
@@ -23,7 +22,6 @@ public class CobolLine {
     public CobolLine(String line, TokenExtractor tokenExtractor){
         originalString = line;
         trimmedString = line.trim();
-        fixedLengthString = StringHelper.fixedLength(line);
         tokens = tokenExtractor.extractTokensFrom(line);
     }
 
@@ -32,10 +30,6 @@ public class CobolLine {
     }
 
     public String getTrimmedString() { return trimmedString; }
-
-    String getFixedLengthString() {
-        return fixedLengthString;
-    }
 
     List<String> getTokens() {
         return tokens;

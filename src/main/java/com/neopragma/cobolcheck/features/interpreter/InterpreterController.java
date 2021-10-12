@@ -2,6 +2,7 @@ package com.neopragma.cobolcheck.features.interpreter;
 
 import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
@@ -21,6 +22,10 @@ public class InterpreterController {
     private NumericFields numericFields;
 
     public InterpreterController(BufferedReader sourceReader) {
+        if (sourceReader == null) {
+            throw new PossibleInternalLogicErrorException(
+                    Messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
+        }
         reader = new CobolReader(sourceReader);
         lineRepository = new LineRepository();
         numericFields = new NumericFields();
@@ -41,7 +46,7 @@ public class InterpreterController {
             updateDependencies(line);
         }
 
-        return line.getFixedLengthString();
+        return line.getOriginalString();
     }
 
     public void closeReader(){
@@ -86,6 +91,14 @@ public class InterpreterController {
     public boolean shouldCurrentLineBeCommentedOut(){
         return Interpreter.shouldLineBeCommentedOut(reader.getCurrentLine(), reader.getState());
     }
+    public boolean shouldCurrentStatementBeCommentedOut(){
+        for (CobolLine line : reader.getCurrentStatement()){
+            if (Interpreter.shouldLineBeCommentedOut(line, reader.getState())){
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void tryReadBatchFileIOStatement(){
         CobolLine line = reader.getCurrentLine();
@@ -121,7 +134,7 @@ public class InterpreterController {
     private List<String> convertToStrings(List<CobolLine> lines){
         List<String> stringLines = new ArrayList<>();
         for (CobolLine l : lines){
-            stringLines.add(l.getFixedLengthString());
+            stringLines.add(l.getOriginalString());
         }
         return stringLines;
     }

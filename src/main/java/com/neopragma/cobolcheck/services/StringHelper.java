@@ -94,4 +94,18 @@ public class StringHelper {
         Log.debug("StringHelper.adjustStringPath() result is <" + result + ">");
         return result;
     }
+
+    /**
+     * Enclose a value in quotation marks.
+     *
+     * @param value - original string
+     * @return - quoted string
+     */
+    public String quote(String value) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(Constants.QUOTE);
+        buffer.append(value);
+        buffer.append(Constants.QUOTE);
+        return buffer.toString();
+    }
 }

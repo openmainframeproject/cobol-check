@@ -1,12 +1,22 @@
        IDENTIFICATION DIVISION.                                                 
-       PROGRAM-ID.  NUMBERS.                                                    
+       PROGRAM-ID.  FILECOPY.                                                   
       *****************************************************************         
-      * Program to exercise symbolic relations like ">=" and "!=".              
+      * Copy one sequential file to another.                                    
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
        INPUT-OUTPUT SECTION.                                                    
        DATA DIVISION.                                                           
        WORKING-STORAGE SECTION.                                                 
+       01  INPUT-RECORD.                                                        
+           05  IN-FIELD-1         PIC X(10).                                    
+           05  FILLER             PIC X(20).                                    
+           05  IN-FIELD-2         PIC X(10).                                    
+       01  OUTPUT-RECORD.                                                       
+           05  OUT-FIELD-1         PIC X(5).                                    
+           05  OUT-FIELD-2     PIC X(16).                                       
+           05  OUT-FIELD-3     PIC X(14).                                       
+      *    COPY OUTREC2.                                                        
+           05  FILLER              PIC X(5).                                    
       * CCHECKWS.CPY                                                            
        01  FILLER PIC X(32) VALUE '******* COBOLCHECK 0.0.1 *******'.           
        01  UT-FIELDS.                                                           
@@ -124,674 +134,40 @@
                                                                                 
       * CCHECKWS.CPY END                                                        
        01  FILLER.                                                              
-           05  ws-field-1           PIC S9(11)V9(07) COMP-3.                    
-           05  WS-FIELD-2           PIC S9(11)V9(07) comp-3.                    
-           05  ws-field-3           pic s9(16) comp.                            
-           05  ws-field-4           pic s9(16) comp-4.                          
-           05  ws-display-field     pic s9(5)v99.                               
+           05  INPUT-FILE-STATUS  PIC XX.                                       
+               88  INPUT-OK       VALUE '00'.                                   
+               88  END-OF-FILE    VALUE '10'.                                   
+               88  FILE-NOT-FOUND VALUE '35'.                                   
+           05  OUTPUT-FILE-STATUS PIC XX.                                       
+               88  OUTPUT-OK      VALUE '00'.                                   
+           05  WS-COUNT           PIC S9(5) COMP-3.                             
+           05  WS-COUNT-FORMATTED PIC ZZ,ZZ9.                                   
+           05  WS-ERROR-MESSAGE   PIC X(60).                                    
        PROCEDURE DIVISION.                                                      
            PERFORM UT-INITIALIZE                                                
            DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Verify Cobol Check handles numeric relations properl        
-      -    "y"                                                                  
-           MOVE "Equal sign with literal compare"                               
+           DISPLAY "Tests for a sequential file copy program"                   
+           MOVE "Output fields are populated from the input record"             
                TO UT-TEST-CASE-NAME                                             
            PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
+            MOVE "Alpha" TO IN-FIELD-1                                          
+            MOVE "Beta" TO IN-FIELD-2                                           
+            PERFORM 5200-PREPARE-OUTPUT-RECORD                                  
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 25.74 TO UT-EXPECTED-NUMERIC                                    
+           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE IN-FIELD-1 OF INPUT-RECORD TO UT-ACTUAL                         
+           MOVE OUT-FIELD-1                                                     
+               TO UT-EXPECTED                                                   
            SET UT-RELATION-EQ TO TRUE                                           
            PERFORM UT-CHECK-EXPECTATION                                         
            PERFORM UT-AFTER                                                     
-           MOVE "Equal sign with literal compare (should fail)"                 
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 25.75 TO UT-EXPECTED-NUMERIC                                    
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not equal sign with literal compare"                           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 25.75 TO UT-EXPECTED-NUMERIC                                    
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not equal sign with literal compare (should fail)"             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 25.74 TO UT-EXPECTED-NUMERIC                                    
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not-equal sign with literal compare"                           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 13.6 TO WS-FIELD-1                                             
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 25.74 TO UT-EXPECTED-NUMERIC                                    
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not-equal sign with literal compare (should fail)"             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 13.6 TO WS-FIELD-1                                             
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 13.6 TO UT-EXPECTED-NUMERIC                                     
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not not-equal sign with literal compare"                       
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 13.6 TO WS-FIELD-1                                             
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 13.6 TO UT-EXPECTED-NUMERIC                                     
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not not-equal sign with literal compare (should fail)"         
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 13.7 TO WS-FIELD-1                                             
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 13.6 TO UT-EXPECTED-NUMERIC                                     
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Equal sign with ield compare"                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Equal sign with field compare (should fail)"                   
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.75 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not equal sign with field compare"                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.75 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not equal sign with field compare (should fail)"               
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not-equal sign with field compare"                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.75 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not-equal sign with field compare (should fail)"               
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not not-equal sign with field compare"                         
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.74 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not not-equal sign with field compare (should fail)"           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 25.75 TO WS-FIELD-1                                            
-            MOVE 25.74 TO WS-FIELD-2                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than sign with literal compare"                           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.068 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than sign with literal compare (should fail)"             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.066 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not less-than sign with literal compare"                       
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.068 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.068 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not less-than sign with literal compare (should fail)"         
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.066 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than sign with field compare"                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 416.071 TO WS-FIELD-1                                          
-            MOVE 416.072 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than sign with field compare (should fail)"               
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 416.072 TO WS-FIELD-1                                          
-            MOVE 416.072 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not less-than sign with field compare"                         
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 416.072 TO WS-FIELD-1                                          
-            MOVE 416.071 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not less-than sign with field compare (should fail)"           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 416.071 TO WS-FIELD-1                                          
-            MOVE 416.072 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than sign with literal compare"                        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 17.01 TO UT-EXPECTED-NUMERIC                                    
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than sign with literal compare (should fail)"          
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 9.805 TO WS-FIELD-1                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 10 TO UT-EXPECTED-NUMERIC                                       
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than sign with literal compare"                    
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 107.701 TO WS-FIELD-1                                          
-            MOVE 107.701 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than sign with literal compare (should fail        
-      -    ")"                                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 107.702 TO WS-FIELD-1                                          
-            MOVE 107.701 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than sign with field compare"                          
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 1766.03145 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than sign with field compare (should fail)"            
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 1766.03143 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than sign with field to field compare"             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 1766.03144 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than sign with field compare (should fail)"        
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 1766.03145 TO WS-FIELD-1                                       
-            MOVE 1766.03144 TO WS-FIELD-2                                       
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare when        
-      -    " greater"                                                           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.066 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare when        
-      -    " equal"                                                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare (sho        
-      -    "uld fail)"                                                          
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 9.805 TO WS-FIELD-1                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 10 TO UT-EXPECTED-NUMERIC                                       
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to sign with literal compare         
-      -    "when less"                                                          
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.066 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to sign with literal compare         
-      -    "when equal (should fail)"                                           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 18.067 TO WS-FIELD-1                                           
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 18.067 TO UT-EXPECTED-NUMERIC                                   
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to sign with literal compare when        
-      -    " greater (should fail)"                                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 13.45 TO WS-FIELD-1                                            
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE 13.44 TO UT-EXPECTED-NUMERIC                                    
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to-sign with field compare when e        
-      -    "qual"                                                               
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to-sign with field compare when g        
-      -    "reater"                                                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Greater-than-or-equal-to-sign with field compare when l        
-      -    "ess (should fail)"                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.061 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en less"                                                            
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.063 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en equal (should fail)"                                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en greater (should fail)"                                           
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-LT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than-or-equal-to-sign with field compare when equa        
-      -    "l"                                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than-or-equal-to-sign with field compare when less        
-      -    ""                                                                   
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.063 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Less-than-or-equal-to-sign with field compare when grea        
-      -    "ter (should fail)"                                                  
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-REVERSE-COMPARE TO TRUE                                       
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not less-than-or-equal-to-sign with field compare when         
-      -    "greater"                                                            
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.063 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en equal (should fail)"                                             
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.062 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Not greater-than-or-equal-to-sign with field compare wh        
-      -    "en less (should fail)"                                              
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 475.062 TO WS-FIELD-1                                          
-            MOVE 475.063 TO WS-FIELD-2                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-FIELD-1 TO UT-ACTUAL-NUMERIC                                 
-           MOVE WS-FIELD-2 TO UT-EXPECTED-NUMERIC                               
-           SET UT-RELATION-GT TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           PERFORM UT-AFTER                                                     
-           MOVE "Display Numeric field equals literal"                          
-               TO UT-TEST-CASE-NAME                                             
-           PERFORM UT-BEFORE                                                    
-            MOVE 123.45 TO WS-DISPLAY-FIELD                                     
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-NUMERIC-COMPARE TO TRUE                                       
-           MOVE WS-DISPLAY-FIELD TO UT-ACTUAL-NUMERIC                           
-           MOVE 123.45 TO UT-EXPECTED-NUMERIC                                   
+           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE OUT-FIELD-2 OF OUTPUT-RECORD TO UT-ACTUAL                       
+           MOVE IN-FIELD-2                                                      
+               TO UT-EXPECTED                                                   
            SET UT-RELATION-EQ TO TRUE                                           
            PERFORM UT-CHECK-EXPECTATION                                         
            PERFORM UT-AFTER                                                     
@@ -1162,4 +538,76 @@
        UT-END.                                                                  
                                                                                 
       * CCHECKPD.CPY END                                                        
-           GOBACK.                                                              
+           PERFORM 1000-INITIALIZE                                              
+           PERFORM 5000-PROCESS                                                 
+           PERFORM 8000-HOUSEKEEPING                                            
+           GOBACK                                                               
+           .                                                                    
+       1000-INITIALIZE.                                                         
+      *    OPEN INPUT INPUT-FILE                                                
+           EVALUATE TRUE                                                        
+               WHEN INPUT-OK                                                    
+                   CONTINUE                                                     
+               WHEN FILE-NOT-FOUND                                              
+                   MOVE 'Input file not found'                                  
+                     TO WS-ERROR-MESSAGE                                        
+               WHEN OTHER                                                       
+                   STRING "Unexpected input file status on open "               
+                       DELIMITED BY SIZE                                        
+                       INPUT-FILE-STATUS                                        
+                       DELIMITED BY SIZE                                        
+                     INTO WS-ERROR-MESSAGE                                      
+                   PERFORM 9999-ABORT                                           
+           END-EVALUATE                                                         
+      *    OPEN OUTPUT OUTPUT-FILE                                              
+           EVALUATE TRUE                                                        
+               WHEN OUTPUT-OK                                                   
+                   CONTINUE                                                     
+               WHEN OTHER                                                       
+                   STRING "Unexpected output file status on open "              
+                       DELIMITED BY SIZE                                        
+                       OUTPUT-FILE-STATUS                                       
+                       DELIMITED BY SIZE                                        
+                     INTO WS-ERROR-MESSAGE                                      
+                   PERFORM 9999-ABORT                                           
+           END-EVALUATE                                                         
+           MOVE ZERO TO WS-COUNT                                                
+           .                                                                    
+       5000-PROCESS.                                                            
+      *    READ INPUT-FILE                                                      
+           PERFORM WITH TEST BEFORE                                             
+                   UNTIL END-OF-FILE                                            
+               PERFORM 5200-PREPARE-OUTPUT-RECORD                               
+               PERFORM 5400-WRITE-OUTPUT-RECORD                                 
+      *        READ INPUT-FILE                                                  
+           END-PERFORM                                                          
+           .                                                                    
+       5200-PREPARE-OUTPUT-RECORD.                                              
+           MOVE SPACES TO OUTPUT-RECORD                                         
+           MOVE IN-FIELD-1 TO OUT-FIELD-1                                       
+           MOVE IN-FIELD-2 TO OUT-FIELD-2                                       
+           MOVE "Good" TO OUT-FIELD-3                                           
+           .                                                                    
+       5400-WRITE-OUTPUT-RECORD.                                                
+      *    WRITE                                                                
+      *    OUTPUT-RECORD                                                        
+           IF NOT OUTPUT-OK                                                     
+               STRING "Unexpected output file status on write "                 
+                   DELIMITED BY SIZE                                            
+                   OUTPUT-FILE-STATUS                                           
+                   DELIMITED BY SIZE                                            
+                 INTO WS-ERROR-MESSAGE                                          
+               PERFORM 9999-ABORT                                               
+           END-IF                                                               
+           ADD 1 TO WS-COUNT                                                    
+           .                                                                    
+       8000-HOUSEKEEPING.                                                       
+      *    CLOSE OUTPUT-FILE.                                                   
+      *    CLOSE INPUT-FILE                                                     
+           MOVE WS-COUNT TO WS-COUNT-FORMATTED                                  
+           DISPLAY "Records processed: " WS-COUNT-FORMATTED                     
+           .                                                                    
+       9999-ABORT.                                                              
+           DISPLAY WS-ERROR-MESSAGE                                             
+           GOBACK                                                               
+           .                                                                    

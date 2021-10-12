@@ -22,7 +22,7 @@ public class PathHelper {
         StringBuilder cobolSourceInPath = new StringBuilder();
         cobolSourceInPath.append(System.getProperty("user.dir"));
         cobolSourceInPath.append(Constants.FILE_SEPARATOR);
-        cobolSourceInPath.append(Config.getApplicationSourceDirectoryPathString());
+//        cobolSourceInPath.append(Config.getApplicationSourceDirectoryPathString());
         if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
             cobolSourceInPath.append(Constants.FILE_SEPARATOR);
         }
