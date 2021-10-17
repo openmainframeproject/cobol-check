@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(MockitoExtension.class)
 public class TestSuiteParserParsingTest {
     private TestSuiteParser testSuiteParser;
-    private static final Messages messages = new Messages();
-    private static final Config config = new Config(messages);
     private StringBuilder testSuite;
 
     @Mock
@@ -33,14 +31,12 @@ public class TestSuiteParserParsingTest {
 
     @BeforeAll
     static void oneTimeSetup() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
     }
 
     @BeforeEach
     void commonSetup() {
-        testSuiteParser = new TestSuiteParser(
-                new KeywordExtractor(),
-                config);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         testSuite = new StringBuilder();
     }
 

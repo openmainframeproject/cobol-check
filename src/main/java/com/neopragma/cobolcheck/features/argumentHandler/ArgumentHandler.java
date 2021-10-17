@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck.features;
+package com.neopragma.cobolcheck.features.argumentHandler;
 
 import com.neopragma.cobolcheck.exceptions.CommandLineArgumentException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class GetOpt implements StringHelper {
+public class ArgumentHandler {
 
     private Map<OptionKey, OptionValue> options;
     private static final String LONG_OPT_PREFIX = "--";
@@ -43,7 +43,6 @@ public class GetOpt implements StringHelper {
     private static final List<String> canTakeMultipleArguments =
             Arrays.asList("t", "tests", "p", "programs");
 
-    private Messages messages;
     private String applicationSourceDirectory;
 
     /**
@@ -53,11 +52,10 @@ public class GetOpt implements StringHelper {
      * @param optionsString - String - Bash-style options specification,
      *                      e.g. "abc:d: --long alpha,bravo,charlie:,delta:"
      */
-    public GetOpt(String[] args, String optionsString, Config config) {
+    public ArgumentHandler(String[] args, String optionsString) {
         options = new HashMap<>();
-        if (isEmptyArray(args)) return;
-        this.messages = config.getMessages();
-        applicationSourceDirectory = config.getApplicationSourceDirectoryPathString();
+        if (StringHelper.isEmptyArray(args)) return;
+        applicationSourceDirectory = Config.getApplicationSourceDirectoryPathString();
         storeOptionSettings(optionsString);
         processCommandLineArgumentArray(args);
     }
@@ -78,8 +76,8 @@ public class GetOpt implements StringHelper {
      * @param optionsString (String) - looks like "a:bc: --long alpha:,beta,charlie:"
      */
     private void storeOptionSettings(String optionsString) {
-        if (isBlank(optionsString))
-            throw new PossibleInternalLogicErrorException(messages.get("ERR005"));
+        if (StringHelper.isBlank(optionsString))
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR005"));
 
         // "a:bg: --long alpha:,beta,gamma:" -> [0] "a:bg:", [1] "--long", [2] "alpha:,beta,gamma:"
         String[] optionSpecs = optionsString.split(Constants.SPACE);
@@ -119,14 +117,14 @@ public class GetOpt implements StringHelper {
         for (String argValue : args) {
             if (isKey(argValue)) {
                 if (!atLeastOneArgumentWasPassed && expectValueNext) throw new CommandLineArgumentException(
-                        messages.get("ERR004", lastOption, argValue)
+                        Messages.get("ERR004", lastOption, argValue)
                 );
                 multipleArgumentsPossible = false;
                 atLeastOneArgumentWasPassed = false;
                 optionValue = lookupOption(stripPrefix(argValue));
                 if (optionValue == null) {
                     throw new CommandLineArgumentException(
-                            messages.get("ERR025", argValue)
+                            Messages.get("ERR025", argValue)
                     );
                 }
                 optionValue.isSet = true;
@@ -143,7 +141,8 @@ public class GetOpt implements StringHelper {
                 }
             } else {
                 if (processingProgramNames) {
-                    argValue = adjustPathString(applicationSourceDirectory + Constants.FILE_SEPARATOR + argValue);
+                    argValue = StringHelper.adjustPathString(applicationSourceDirectory +
+                            Constants.FILE_SEPARATOR + argValue);
                 }
                 atLeastOneArgumentWasPassed = true;
                 if (multipleArgumentsPossible) {
@@ -153,7 +152,7 @@ public class GetOpt implements StringHelper {
                     optionValue.argumentValue += argValue;
                 } else {
                     if (!expectValueNext) throw new CommandLineArgumentException(
-                            messages.get("ERR006", argValue)
+                            Messages.get("ERR006", argValue)
                     );
                     optionValue.argumentValue = argValue;
                     expectValueNext = false;
@@ -161,7 +160,7 @@ public class GetOpt implements StringHelper {
             }
         }
         if (expectValueNext && !atLeastOneArgumentWasPassed) throw new CommandLineArgumentException(
-                messages.get("ERR004", lastOption, "(none)")
+                Messages.get("ERR004", lastOption, "(none)")
         );
     }
 

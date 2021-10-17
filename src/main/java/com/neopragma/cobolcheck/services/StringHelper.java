@@ -23,13 +23,13 @@ import java.util.Locale;
 /**
  * Helper methods for handling String values specific to this project.
  */
-public interface StringHelper {
+public class StringHelper {
 
     /**
      * @param subject - reference to a String
      * @return true if the subject is null or empty
      */
-    default boolean isBlank(String subject) {
+    public static boolean isBlank(String subject) {
         return subject == null || subject.equals("");
     }
 
@@ -37,7 +37,7 @@ public interface StringHelper {
      * @param subject - reference to a String
      * @return true if the subject contains a value other than empty string
      */
-    default boolean notBlank(String subject) {
+    public static boolean notBlank(String subject) {
         return subject != null && !subject.equals("");
     }
 
@@ -48,7 +48,7 @@ public interface StringHelper {
      * @param defaultValue - the value to use if the String is null or empty
      * @return the original String value or the specified default value
      */
-    default String defaultIfBlank(String subject, String defaultValue) {
+    public static String defaultIfBlank(String subject, String defaultValue) {
         return isBlank(subject) ? defaultValue : subject;
     }
 
@@ -58,7 +58,7 @@ public interface StringHelper {
      * @param subject - reference to the array
      * @return true if subject is null or subject array contains no entries
      */
-    default boolean isEmptyArray(String[] subject) {
+    public static boolean isEmptyArray(String[] subject) {
         return subject == null || subject.length == 0;
     }
 
@@ -68,7 +68,7 @@ public interface StringHelper {
      * @param sourceLine that may be less than 80 bytes long
      * @return the same source line padded to 80 bytes
      */
-    default String fixedLength(String sourceLine) {
+    public static String fixedLength(String sourceLine) {
         return String.format("%1$-80s", sourceLine).substring(0, 80) +
                 System.getProperty("line.separator");
     }
@@ -79,7 +79,7 @@ public interface StringHelper {
      * @param pathString that may not have platform-specific file separator characters
      * @return path string value with platform-specific file separator characters
      */
-    default String adjustPathString(String pathString) {
+    public static String adjustPathString(String pathString) {
         Log.debug("StringHelper.adjustPathString() original string: <" + pathString + ">");
         Log.debug("StringHelper.adjustPathString() Constants.FILE_SEPARATOR: <" + Constants.FILE_SEPARATOR + ">");
 

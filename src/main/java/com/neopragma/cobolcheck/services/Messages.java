@@ -26,13 +26,13 @@ import java.util.ResourceBundle;
  */
 public class Messages {
 
-    private ResourceBundle messageBundle;
+    private static ResourceBundle messageBundle;
 
-    public Messages() {
+    static{
         loadResourceBundle();
     }
 
-    public String get(String messageId, String... substitutionValues) {
+    public static String get(String messageId, String... substitutionValues) {
         if (substitutionValues.length < 1) {
             return messageBundle.getString(messageId);
         } else {
@@ -40,12 +40,12 @@ public class Messages {
         }
     }
 
-    public void setLocale(Locale locale) {
+    public static void setLocale(Locale locale) {
         Locale.setDefault(locale);
         loadResourceBundle();
     }
 
-    public void loadResourceBundle() {
+    public static void loadResourceBundle() {
         messageBundle = ResourceBundle.getBundle("com.neopragma.cobolcheck.messages.messages",
                 Locale.getDefault());
     }

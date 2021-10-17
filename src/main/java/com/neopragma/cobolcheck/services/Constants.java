@@ -19,11 +19,9 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
 public final class Constants {
 
-    Messages messages = new Messages();
-
     private Constants() {
         throw new PossibleInternalLogicErrorException(
-                messages.get("ERR026"));
+                Messages.get("ERR026"));
     }
 
     // File read status values

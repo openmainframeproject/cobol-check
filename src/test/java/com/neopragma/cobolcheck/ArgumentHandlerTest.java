@@ -17,7 +17,7 @@ package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.CommandLineArgumentException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
@@ -26,77 +26,75 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GetOptTest {
+public class ArgumentHandlerTest {
 
     private static final String optionSpec = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
-    private final Config config = new Config(new Messages());
-    private final Messages messages = config.getMessages();
 
     @BeforeEach
     public void commonSetup() {
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
     }
 
     @Test
     public void it_throws_when_option_specification_string_is_null() {
-        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> new GetOpt(new String[] { "--help" }, null, config));
-        assertEquals("ERR005: Command line option specification string passed to GetOpt was null.",
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> new ArgumentHandler(new String[] { "--help" }, null));
+        assertEquals("ERR005: Command line option specification string passed to ArgumentHandler was null.",
                 ex.getMessage());
     }
 
     @Test
     public void it_throws_when_required_argument_is_not_present() {
-        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-c", "-l", "warn" }, optionSpec, config));
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new ArgumentHandler(new String[] { "-c", "-l", "warn" }, optionSpec));
         assertEquals("ERR004: Expecting an argument for command line option <-c> but got <-l>.",
                 ex.getMessage());
     }
 
     @Test
     public void it_throws_when_an_option_is_not_present_when_expected() {
-        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new GetOpt(new String[] { "-l", "warn", "c" }, optionSpec, config));
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> new ArgumentHandler(new String[] { "-l", "warn", "c" }, optionSpec));
         assertEquals("ERR006: Expecting a command line option but got <c>.",
                 ex.getMessage());
     }
 
     @Test
     public void it_does_not_throw_while_processing_a_valid_short_option_specification_string() {
-        GetOpt getOpt = new GetOpt(new String[] { "--h" }, optionSpec,config);
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--h" }, optionSpec);
     }
 
     @Test
     public void it_does_not_throw_while_processing_a_valid_long_option_specification_string() {
-        GetOpt getOpt = new GetOpt(new String[] { "--help" }, optionSpec, config);
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--help" }, optionSpec);
     }
 
     @Test
     public void it_correctly_marks_a_selected_option_as_set() {
-        GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" }, optionSpec, config);
-        assertTrue(getOpt.isSet("log-level"), "log-level is expected to be set");
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--log-level", "info" }, optionSpec);
+        assertTrue(argumentHandler.isSet("log-level"), "log-level is expected to be set");
     }
 
     @Test
     public void it_correctly_stores_the_argument_that_goes_with_an_option() {
-        GetOpt getOpt = new GetOpt(new String[] { "--log-level", "info" },
-                optionSpec, config);
-        assertEquals("info", getOpt.getValueFor("log-level"));
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--log-level", "info" },
+                optionSpec);
+        assertEquals("info", argumentHandler.getValueFor("log-level"));
     }
 
     @Test
     public void it_handles_option_p_followed_by_one_full_program_name() {
         String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG1";
-        GetOpt getOpt = new GetOpt(new String[] { "-p", "PROG1", "-l", "err" },
-                optionSpec, config);
-        assertEquals(expected, getOpt.getValueFor("programs"));
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-p", "PROG1", "-l", "err" },
+                optionSpec);
+        assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
     @Test
     public void it_handles_option_programs_followed_by_one_full_program_name() {
         String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG1";
-        GetOpt getOpt = new GetOpt(new String[] { "--programs", "PROG1", "-l", "err" },
-                optionSpec, config);
-        assertEquals(expected, getOpt.getValueFor("programs"));
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--programs", "PROG1", "-l", "err" },
+                optionSpec);
+        assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
     @Test
@@ -106,9 +104,9 @@ public class GetOptTest {
                 + Constants.COLON
                 + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
-        GetOpt getOpt = new GetOpt(new String[] { "-p", "PROG1", "PROG2", "-l", "err" },
-                optionSpec, config);
-        assertEquals(expected, getOpt.getValueFor("programs"));
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-p", "PROG1", "PROG2", "-l", "err" },
+                optionSpec);
+        assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
     @Test
@@ -118,32 +116,32 @@ public class GetOptTest {
                 + Constants.COLON
                 + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
-        GetOpt getOpt = new GetOpt(new String[] { "--programs", "PROG1", "PROG2", "-l", "err" },
-                optionSpec, config);
-        assertEquals(expected, getOpt.getValueFor("programs"));
+        ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--programs", "PROG1", "PROG2", "-l", "err" },
+                optionSpec);
+        assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
     @Test
     public void it_throws_when_an_undefined_option_is_passed() {
         Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
-            GetOpt getOpt = new GetOpt(new String[] { "-f" },
-                    optionSpec, config);
+            ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-f" },
+                    optionSpec);
         });
     }
 
     @Test
     public void it_throws_when_no_value_is_passed_for_the_only_argument_and_it_requires_a_value() {
         Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
-            GetOpt getOpt = new GetOpt(new String[] { "-c" },
-                    optionSpec, config);
+            ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-c" },
+                    optionSpec);
         });
     }
 
     @Test
     public void it_throws_when_no_value_is_passed_for_the_last_argument_and_it_requires_a_value() {
         Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
-            GetOpt getOpt = new GetOpt(new String[] { "-l", "info", "-c" },
-                    optionSpec, config);
+            ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-l", "info", "-c" },
+                    optionSpec);
         });
     }
 

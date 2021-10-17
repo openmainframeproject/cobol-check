@@ -13,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck.features.launching;
+package com.neopragma.cobolcheck.features.launcher;
 
-import com.neopragma.cobolcheck.features.launching.ProcessLauncher;
 import com.neopragma.cobolcheck.services.log.Log;
+import com.neopragma.cobolcheck.services.log.LogLevel;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
@@ -31,15 +31,10 @@ import java.io.IOException;
  * @author Dave Nicolette
  * @since 1.5
  */
-public class WindowsProcessLauncher implements ProcessLauncher, StringHelper {
-
-    private Config config;
-    private Messages messages;
+public class LinuxProcessLauncher implements ProcessLauncher {
     private String processConfigKeyPrefix;
 
-    public WindowsProcessLauncher(Config config, String processConfigKeyPrefix) {
-        this.config = config;
-        this.messages = config.getMessages();
+    public LinuxProcessLauncher(String processConfigKeyPrefix) {
         this.processConfigKeyPrefix = processConfigKeyPrefix;
     }
 
@@ -50,23 +45,29 @@ public class WindowsProcessLauncher implements ProcessLauncher, StringHelper {
 
     @Override
     public Process run(String programName) {
-        Log.debug("Entering WindowsProcessLauncher.run() method, programName is <" + programName + ">");
-        if (isBlank(programName)) {
-            Log.error(messages.get("ERR020"));
-            throw new PossibleInternalLogicErrorException(messages.get("ERR020"));
+        if (Log.level() == LogLevel.DEBUG) {
+            System.out.println("Entering LinuxProcessLauncher.run() method, programName is <" + programName + ">");
         }
-        String processConfigKey = "windows" + Constants.PROCESS_CONFIG_KEY;
-        String scriptName = config.getString(processConfigKey);
-
-        if (isBlank(scriptName)) {
-            Log.error(messages.get("ERR021", processConfigKey));
-            throw new PossibleInternalLogicErrorException(messages.get("ERR021", processConfigKey));
+        if (StringHelper.isBlank(programName)) {
+            Log.error(Messages.get("ERR020"));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR020"));
         }
-        String scriptDirectory = config.getString(Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
+        // Hack for Mac
+        if (!programName.toUpperCase().endsWith("CBL")
+        && !programName.toUpperCase().endsWith("COB")) {
+            programName += ".CBL";
+        }
+        String processConfigKey = "linux" + Constants.PROCESS_CONFIG_KEY;
+        String scriptName = Config.getString(processConfigKey);
+        if (StringHelper.isBlank(scriptName)) {
+            Log.error(Messages.get("ERR021", processConfigKey));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR021", processConfigKey));
+        }
+        String scriptDirectory = Config.getString(Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
                 Constants.DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY);
-        if (isBlank(scriptDirectory)) {
-            Log.error(messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
-            throw new PossibleInternalLogicErrorException(messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+        if (StringHelper.isBlank(scriptDirectory)) {
+            Log.error(Messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
         }
 
         if (!scriptDirectory.endsWith(Constants.FILE_SEPARATOR)) {
@@ -83,12 +84,12 @@ public class WindowsProcessLauncher implements ProcessLauncher, StringHelper {
             processArguments.append(argument);
             delim = Constants.COMMA;
         }
-        Log.info(messages.get("INF008", processArguments.toString()));
+        Log.info(Messages.get("INF008", processArguments.toString()));
         try {
             process = processBuilder.start();
         } catch (IOException processBuilderException) {
-            Log.error(messages.get("ERR023", processArguments.toString()));
-            throw new PossibleInternalLogicErrorException(messages.get("ERR023",
+            Log.error(Messages.get("ERR023", processArguments.toString()));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR023",
                     processArguments.toString()), processBuilderException);
         }
         return process;

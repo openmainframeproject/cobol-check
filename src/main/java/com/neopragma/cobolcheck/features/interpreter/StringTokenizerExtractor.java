@@ -31,11 +31,10 @@ import java.util.*;
  */
 public class StringTokenizerExtractor implements TokenExtractor {
 
-    public StringTokenizerExtractor(Messages messages) {
-        this.messages = messages;
+    public StringTokenizerExtractor() {
+
     }
 
-    private final Messages messages;
     private static final String delimiters = String.format(" .%s", Constants.NEWLINE);
 
     // Some "logical tokens" meaningful in Cobol source consist of two words separated by whitespace.
@@ -70,7 +69,7 @@ public class StringTokenizerExtractor implements TokenExtractor {
     public List<String> extractTokensFrom(String sourceLine) {
         if (sourceLine == null) {
             throw new PossibleInternalLogicErrorException(
-                 messages.get("ERR001",
+                 Messages.get("ERR001",
                          "sourceLine",
                          "StringTokenizerExtractor.extractTokensFrom(sourceLine)")
             );

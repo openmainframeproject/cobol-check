@@ -23,15 +23,22 @@ import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import com.neopragma.cobolcheck.features.parser.KeywordExtractor;
 import com.neopragma.cobolcheck.features.parser.NumericFields;
 import com.neopragma.cobolcheck.features.parser.TestSuiteParser;
+import com.neopragma.cobolcheck.features.prepareMerge.PrepareMergeController;
 import com.neopragma.cobolcheck.services.*;
 import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
+import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.neopragma.cobolcheck.services.filehelpers.PathHelper.endWithFileSeparator;
+import static com.neopragma.cobolcheck.services.filehelpers.PathHelper.getMatchingDirectories;
 
 /**
  * This class merges a Test Suite (a text file) with the source of the Cobol program to be tested,
@@ -40,12 +47,10 @@ import java.util.regex.Pattern;
  * @author Dave Nicolette (neopragma)
  * @since 14
  */
-public class Generator implements StringHelper {
+public class Generator {
 
     public static final String PIC_VALUE = "PIC";
     public static final String PICTURE_VALUE = "PICTURE";
-    private final Messages messages;
-    private final Config config;
     private final TokenExtractor tokenExtractor;
     private final TestSuiteParser testSuiteParser;
     private NumericFields numericFields;
@@ -93,7 +98,7 @@ public class Generator implements StringHelper {
 
     // Used to handle programs that don't have a Working-Storage Section
     private boolean workingStorageTestCodeHasBeenInserted = false;
-    private final String workingStorageHeader = fixedLength("       WORKING-STORAGE SECTION.");
+    private final String workingStorageHeader = StringHelper.fixedLength("       WORKING-STORAGE SECTION.");
 
     // used while processing SELECT statements in the program under test
     String fileIdentifier = Constants.EMPTY_STRING;
@@ -114,16 +119,68 @@ public class Generator implements StringHelper {
     private boolean commentThisLine;
     private boolean previousLineContainedOnlyAPeriod;
 
-    public Generator(
-            KeywordExtractor keywordExtractor,
-            Config config) {
-        this.config = config;
-        this.messages = config.getMessages();
-        this.tokenExtractor = new StringTokenizerExtractor(messages);
-        testSuiteParser = new TestSuiteParser(keywordExtractor, config);
+    public Generator() {
+        this.tokenExtractor = new StringTokenizerExtractor();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         numericFields = new NumericFields();
-        testCodePrefix = config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         fileIdentifiersAndStatuses = new HashMap<>();
+    }
+
+    /**
+     * For each program name specified in command-line option --programs, walk the directory tree under
+     * test.suite.directory (from config) to find subdirectories that match the program name, and then pick up
+     * all the testsuite files there (or the ones that match the specifications in command-line option --tests)
+     * and concatenate them into a single testsuite source. For each program, invoke the Generator to merge the test
+     * code into the program under test to produce a test program. Finally, launch an OS process to compile the test
+     * program and execute it.
+     */
+    public void prepareAndRunMerge(String programName, String testFileNames) {
+        // all test suites are located under this directory
+        String testSuiteDirectory = Config.getTestSuiteDirectoryPathString();
+        testSuiteDirectory = endWithFileSeparator(testSuiteDirectory);
+
+        // Find test subdirectories that match program names
+        List<String> matchingDirectories;
+        Path path = Paths.get(programName);
+        programName = path.getFileName().toString();
+        try{
+            matchingDirectories = getMatchingDirectories(programName, testSuiteDirectory);
+        } catch (IOException ioException) {
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR019", programName));
+        }
+
+
+        for (String matchingDirectory : matchingDirectories) {
+            Reader sourceReader = PrepareMergeController.getSourceReader(programName);
+            Reader testSuiteReader = PrepareMergeController.getTestSuiteReader(matchingDirectory, testFileNames);
+            Writer testSourceWriter = PrepareMergeController.getTestSourceWriter(programName);
+            String testSourceOutPath = PrepareMergeController.getTestSourceOutPath();
+
+            Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
+
+            mergeTestSuitesIntoTheTestProgram(sourceReader, testSuiteReader, testSourceWriter, programName);
+        }
+    }
+
+    /**
+     * Merges source input and test suites into a single file
+     *
+     * @param sourceReader - For reading the cobol source.
+     * @param testSuiteReader - For reading the test suites
+     * @param testSourceWriter - For writing the merged output test file.
+     * @param programName - The name of the cobol source program.
+     */
+    void mergeTestSuitesIntoTheTestProgram(Reader sourceReader, Reader testSuiteReader,
+                                           Writer testSourceWriter, String programName) {
+        mergeTestSuite(testSuiteReader, sourceReader, testSourceWriter);
+
+        try {
+            testSourceWriter.close();
+        } catch (IOException closeTestSourceOutException) {
+            throw new PossibleInternalLogicErrorException(
+                    Messages.get("ERR017", programName));
+        }
     }
 
     /**
@@ -142,13 +199,13 @@ public class Generator implements StringHelper {
 
         if (testSuite == null) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR001", "testSuite", "Generator.runSuite()"));
+                    Messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
         BufferedReader testSuiteReader
                 = new BufferedReader(testSuite);
         if (cobolSourceIn == null) {
             throw new PossibleInternalLogicErrorException(
-                    messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
+                    Messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
         }
         BufferedReader cobolSourceInReader
                 = new BufferedReader(cobolSourceIn);
@@ -160,10 +217,10 @@ public class Generator implements StringHelper {
                 if (sourceLine.trim().equals(Constants.PERIOD)) {
                     skipThisLine = false;
                     previousLineContainedOnlyAPeriod = true;
-                    testSourceOut.write(fixedLength(sourceLine));
+                    testSourceOut.write(StringHelper.fixedLength(sourceLine));
                     continue;
                 }
-                sourceLine = fixedLength(sourceLine);
+                sourceLine = StringHelper.fixedLength(sourceLine);
                 List<String> tokens = tokenExtractor.extractTokensFrom(sourceLine);
 
                 processingBeforeEchoingSourceLineToOutput(
@@ -189,7 +246,7 @@ public class Generator implements StringHelper {
             throw new PossibleInternalLogicErrorException(ex);
         }
         if (emptyInputStream) {
-            throw new PossibleInternalLogicErrorException(messages.get("ERR007"));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR007"));
         }
         return testSourceOut;
     }
@@ -549,7 +606,7 @@ public class Generator implements StringHelper {
         if (copyTokens.isEmpty()
                 || !copyTokens.get(0).equalsIgnoreCase(Constants.COPY_TOKEN)
                 || copyTokens.size() < 2) {
-            throw new PossibleInternalLogicErrorException(messages.get("ERR024"));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR024"));
         }
         List<String> copyLines = new ArrayList<>();
 
@@ -566,7 +623,7 @@ public class Generator implements StringHelper {
         }
 
         StringWriter expandedLines = new StringWriter();
-        CopybookExpander copybookExpander = new CopybookExpander(config, messages);
+        CopybookExpander copybookExpander = new CopybookExpander();
         try {
             expandedLines = (StringWriter) copybookExpander.expand(
                     expandedLines,
@@ -636,7 +693,7 @@ public class Generator implements StringHelper {
         // If this program had File Section source that we need to move to Working-Storage, inject the lines here.
         if (fileSectionStatements != null) {
             for (String line : fileSectionStatements) {
-                testSourceOut.write(fixedLength(line));
+                testSourceOut.write(StringHelper.fixedLength(line));
             }
         }
 
@@ -680,7 +737,7 @@ public class Generator implements StringHelper {
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
             secondarySourceLine = secondarySourceLine
                     .replaceAll(Constants.TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
-            testSourceOut.write(fixedLength(secondarySourceLine));
+            testSourceOut.write(StringHelper.fixedLength(secondarySourceLine));
         }
         secondarySourceBufferedReader.close();
     }

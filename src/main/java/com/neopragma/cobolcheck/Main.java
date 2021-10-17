@@ -1,20 +1,35 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
-import com.neopragma.cobolcheck.workers.Driver;
+import com.neopragma.cobolcheck.workers.CobolTestRunner;
+import com.neopragma.cobolcheck.workers.Generator;
+import com.neopragma.cobolcheck.workers.Initializer;
 
 class Main {
+
+
+
+
     public static void main(String[] args) throws InterruptedException {
-        Messages messages = new Messages();
-        Config config = new Config(messages);
-        config.load();
-        Driver app = new Driver(
-                config,
-                new GetOpt(args, Constants.COMMAND_lINE_OPTIONS, config));
-        app.run();
-        System.exit(app.getExitStatus());
+        Initializer initializer = new Initializer(args);
+        Generator generator = new Generator();
+        CobolTestRunner testRunner = new CobolTestRunner();
+
+        initializer.run();
+        if (initializer.isExitStatusHalt()) {
+            initializer.exitProgram();
+        }
+
+        for (String programName : initializer.getSourceProgramNames()){
+
+            generator.prepareAndRunMerge(programName, initializer.getTestFileNames());
+
+            testRunner.run();
+        }
+
+        initializer.exitProgram();
     }
 }
