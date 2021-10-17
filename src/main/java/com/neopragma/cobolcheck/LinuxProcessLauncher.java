@@ -29,10 +29,17 @@ public class LinuxProcessLauncher implements ProcessLauncher, StringHelper {
 
     private Config config;
     private Messages messages;
+    private String processConfigKeyPrefix;
 
-    public LinuxProcessLauncher(Config config) {
+    public LinuxProcessLauncher(Config config, String processConfigKeyPrefix) {
         this.config = config;
         this.messages = config.getMessages();
+        this.processConfigKeyPrefix = processConfigKeyPrefix;
+    }
+
+    @Override
+    public String getProcessConfigKeyPrefix() {
+        return processConfigKeyPrefix;
     }
 
     @Override
