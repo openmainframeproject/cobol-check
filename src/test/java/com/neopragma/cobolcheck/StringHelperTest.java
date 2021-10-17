@@ -15,7 +15,7 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import com.sun.org.apache.bcel.internal.Const;
+import com.neopragma.cobolcheck.services.StringHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

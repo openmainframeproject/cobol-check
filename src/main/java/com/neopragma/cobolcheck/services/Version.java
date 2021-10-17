@@ -13,17 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck;
+package com.neopragma.cobolcheck.services;
 
-import com.neopragma.cobolcheck.services.Version;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+/**
+ * Current version of the product.
+ *
+ * @author Dave Nicolette (neopragma)
+ * @since 1.8
+ */
+public class Version {
+    private static final Integer MAJOR = 0;
+    private static final Integer MINOR = 1;
+    private static final String PATCH = "0";
 
-
-public class VersionTest {
-
-    @Test
-    public void it_returns_the_current_version_string() {
-        assertTrue(Version.current().matches("^Version: \\d\\.\\d\\..*$"));
+    public static String current() {
+        return String.format("Version: %s.%s.%s", MAJOR.toString(), MINOR.toString(), PATCH);
     }
 }

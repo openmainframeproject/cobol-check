@@ -1,5 +1,9 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.parser.KeywordAction;
+import com.neopragma.cobolcheck.services.cobolLogic.Keywords;
+import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.cobolLogic.Keyword;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

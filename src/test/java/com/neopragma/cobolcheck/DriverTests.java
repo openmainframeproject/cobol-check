@@ -1,7 +1,12 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import org.graalvm.compiler.core.match.MatchRule;
+import com.neopragma.cobolcheck.features.GetOpt;
+import com.neopragma.cobolcheck.features.launching.ProcessLauncher;
+import com.neopragma.cobolcheck.services.Config;
+import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.Messages;
+import com.neopragma.cobolcheck.services.platform.Platform;
+import com.neopragma.cobolcheck.workers.Driver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,11 +14,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
