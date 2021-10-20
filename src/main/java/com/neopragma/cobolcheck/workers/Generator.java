@@ -17,10 +17,8 @@ package com.neopragma.cobolcheck.workers;
 
 import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
-import com.neopragma.cobolcheck.features.concatenator.ConcatenatorController;
-import com.neopragma.cobolcheck.features.concatenator.TestSuiteConcatenator;
 import com.neopragma.cobolcheck.features.interpreter.InterpreterController;
+import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import com.neopragma.cobolcheck.features.writer.WriterController;
 import com.neopragma.cobolcheck.features.prepareMerge.PrepareMergeController;
 import com.neopragma.cobolcheck.services.*;
@@ -40,7 +38,7 @@ public class Generator {
 
     private InterpreterController interpreter;
     private WriterController writerController;
-    private ConcatenatorController concatenatorController;
+    private TestSuiteParserController testSuiteParserController;
 
     List<String> matchingTestDirectories;
 
@@ -49,12 +47,11 @@ public class Generator {
     }
 
     /**
-     * For each program name specified in command-line option --programs, walk the directory tree under
-     * test.suite.directory (from config) to find subdirectories that match the program name, and then pick up
-     * all the testsuite files there (or the ones that match the specifications in command-line option --tests)
-     * and concatenate them into a single testsuite source. For each program, invoke the Generator to merge the test
-     * code into the program under test to produce a test program. Finally, launch an OS process to compile the test
-     * program and execute it.
+     * Finds any test-directory that matches the given program name. For each of these directories, all test
+     * files are concatenated into one and the source program are merged with all the test-suites and cobol-
+     * check's boilerplate copybooks into one test-program.
+     * @param programName The name of the source program.
+     * @param testFileNames The names of every test for the source program, separated by a space.
      */
     public void prepareAndRunMerge(String programName, String testFileNames) {
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
@@ -63,11 +60,11 @@ public class Generator {
             Reader sourceReader = PrepareMergeController.getSourceReader(programName);
             interpreter = new InterpreterController(new BufferedReader(sourceReader));
 
-            concatenatorController = new ConcatenatorController(testFileNames);
-            Reader testSuiteReader = concatenatorController.concatenateTestSuites(matchingDirectory);
+            testSuiteParserController = new TestSuiteParserController(testFileNames);
+            testSuiteParserController.concatenateTestSuites(matchingDirectory);
 
             Writer testSourceWriter = PrepareMergeController.getTestSourceWriter(programName);
-            writerController = new WriterController(testSourceWriter, testSuiteReader);
+            writerController = new WriterController(testSourceWriter);
 
             String testSourceOutPath = PrepareMergeController.getTestSourceOutPath();
             Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
@@ -75,23 +72,19 @@ public class Generator {
             mergeTestSuite();
 
             closeReadersAndWriters(programName);
-
         }
     }
 
     /**
-     * Merge test code with the program under test to produce a Cobol source program
-     * that can be compiled and executed to run the test suite.
-     *
-     * @return (Writer) Same Writer object as passed in, populated with Cobol source lines
+     * Handles the merge of the source program, the test-suites and cobol-check's boilerplate copybooks.
+     * This is done by reading the source file line by line, and writing the appropriate lines to the
+     * output file. Each line is interpreted, in order to know if, it should be commented out, ignored
+     * or if the test-suite or boilerplate code should be inserted.
      */
     private void mergeTestSuite() {
         String sourceLine;
-        boolean emptyInputStream = true;
         try {
             while ((sourceLine = interpreter.interpretNextLine()) != null) {
-                emptyInputStream = false;
-
                 processingBeforeEchoingSourceLineToOutput();
 
                 writeToSource(sourceLine);
@@ -103,9 +96,6 @@ public class Generator {
         }
         catch (Exception ex) {
             throw new PossibleInternalLogicErrorException(ex);
-        }
-        if (emptyInputStream) {
-            throw new PossibleInternalLogicErrorException(Messages.get("ERR007"));
         }
     }
 
@@ -119,22 +109,31 @@ public class Generator {
     private void processingBeforeEchoingSourceLineToOutput() throws IOException {
 
         if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
-            if (!writerController.hasWorkingStorageTestCodeHasBeenInserted()) {
-                writerController.insertWorkingStorageHeader();
-                writerController.insertWorkingStorageTestCode(interpreter.getFileSectionStatements());
+            if (!testSuiteParserController.hasWorkingStorageTestCodeHasBeenInserted()) {
+                writerController.writeLine(testSuiteParserController.getWorkingStorageHeader());
+
+                writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
+                        interpreter.getFileSectionStatements()));
             }
         }
     }
 
+    /**
+     * Writes the given line to the output file. If a multiline statement has been read, this will
+     * be written instead (this statement will include the line). Comments out lines and statements
+     * when needed.
+     *
+     * @param sourceLine - The line to write
+     */
     private void writeToSource(String sourceLine) throws IOException {
         if (interpreter.shouldCurrentLineBeParsed()) {
 
             if (interpreter.hasStatementBeenRead()){
                 if (interpreter.shouldCurrentStatementBeCommentedOut()){
-                    writerController.writeCommentedStatement(interpreter.getCurrentStatement());
+                    writerController.writeCommentedLines(interpreter.getCurrentStatement());
                 }
                 else {
-                    writerController.writeStatement(interpreter.getCurrentStatement());
+                    writerController.writeLines(interpreter.getCurrentStatement());
                 }
             }
 
@@ -157,17 +156,19 @@ public class Generator {
     private void processingAfterEchoingSourceLineToOutput() throws IOException {
 
         if (interpreter.currentLineContains(Constants.WORKING_STORAGE_SECTION)) {
-            writerController.insertWorkingStorageTestCode(interpreter.getFileSectionStatements());
+            writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
+                    interpreter.getFileSectionStatements()));
         }
 
         if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
-            writerController.insertProcedureDivisionTestCode(interpreter.getNumericFields());
+            writerController.writeLines(testSuiteParserController.getProcedureDivisionTestCode(
+                    interpreter.getNumericFields()));
         }
     }
 
     private void closeReadersAndWriters(String programName) {
         interpreter.closeReader();
-        writerController.closeTestSuiteReader();
+        testSuiteParserController.closeTestSuiteReader();
         writerController.closeWriter(programName);
     }
 

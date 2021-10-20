@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.features.interpreter.CobolLine;
 import com.neopragma.cobolcheck.features.interpreter.Interpreter;
 import com.neopragma.cobolcheck.features.interpreter.State;

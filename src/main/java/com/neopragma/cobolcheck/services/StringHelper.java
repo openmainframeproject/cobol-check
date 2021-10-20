@@ -96,6 +96,19 @@ public class StringHelper {
     }
 
     /**
+     * Trims only the end of the string.
+     * Ex.: "     Hey  \n" => "     Hey"
+     *
+     * @param line - original string
+     * @return - string trimmed at the end.
+     */
+    public static String removeTrailingSpaces(String line){
+        //Regex for trailing spaces
+        String regex = "\\s+$";
+        return line.replaceAll(regex, "");
+    }
+
+    /**
      * Enclose a value in quotation marks.
      *
      * @param value - original string

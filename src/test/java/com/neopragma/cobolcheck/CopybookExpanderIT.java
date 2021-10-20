@@ -15,7 +15,7 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.CopybookExpander;
+import com.neopragma.cobolcheck.features.interpreter.CopybookExpander;
 import com.neopragma.cobolcheck.services.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +24,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +35,7 @@ import java.util.stream.Stream;
 
 import static java.nio.file.Files.readAllBytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class CopybookExpanderIT {
@@ -67,28 +64,28 @@ public class CopybookExpanderIT {
     public void it_expands_a_simple_copybook() throws IOException {
         List<String> expandedSource =
                 runTestCase("COPY001-padded", "COPY001-padded");
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_expands_nested_copybooks_one_level_deep() throws IOException {
         List<String> expandedSource =
                 runTestCase("COPY002-padded", "EX002-padded");
-        assertEquals(expectedResult, runTestCase("COPY002-padded", "EX002-padded").toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_expands_nested_copybooks_three_levels_deep() throws IOException {
         List<String> expandedSource =
                 runTestCase("COPY005-padded", "EX005-padded");
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_handles_lower_case_and_mixed_case_code() throws IOException {
         List<String> expandedSource =
                 runTestCase("mixed005-padded", "mixedex005-padded");
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
@@ -100,7 +97,7 @@ public class CopybookExpanderIT {
                         new StringTuple("B", "BETA"),
                         new StringTuple("C", "CHARLIE"),
                         new StringTuple("D", "DELTA"));
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @ParameterizedTest
@@ -114,7 +111,7 @@ public class CopybookExpanderIT {
                 runTestCase(testCopybookFilename + "-padded",
                         expectedResultFilename + "-padded",
                         new StringTuple(pseudoTextPattern, replacementText));
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
     private static Stream<Arguments> textPatternAndTestFilenameProvider() {
         return Stream.of(
@@ -144,7 +141,7 @@ public class CopybookExpanderIT {
         File f = new File(pathToTestCobolCopybooks + copybookFilename);
         String s = new String(readAllBytes(f.toPath()));
         String[] lines = s.split("\n");
-        return Arrays.asList(lines);
+        return removeTrailingSpacesFromLines(Arrays.asList(lines));
     }
 
     private static String getPathFor(String configPropertyName, String defaultValue) {
@@ -156,5 +153,15 @@ public class CopybookExpanderIT {
             directoryName.append(Constants.FILE_SEPARATOR);
         }
         return directoryName.toString();
+    }
+
+    //Needed as 'expected' and 'actual' have different trailing spaces, even
+    //though their values are essentially the same.
+    private List<String> removeTrailingSpacesFromLines(List<String> lines){
+        List<String> newLines = new ArrayList<>();
+        for (String line : lines){
+            newLines.add(StringHelper.removeTrailingSpaces(line));
+        }
+        return newLines;
     }
 }

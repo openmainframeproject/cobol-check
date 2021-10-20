@@ -20,6 +20,7 @@ public class InterpreterController {
     private CobolReader reader;
     private LineRepository lineRepository;
     private NumericFields numericFields;
+    private boolean hasReadLine;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -31,19 +32,92 @@ public class InterpreterController {
         numericFields = new NumericFields();
     }
 
+    //Getters for lists of specific source lines
+    public List<String> getFileSectionStatements(){
+        return lineRepository.getFileSectionStatements();
+    }
+    public List<String> getFileControlStatements() { return lineRepository.getFileControlStatements(); }
+    public Map<String, String> getFileIdentifiersAndStatuses() { return lineRepository.getFileIdentifiersAndStatuses(); }
+    public List<String> getCopyTokens() { return lineRepository.getCopyTokens(); }
+
+    //Getters for numeric field info
+    public DataType getNumericFieldDataTypeFor(String fieldName){
+        return numericFields.dataTypeOf(fieldName);
+    }
+    public NumericFields getNumericFields() { return numericFields; }
+
+    //Getters from reader
+    public List<String> getTokensForCurrentLine(){
+        return reader.getCurrentLine().getTokens();
+    }
+    public List<String> getCurrentStatement(){
+        return convertToStrings(reader.getCurrentStatement());
+    }
+
+    //Getting info from reader
+    public boolean hasStatementBeenRead(){
+        return reader.hasStatementBeenRead();
+    }
+    public boolean isReading(String partOfProgram){
+        return reader.isFlagSet(partOfProgram);
+    }
+    public boolean hasReaderStateChanged() { return reader.hasStateChanged(); }
+    public boolean currentLineContains(String str){
+        return reader.getCurrentLine().contains(str);
+    }
+
+    public boolean shouldCurrentLineBeParsed(){
+        return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
+    }
+
+    public boolean shouldCurrentLineBeCommentedOut(){
+        return Interpreter.shouldLineBeCommentedOut(reader.getCurrentLine(), reader.getState());
+    }
+
+    public boolean shouldCurrentStatementBeCommentedOut(){
+        for (CobolLine line : reader.getCurrentStatement()){
+            if (Interpreter.shouldLineBeCommentedOut(line, reader.getState())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**Interprets the next line from the source file. Based on the line, the following values
+     * will be updated:
+     * - Current line
+     * - Current tokens
+     * - previous line
+     * The following values can be updated, based on the line:
+     * - Current statement (only if multiline statement was read)
+     * - The state of the reader (flags that shows what part of the program we are reading)
+     * - List of FILE SECTION statements
+     * - List of FILE CONTROL statements
+     * - List mapping file identifiers to statuses
+     * - List of copy tokens
+     * - Numeric fields
+     * If the line is part of a longer statement, the reader might read multiple lines.
+     * @return The line that was read as a string
+     */
     public String interpretNextLine(){
         CobolLine line;
         try{
             line = reader.readLine();
+
+            if (line == null){
+                if (!hasReadLine){
+                    throw new PossibleInternalLogicErrorException(Messages.get("ERR007"));
+                }
+                return null;
+            }
+
+            if (!Interpreter.isTooShortToBeMeaningful(line) && !Interpreter.isComment(line)){
+                updateDependencies(line);
+                hasReadLine = true;
+
+            }
         } catch (IOException ex){
             throw new CobolSourceCouldNotBeReadException(ex);
-        }
-        if (line == null){
-            return null;
-        }
-
-        if (!Interpreter.isTooShortToBeMeaningful(line) && !Interpreter.isComment(line)){
-            updateDependencies(line);
         }
 
         return line.getOriginalString();
@@ -57,7 +131,18 @@ public class InterpreterController {
         }
     }
 
-    private void updateDependencies(CobolLine line){
+     /**Updates dependencies of the interpreter.
+      * The following values can be updated, based on the given line:
+     * - Current statement (only if multiline statement was read)
+     * - The state of the reader (flags that shows what part of the program we are reading)
+     * - List of FILE SECTION statements
+     * - List of FILE CONTROL statements
+     * - List mapping file identifiers to statuses
+     * - List of copy tokens
+     * - Numeric fields
+      * @param line - The line the update is based upon
+     */
+    private void updateDependencies(CobolLine line) throws IOException {
         reader.updateState();
         updateLineRepository(line);
 
@@ -70,77 +155,25 @@ public class InterpreterController {
         }
     }
 
-    public boolean isReading(String partOfProgram){
-        return reader.isFlagSet(partOfProgram);
-    }
-
-    public boolean hasStatementBeenRead(){
-        return reader.hasStatementBeenRead();
-    }
-
-    public List<String> getCurrentStatement(){
-        return convertToStrings(reader.getCurrentStatement());
-    }
-
-    public boolean hasReaderStateChanged() { return reader.hasStateChanged(); }
-
-    public boolean shouldCurrentLineBeParsed(){
-        return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
-    }
-
-    public boolean shouldCurrentLineBeCommentedOut(){
-        return Interpreter.shouldLineBeCommentedOut(reader.getCurrentLine(), reader.getState());
-    }
-    public boolean shouldCurrentStatementBeCommentedOut(){
-        for (CobolLine line : reader.getCurrentStatement()){
-            if (Interpreter.shouldLineBeCommentedOut(line, reader.getState())){
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /**If the current line is a batch file IO statement, the reader will read the
+     * whole statement no matter how many lines it spans.
+     */
     private void tryReadBatchFileIOStatement(){
         CobolLine line = reader.getCurrentLine();
         if (Interpreter.checkForBatchFileIOStatement(line)){
             try{
-                List<CobolLine> lines = reader.readTillEndOfStatement();
+                reader.readTillEndOfStatement();
             } catch (IOException ex){
                 throw new CobolSourceCouldNotBeReadException(ex);
             }
 
         }
     }
-
-    public List<String> getFileSectionStatements(){
-        return lineRepository.getFileSectionStatements();
-    }
-    public List<String> getFileControlStatements() { return lineRepository.getFileControlStatements(); }
-    public Map<String, String> getFileIdentifiersAndStatuses() { return lineRepository.getFileIdentifiersAndStatuses(); }
-    public List<String> getCopyTokens() { return lineRepository.getCopyTokens(); }
-    public DataType getNumericFieldDataTypeFor(String fieldName){
-        return numericFields.dataTypeOf(fieldName);
-    }
-    public NumericFields getNumericFields() { return numericFields; }
-
-    public boolean currentLineContains(String str){
-        return reader.getCurrentLine().contains(str);
-    }
-
-    public List<String> getTokensForCurrentLine(){
-        return reader.getCurrentLine().getTokens();
-    }
-
-    private List<String> convertToStrings(List<CobolLine> lines){
-        List<String> stringLines = new ArrayList<>();
-        for (CobolLine l : lines){
-            stringLines.add(l.getOriginalString());
-        }
-        return stringLines;
-    }
-
-    // Need to save field names of numeric data items in case a test case references them.
-    // There's no way to distinguish numeric fields while reading the Procedure Division.
+    /**If the current line is a numeric field, it will be added to the list of numeric fields.
+     * We need to save field names of numeric data items in the DATA DIVISION in case a test case
+     * references them. There's no way to distinguish numeric fields while reading the PROCEDURE
+     * DIVISION.
+     */
     private void updateNumericFields(CobolLine line){
         if (line.tokensSize() > 1) {
             if (line.contains(Constants.COMP_3_VALUE)) {
@@ -169,16 +202,16 @@ public class InterpreterController {
     }
 
     /**
-     * If we are currently reading the FILE CONTROL paragraph of the program under test, look for specific
-     * source lines that require explicit processing by cobol-check.
-     * Specifically, we need to save the file identifiers associated with SELECT statements and store the
-     * corresponding field names of FILE STATUS specifications in case they are referenced in user-written
-     * test cases. We also need to copy any record layout items into Working-Storage, as storage for FD areas
-     * will not be allocated when we stub out the OPEN statements for files.
-     *
+     * Updates the line repository with the given line, if it might have further use when testing.
+     * Lines ahead of the current one, might be peeked or even read, if the current statement spans
+     * multiple lines. If the line fits any of below it will be saved in the repository:
+     * - It is a line read under FILE CONTROL
+     * - It has a SELECT token. File identifier and corresponding FILE STATUS will be saved
+     * - It contains a copy token
+     * - It is a file section statement (file section statements from referenced copybooks are also included)
      * @param line - current source line
      */
-    private void updateLineRepository(CobolLine line){
+    private void updateLineRepository(CobolLine line) throws IOException {
         if (reader.isFlagSet(Constants.FILE_CONTROL)){
             lineRepository.addFileControlStatement(line.getOriginalString());
 
@@ -196,15 +229,18 @@ public class InterpreterController {
         }
     }
 
+    /**
+     * If the given line contains a SELECT token, the file identifier will be added, waiting for
+     * a mapping to a corresponding file status.
+     * @param line - current source line
+     */
     private void updateLineRepoBySelectToken(CobolLine line){
         if (line.contains(Constants.SELECT_TOKEN)){
             if (line.tokensSize() > 1) {
                 lineRepository.addFileIdentifierWithNoStatus(line.getToken(1));
             }
             else {
-                // We expect the next token from the source program to be the file identifier associated with the
-                // most recent SELECT statement we encountered. It will become a key in a map of file identifiers
-                // to file status field names.
+                // First token on the next line should be the file identifier
                 String nextLineToken0 = peekNextMeaningfulLineAndGetTokenAtIndex0();
                 if (nextLineToken0 == null)
                 {
@@ -215,38 +251,45 @@ public class InterpreterController {
         }
     }
 
-    private void updateLineRepoByFileStatusToken(CobolLine line){
+    /**
+     * If the given line contains a file status token, it will be added to a map to a
+     * corresponding file identifier.
+     * @param line - current source line
+     */
+    private void updateLineRepoByFileStatusToken(CobolLine line) throws IOException {
         if (line.contains(Constants.FILE_STATUS_TOKEN)){
-            if (line.tokensSize() > 2) {
-                if (line.getToken(1).equalsIgnoreCase(Constants.IS_TOKEN)) {
-                    lineRepository.addStatusForLastSetIdentifier(line.getToken(2));
-                }
-            } else {
-                // When the current source line contains FILE STATUS, the next tokens will be [IS] FIELDNAME.
-                // Those tokens may be coded on the same line or on subsequent lines in the source program.
-                if (line.tokensSize() > 1) {
+            if (Interpreter.isEndOfStatement(line, reader.peekNextMeaningfulLine())){
+                //File status statement is on one line
+                if (line.tokensSize() > 2) {
                     if (line.getToken(1).equalsIgnoreCase(Constants.IS_TOKEN)) {
-                        String nextLineToken0 = peekNextMeaningfulLineAndGetTokenAtIndex0();
-                        if (nextLineToken0 == null)
-                        {
-                            throw new PossibleInternalLogicErrorException("Line after FILE STATUS IS is empty");
-                        }
-                        lineRepository.addStatusForLastSetIdentifier(nextLineToken0);
-                    } else {
+                        lineRepository.addStatusForLastSetIdentifier(line.getToken(2));
+                    }
+                }
+                else if (line.tokensSize() > 1){
+                    if (!line.contains(Constants.IS_TOKEN)) {
                         lineRepository.addStatusForLastSetIdentifier(line.getToken(1));
                     }
-                } else {
-                    String nextLineToken0 = peekNextMeaningfulLineAndGetTokenAtIndex0();
-                    if (nextLineToken0 == null)
-                    {
-                        throw new PossibleInternalLogicErrorException("Line after FILE STATUS is empty");
+                }
+            } else {
+                //File status statement is written across multiple lines
+                List<CobolLine> statement = reader.readTillEndOfStatement();
+                for (CobolLine l : statement){
+                    List<String> tokens = l.getTokens();
+                    for(String token : tokens){
+                        if (!token.equalsIgnoreCase(Constants.FILE_STATUS_TOKEN) && !token.equalsIgnoreCase(Constants.IS_TOKEN)){
+                            lineRepository.addStatusForLastSetIdentifier(token);
+                        }
                     }
-                    lineRepository.addStatusForLastSetIdentifier(nextLineToken0);
                 }
             }
         }
     }
 
+    /**
+     * This method should only be called if the current line contains a COPY token.
+     * Reads the whole copy statement and adds each token of each line, to a list
+     * of copy tokens.
+     */
     private void updateLineRepoByCopyStatement(){
         List<CobolLine> copystatementLines;
         try{
@@ -282,6 +325,14 @@ public class InterpreterController {
         else {
             return null;
         }
+    }
+
+    private List<String> convertToStrings(List<CobolLine> lines){
+        List<String> stringLines = new ArrayList<>();
+        for (CobolLine l : lines){
+            stringLines.add(l.getOriginalString());
+        }
+        return stringLines;
     }
 
 

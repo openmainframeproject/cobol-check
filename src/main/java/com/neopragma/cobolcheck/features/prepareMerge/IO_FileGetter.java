@@ -54,6 +54,13 @@ public class IO_FileGetter {
         return testSourceWriter;
     }
 
+    /**
+     * Looks through the test directory, to find folders, that matches the name of the
+     * source program name given as a parameter.
+     *
+     * @param programName - The name of the source cobol program
+     * @return A list of the found folder paths
+     */
     static List<String> getMatchingTestDirectoriesForProgram(String programName){
         // all test suites are located under this directory
         String testSuiteDirectory = Config.getTestSuiteDirectoryPathString();

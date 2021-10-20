@@ -28,13 +28,22 @@ public class CobolReader {
         currentStatement = new ArrayList<>();
     }
 
+    State getState() {return state; }
+    CobolLine getCurrentLine() { return currentLine; }
+    CobolLine getPrevoiusLine() { return prevoiusLine; }
+    List<CobolLine> getCurrentStatement(){ return currentStatement; }
+
+    public boolean hasStateChanged() { return stateHasChanged; }
+    boolean hasStatementBeenRead(){ return currentStatement != null; }
+
     /**
-     * Reads the next line of the cobol file and updates the status of the reader based on the line.
-     * Returns a CobolLine
+     * Reads the next line of the cobol file.
+     *
+     * @return (CobolLine) The line that was read
      *
      * @throws IOException - pass any IOExceptions up to the caller
      */
-    public CobolLine readLine() throws IOException {
+    CobolLine readLine() throws IOException {
         currentStatement = null;
         if (!nextLines.isEmpty()){
             prevoiusLine = currentLine;
@@ -51,32 +60,19 @@ public class CobolReader {
         return currentLine;
     }
 
+    /**
+     * Sets and unsets flags that signifies the current state of the cobol being read, based
+     * on the current line.
+     */
     void updateState(){
         stateHasChanged = Interpreter.setFlagsForCurrentLine(currentLine, state);
     }
 
-    public void close() throws IOException {
+    void close() throws IOException {
         reader.close();
     }
 
-    public State getState() {return state; }
 
-    public boolean hasStateChanged() {
-        return stateHasChanged;
-    }
-
-    public CobolLine getPrevoiusLine() {
-        return prevoiusLine;
-    }
-    public CobolLine getCurrentLine() { return currentLine; }
-
-    boolean hasStatementBeenRead(){
-        return currentStatement != null;
-    }
-
-    List<CobolLine> getCurrentStatement(){
-        return currentStatement;
-    }
 
     /**
      * Peeks the next line of the cobol file that is meaningful - that is; a line that is
@@ -90,7 +86,7 @@ public class CobolReader {
      *
      * @throws IOException - pass any IOExceptions up to the caller
      */
-    public CobolLine peekNextMeaningfulLine() throws IOException {
+    CobolLine peekNextMeaningfulLine() throws IOException {
         if (!nextLines.isEmpty()){
             return nextLines.get(nextLines.size() - 1);
         }
@@ -108,22 +104,22 @@ public class CobolReader {
     }
 
     /**
-     * Reads the current statement till the end. The reader only updates its state at
-     * the end of the statement.
+     * Reads the current statement till the end. This will forward the reader till the end of
+     * the statement.
      *
      * @return Each line in the statement as a list
      *
-     * @throws IOException - pass any IOExceptions up to the caller
-     * @throws PossibleInternalLogicErrorException - If a line is null, the cobol-program
+     * @throws IOException pass any IOExceptions up to the caller
+     * @throws PossibleInternalLogicErrorException If a line is null, the cobol-program
      * would terminate mid-statement
      */
-    public List<CobolLine> readTillEndOfStatement() throws IOException {
+    List<CobolLine> readTillEndOfStatement() throws IOException {
         List<CobolLine> statementLines = new ArrayList<>();
 
         statementLines.add(currentLine);
         peekNextMeaningfulLine();
 
-        while (!Interpreter.isEndOfStatement(currentLine, nextLines.get(nextLines.size() - 1))){
+        while (nextLines.size() > 0 && !Interpreter.isEndOfStatement(currentLine, nextLines.get(nextLines.size() - 1))){
             readLine();
             if (currentLine == null){
                 throw new PossibleInternalLogicErrorException("File ends mid-statement");
@@ -131,12 +127,18 @@ public class CobolReader {
             statementLines.add(currentLine);
             peekNextMeaningfulLine();
         }
-//        currentLine = readLine();
         currentStatement = statementLines;
         return statementLines;
     }
 
-    public boolean isFlagSet(String partOfProgram){
+    /**
+     * Checks whether a flag is set in the state of the reader, for a specific part of the program.
+     * If this is the case, it means, that we are currently reading that part.
+     *
+     * @param partOfProgram - The part of the program to check - ex.: "IDENTIFICATION DIVISION".
+     * @return True if the flag is set
+     */
+    boolean isFlagSet(String partOfProgram){
         return state.getFlags().get(partOfProgram).isSet();
     }
 

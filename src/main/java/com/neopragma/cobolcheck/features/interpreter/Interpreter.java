@@ -18,7 +18,7 @@ public class Interpreter {
     private static final int commentIndicatorOffset = 6;
     private static final char commentIndicator = '*';
 
-    //TODO: make quicker by adding 'else if's and putting if in if
+    //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
     /**
      * Sets flags based on a line, to be able to know which kinds of source
      * statements to look for when reading and interpreting lines.
@@ -27,7 +27,7 @@ public class Interpreter {
      * @param state - current state of flags
      * @return - true if a flag has been set
      */
-    public static boolean setFlagsForCurrentLine(CobolLine line, State state){
+    static boolean setFlagsForCurrentLine(CobolLine line, State state){
         boolean flagSet = false;
         if (line.contains(Constants.IDENTIFICATION_DIVISION)) {
             state.setFlagFor(Constants.IDENTIFICATION_DIVISION);
@@ -145,10 +145,19 @@ public class Interpreter {
         return line.getOriginalString().charAt(commentIndicatorOffset) == commentIndicator;
     }
 
+    /**
+     * @param line
+     * @return true if the source line is empty
+     */
     public static boolean isEmpty(CobolLine line){
         return line.tokensSize() == 0 && !line.contains(Constants.PERIOD);
     }
 
+    /**
+     * @param line
+     * @param state
+     * @return true if the source line should be parsed
+     */
     public static boolean shouldLineBeParsed(CobolLine line, State state){
         if (isTooShortToBeMeaningful(line)){
             return false;
@@ -163,6 +172,11 @@ public class Interpreter {
         return true;
     }
 
+    /**
+     * @param line
+     * @param state
+     * @return true if the source line should be commented out
+     */
     public static boolean shouldLineBeCommentedOut(CobolLine line, State state){
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)){
             if (checkForBatchFileIOStatement(line))
@@ -177,6 +191,10 @@ public class Interpreter {
         return line.getTrimmedString().equals(Constants.PERIOD);
     }
 
+    /**
+     * @param line
+     * @return true if the source line contains a batch file IO verb
+     */
     public static boolean checkForBatchFileIOStatement(CobolLine line) {
         for (String ioVerb : batchFileIOVerbs) {
             if (isBatchFileIOStatement(line.getTokens(), ioVerb)) {

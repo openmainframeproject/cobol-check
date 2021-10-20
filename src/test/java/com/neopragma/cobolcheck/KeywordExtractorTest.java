@@ -1,6 +1,6 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.writer.KeywordExtractor;
+import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

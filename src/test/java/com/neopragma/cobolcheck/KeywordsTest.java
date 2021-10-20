@@ -1,6 +1,6 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.writer.KeywordAction;
+import com.neopragma.cobolcheck.features.testSuiteParser.KeywordAction;
 import com.neopragma.cobolcheck.services.cobolLogic.Keywords;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.Keyword;

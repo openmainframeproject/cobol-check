@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.features.interpreter.CobolLine;
 import com.neopragma.cobolcheck.features.interpreter.Interpreter;
 import com.neopragma.cobolcheck.features.interpreter.InterpreterController;
@@ -33,6 +34,21 @@ public class InterpreterControllerTest {
     public void commonSetup(){
         mockedReader = Mockito.mock(BufferedReader.class);
         interpreterController = new InterpreterController(mockedReader);
+    }
+
+    @Test
+    void cobol_source_cannot_be_null__probable_internal_logic_error() {
+        assertThrows(PossibleInternalLogicErrorException.class, () -> new InterpreterController(null));
+    }
+
+    @Test
+    void cobol_source_cannot_be_empty__probable_internal_logic_error() throws IOException {
+        Mockito.when(mockedReader.readLine()).thenReturn(null);
+
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+                interpreterController.interpretNextLine());
+        String message = ex.getMessage();
+        assertTrue(message.contains("empty input stream"));
     }
 
     @Test
@@ -106,6 +122,22 @@ public class InterpreterControllerTest {
 
         assertTrue(interpreterController.getFileControlStatements().contains(str2));
         assertTrue(interpreterController.getFileControlStatements().contains(str3));
+    }
+
+    @Test
+    public void it_throws_when_token_list_has_fewer_than_2_entries() throws IOException {
+        String str1 = "       FILE SECTION.";
+        String str2 = "       FD  OUTPUT-FILE";
+        String str3 = "           COPY.";
+        String str4 = "       WORKING-STORAGE SECTION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+        interpreterController.interpretNextLine();
+        interpreterController.interpretNextLine();
+
+        Exception ex = assertThrows(PossibleInternalLogicErrorException.class, () ->
+                interpreterController.interpretNextLine());
+        assertTrue(ex.getMessage().contains("ERR024:"));
     }
 
     @Test
@@ -204,11 +236,11 @@ public class InterpreterControllerTest {
 
         assertEquals(6,interpreterController.getFileSectionStatements().size());
         assertTrue(interpreterController.getFileSectionStatements().contains("       01  OUTPUT-RECORD."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-1         PIC X(5).                                    "));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-2     PIC X(16).                                       "));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-3     PIC X(14).                                       "));
-        assertTrue(interpreterController.getFileSectionStatements().contains("      *    COPY OUTREC2.                                                        "));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           05  FILLER              PIC X(5).                                    "));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-1         PIC X(5)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-2     PIC X(16)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-3     PIC X(14)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("      *    COPY OUTREC2."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  FILLER              PIC X(5)."));
     }
 
     @Test
@@ -270,10 +302,10 @@ public class InterpreterControllerTest {
         String str8 = "               ASSIGN TO \"OUTFILE\"";
         String str9 = "               ORGANIZATION SEQUENTIAL";
         String str10 = "               ACCESS MODE SEQUENTIAL";
-        String str11 = "               FILE STATUS IS";
+        String str11 = "               FILE STATUS";
         String str12 = "         ";
         String str13 = "      * This line is ignored";
-        String str14 = "                   OUTPUT-FILE-STATUS.";
+        String str14 = "                    IS OUTPUT-FILE-STATUS.";
         String str15 = "       DATA DIVISION.";
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
@@ -305,7 +337,7 @@ public class InterpreterControllerTest {
             }
         }
 
-        assertEquals(StringHelper.fixedLength("               READ INPUT-FILE"), statement.get(0));
+        assertEquals("               READ INPUT-FILE", statement.get(0));
     }
 
     @Test
@@ -328,9 +360,9 @@ public class InterpreterControllerTest {
         }
 
         assertEquals(3, statement.size());
-        assertEquals(StringHelper.fixedLength("           OPEN"), statement.get(0));
-        assertEquals(StringHelper.fixedLength("               OUTPUT"), statement.get(1));
-        assertEquals(StringHelper.fixedLength("               OUTPUT-FILE"), statement.get(2));
+        assertEquals("               OUTPUT", statement.get(1));
+        assertEquals("               OUTPUT-FILE", statement.get(2));
+        assertEquals("           OPEN", statement.get(0));
     }
 
     @Test

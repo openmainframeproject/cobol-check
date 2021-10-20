@@ -1,7 +1,7 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.concatenator.ConcatenatorController;
-import com.neopragma.cobolcheck.features.concatenator.TestSuiteConcatenator;
+import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteConcatenator;
+import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import org.junit.jupiter.api.Test;
@@ -37,10 +37,9 @@ public class TestSuiteConcatenatorIT {
             testSuiteReader.close();
         }
 
-        ConcatenatorController concat = new ConcatenatorController("GreetingByType");
+        TestSuiteParserController tspController = new TestSuiteParserController("GreetingByType");
+        tspController.concatenateTestSuites("src/test/cobol/GREETING/");
 
-        Reader concatenatedTestSuite =
-                concat.concatenateTestSuites("src/test/cobol/GREETING/");
         StringBuilder actualResult = new StringBuilder();
         testSuiteReader = new BufferedReader(new FileReader(pathToResults));
         while ((line = testSuiteReader.readLine()) != null) {

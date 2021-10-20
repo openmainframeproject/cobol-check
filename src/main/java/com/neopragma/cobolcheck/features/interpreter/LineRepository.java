@@ -1,15 +1,11 @@
 package com.neopragma.cobolcheck.features.interpreter;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.CopybookExpander;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringTuple;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +96,7 @@ public class LineRepository {
         }
     }
 
-    public void addExpandedCopyStatementsToFileSectionStatements() {
+    void addExpandedCopyStatementsToFileSectionStatements() {
         for (int i = 0 ; i < copyTokens.size() ; i++) {
             if (copyTokens.get(i).equals(Constants.EMPTY_STRING)) {
                 copyTokens.remove(i);

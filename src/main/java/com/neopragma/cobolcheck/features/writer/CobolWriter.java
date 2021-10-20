@@ -1,6 +1,5 @@
 package com.neopragma.cobolcheck.features.writer;
 
-import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.io.IOException;
@@ -10,40 +9,71 @@ import java.util.List;
 public class CobolWriter {
 
     Writer writer;
+    private boolean currentLineIsComment;
 
     public CobolWriter(Writer writer){
         this.writer = writer;
     }
 
-    public void writeLine(String line) throws IOException {
-        line = removeEndingSpaces(line);
+    /**
+     * Writes a line of cobol code to the test output file. If the given line is too
+     * long for cobol to handle, it will be correctly split into multiple lines.
+     *
+     * @param line - line to be written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    void writeLine(String line) throws IOException {
+        line = StringHelper.removeTrailingSpaces(line);
         if (line.length() <= 72){
             line = StringHelper.fixedLength(line);
             writer.write(line);
         }
-        //TODO: Handle comments for multiLine!!
         else {
-            writeMultiLine(line);
+            writeMultiLine(line, currentLineIsComment);
         }
+        currentLineIsComment = false;
     }
 
-    public void writeCommentedLine(String line) throws IOException {
+    /**
+     * Writes an out-commented line of cobol code to the test output file. If the given line is too
+     * long for cobol to handle, it will be correctly split into multiple lines.
+     *
+     * @param line - line to be commented out and then written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    void writeCommentedLine(String line) throws IOException {
+        currentLineIsComment = true;
         writeLine(commentOutLine(line));
     }
 
-    public void writeFormattedLine(String format, Object... args) throws IOException {
+    void writeFormattedLine(String format, Object... args) throws IOException {
         writeLine(String.format(format, args));
     }
 
-    public void writeStatement(List<String> statement) throws IOException {
-        for (String line : statement){
+    /**
+     * Writes all the given lines of cobol code to the test output file. If the any of the lines
+     * are too long for cobol to handle, it will be correctly split into multiple lines.
+     *
+     * @param lines - lines to be written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    void writeLines(List<String> lines) throws IOException {
+        for (String line : lines){
             writeLine(line);
         }
     }
 
-    public void writeCommentedStatement(List<String> statement) throws IOException {
-        for (String line : statement){
-            writeLine(commentOutLine(line));
+    /**
+     * Comments out and writes all the given lines of cobol code to the test output file.
+     * If the any of the lines are too long for cobol to handle, it will be correctly
+     * split into multiple lines.
+     *
+     * @param lines - lines to be commented out, then written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    void writeCommentedLines(List<String> lines) throws IOException {
+        for (String line : lines){
+            writeCommentedLine(line);
         }
     }
 
@@ -51,11 +81,7 @@ public class CobolWriter {
         writer.close();
     }
 
-    private String removeEndingSpaces(String line){
-        //Regex for trailing spaces
-        String regex = "\\s+$";
-        return line.replaceAll(regex, "");
-    }
+
 
     private String commentOutLine(String line){
         return "      *" + line.substring(6 + 1);
@@ -65,21 +91,25 @@ public class CobolWriter {
      * Lines of test code in a test suite are Cobol-like, but not strictly Cobol. The descriptions for TESTSUITE and
      * TESTCASE specifications may exceed the maximum length allowed for Area B in the generated test Cobol program.
      * This method splits the literal and writes the value with a continuation line, if necessary. If the line must
-     * be split into 3 or more lines, this method calls itself recursively.
+     * be split into 3 or more lines, this method calls itself recursively. If the line is a comment, subsequent
+     * lines will receive a '*' marking, to turn it into a comment.
      *
      * @param line - original line from test suite.
-     * @param testSourceOut - writer attached to the test program being generated.
+     * @param isComment should be true if the given line is a comment
      * @throws IOException - pass any IOExceptions to the caller.
      */
-    private void writeMultiLine(String line) throws IOException {
+    private void writeMultiLine(String line, boolean isComment) throws IOException {
         String line1 = line.substring(0,72);
         String line2 = line.substring(72);
         writeLine(line1);
-        if (line2.length() > 0) {
+        if (line2.length() > 0 && !isComment) {
             line2 = ("      -    \"" + line2);
         }
+        else if (line2.length() > 0 && isComment){
+            line2 = ("      * " + line2);
+        }
         if (line2.length() > 72){
-            writeMultiLine(line2);
+            writeMultiLine(line2, isComment);
         }
         else {
             writeLine(line2);
