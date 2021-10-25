@@ -128,19 +128,41 @@ public class GeneratorTest {
     @Test
     public void it_recognizes_paragraph_header_format(){
         String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD.");
-        assertTrue(generator.isParagraphHeaderFormat(paragraphHeader));
+        List<String> tokens = tokenExtractor.extractTokensFrom(paragraphHeader);
+        String nextLine = "           WRITE OUTPUT-RECORD";
+        assertTrue(generator.isParagraphHeaderFormat(tokens, paragraphHeader, nextLine));
     }
 
     @Test
-    public void it_recognizes_paragraph_header_format_with_sequence_number(){
-        String paragraphHeader = ("001200 5400-WRITE-OUTPUT-RECORD.");
-        assertTrue(generator.isParagraphHeaderFormat(paragraphHeader));
+    public void it_recognizes_paragraph_header_format_with_extra_spaces(){
+        String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD        .      ");
+        List<String> tokens = tokenExtractor.extractTokensFrom(paragraphHeader);
+        String nextLine = "           WRITE OUTPUT-RECORD";
+        assertTrue(generator.isParagraphHeaderFormat(tokens, paragraphHeader, nextLine));
+    }
+
+    @Test
+    public void it_recognizes_paragraph_header_format_with_period_on_next_line(){
+        String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD");
+        List<String> tokens = tokenExtractor.extractTokensFrom(paragraphHeader);
+        String nextLine = "       .";
+        assertTrue(generator.isParagraphHeaderFormat(tokens, paragraphHeader, nextLine));
     }
 
     @Test
     public void it_returns_false_if_not_a_paragraph_header_format(){
         String sectionHeader = ("       000-START SECTION.");
-        assertFalse(generator.isParagraphHeaderFormat(sectionHeader));
+        List<String> tokens = tokenExtractor.extractTokensFrom(sectionHeader);
+        String nextLine = "           PERFORM WITH TEST BEFORE";
+        assertFalse(generator.isParagraphHeaderFormat(tokens, sectionHeader, nextLine));
+    }
+
+    @Test
+    public void it_returns_false_if_not_in_correct_area(){
+        String sectionHeader = ("          000-START SECTION.");
+        List<String> tokens = tokenExtractor.extractTokensFrom(sectionHeader);
+        String nextLine = "           PERFORM WITH TEST BEFORE";
+        assertFalse(generator.isParagraphHeaderFormat(tokens, sectionHeader, nextLine));
     }
 
     @Test

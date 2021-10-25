@@ -663,31 +663,25 @@ public class Generator implements StringHelper {
      */
     private boolean isParagraphHeader(List<String> tokens, String sourceLine){
         return (processingProcedureDivision
-                && isParagraphHeaderFormat(sourceLine)
+                //TODO: Peek next line instead of just giving "."
+                && isParagraphHeaderFormat(tokens, sourceLine, ".")
                 && !sourceLineContains(tokens, Constants.DECLARATIVES_TOKEN));
     }
 
     /**
-     * Checks if the word, following the initial spaces, is followed by a period
-     * with no spaces parting the word.
+     * Checks if the line is in the format of a paragraph header, which is:
+     * - It begins in area 'A'
+     * - It has only one token
+     * - The token is followed by a period on this or the next line.
      *
      * @param sourceLine - current source line being processed
      * @return true if sourceLine is of the format of a paragraph header
      */
-    public boolean isParagraphHeaderFormat(String sourceLine){
+    public boolean isParagraphHeaderFormat(List<String> tokens, String sourceLine, String nextLine){
         if (getBeginningArea(sourceLine, true) == Area.A){
-            char[] characters = sourceLine.toCharArray();
-            boolean charactersStarted = false;
-            for (int i = sequenceNumberAreaEnd; i<characters.length; i++){
-                if (charactersStarted && characters[i] == ' '){
-                    return false;
-                }
-                if (characters[i] != ' ' && !charactersStarted){
-                    charactersStarted = true;
-                }
-                if (charactersStarted && characters[i] == '.'){
+            if (tokens.size()  == 1) {
+                if (sourceLine.trim().endsWith(Constants.PERIOD) || nextLine.trim().equals(Constants.PERIOD))
                     return true;
-                }
             }
         }
         return false;
