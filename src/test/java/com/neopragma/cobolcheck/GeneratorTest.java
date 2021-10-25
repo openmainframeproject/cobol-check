@@ -166,6 +166,14 @@ public class GeneratorTest {
     }
 
     @Test
+    public void it_returns_false_if_not_in_correct_area(){
+        String sectionHeader = ("          000-START SECTION.");
+        List<String> tokens = tokenExtractor.extractTokensFrom(sectionHeader);
+        String nextLine = "           PERFORM WITH TEST BEFORE";
+        assertFalse(generator.isParagraphHeaderFormat(tokens, sectionHeader, nextLine));
+    }
+
+    @Test
     public void it_returns_paragraph_name(){
         String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD.");
         List<String> tokens = tokenExtractor.extractTokensFrom(paragraphHeader);
