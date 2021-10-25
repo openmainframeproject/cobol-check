@@ -13,23 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck.features.parser;
+package com.neopragma.cobolcheck.features.testSuiteParser;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
-import com.neopragma.cobolcheck.services.cobolLogic.Keywords;
+import com.neopragma.cobolcheck.services.cobolLogic.*;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
-import com.neopragma.cobolcheck.services.StringHelper;
-import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
-import com.neopragma.cobolcheck.services.cobolLogic.DataType;
-import com.neopragma.cobolcheck.services.cobolLogic.Keyword;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +73,7 @@ public class TestSuiteParser {
     private static final String COBOL_PERFORM_INITIALIZE =
             "           PERFORM %sINITIALIZE";
     private static final String COBOL_DISPLAY_TESTSUITE =
-            "           DISPLAY \"TESTSUITE:\"                                                 ";
+            "           DISPLAY \"TESTSUITE:\"";
     private static final String COBOL_DISPLAY_NAME =
             "           DISPLAY %s";
     private static final String COBOL_STORE_TESTCASE_NAME_1 =
@@ -178,13 +173,12 @@ public class TestSuiteParser {
     /**
      * Process the test suite as a series of tokens. When we have processed all the input, getNextTokenFromTestSuite()
      * returns a null reference.
+     *  @param testSuiteReader - reader attached to the concatenated test suite files.
      *
-     * @param testSuiteReader - reader attached to the concatenated test suite files.
-     * @param testSourceOut   - writer attached to the test program being generated.
      */
-    public void parseTestSuite(BufferedReader testSuiteReader,
-                        Writer testSourceOut,
-                        NumericFields numericFieldsList) throws IOException {
+    public List<String> getParsedTestSuiteLines(BufferedReader testSuiteReader,
+                                                NumericFields numericFieldsList) throws IOException {
+        List<String> parsedTestSuiteLines = new ArrayList<>();
         numericFields = numericFieldsList;
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
@@ -208,11 +202,11 @@ public class TestSuiteParser {
 
                 case Constants.EXPECT_KEYWORD:
                     if (cobolStatementInProgress) {
-                        insertUserWrittenCobolStatement(testSourceOut);
+                        addUserWrittenCobolStatement(parsedTestSuiteLines);
                     }
                     cobolStatementInProgress = false;
                     initializeCobolStatement();
-                    insertIncrementTestCaseCount(testSourceOut);
+                    addIncrementTestCaseCountLine(parsedTestSuiteLines);
                     expectInProgress = true;
                     reverseCompare = false;
                     fieldNameForExpect = Constants.EMPTY_STRING;
@@ -273,7 +267,7 @@ public class TestSuiteParser {
                     }
                     if (toBeInProgress) {
                         expectedValueToCompare = testSuiteToken;
-                        insertTestCodeForAssertion(testSourceOut, numericFields);
+                        addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         toBeInProgress = false;
                     }
                     break;
@@ -282,19 +276,19 @@ public class TestSuiteParser {
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
-                        insertTestSuiteNameIntoTestSource(currentTestSuiteName, testSourceOut);
+                        addTestSuiteNamelines(currentTestSuiteName, parsedTestSuiteLines);
                         initializeCobolStatement();
                     }
                     if (expectTestcaseName) {
                         expectTestcaseName = false;
                         currentTestCaseName = testSuiteToken;
-                        insertTestCaseNameIntoTestSource(currentTestCaseName, testSourceOut);
+                        addTestCaseNameLines(currentTestCaseName, parsedTestSuiteLines);
                         initializeCobolStatement();
                     }
                     if (toBeInProgress) {
                         if (testSuiteToken.startsWith(Constants.QUOTE) || testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                             expectedValueToCompare = testSuiteToken;
-                            insertTestCodeForAssertion(testSourceOut, numericFields);
+                            addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         }
                         toBeInProgress = false;
                     }
@@ -303,7 +297,7 @@ public class TestSuiteParser {
                 case Constants.NUMERIC_LITERAL_KEYWORD:
                     if (toBeInProgress) {
                         expectedValueToCompare = testSuiteToken;
-                        insertTestCodeForAssertion(testSourceOut, numericFields);
+                        addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         toBeInProgress = false;
                     }
                     break;
@@ -312,13 +306,13 @@ public class TestSuiteParser {
                     if (toBeInProgress) {
                         boolean88LevelCompare = true;
                         expectedValueToCompare = testSuiteToken;
-                        insertTestCodeForAssertion(testSourceOut, numericFields);
+                        addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         boolean88LevelCompare = false;
                         toBeInProgress = false;
                     } else {
                         if (cobolStatementInProgress) {
                             appendTokenToCobolStatement(testSuiteToken);
-                            insertUserWrittenCobolStatement(testSourceOut);
+                            addUserWrittenCobolStatement(parsedTestSuiteLines);
                             initializeCobolStatement();
                         }
                         cobolStatementInProgress = false;
@@ -349,7 +343,7 @@ public class TestSuiteParser {
                 case COBOL_STATEMENT:
                     if (CobolVerbs.isCobolVerb(testSuiteToken)) {
                         if (cobolStatementInProgress) {
-                            insertUserWrittenCobolStatement(testSourceOut);
+                            addUserWrittenCobolStatement(parsedTestSuiteLines);
                             initializeCobolStatement();
                         }
                         cobolStatementInProgress = true;
@@ -366,8 +360,9 @@ public class TestSuiteParser {
             testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         }
         if (cobolStatementInProgress) {
-            insertUserWrittenCobolStatement(testSourceOut);
+            addUserWrittenCobolStatement(parsedTestSuiteLines);
         }
+        return parsedTestSuiteLines;
     }
 
     /**
@@ -426,82 +421,74 @@ public class TestSuiteParser {
     // Helper methods to insert code into the test program being generated based on interpretation of user-written
     // test case code.
 
-    public void insertTestInitializationLineIntoTestSource(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(String.format(COBOL_PERFORM_INITIALIZE, testCodePrefix)));
+    public String getTestInitializationLine() {
+        String line = String.format(COBOL_PERFORM_INITIALIZE, testCodePrefix);
+        return line;
     }
 
-    public void insertTestSuiteNameIntoTestSource(String testSuiteName, Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(COBOL_DISPLAY_TESTSUITE));
-        writeCobolLine(String.format(COBOL_DISPLAY_NAME, testSuiteName), testSourceOut);
+    public void addTestSuiteNamelines(String testSuiteName, List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(COBOL_DISPLAY_TESTSUITE);
+        parsedTestSuiteLines.add(String.format(COBOL_DISPLAY_NAME, testSuiteName));
     }
 
-    public void insertTestCaseNameIntoTestSource(String testCaseName, Writer testSourceOut) throws IOException {
-        writeCobolLine(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName), testSourceOut);
-        testSourceOut.write(StringHelper.fixedLength(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
+    public void addTestCaseNameLines(String testCaseName, List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName));
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_BEFORE, testCodePrefix));
     }
 
-    public void insertPerformBeforeEachIntoTestSource(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(String.format(COBOL_PERFORM_BEFORE, testCodePrefix)));
+    public void addPerformBeforeEachLine(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_BEFORE, testCodePrefix));
     }
 
-    void insertIncrementTestCaseCount(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix)));
+    void addIncrementTestCaseCountLine(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix));
     }
 
-    void insertTestCodeForAssertion(Writer testSourceOut, NumericFields numericFields) throws IOException {
+    void addTestCodeForAssertion(List<String> parsedTestSuiteLines, NumericFields numericFields) {
         if (boolean88LevelCompare) {
-            insertTestCodeFor88LevelEqualityCheck(testSourceOut);
+            addTestCodeFor88LevelEqualityCheck(parsedTestSuiteLines);
         } else {
-            insertSetNormalOrReverseCompare(testSourceOut);
+            addSetNormalOrReverseCompare(parsedTestSuiteLines);
             if (fieldIsANumericDataType(fieldNameForExpect)) {
-                testSourceOut.write(StringHelper.fixedLength(String.format(
-                        COBOL_SET_COMPARE_NUMERIC, testCodePrefix, Constants.TRUE)));
-                testSourceOut.write(StringHelper.fixedLength(String.format(
-                        COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect)));
-                testSourceOut.write(StringHelper.fixedLength(String.format(
-                        COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare)));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_SET_COMPARE_NUMERIC, testCodePrefix, Constants.TRUE));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC, testCodePrefix, fieldNameForExpect));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare));
             } else {
-                testSourceOut.write(StringHelper.fixedLength(String.format(
-                        COBOL_SET_ALPHANUMERIC_COMPARE, testCodePrefix, Constants.TRUE)));
-                testSourceOut.write(StringHelper.fixedLength(String.format(
-                        COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect)));
-                String cobolLine = String.format(
-                        COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1, expectedValueToCompare);
-                writeCobolLine(cobolLine, testSourceOut);
-                testSourceOut.write(StringHelper.fixedLength(String.format(
-                        COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix)));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_SET_ALPHANUMERIC_COMPARE, testCodePrefix, Constants.TRUE));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_MOVE_FIELDNAME_TO_ACTUAL, testCodePrefix, fieldNameForExpect));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1, expectedValueToCompare));
+                parsedTestSuiteLines.add(String.format(
+                        COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2, testCodePrefix));
             }
-            testSourceOut.write(StringHelper.fixedLength(String.format(
+            parsedTestSuiteLines.add(String.format(
                     COBOL_SET_RELATION,
                     testCodePrefix,
                     greaterThanComparison ? RELATION_GT
                             : lessThanComparison ? RELATION_LT
                             : RELATION_EQ,
-                    Constants.TRUE)));
-            insertFinalLines(testSourceOut);
+                    Constants.TRUE));
+            addFinalLines(parsedTestSuiteLines);
             greaterThanComparison = false;
             lessThanComparison = false;
         }
     }
 
-    void insertTestCodeFor88LevelEqualityCheck(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_COMPARE_88_LEVEL, testCodePrefix, Constants.TRUE)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_1, fieldNameForExpect)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_2, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_3, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(
-                COBOL_SET_ACTUAL_88_VALUE_4));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_5, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_ACTUAL_88_VALUE_6, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(
-                COBOL_SET_ACTUAL_88_VALUE_7));
+    void addTestCodeFor88LevelEqualityCheck(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_SET_COMPARE_88_LEVEL, testCodePrefix, Constants.TRUE));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_88_VALUE_1, fieldNameForExpect));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_88_VALUE_2, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_88_VALUE_3, testCodePrefix));
+        parsedTestSuiteLines.add(COBOL_SET_ACTUAL_88_VALUE_4);
+        parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_88_VALUE_5, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_88_VALUE_6, testCodePrefix));
+        parsedTestSuiteLines.add(COBOL_SET_ACTUAL_88_VALUE_7);
         if (reverseCompare) {
             if (expectedValueToCompare.equals(Constants.TRUE)) {
                 expectedValueToCompare = Constants.FALSE;
@@ -509,48 +496,40 @@ public class TestSuiteParser {
                 expectedValueToCompare = Constants.TRUE;
             }
         }
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_EXPECTED_88_VALUE, testCodePrefix, expectedValueToCompare)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_EXPECTED_88_VALUE_1, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_EXPECTED_88_VALUE_2, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(
-                COBOL_SET_EXPECTED_88_VALUE_3));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_SET_EXPECTED_88_VALUE_4, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(
-                COBOL_SET_EXPECTED_88_VALUE_5));
-        insertFinalLines(testSourceOut);
+        parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE, testCodePrefix, expectedValueToCompare));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE_1, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE_2, testCodePrefix));
+        parsedTestSuiteLines.add(COBOL_SET_EXPECTED_88_VALUE_3);
+        parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE_4, testCodePrefix));
+        parsedTestSuiteLines.add(COBOL_SET_EXPECTED_88_VALUE_5);
+        addFinalLines(parsedTestSuiteLines);
     }
 
     /**
      * Writes a Cobol source statement of the form SET XX-NORMAL-COMPARE TO TRUE or SET XX-REVERSE-COMPARE TO TRUE
      * depending on whether NOT was specified in an EXPECT specification.
      *
-     * @param testSourceOut - Writer for the generated test program
+     * @param parsedTestSuiteLines - The lines that are parsed from the testsuites
      * @throws IOException - May be thrown by the write method
      */
-    void insertSetNormalOrReverseCompare(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(String.format(
+    void addSetNormalOrReverseCompare(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(
                 COBOL_SET_NORMAL_OR_REVERSE_COMPARE,
                 testCodePrefix,
                 reverseCompare ? REVERSE : NORMAL,
-                Constants.TRUE)));
+                Constants.TRUE));
         reverseCompare = false;
     }
 
     /**
      * Writes the final lines of Cobol for a test case, common to different kinds of test cases.
      *
-     * @param testSourceOut - Writer for the generated test program
+     * @param parsedTestSuiteLines - The lines that are parsed from the testsuites
      * @throws IOException - May be thrown by the write method
      */
-    void insertFinalLines(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_CHECK_EXPECTATION, testCodePrefix)));
-        testSourceOut.write(StringHelper.fixedLength(String.format(
-                COBOL_PERFORM_AFTER, testCodePrefix)));
+    void addFinalLines(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_CHECK_EXPECTATION, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_AFTER, testCodePrefix));
     }
 
     /**
@@ -584,11 +563,11 @@ public class TestSuiteParser {
      * Insert user-written Cobol statement from a test suite (not from the program under test) into the test program
      * being generated.
      *
-     * @param testSourceOut - writer attached to the test program being generated.
+     * @param parsedTestSuiteLines - The lines that are parsed from the testsuites
      * @throws IOException - pass any IOExceptions to the caller
      */
-    void insertUserWrittenCobolStatement(Writer testSourceOut) throws IOException {
-        testSourceOut.write(StringHelper.fixedLength(cobolStatement.toString()));
+    void addUserWrittenCobolStatement(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(cobolStatement.toString());
     }
 
     private void initializeCobolStatement() {
@@ -606,32 +585,4 @@ public class TestSuiteParser {
     public String getCobolStatement() {
         return cobolStatement.toString();
     }
-
-    /**
-     * Lines of test code in a test suite are Cobol-like, but not strictly Cobol. The descriptions for TESTSUITE and
-     * TESTCASE specifications may exceed the maximum length allowed for Area B in the generated test Cobol program.
-     * This method splits the literal and writes the value with a continuation line, if necessary.
-     *
-     * Limitation: Only works for a maximum of 2 source lines.
-     *
-     * @param line - original line from test suite.
-     * @param testSourceOut - writer attached to the test program being generated.
-     * @throws IOException - pass any IOExceptions to the caller.
-     */
-    public void writeCobolLine(String line, Writer testSourceOut) throws IOException {
-        //TODO: Enhance this to work with an arbitrary number of continuation lines
-        String line1 = line;
-        String line2 = Constants.EMPTY_STRING;
-        if (line.length() > 72) {
-            line1 = line.substring(0,72);
-            line2 = line.substring(72);
-        }
-        testSourceOut.write(StringHelper.fixedLength(line1));
-        if (line2.length() > 0) {
-            line2 = StringHelper.fixedLength("      -    \"" + line2);
-        }
-        testSourceOut.write(line2);
-    }
-
-
 }

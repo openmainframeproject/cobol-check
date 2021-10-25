@@ -94,4 +94,31 @@ public class StringHelper {
         Log.debug("StringHelper.adjustStringPath() result is <" + result + ">");
         return result;
     }
+
+    /**
+     * Trims only the end of the string.
+     * Ex.: "     Hey  \n" => "     Hey"
+     *
+     * @param line - original string
+     * @return - string trimmed at the end.
+     */
+    public static String removeTrailingSpaces(String line){
+        //Regex for trailing spaces
+        String regex = "\\s+$";
+        return line.replaceAll(regex, "");
+    }
+
+    /**
+     * Enclose a value in quotation marks.
+     *
+     * @param value - original string
+     * @return - quoted string
+     */
+    public String quote(String value) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(Constants.QUOTE);
+        buffer.append(value);
+        buffer.append(Constants.QUOTE);
+        return buffer.toString();
+    }
 }
