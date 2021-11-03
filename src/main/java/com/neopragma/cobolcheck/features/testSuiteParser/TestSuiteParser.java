@@ -344,8 +344,12 @@ public class TestSuiteParser {
                     mockNumber += 1;
                     currentMock = new Mock(currentTestSuiteName, currentTestCaseName,
                             testSuiteNumber, testCaseNumber, mockNumber);
-                    //TODO: Make sure to differentiate between local and global mocks
-                    currentMock.setScope(MockScope.Local);
+                    if (testCaseNumber == 0){
+                        currentMock.setScope(MockScope.Global);
+                    }
+                    else {
+                        currentMock.setScope(MockScope.Local);
+                    }
                     break;
 
                 case Constants.MOCK_TYPE:

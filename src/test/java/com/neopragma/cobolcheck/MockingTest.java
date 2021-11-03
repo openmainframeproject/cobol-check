@@ -152,6 +152,20 @@ public class MockingTest {
     }
 
     @Test
+    public void mock_gets_global_scope() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       MOCK SECTION 000-START";
+        String str3 = "          MOVE \"something\" TO this";
+        String str4 = "          MOVE \"something else\" TO other";
+        String str5 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields, mockRepository);
+        assertEquals("Global", mockRepository.getMocks().get(0).getScope().name());
+    }
+
+    @Test
     public void mock_gets_local_scope() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
@@ -159,10 +173,6 @@ public class MockingTest {
         String str4 = "          MOVE \"something\" TO this";
         String str5 = "          MOVE \"something else\" TO other";
         String str6 = "       END-MOCK";
-
-        List<String> expected = new ArrayList<>();
-        expected.add(str4);
-        expected.add(str5);
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
@@ -259,7 +269,30 @@ public class MockingTest {
     }
 
     @Test
-    public void single_mock_perform_evaluate_is_generated_correctly() throws IOException {
+    public void single_global_mock_perform_evaluate_is_generated_correctly() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       MOCK SECTION 000-START";
+        String str3 = "          MOVE \"something\" TO this";
+        String str4 = "          MOVE \"something else\" TO other";
+        String str5 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\" ALSO ANY");
+        expected.add("                    PERFORM 1-0-1-MOCK");
+        expected.add("           WHEN OTHER");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START");
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void single_local_mock_perform_evaluate_is_generated_correctly() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
         String str3 = "       MOCK SECTION 000-START";
@@ -285,26 +318,30 @@ public class MockingTest {
     @Test
     public void multiple_mock_perform_evaluates_are_generated_correctly() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
-        String str2 = "       TESTCASE \"Name of test case\"";
-        String str3 = "       MOCK SECTION 000-START";
-        String str4 = "          MOVE \"something\" TO this";
-        String str5 = "          MOVE \"something else\" TO other";
-        String str6 = "       END-MOCK";
-        String str7 = "       MOCK SECTION 100-START";
-        String str8 = "          MOVE \"hey\" TO greeting";
-        String str9 = "          MOVE \"bye\" TO greeting2";
+        String str2 = "       MOCK SECTION 000-START";
+        String str3 = "          MOVE \"global\" TO this";
+        String str4 = "          MOVE \"mock\" TO other";
+        String str5 = "       END-MOCK";
+        String str6 = "       TESTCASE \"Name of test case\"";
+        String str7 = "       MOCK SECTION 000-START";
+        String str8 = "          MOVE \"something\" TO this";
+        String str9 = "          MOVE \"something else\" TO other";
         String str10 = "       END-MOCK";
-        String str11 = "       TESTCASE \"test case 2\"";
-        String str12 = "       MOCK SECTION 000-START";
-        String str13 = "          ADD 1 TO WS-COUNT";
-        String str14 = "          MOVE \"something else\" TO other";
-        String str15 = "       END-MOCK";
-        String str16 = "       TESTSUITE \"Test suite 2\"";
-        String str17 = "       TESTCASE \"test case 1\"";
-        String str18 = "       MOCK SECTION 000-START";
-        String str19 = "          MOVE \"something\" TO this";
-        String str20 = "          ADD 1 TO WS-COUNT";
-        String str21 = "       END-MOCK";
+        String str11 = "       MOCK SECTION 100-START";
+        String str12 = "          MOVE \"hey\" TO greeting";
+        String str13 = "          MOVE \"bye\" TO greeting2";
+        String str14 = "       END-MOCK";
+        String str15 = "       TESTCASE \"test case 2\"";
+        String str16 = "       MOCK SECTION 000-START";
+        String str17 = "          ADD 1 TO WS-COUNT";
+        String str18 = "          MOVE \"something else\" TO other";
+        String str19 = "       END-MOCK";
+        String str20 = "       TESTSUITE \"Test suite 2\"";
+        String str21 = "       TESTCASE \"test case 1\"";
+        String str22 = "       MOCK SECTION 000-START";
+        String str23 = "          MOVE \"something\" TO this";
+        String str24 = "          ADD 1 TO WS-COUNT";
+        String str25 = "       END-MOCK";
 
         List<String> expected1 = new ArrayList<>();
         expected1.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
@@ -314,6 +351,8 @@ public class MockingTest {
         expected1.add("                    PERFORM 1-2-1-MOCK");
         expected1.add("                WHEN \"Test suite 2\" ALSO \"test case 1\"");
         expected1.add("                    PERFORM 2-1-1-MOCK");
+        expected1.add("                WHEN \"Name of test suite\" ALSO ANY");
+        expected1.add("                    PERFORM 1-0-1-MOCK");
         expected1.add("           WHEN OTHER");
 
         List<String> expected2 = new ArrayList<>();
@@ -324,7 +363,7 @@ public class MockingTest {
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
                 str7, str8, str9, str10, str11, str12, str13, str14, str15, str16, str17, str18, str19,
-                str20, str21, null);
+                str20, str21, str22, str23, str24, str25, null);
 
         testSuiteParserController.getProcedureDivisionTestCode(numericFields);
 

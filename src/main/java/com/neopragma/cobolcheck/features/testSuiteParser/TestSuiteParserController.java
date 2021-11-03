@@ -124,6 +124,10 @@ public class TestSuiteParserController {
         return lines;
     }
 
+    /**Generates the lines for SECTIONs based on mocks,
+     * for each mock in a given list.
+     * @return The generated lines
+     */
     public List<String> generateMockSections(){
         return mockGenerator.generateMockSections(mockRepository.getMocks());
     }
@@ -132,10 +136,18 @@ public class TestSuiteParserController {
         return mockRepository.mockExistsFor(identifier);
     }
 
+    /**Generates the lines for 'Evaluate when' to perform the correct generated SECTION
+     * for a specific identifier.
+     * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
+     * @return The generated lines
+     */
     public List<String> generateMockPerformCalls(String identifier){
         return mockGenerator.generateMockPerformCalls(identifier, mockRepository.getMocks());
     }
-
+    /**This line should be inserted at the end of a mocked component,
+     * to end the EVALUATE started in the beginning of the mock.
+     * @return END-EVALUATE line
+     */
     public String getEndEvaluateLine(){
         return mockGenerator.getEndEvaluateLine();
     }
