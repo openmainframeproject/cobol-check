@@ -20,6 +20,7 @@ import com.neopragma.cobolcheck.services.Constants;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +32,7 @@ import java.util.Map;
  */
 public class Keywords {
     private static final Map<String, Keyword> keywordInfo;
+    private static final List<String> mockTypes;
 
     static {
         keywordInfo = new HashMap<>();
@@ -145,7 +147,20 @@ public class Keywords {
                 new Keyword(Constants.BOOLEAN_VALUE,
                         Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.BOOLEAN_COMPARE));
+        keywordInfo.put(Constants.MOCK_KEYWORD,
+                new Keyword(Constants.MOCK_KEYWORD,
+                        Arrays.asList(Constants.MOCK_TYPE),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.MOCK_TYPE,
+                new Keyword(Constants.MOCK_TYPE,
+                        Arrays.asList(Constants.COBOL_TOKEN),
+                        KeywordAction.NONE));
+
+        //TODO: Add other types that can be mocked
+        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN);
     }
+
+
 
     public static Keyword getKeywordFor(String key) {
         Keyword result = null;
@@ -170,6 +185,8 @@ public class Keywords {
                     if (key.equals("TRUE") || key.equals("FALSE")) {
                         key = Constants.BOOLEAN_VALUE;
                     }
+                } if (mockTypes.contains(key)){
+                    key = Constants.MOCK_TYPE;
                 }
             }
         }

@@ -40,6 +40,8 @@ public class Generator {
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
 
+    private boolean waitingForMockedComponentToEnd = false;
+
     List<String> matchingTestDirectories;
 
     public Generator() {
@@ -116,6 +118,13 @@ public class Generator {
                         interpreter.getFileSectionStatements()));
             }
         }
+
+        if (waitingForMockedComponentToEnd){
+            if (interpreter.doesCurrentLineEndInPeriod()){
+                waitingForMockedComponentToEnd = false;
+                writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
+            }
+        }
     }
 
     /**
@@ -163,6 +172,14 @@ public class Generator {
         if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
             writerController.writeLines(testSuiteParserController.getProcedureDivisionTestCode(
                     interpreter.getNumericFields()));
+        }
+
+        if (interpreter.isCurrentComponentMockable()){
+            String identifier = interpreter.getPossibleMockIdentifier();
+            if (testSuiteParserController.mockExistsFor(identifier)){
+                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier));
+                waitingForMockedComponentToEnd = true;
+            }
         }
     }
 

@@ -18,6 +18,12 @@ public class Interpreter {
     private static final int commentIndicatorOffset = 6;
     private static final char commentIndicator = '*';
 
+    //Used to find areas
+    private static final int sequenceNumberAreaEnd = 6;
+    private static final int indicatorAreaEnd = 7;
+    private static final int A_AreaEnd = 11;
+    private static final int B_AreaEnd = 71;
+
     //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
     /**
      * Sets flags based on a line, to be able to know which kinds of source
@@ -25,85 +31,96 @@ public class Interpreter {
      *
      * @param line - current source line being processed
      * @param state - current state of flags
-     * @return - true if a flag has been set
+     * @return - the part of the program just entered or null if no part was entered
      */
-    static boolean setFlagsForCurrentLine(CobolLine line, State state){
-        boolean flagSet = false;
-        if (line.contains(Constants.IDENTIFICATION_DIVISION)) {
+    static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state){
+        String partOfProgram = null;
+        if (line.containsToken(Constants.IDENTIFICATION_DIVISION)) {
             state.setFlagFor(Constants.IDENTIFICATION_DIVISION);
-            flagSet = true;
+            partOfProgram = Constants.IDENTIFICATION_DIVISION;
         }
-        if (line.contains(Constants.ENVIRONMENT_DIVISION)) {
+        if (line.containsToken(Constants.ENVIRONMENT_DIVISION)) {
             state.setFlagFor(Constants.ENVIRONMENT_DIVISION);
-            flagSet = true;
+            partOfProgram = Constants.ENVIRONMENT_DIVISION;
         }
-        if (line.contains(Constants.CONFIGURATION_SECTION)) {
+        if (line.containsToken(Constants.CONFIGURATION_SECTION)) {
             state.setFlagFor(Constants.CONFIGURATION_SECTION);
-            flagSet = true;
+            partOfProgram = Constants.CONFIGURATION_SECTION;
         }
-        if (line.contains(Constants.INPUT_OUTPUT_SECTION)) {
+        if (line.containsToken(Constants.INPUT_OUTPUT_SECTION)) {
             state.setFlagFor(Constants.INPUT_OUTPUT_SECTION);
-            flagSet = true;
+            partOfProgram = Constants.INPUT_OUTPUT_SECTION;
         }
-        if (line.contains(Constants.FILE_CONTROL)){
+        if (line.containsToken(Constants.FILE_CONTROL)){
             state.setFlagFor(Constants.FILE_CONTROL);
-            flagSet = true;
+            partOfProgram = Constants.FILE_CONTROL;
         }
-        if (line.contains(Constants.DATA_DIVISION)) {
+        if (line.containsToken(Constants.DATA_DIVISION)) {
             state.setFlagFor(Constants.DATA_DIVISION);
-            flagSet = true;
+            partOfProgram = Constants.DATA_DIVISION;
         }
-        if (line.contains(Constants.PROCEDURE_DIVISION)) {
+        if (line.containsToken(Constants.PROCEDURE_DIVISION)) {
             state.setFlagFor(Constants.PROCEDURE_DIVISION);
-            flagSet = true;
+            partOfProgram = Constants.PROCEDURE_DIVISION;
         }
-        if (line.contains(Constants.FILE_SECTION)) {
+        if (line.containsToken(Constants.FILE_SECTION)) {
             state.setFlagFor(Constants.FILE_SECTION);
-            flagSet = true;
+            partOfProgram = Constants.FILE_SECTION;
         }
-        if (line.contains(Constants.LOCAL_STORAGE_SECTION)) {
+        if (line.containsToken(Constants.LOCAL_STORAGE_SECTION)) {
             state.setFlagFor(Constants.LOCAL_STORAGE_SECTION);
-            flagSet = true;
+            partOfProgram = Constants.LOCAL_STORAGE_SECTION;
         }
-        if (line.contains(Constants.LINKAGE_SECTION)) {
+        if (line.containsToken(Constants.LINKAGE_SECTION)) {
             state.setFlagFor(Constants.LINKAGE_SECTION);
-            flagSet = true;
+            partOfProgram = Constants.LINKAGE_SECTION;
         }
-        if (line.contains(Constants.WORKING_STORAGE_SECTION)) {
+        if (line.containsToken(Constants.WORKING_STORAGE_SECTION)) {
             state.setFlagFor(Constants.WORKING_STORAGE_SECTION);
-            flagSet = true;
+            partOfProgram = Constants.WORKING_STORAGE_SECTION;
         }
-        if (line.contains(Constants.SELECT_TOKEN)) {
+        if (line.containsToken(Constants.SELECT_TOKEN)) {
             state.unsetFlagFor(Constants.SELECT_TOKEN);
             state.setFlagFor(Constants.SELECT_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.SELECT_TOKEN;
         }
-        if (line.contains(Constants.FILE_STATUS_TOKEN)) {
+        if (line.containsToken(Constants.FILE_STATUS_TOKEN)) {
             state.setFlagFor(Constants.FILE_STATUS_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.FILE_STATUS_TOKEN;
         }
-        if (line.contains(Constants.IS_TOKEN)) {
+        if (line.containsToken(Constants.IS_TOKEN)) {
             state.setFlagFor(Constants.IS_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.IS_TOKEN;
         }
-        if (line.contains(Constants.IS_TOKEN)) {
+        if (line.containsToken(Constants.IS_TOKEN)) {
             state.setFlagFor(Constants.IS_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.IS_TOKEN;
         }
-        if (line.contains(Constants.FD_TOKEN)) {
+        if (line.containsToken(Constants.FD_TOKEN)) {
             state.unsetFlagFor(Constants.FD_TOKEN);
             state.setFlagFor(Constants.FD_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.FD_TOKEN;
         }
-        if (line.contains(Constants.LEVEL_01_TOKEN)) {
+        if (line.containsToken(Constants.LEVEL_01_TOKEN)) {
             state.setFlagFor(Constants.LEVEL_01_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.LEVEL_01_TOKEN;
         }
-        if (line.contains(Constants.COPY_TOKEN)) {
+        if (line.containsToken(Constants.COPY_TOKEN)) {
             state.setFlagFor(Constants.COPY_TOKEN);
-            flagSet = true;
+            partOfProgram = Constants.COPY_TOKEN;
         }
-        return flagSet;
+        if (line.containsToken(Constants.SECTION_TOKEN)) {
+            state.unsetFlagFor(Constants.SECTION_TOKEN);
+            state.setFlagFor(Constants.SECTION_TOKEN);
+            partOfProgram = Constants.SECTION_TOKEN;
+        }
+        if (isParagraphHeader(line, nextLine, state)) {
+            state.unsetFlagFor(Constants.PARAGRAPH_TOKEN);
+            state.setFlagFor(Constants.PARAGRAPH_TOKEN);
+            partOfProgram = Constants.PARAGRAPH_TOKEN;
+        }
+
+        return partOfProgram;
     }
 
     /**
@@ -150,7 +167,7 @@ public class Interpreter {
      * @return true if the source line is empty
      */
     public static boolean isEmpty(CobolLine line){
-        return line.tokensSize() == 0 && !line.contains(Constants.PERIOD);
+        return line.tokensSize() == 0 && !containsOnlyPeriod(line);
     }
 
     /**
@@ -209,5 +226,99 @@ public class Interpreter {
     }
 
 
+    public static String getSectionOrParagraphName(CobolLine line){
+        if (line.tokensSize() > 0){
+            if (getBeginningArea(line, false) == Area.SEQUENCE_NUMBER){
+                if (line.tokensSize() >= 1){
+                    return line.getToken(1);
+                }
+                else {
+                    return null;
+                }
+            }
+            return line.getToken(0);
+        }
+        else {
+            return null;
+        }
+    }
 
+    /**
+     * As paragraph headers are not associated with any keyword, the method matches the
+     * source line against specific attributes that makes up a paragraph header.
+     *
+     * @param line - The line to check
+     * @param nextLine - The line after the line param
+     * @param state - current state of flags
+     * @return true if the source line have all the attributes of a paragraph header.
+     */
+    public static boolean isParagraphHeader(CobolLine line, CobolLine nextLine, State state){
+        return (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)
+                && isParagraphHeaderFormat(line, nextLine)
+                && !line.containsToken(Constants.PROCEDURE_DIVISION)
+                && !line.containsToken(Constants.DECLARATIVES_TOKEN));
+    }
+
+    /**
+     * Checks if the line is in the format of a paragraph header, which is:
+     * - It begins in area 'A'
+     * - It has only one token
+     * - The token is followed by a period on this or the next line.
+     *
+     * @param line - The line to check
+     * @param nextLine - The line after the line param
+     * @return true if sourceLine is of the format of a paragraph header
+     */
+    private static boolean isParagraphHeaderFormat(CobolLine line, CobolLine nextLine){
+        if (getBeginningArea(line, true) == Area.A){
+            if (line.tokensSize()  == 1) {
+                if (line.getTrimmedString().endsWith(Constants.PERIOD) ||
+                        (nextLine != null &&
+                        nextLine.getTrimmedString().equals(Constants.PERIOD)))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Looks through the prefix-spaces in the source line in order to determine the
+     * beginning area (SEQUENCE_NUMBER, INDICATOR, A or B)
+     *
+     * @param line - the line to get the area for
+     * @return the beginning area of the source line.
+     */
+    public static Area getBeginningArea(CobolLine line, boolean ignoreSequenceArea){
+        if (isTooShortToBeMeaningful(line) ||
+                (ignoreSequenceArea && line.getOriginalString().length() <= sequenceNumberAreaEnd + 1)){
+            return Area.NONE;
+        }
+
+        char[] characters = line.getOriginalString().toCharArray();
+        int index = 0;
+        if (ignoreSequenceArea) index = sequenceNumberAreaEnd;
+
+        while (characters[index] == ' '){
+            index++;
+        }
+
+        if (index < sequenceNumberAreaEnd) return Area.SEQUENCE_NUMBER;
+        if (index == indicatorAreaEnd - 1) return Area.INDICATOR;
+        if (index < A_AreaEnd) return Area.A;
+        if (index < B_AreaEnd) return Area.B;
+
+        return Area.NONE;
+    }
+
+    /**
+     * Checks if this line is ending the current component (SECTION, CALL, etc.)
+     * This should be called from inside the component, as it only checks, if
+     * the trimmed line ends with a period
+     *
+     * @param line - the line to check
+     * @return true if the trimmed line ends with a period
+     */
+    public static boolean doesCurrentLineEndInPeriod(CobolLine line) {
+        return line.getTrimmedString().endsWith(Constants.PERIOD);
+    }
 }

@@ -18,7 +18,7 @@ public class CobolReader {
     private List<CobolLine> nextLines;
     private List<CobolLine> currentStatement;
 
-    private boolean stateHasChanged = false;
+    private String lineJustEneterd = null;
 
     public CobolReader(BufferedReader sourceReader) {
         reader = sourceReader;
@@ -33,7 +33,7 @@ public class CobolReader {
     CobolLine getPrevoiusLine() { return prevoiusLine; }
     List<CobolLine> getCurrentStatement(){ return currentStatement; }
 
-    public boolean hasStateChanged() { return stateHasChanged; }
+    public String getLineJustEntered() { return lineJustEneterd; }
     boolean hasStatementBeenRead(){ return currentStatement != null; }
 
     /**
@@ -64,8 +64,9 @@ public class CobolReader {
      * Sets and unsets flags that signifies the current state of the cobol being read, based
      * on the current line.
      */
-    void updateState(){
-        stateHasChanged = Interpreter.setFlagsForCurrentLine(currentLine, state);
+    void updateState() throws IOException {
+        CobolLine nextLine = peekNextMeaningfulLine();
+        lineJustEneterd = Interpreter.setFlagsForCurrentLine(currentLine, nextLine, state);
     }
 
     void close() throws IOException {

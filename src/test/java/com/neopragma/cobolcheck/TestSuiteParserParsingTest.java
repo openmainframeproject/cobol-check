@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.testSuiteParser.MockRepository;
 import com.neopragma.cobolcheck.features.writer.CobolWriter;
 import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestSuiteParserParsingTest {
     private TestSuiteParser testSuiteParser;
     private StringBuilder testSuite;
+    private MockRepository mockRepository;
 
     CobolWriter cobolWriter;
     @Mock
@@ -40,13 +42,14 @@ public class TestSuiteParserParsingTest {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         testSuite = new StringBuilder();
         cobolWriter = new CobolWriter(mockTestProgramSource);
+        mockRepository = new MockRepository();
     }
 
     @Test
     public void it_stores_the_name_of_the_test_suite_after_detecting_the_TESTSUITE_keyword() throws IOException {
         testSuite.append("       TESTSUITE \"Name of test suite\"");
         testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals("\"Name of test suite\"", testSuiteParser.getCurrentTestSuiteName());
     }
 
@@ -55,7 +58,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append("       TESTCASE \"Name of test case\"");
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals("\"Name of test case\"", testSuiteParser.getCurrentTestCaseName());
     }
 
@@ -65,7 +68,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append(expectedResult);
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
@@ -76,7 +79,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append(".");
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
@@ -86,7 +89,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append("            MOVE \n\"alpha\" \nTO WS-FIELDNAME");
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
@@ -95,7 +98,7 @@ public class TestSuiteParserParsingTest {
         String expectedResult = "            MOVE \"alpha\" TO WS-FIELDNAME";
         testSuite.append("            MOVE \n\"alpha\" \nTO WS-FIELDNAME.");
         testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
@@ -106,7 +109,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append(expectedResult);
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
@@ -116,7 +119,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append("           EXPECT WS-FIELDNAME TO BE \"some value\"");
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 
@@ -126,7 +129,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append("           EXPECT WS-FIELDNAME OF WS-GROUP TO BE \"some value\"");
         testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
-                numericFields);
+                numericFields, mockRepository);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
 }

@@ -15,6 +15,8 @@ public class TestSuiteParserController {
 
     private final TestSuiteParser testSuiteParser;
     TestSuiteConcatenator testSuiteConcatenator;
+    private MockRepository mockRepository;
+    private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
 
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
@@ -35,6 +37,17 @@ public class TestSuiteParserController {
     public TestSuiteParserController(String testFileNames) {
         testSuiteConcatenator = new TestSuiteConcatenator(testFileNames);
         testSuiteParser = new TestSuiteParser(new KeywordExtractor());
+        mockRepository = new MockRepository();
+        mockGenerator = new MockGenerator();
+        testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+    }
+
+    //Used for testing only
+    public TestSuiteParserController(BufferedReader reader) {
+        testSuiteReader = reader;
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
+        mockRepository = new MockRepository();
+        mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
 
@@ -102,11 +115,29 @@ public class TestSuiteParserController {
                     Messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
         // Parse the concatenated test suite and insert generated Cobol test statements
-        lines.addAll(testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields));
+        lines.addAll(testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, mockRepository));
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
+
+        lines.addAll(generateMockSections());
         return lines;
+    }
+
+    public List<String> generateMockSections(){
+        return mockGenerator.generateMockSections(mockRepository.getMocks());
+    }
+
+    public boolean mockExistsFor(String identifier){
+        return mockRepository.mockExistsFor(identifier);
+    }
+
+    public List<String> generateMockPerformCalls(String identifier){
+        return mockGenerator.generateMockPerformCalls(identifier, mockRepository.getMocks());
+    }
+
+    public String getEndEvaluateLine(){
+        return mockGenerator.getEndEvaluateLine();
     }
 
     /**

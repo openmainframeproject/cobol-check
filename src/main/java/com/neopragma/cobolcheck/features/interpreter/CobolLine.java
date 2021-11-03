@@ -38,7 +38,7 @@ public class CobolLine {
      *
      * @return (boolean) true if this line contains the token
      */
-    boolean contains(String tokenValue) {
+    boolean containsToken(String tokenValue) {
         return tokens.size() > 0 && tokens.contains(tokenValue.toUpperCase(Locale.ROOT));
     }
 }

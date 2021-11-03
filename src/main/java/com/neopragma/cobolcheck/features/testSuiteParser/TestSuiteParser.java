@@ -43,6 +43,12 @@ public class TestSuiteParser {
     // Source tokens used in fully-qualified data item names
     private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
 
+    //Used for mocking
+    private Mock currentMock;
+    private int mockNumber;
+    private boolean expectMockIdentifier;
+    private boolean mockJustAdded;
+
 
     // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
     // in case of conflict with prefixes used in programs to be tested.
@@ -67,7 +73,9 @@ public class TestSuiteParser {
     private boolean lessThanComparison;
     private KeywordAction nextAction = KeywordAction.NONE;
     private String currentTestSuiteName = Constants.EMPTY_STRING;
+    private int testSuiteNumber = 0;
     private String currentTestCaseName = Constants.EMPTY_STRING;
+    private int testCaseNumber = 0;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE =
@@ -80,6 +88,10 @@ public class TestSuiteParser {
             "           MOVE %s";
     private static final String COBOL_STORE_TESTCASE_NAME_2 =
             "               TO %sTEST-CASE-NAME";
+    private static final String COBOL_STORE_TESTSUITE_NAME_1 =
+            "           MOVE %s";
+    private static final String COBOL_STORE_TESTSUITE_NAME_2 =
+            "               TO %sTEST-SUITE-NAME";
     private static final String COBOL_PERFORM_BEFORE =
             "           PERFORM %sBEFORE";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
@@ -177,7 +189,8 @@ public class TestSuiteParser {
      *
      */
     public List<String> getParsedTestSuiteLines(BufferedReader testSuiteReader,
-                                                NumericFields numericFieldsList) throws IOException {
+                                                NumericFields numericFieldsList,
+                                                MockRepository mockList) {
         List<String> parsedTestSuiteLines = new ArrayList<>();
         numericFields = numericFieldsList;
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
@@ -270,6 +283,14 @@ public class TestSuiteParser {
                         addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         toBeInProgress = false;
                     }
+                    if (expectMockIdentifier){
+                        expectMockIdentifier = false;
+                        currentMock.setIdentifier(testSuiteToken);
+                        currentMock.addLines(getLinesForCurrentMock(testSuiteReader));
+                        //We know END-MOCK is reached here
+                        mockList.addMock(currentMock);
+                        mockJustAdded = true;
+                    }
                     break;
 
                 case Constants.ALPHANUMERIC_LITERAL_KEYWORD:
@@ -319,6 +340,19 @@ public class TestSuiteParser {
                     }
                     break;
 
+                case Constants.MOCK_KEYWORD:
+                    mockNumber += 1;
+                    currentMock = new Mock(currentTestSuiteName, currentTestCaseName,
+                            testSuiteNumber, testCaseNumber, mockNumber);
+                    //TODO: Make sure to differentiate between local and global mocks
+                    currentMock.setScope(MockScope.Local);
+                    break;
+
+                case Constants.MOCK_TYPE:
+                    currentMock.setType(testSuiteToken);
+                    expectMockIdentifier = true;
+                    break;
+
                 case Constants.TO_BE_KEYWORD:
                 case Constants.TO_EQUAL_KEYWORD:
                 case Constants.EQUAL_SIGN_KEYWORD:
@@ -330,10 +364,15 @@ public class TestSuiteParser {
             switch (nextAction) {
                 case TESTSUITE_NAME:
                     currentTestSuiteName = testSuiteToken;
+                    testSuiteNumber += 1;
+                    testCaseNumber = 0;
+                    mockNumber = 0;
                     nextAction = KeywordAction.NONE;
                     break;
             case NEW_TESTCASE:
                     currentTestCaseName = testSuiteToken;
+                    testCaseNumber += 1;
+                    mockNumber = 0;
                     nextAction = KeywordAction.NONE;
                     break;
             }
@@ -341,6 +380,10 @@ public class TestSuiteParser {
             // take actions that are triggered by the current token's action
             switch (keyword.keywordAction()) {
                 case COBOL_STATEMENT:
+                    if (mockJustAdded){
+                        mockJustAdded = false;
+                        break;
+                    }
                     if (CobolVerbs.isCobolVerb(testSuiteToken)) {
                         if (cobolStatementInProgress) {
                             addUserWrittenCobolStatement(parsedTestSuiteLines);
@@ -429,6 +472,8 @@ public class TestSuiteParser {
     public void addTestSuiteNamelines(String testSuiteName, List<String> parsedTestSuiteLines) {
         parsedTestSuiteLines.add(COBOL_DISPLAY_TESTSUITE);
         parsedTestSuiteLines.add(String.format(COBOL_DISPLAY_NAME, testSuiteName));
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTSUITE_NAME_1, testSuiteName));
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTSUITE_NAME_2, testCodePrefix));
     }
 
     public void addTestCaseNameLines(String testCaseName, List<String> parsedTestSuiteLines) {
@@ -510,7 +555,6 @@ public class TestSuiteParser {
      * depending on whether NOT was specified in an EXPECT specification.
      *
      * @param parsedTestSuiteLines - The lines that are parsed from the testsuites
-     * @throws IOException - May be thrown by the write method
      */
     void addSetNormalOrReverseCompare(List<String> parsedTestSuiteLines) {
         parsedTestSuiteLines.add(String.format(
@@ -525,7 +569,6 @@ public class TestSuiteParser {
      * Writes the final lines of Cobol for a test case, common to different kinds of test cases.
      *
      * @param parsedTestSuiteLines - The lines that are parsed from the testsuites
-     * @throws IOException - May be thrown by the write method
      */
     void addFinalLines(List<String> parsedTestSuiteLines) {
         parsedTestSuiteLines.add(String.format(COBOL_CHECK_EXPECTATION, testCodePrefix));
@@ -564,10 +607,18 @@ public class TestSuiteParser {
      * being generated.
      *
      * @param parsedTestSuiteLines - The lines that are parsed from the testsuites
-     * @throws IOException - pass any IOExceptions to the caller
      */
     void addUserWrittenCobolStatement(List<String> parsedTestSuiteLines) {
         parsedTestSuiteLines.add(cobolStatement.toString());
+    }
+
+    List<String> getLinesForCurrentMock(BufferedReader testSuiteReader){
+        List<String> lines = new ArrayList<>();
+        String line;
+        while (!(line = readNextLineFromTestSuite(testSuiteReader)).toUpperCase().contains(Constants.ENDMOCK_KEYWORD)){
+            lines.add(line);
+        }
+        return lines;
     }
 
     private void initializeCobolStatement() {

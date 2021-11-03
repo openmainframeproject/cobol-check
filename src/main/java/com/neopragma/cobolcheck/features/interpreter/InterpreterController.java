@@ -21,6 +21,7 @@ public class InterpreterController {
     private LineRepository lineRepository;
     private NumericFields numericFields;
     private boolean hasReadLine;
+    private String possibleMockIdentifier;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -61,10 +62,15 @@ public class InterpreterController {
     public boolean isReading(String partOfProgram){
         return reader.isFlagSet(partOfProgram);
     }
-    public boolean hasReaderStateChanged() { return reader.hasStateChanged(); }
+    public boolean didLineJustEnter(String partOfProgram) { return partOfProgram.equals(reader.getLineJustEntered()); }
+    public boolean hasReaderStateChanged() {return reader.getLineJustEntered() != null;}
     public boolean currentLineContains(String str){
-        return reader.getCurrentLine().contains(str);
+        return reader.getCurrentLine().containsToken(str);
     }
+
+    //Mock info
+    public boolean isCurrentComponentMockable() { return possibleMockIdentifier != null; }
+    public String getPossibleMockIdentifier() { return possibleMockIdentifier; }
 
     public boolean shouldCurrentLineBeParsed(){
         return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
@@ -81,6 +87,10 @@ public class InterpreterController {
             }
         }
         return false;
+    }
+
+    public boolean doesCurrentLineEndInPeriod() {
+        return Interpreter.doesCurrentLineEndInPeriod(reader.getCurrentLine());
     }
 
     /**Interprets the next line from the source file. Based on the line, the following values
@@ -151,7 +161,15 @@ public class InterpreterController {
         }
 
         if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)){
+            possibleMockIdentifier = null;
+            updatePossibleMock(line);
             tryReadBatchFileIOStatement();
+        }
+    }
+
+    private void updatePossibleMock(CobolLine line) {
+        if (didLineJustEnter(Constants.SECTION_TOKEN)){
+            possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
         }
     }
 
@@ -176,10 +194,10 @@ public class InterpreterController {
      */
     private void updateNumericFields(CobolLine line){
         if (line.tokensSize() > 1) {
-            if (line.contains(Constants.COMP_3_VALUE)) {
+            if (line.containsToken(Constants.COMP_3_VALUE)) {
                 numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
             } else {
-                if (line.contains(Constants.COMP_VALUE)) {
+                if (line.containsToken(Constants.COMP_VALUE)) {
                     numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.FLOATING_POINT);
                 } else {
                     int ix = 0;
@@ -219,7 +237,7 @@ public class InterpreterController {
             updateLineRepoByFileStatusToken(line);
         }
         if(reader.isFlagSet(Constants.FILE_SECTION) && reader.isFlagSet(Constants.FD_TOKEN)){
-            if (line.contains(Constants.COPY_TOKEN)){
+            if (line.containsToken(Constants.COPY_TOKEN)){
                 updateLineRepoByCopyStatement();
                 lineRepository.addExpandedCopyStatementsToFileSectionStatements();
             }
@@ -235,7 +253,7 @@ public class InterpreterController {
      * @param line - current source line
      */
     private void updateLineRepoBySelectToken(CobolLine line){
-        if (line.contains(Constants.SELECT_TOKEN)){
+        if (line.containsToken(Constants.SELECT_TOKEN)){
             if (line.tokensSize() > 1) {
                 lineRepository.addFileIdentifierWithNoStatus(line.getToken(1));
             }
@@ -257,7 +275,7 @@ public class InterpreterController {
      * @param line - current source line
      */
     private void updateLineRepoByFileStatusToken(CobolLine line) throws IOException {
-        if (line.contains(Constants.FILE_STATUS_TOKEN)){
+        if (line.containsToken(Constants.FILE_STATUS_TOKEN)){
             if (Interpreter.isEndOfStatement(line, reader.peekNextMeaningfulLine())){
                 //File status statement is on one line
                 if (line.tokensSize() > 2) {
@@ -266,7 +284,7 @@ public class InterpreterController {
                     }
                 }
                 else if (line.tokensSize() > 1){
-                    if (!line.contains(Constants.IS_TOKEN)) {
+                    if (!line.containsToken(Constants.IS_TOKEN)) {
                         lineRepository.addStatusForLastSetIdentifier(line.getToken(1));
                     }
                 }
@@ -334,6 +352,4 @@ public class InterpreterController {
         }
         return stringLines;
     }
-
-
 }

@@ -28,6 +28,8 @@ public final class Constants {
     public static final int STATUS_NORMAL = 0;
     public static final int STATUS_HALT = 8;
 
+    public static final int COMMENT_SPACE_OFFSET = 7;
+
     // Cobol Check copybook location (not for users)
     public static final String COBOLCHECK_COPYBOOK_DIRECTORY = "/com/neopragma/cobolcheck/copybooks/";
 
@@ -73,6 +75,9 @@ public final class Constants {
     public static final String LESS_THAN_SIGN_KEYWORD = "<";
     public static final String GREATER_THAN_EQUAL_TO_SIGN_KEYWORD = ">=";
     public static final String LESS_THAN_EQUAL_TO_SIGN_KEYWORD = "<=";
+    public static final String MOCK_KEYWORD = "MOCK";
+    public static final String MOCK_TYPE = "mock-type";
+    public static final String ENDMOCK_KEYWORD = "END-MOCK";
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
@@ -108,10 +113,16 @@ public final class Constants {
     public static final String FD_TOKEN = "FD";
     public static final String LEVEL_01_TOKEN = "01";
     public static final String COPY_TOKEN = "COPY";
+    public static final String SECTION_TOKEN = "SECTION";
+    public static final String DECLARATIVES_TOKEN = "DECLARATIVES";
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";
     public static final String PIC_VALUE = "PIC";
     public static final String PICTURE_VALUE = "PICTURE";
     public static final String NUMERIC_PICTURE_CLAUSE_PATTERN = "^[\\d\\(\\)SsVv]+$";
+
+
+    //Keywords not in COBOL-Code
+    public static final String PARAGRAPH_TOKEN = "PARAGRAPH";
 }

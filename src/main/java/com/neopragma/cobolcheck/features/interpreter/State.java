@@ -46,6 +46,8 @@ public class State {
         flags.put(Constants.FD_TOKEN, new Flag());
         flags.put(Constants.LEVEL_01_TOKEN, new Flag());
         flags.put(Constants.COPY_TOKEN, new Flag());
+        flags.put(Constants.SECTION_TOKEN, new Flag());
+        flags.put(Constants.PARAGRAPH_TOKEN, new Flag());
 
 //IDENTIFICATION_DIVISION
         mutuallyExclusiveFlagsFor(Constants.IDENTIFICATION_DIVISION,
@@ -119,6 +121,9 @@ public class State {
         mutuallyExclusiveFlagsFor(Constants.PROCEDURE_DIVISION,
                 Constants.IDENTIFICATION_DIVISION, Constants.ENVIRONMENT_DIVISION, Constants.DATA_DIVISION);
 
+// SECTION
+        dependentFlagsFor(Constants.SECTION_TOKEN,
+                Constants.PARAGRAPH_TOKEN);
     }
 
     public Map<String, Flag> getFlags() {
@@ -177,7 +182,7 @@ public class State {
         public void unset() {
             state = false;
             for (Flag flag : dependentFlags) {
-                flag.unset();
+                if (flag != null) flag.unset();
             }
         }
     }

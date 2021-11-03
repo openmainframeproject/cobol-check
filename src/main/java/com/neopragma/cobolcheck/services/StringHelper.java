@@ -108,6 +108,11 @@ public class StringHelper {
         return line.replaceAll(regex, "");
     }
 
+
+    public static String commentOutLine(String line){
+        return "      *" + line.substring(Constants.COMMENT_SPACE_OFFSET);
+    }
+
     /**
      * Enclose a value in quotation marks.
      *

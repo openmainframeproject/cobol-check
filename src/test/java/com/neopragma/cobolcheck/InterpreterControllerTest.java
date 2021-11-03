@@ -1,10 +1,7 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.interpreter.CobolLine;
-import com.neopragma.cobolcheck.features.interpreter.Interpreter;
-import com.neopragma.cobolcheck.features.interpreter.InterpreterController;
-import com.neopragma.cobolcheck.features.interpreter.State;
+import com.neopragma.cobolcheck.features.interpreter.*;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.StringHelper;
@@ -81,6 +78,168 @@ public class InterpreterControllerTest {
         assertFalse(interpreterController.isReading(Constants.LEVEL_01_TOKEN));
         assertTrue(interpreterController.isReading(Constants.WORKING_STORAGE_SECTION));
     }
+
+    @Test
+    public void it_recognizes_paragraph_header_format() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       5400-WRITE-OUTPUT-RECORD.";
+        String str3 = "           WRITE OUTPUT-RECORD";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(interpreterController.isReading(Constants.PARAGRAPH_TOKEN));
+    }
+
+    @Test
+    public void it_recognizes_paragraph_header_format_with_extra_spaces() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       5400-WRITE-OUTPUT-RECORD        .      ";
+        String str3 = "           WRITE OUTPUT-RECORD";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(interpreterController.isReading(Constants.PARAGRAPH_TOKEN));
+    }
+
+    @Test
+    public void it_recognizes_paragraph_header_format_with_period_on_next_line() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       5400-WRITE-OUTPUT-RECORD";
+        String str3 = "       .";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(interpreterController.isReading(Constants.PARAGRAPH_TOKEN));
+    }
+
+    @Test
+    public void it_returns_false_if_not_a_paragraph_header_format() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "\"       000-START SECTION.\"";
+        String str3 = "           PERFORM WITH TEST BEFORE";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertFalse(interpreterController.isReading(Constants.PARAGRAPH_TOKEN));
+    }
+
+    @Test
+    public void it_returns_false_if_not_in_correct_area() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "           5400-WRITE-OUTPUT-RECORD.";
+        String str3 = "           WRITE OUTPUT-RECORD";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertFalse(interpreterController.isReading(Constants.PARAGRAPH_TOKEN));
+    }
+
+//    @Test
+//    public void it_returns_paragraph_name(){
+//        String paragraphHeader = ("       5400-WRITE-OUTPUT-RECORD.");
+//        List<String> tokens = tokenExtractor.extractTokensFrom(paragraphHeader);
+//        assertEquals("5400-WRITE-OUTPUT-RECORD", generator.getSectionOrParagraphName(tokens, paragraphHeader));
+//    }
+//
+
+//    String str1 = "       PROCEDURE DIVISION.";
+//    String str2 = "       5000-PROCESS SECTION.";
+//    String str3 = "           READ INPUT-FILE";
+//    String str4 = "           PERFORM WITH TEST BEFORE";
+//    String str5 = "                   UNTIL END-OF-FILE";
+//    String str6 = "               PERFORM 5200-PREPARE-OUTPUT-RECORD";
+//    String str7 = "               PERFORM 5400-WRITE-OUTPUT-RECORD";
+//    String str8 = "               READ INPUT-FILE";
+//    String str9 = "           END-PERFORM";
+//    String str10 = "           .";
+
+//    List<String> expected = new ArrayList<>();
+//        expected.add(str2);
+//        expected.add(str3);
+//        expected.add(str4);
+//        expected.add(str5);
+//        expected.add(str6);
+//        expected.add(str7);
+//        expected.add(str8);
+//        expected.add(str9);
+//        expected.add(str10);
+
+    @Test
+    public void it_sets_possible_mock_identifier_to_section_name() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       5000-PROCESS SECTION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals("5000-PROCESS", interpreterController.getPossibleMockIdentifier());
+    }
+
+//    @Test
+//    public void it_returns_section_name_while_containing_sequence_number(){
+//        String sectionHeader = ("001200 000-START SECTION.");
+//        List<String> tokens = tokenExtractor.extractTokensFrom(sectionHeader);
+//        assertEquals("000-START", generator.getSectionOrParagraphName(tokens, sectionHeader));
+//    }
+//
+//    @Test
+//    public void it_recognizes_sequence_number_area(){
+//        String seqNumber = ("001200 DATA DIVISION.");
+//        assertEquals(Area.SEQUENCE_NUMBER, generator.getBeginningArea(seqNumber, false));
+//    }
+//
+//    @Test
+//    public void it_recognizes_indicator_area_while_ignoring_sequence_number_area(){
+//        String indicator = ("001200-              \"World\"");
+//        assertEquals(Area.INDICATOR, generator.getBeginningArea(indicator, true));
+//    }
+//
+//    @Test
+//    public void it_recognizes_a_area(){
+//        String a         = ("       000-START SECTION.");
+//        assertEquals(Area.A, generator.getBeginningArea(a, false));
+//    }
+//
+//    @Test
+//    public void it_recognizes_b_area(){
+//        String b         = ("           PERFORM 003-DO-SOMETHING");
+//        assertEquals(Area.B, generator.getBeginningArea(b, false));
+//    }
+//
+//    @Test
+//    public void it_returns_none_if_outside_areas(){
+//        String none      = ("                                                                         Too many spaces!");
+//        assertEquals(Area.NONE, generator.getBeginningArea(none, false));
+//    }
+//
+//    @Test
+//    public void it_returns_none_if_ignoring_sequence_area_but_string_is_too_short(){
+//        String none      = ("01");
+//        assertEquals(Area.NONE, generator.getBeginningArea(none, true));
+//    }
 
     @Test
     public void it_ignores_lines_that_does_not_change_flags() throws IOException {

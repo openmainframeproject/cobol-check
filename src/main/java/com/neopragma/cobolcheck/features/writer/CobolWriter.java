@@ -43,7 +43,7 @@ public class CobolWriter {
      */
     void writeCommentedLine(String line) throws IOException {
         currentLineIsComment = true;
-        writeLine(commentOutLine(line));
+        writeLine(StringHelper.commentOutLine(line));
     }
 
     void writeFormattedLine(String format, Object... args) throws IOException {
@@ -81,11 +81,6 @@ public class CobolWriter {
         writer.close();
     }
 
-
-
-    private String commentOutLine(String line){
-        return "      *" + line.substring(6 + 1);
-    }
 
     /**
      * Lines of test code in a test suite are Cobol-like, but not strictly Cobol. The descriptions for TESTSUITE and

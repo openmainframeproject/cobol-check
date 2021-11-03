@@ -264,7 +264,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.add(expected2);
 
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite));
-        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields);
+        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, null);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -276,15 +276,19 @@ public class TestSuiteParserCodeInsertionTest {
 
         String expected1 = "           DISPLAY \"TESTSUITE:\"";
         String expected2 = "           DISPLAY \"Test Suite Name\"";
+        String expected3 = "           MOVE \"Test Suite Name\"";
+        String expected4 = "               TO UT-TEST-SUITE-NAME";
         expectedResult.add(expected1);
         expectedResult.add(expected2);
+        expectedResult.add(expected3);
+        expectedResult.add(expected4);
 
         testSuiteParser.addTestSuiteNamelines("\"Test Suite Name\"", actualResult);
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void it_inserts_cobol_statements_to_store_the_testcase_name() throws IOException {
+    public void it_inserts_cobol_statements_to_store_the_testcase_name() {
         List<String> actualResult = new ArrayList<>();
         List<String> expectedResult = new ArrayList<>();
         String expected1 = "           MOVE \"Test Case Name\"";
@@ -299,7 +303,7 @@ public class TestSuiteParserCodeInsertionTest {
     }
 
     @Test
-    public void it_inserts_cobol_statements_to_perform_before_each_logic() throws IOException {
+    public void it_inserts_cobol_statements_to_perform_before_each_logic() {
         List<String> actualResult = new ArrayList<>();
         List<String> expectedResult = new ArrayList<>();
         String expected = "           PERFORM UT-BEFORE";
@@ -325,7 +329,7 @@ public class TestSuiteParserCodeInsertionTest {
 
         lenient().doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields);
+        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, null);
         assertEquals(expectedResultList, actualResult);
     }
     private static Stream<Arguments> expectationCheckProvider() {

@@ -1,0 +1,41 @@
+           TestSuite "General tests"
+
+           TestCase "Welcome section performs as intended"
+           PERFORM 100-WELCOME
+           Expect VALUE-1 to be "Hello"
+           Expect VALUE-2 to be "Hi"
+
+           TestCase "Goodbye section performs as intended"
+           PERFORM 200-GOODBYE
+           Expect VALUE-1 to be "Bye"
+           Expect VALUE-2 to be "See you"
+
+           TestCase "Change-1 changes hello to bye"
+           PERFORM 100-WELCOME
+           PERFORM 300-CHANGE-1
+           Expect VALUE-1 to be "Bye"
+           Expect VALUE-2 to be "Hi"
+
+           TestCase "Change-1 changes bye to hello"
+           PERFORM 200-GOODBYE
+           PERFORM 300-CHANGE-1
+           Expect VALUE-1 to be "Hello"
+           Expect VALUE-2 to be "See you"
+
+           TestCase "Change-2 changes hi to see you"
+           PERFORM 100-WELCOME
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "Hello"
+           Expect VALUE-2 to be "See you"
+
+           TestCase "Change-2 changes see you to hi"
+           PERFORM 200-GOODBYE
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "Bye"
+           Expect VALUE-2 to be "Hi"
+
+           TestCase "Switches values"
+           PERFORM 100-WELCOME
+           PERFORM 500-SWITCH
+           Expect VALUE-1 to be "Hi"
+           Expect VALUE-2 to be "Hello"
