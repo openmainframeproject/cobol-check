@@ -167,6 +167,9 @@ public class InterpreterController {
         }
     }
 
+    /**Updates possibleMockIdentifier if a specific part of the program was just entered.
+     * @param line - The line the update is based upon
+     */
     private void updatePossibleMock(CobolLine line) {
         if (didLineJustEnter(Constants.SECTION_TOKEN)){
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
