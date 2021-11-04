@@ -110,7 +110,16 @@ public class StringHelper {
 
 
     public static String commentOutLine(String line){
-        return "      *" + line.substring(Constants.COMMENT_SPACE_OFFSET);
+        if (line.startsWith("       ")){
+            return "      *" + line.substring(Constants.COMMENT_SPACE_OFFSET);
+        }
+        if (line.startsWith("      *")){
+            return line;
+        }
+        else {
+            return "      *" + line;
+        }
+
     }
 
     /**

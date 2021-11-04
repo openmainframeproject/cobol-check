@@ -19,11 +19,11 @@ public class MockGenerator {
      * @param mocks - The mocks to generate SECTIONs for
      * @return The generated lines
      */
-    List<String> generateMockSections(List<Mock> mocks){
+    List<String> generateMockSections(List<Mock> mocks, boolean withComments){
 
         List<String> lines = new ArrayList<>(getMockSectionCommentHeader());
         for (Mock mock : mocks){
-            lines.addAll(generateSectionForMock(mock));
+            lines.addAll(generateSectionForMock(mock, withComments));
             lines.add("");
         }
         return lines;
@@ -74,10 +74,14 @@ public class MockGenerator {
         return lines;
     }
 
-    private List<String> generateSectionForMock(Mock mock){
+    private List<String> generateSectionForMock(Mock mock, boolean withComment){
         List<String> lines = new ArrayList<>();
-//        lines.add(StringHelper.commentOutLine("       " + mock.getCommentText()));
         lines.add("       " + mock.getGeneratedMockIdentifier() + " SECTION.");
+        if (withComment){
+            for (String line : mock.getCommentText()){
+                lines.add(StringHelper.commentOutLine(line));
+            }
+        }
         lines.addAll(mock.getLines());
         lines.add("       .");
         return lines;

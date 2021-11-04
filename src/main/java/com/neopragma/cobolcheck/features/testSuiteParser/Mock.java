@@ -27,9 +27,17 @@ public class Mock {
         return testSuiteNumber + "-" + testCaseNumber + "-" + mockNumber + "-MOCK";
     }
 
-    public String getCommentText(){
-        return scope.name() + "mock created from test case: " + testCaseName + " in test suite: " + testSuiteName +
-                "for the " + type + ": " + identifier;
+    public List<String> getCommentText(){
+        List<String> lines = new ArrayList<>();
+        lines.add("      *****************************************************************");
+        lines.add(scope.name() + " mock of: " + type + ": " + identifier);
+        lines.add("In testsuite: " + testSuiteName);
+        if (scope == MockScope.Local){
+            lines.add("In testcase: " + testCaseName);
+        }
+        lines.add("      *****************************************************************");
+        return lines;
+
     }
 
     public String getIdentifier() {

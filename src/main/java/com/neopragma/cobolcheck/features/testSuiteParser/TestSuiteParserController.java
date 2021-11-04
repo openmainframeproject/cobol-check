@@ -120,7 +120,7 @@ public class TestSuiteParserController {
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
 
-        lines.addAll(generateMockSections());
+        lines.addAll(generateMockSections(true));
         return lines;
     }
 
@@ -128,8 +128,8 @@ public class TestSuiteParserController {
      * for each mock in a given list.
      * @return The generated lines
      */
-    public List<String> generateMockSections(){
-        return mockGenerator.generateMockSections(mockRepository.getMocks());
+    public List<String> generateMockSections(boolean withComments){
+        return mockGenerator.generateMockSections(mockRepository.getMocks(), withComments);
     }
 
     public boolean mockExistsFor(String identifier){

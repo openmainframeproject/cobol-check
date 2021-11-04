@@ -203,7 +203,40 @@ public class MockingTest {
 
         testSuiteParserController.getProcedureDivisionTestCode(numericFields);
 
-        List<String> actual = testSuiteParserController.generateMockSections();
+        List<String> actual = testSuiteParserController.generateMockSections(false);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void single_mock_section_gets_generated_correctly_with_comment() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK SECTION 000-START";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("      *****************************************************************");
+        expected.add("      *Sections called when mocking");
+        expected.add("      *****************************************************************");
+        expected.add("       1-1-1-MOCK SECTION.");
+        expected.add("      *****************************************************************");
+        expected.add("      *Local mock of: SECTION: 000-START");
+        expected.add("      *In testsuite: \"Name of test suite\"");
+        expected.add("      *In testcase: \"Name of test case\"");
+        expected.add("      *****************************************************************");
+        expected.add(str4);
+        expected.add(str5);
+        expected.add("       .");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+
+        List<String> actual = testSuiteParserController.generateMockSections(true);
 
         assertEquals(expected, actual);
     }
@@ -263,7 +296,7 @@ public class MockingTest {
 
         testSuiteParserController.getProcedureDivisionTestCode(numericFields);
 
-        List<String> actual = testSuiteParserController.generateMockSections();
+        List<String> actual = testSuiteParserController.generateMockSections(false);
 
         assertEquals(expected, actual);
     }
