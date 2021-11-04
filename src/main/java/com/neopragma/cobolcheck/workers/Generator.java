@@ -165,13 +165,13 @@ public class Generator {
     private void processingAfterEchoingSourceLineToOutput() throws IOException {
 
         if (interpreter.currentLineContains(Constants.WORKING_STORAGE_SECTION)) {
+            testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
                     interpreter.getFileSectionStatements()));
         }
 
         if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
-            writerController.writeLines(testSuiteParserController.getProcedureDivisionTestCode(
-                    interpreter.getNumericFields()));
+            writerController.writeLines(testSuiteParserController.getProcedureDivisionTestCode());
         }
 
         if (interpreter.isCurrentComponentMockable()){

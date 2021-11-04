@@ -3,6 +3,7 @@ package com.neopragma.cobolcheck.features.testSuiteParser;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MockGenerator {
@@ -13,6 +14,30 @@ public class MockGenerator {
     private final String whenOtherLine = "           WHEN OTHER";
     private final String endEvaluateLine = "            END-EVALUATE";
     private final String anyKeyword = "ANY";
+
+
+    List<String> generateWorkingStorageMockCountLines(List<Mock> mocks){
+        List<String> lines = new ArrayList<>();
+        lines.add("       01  UT-MOCKS-GENERATED.");
+        lines.addAll(generateMockCounters(mocks));
+
+        return lines;
+    }
+
+    List<String> generateMockCountInitializer(List<Mock> mocks){
+        List<String> lines = new ArrayList<>();
+        lines.add("       UT-INITIALIZE-MOCK-COUNT SECTION.");
+        lines.add("      *****************************************************************");
+        lines.add(StringHelper.commentOutLine("       Sets all global mock counters to 0"));
+        lines.add("      *****************************************************************");
+        for (Mock mock : mocks){
+            if (mock.getScope() == MockScope.Global){
+                lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountIdentifier());
+            }
+        }
+        lines.add("       .");
+        return lines;
+    }
 
     /**Generates the lines for SECTIONs based on mocks,
      * for each mock in a given list.
@@ -66,6 +91,14 @@ public class MockGenerator {
         return endEvaluateLine;
     }
 
+    private List<String> generateMockCounters(List<Mock> mocks) {
+        List<String> lines = new ArrayList<>();
+        for (Mock mock : mocks){
+            lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(02) VALUE ZERO.");
+        }
+        return lines;
+    }
+
     private List<String> getMockSectionCommentHeader(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");
@@ -82,6 +115,7 @@ public class MockGenerator {
                 lines.add(StringHelper.commentOutLine(line));
             }
         }
+        lines.add("           ADD 1 TO " + mock.getGeneratedMockCountIdentifier());
         lines.addAll(mock.getLines());
         lines.add("       .");
         return lines;

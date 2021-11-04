@@ -19,6 +19,10 @@ public class TestSuiteParserController {
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
 
+    //We parse the test suite early, in order to generate mocks.
+    //Thus, we save the lines we get from parsing, to use them later.
+    private List<String> parsedTestSuiteLines;
+
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
     // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
     private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
@@ -75,6 +79,16 @@ public class TestSuiteParserController {
         this.testSuiteReader = new BufferedReader(testSuiteReader);
     }
 
+    /**
+     * Reads through the concatenated testsuites. While reading, test statements, Mocks and Verifiers
+     * will be generated for later use.
+     *
+     * @param numericFields numeric field values gathered from Interpreter
+     */
+    public void parseTestSuites(NumericFields numericFields){
+        parsedTestSuiteLines = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, mockRepository);
+    }
+
 
     /**
      * Gets the Working-Storage Section test code to be inserted into the program being generated.
@@ -92,6 +106,10 @@ public class TestSuiteParserController {
 
         // Inject boilerplate test code from cobol-check Working-Storage copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(workingStorageCopybookFilename));
+
+        //Generates the variables used for counting
+        lines.addAll(mockGenerator.generateWorkingStorageMockCountLines(mockRepository.getMocks()));
+
         workingStorageTestCodeHasBeenInserted = true;
 
         return lines;
@@ -100,11 +118,10 @@ public class TestSuiteParserController {
     /**
      * Gets the PROCEDURE DIVISION test code to be inserted into the program being generated.
      *
-     * @param numericFields numeric field values gathered from Interpreter
      * @return A list of the lines generated
      * @throws IOException - pass any IOExceptions to the caller.
      */
-    public List<String> getProcedureDivisionTestCode(NumericFields numericFields) throws IOException {
+    public List<String> getProcedureDivisionTestCode() throws IOException {
         List<String> lines = new ArrayList<>();
         // Inject test initialization statement
         lines.add(testSuiteParser.getTestInitializationLine());
@@ -114,11 +131,13 @@ public class TestSuiteParserController {
             throw new PossibleInternalLogicErrorException(
                     Messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
-        // Parse the concatenated test suite and insert generated Cobol test statements
-        lines.addAll(testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, mockRepository));
+        // Insert generated Cobol test statements, from the testsuite parse
+        lines.addAll(parsedTestSuiteLines);
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
+
+        lines.addAll(mockGenerator.generateMockCountInitializer(mockRepository.getMocks()));
 
         lines.addAll(generateMockSections(true));
         return lines;

@@ -94,6 +94,8 @@ public class TestSuiteParser {
             "               TO %sTEST-SUITE-NAME";
     private static final String COBOL_PERFORM_BEFORE =
             "           PERFORM %sBEFORE";
+    private static final String COBOL_PERFORM_INITIALIZE_MOCK_COUNT =
+            "           PERFORM %sINITIALIZE-MOCK-COUNT";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
             "           ADD 1 TO %sTEST-CASE-COUNT";
 
@@ -484,6 +486,7 @@ public class TestSuiteParser {
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName));
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix));
         parsedTestSuiteLines.add(String.format(COBOL_PERFORM_BEFORE, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_INITIALIZE_MOCK_COUNT, testCodePrefix));
     }
 
     public void addPerformBeforeEachLine(List<String> parsedTestSuiteLines) {

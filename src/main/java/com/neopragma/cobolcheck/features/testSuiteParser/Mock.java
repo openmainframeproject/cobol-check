@@ -27,6 +27,10 @@ public class Mock {
         return testSuiteNumber + "-" + testCaseNumber + "-" + mockNumber + "-MOCK";
     }
 
+    public String getGeneratedMockCountIdentifier(){
+        return "UT-" + getGeneratedMockIdentifier() + "-COUNT";
+    }
+
     public List<String> getCommentText(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");

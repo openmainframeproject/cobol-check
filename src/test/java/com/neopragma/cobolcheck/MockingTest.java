@@ -194,6 +194,7 @@ public class MockingTest {
         expected.add("      *Sections called when mocking");
         expected.add("      *****************************************************************");
         expected.add("       1-1-1-MOCK SECTION.");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
         expected.add("       .");
@@ -201,7 +202,8 @@ public class MockingTest {
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
-        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockSections(false);
 
@@ -227,6 +229,7 @@ public class MockingTest {
         expected.add("      *In testsuite: \"Name of test suite\"");
         expected.add("      *In testcase: \"Name of test case\"");
         expected.add("      *****************************************************************");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
         expected.add("       .");
@@ -234,7 +237,8 @@ public class MockingTest {
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
-        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockSections(true);
 
@@ -270,21 +274,25 @@ public class MockingTest {
         expected.add("      *Sections called when mocking");
         expected.add("      *****************************************************************");
         expected.add("       1-1-1-MOCK SECTION.");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
         expected.add("       .");
         expected.add("");
         expected.add("       1-1-2-MOCK SECTION.");
+        expected.add("           ADD 1 TO UT-1-1-2-MOCK-COUNT");
         expected.add(str8);
         expected.add(str9);
         expected.add("       .");
         expected.add("");
         expected.add("       1-2-1-MOCK SECTION.");
+        expected.add("           ADD 1 TO UT-1-2-1-MOCK-COUNT");
         expected.add(str13);
         expected.add(str14);
         expected.add("       .");
         expected.add("");
         expected.add("       2-1-1-MOCK SECTION.");
+        expected.add("           ADD 1 TO UT-2-1-1-MOCK-COUNT");
         expected.add(str19);
         expected.add(str20);
         expected.add("       .");
@@ -294,7 +302,8 @@ public class MockingTest {
                 str7, str8, str9, str10, str11, str12, str13, str14, str15, str16, str17, str18, str19,
                 str20, str21, null);
 
-        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockSections(false);
 
@@ -317,7 +326,8 @@ public class MockingTest {
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
 
-        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START");
 
@@ -341,7 +351,8 @@ public class MockingTest {
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
-        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START");
 
@@ -398,7 +409,8 @@ public class MockingTest {
                 str7, str8, str9, str10, str11, str12, str13, str14, str15, str16, str17, str18, str19,
                 str20, str21, str22, str23, str24, str25, null);
 
-        testSuiteParserController.getProcedureDivisionTestCode(numericFields);
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual1 = testSuiteParserController.generateMockPerformCalls("000-START");
         List<String> actual2 = testSuiteParserController.generateMockPerformCalls("100-START");
