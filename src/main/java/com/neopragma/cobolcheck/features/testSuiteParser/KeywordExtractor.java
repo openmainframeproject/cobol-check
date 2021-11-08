@@ -37,6 +37,10 @@ public class KeywordExtractor implements TokenExtractor {
         nextExpectedTokens = new ArrayList<>();
         multiWordTokens = new HashMap<>();
         multiWordTokens.put("TO", Arrays.asList("BE", "EQUAL"));
+        multiWordTokens.put("NEVER", Arrays.asList("HAPPENED"));
+        multiWordTokens.put("AT", Arrays.asList("LEAST"));
+        multiWordTokens.put("NO", Arrays.asList("MORE", "THAN"));
+
     }
 
     @Override
@@ -90,16 +94,20 @@ public class KeywordExtractor implements TokenExtractor {
                             for (String expectedToken : nextExpectedTokens) {
                                 int endOfLookahead = startOfLookahead + expectedToken.length();
                                 if (sourceLine.length() >= endOfLookahead) {
-                                    if (expectedToken.equalsIgnoreCase(sourceLine.substring(startOfLookahead, endOfLookahead))
+                                    String temp = sourceLine.substring(startOfLookahead, endOfLookahead);
+                                    if (expectedToken.equalsIgnoreCase(temp)
                                             && (endOfLookahead == sourceLine.length()
                                             || sourceLine.charAt(endOfLookahead) == SPACE)) {
                                         buffer.append(expectedToken);
                                         tokenOffset += expectedToken.length();
-                                        break;
+                                        buffer.append(SPACE);
+                                        startOfLookahead = tokenOffset + 2;
+//                                        break;
                                     }
                                 }
 
                             }
+                            buffer.deleteCharAt(buffer.length() - 1);
                             buffer = addTokenAndClearBuffer(buffer, tokens);
                             nextExpectedTokens = new ArrayList<>();
                         } else {

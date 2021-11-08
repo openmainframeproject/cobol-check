@@ -31,6 +31,14 @@ public class Mock {
         return "UT-" + getGeneratedMockIdentifier() + "-COUNT";
     }
 
+    public String getGeneratedMockCountExpectedIdentifier(){
+        return "UT-" + getGeneratedMockIdentifier() + "-EXPECTED";
+    }
+
+    public String getGeneratedMockStringIdentifierName(){
+        return "UT-" + getGeneratedMockIdentifier() + "-NAME";
+    }
+
     public List<String> getCommentText(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");

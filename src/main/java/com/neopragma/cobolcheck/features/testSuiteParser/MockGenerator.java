@@ -3,7 +3,6 @@ package com.neopragma.cobolcheck.features.testSuiteParser;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MockGenerator {
@@ -19,7 +18,7 @@ public class MockGenerator {
     List<String> generateWorkingStorageMockCountLines(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
         lines.add("       01  UT-MOCKS-GENERATED.");
-        lines.addAll(generateMockCounters(mocks));
+        lines.addAll(generateMockCountValues(mocks));
 
         return lines;
     }
@@ -28,11 +27,12 @@ public class MockGenerator {
         List<String> lines = new ArrayList<>();
         lines.add("       UT-INITIALIZE-MOCK-COUNT SECTION.");
         lines.add("      *****************************************************************");
-        lines.add(StringHelper.commentOutLine("       Sets all global mock counters to 0"));
+        lines.add(StringHelper.commentOutLine("       Sets all global mock counters and expected count to 0"));
         lines.add("      *****************************************************************");
         for (Mock mock : mocks){
             if (mock.getScope() == MockScope.Global){
                 lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountIdentifier());
+                lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountExpectedIdentifier());
             }
         }
         lines.add("       .");
@@ -91,10 +91,12 @@ public class MockGenerator {
         return endEvaluateLine;
     }
 
-    private List<String> generateMockCounters(List<Mock> mocks) {
+    private List<String> generateMockCountValues(List<Mock> mocks) {
         List<String> lines = new ArrayList<>();
         for (Mock mock : mocks){
             lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(02) VALUE ZERO.");
+            lines.add("           05  " + mock.getGeneratedMockCountExpectedIdentifier() + "    PIC 9(02) VALUE ZERO.");
+            lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(20) VALUE \"" + mock.getIdentifier() + "\".");
         }
         return lines;
     }

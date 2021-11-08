@@ -11,6 +11,10 @@ public class MockRepository {
         mocks.add(mock);
     }
 
+    public List<Mock> getMocks(){
+        return mocks;
+    }
+
     public boolean mockExistsFor(String identifier){
         for (Mock mock: mocks) {
             if (mock.getIdentifier().equals(identifier)){
@@ -20,7 +24,23 @@ public class MockRepository {
         return false;
     }
 
-    public List<Mock> getMocks(){
-        return mocks;
+    public Mock getMockFor(String identifier, String testSuite, String testCase){
+        for (Mock mock: mocks) {
+            if (mock.getIdentifier().equals(identifier)){
+                if (mock.getScope() == MockScope.Local){
+                    if (mock.getTestSuiteName().equals(testSuite) && mock.getTestCaseName().equals(testCase)){
+                        return mock;
+                    }
+                }
+                if (mock.getScope() == MockScope.Global){
+                    if (mock.getTestSuiteName().equals(testSuite)){
+                        return mock;
+                    }
+                }
+            }
+        }
+        return null;
     }
+
+
 }
