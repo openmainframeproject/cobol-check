@@ -15,6 +15,14 @@ public class MockGenerator {
     private final String anyKeyword = "ANY";
 
 
+    /**Generates the lines for keeping track of mock counting
+     * For each mock a variable are created for:
+     * - Current count
+     * - Expected count
+     * - Mock operation (string showing type and identity)
+     * @param mocks - The mocks to generate lines for
+     * @return The generated lines
+     */
     List<String> generateWorkingStorageMockCountLines(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
         lines.add("       01  UT-MOCKS-GENERATED.");
@@ -23,6 +31,11 @@ public class MockGenerator {
         return lines;
     }
 
+    /**Generates the lines for the initializer section.
+     * This resets the current count and expected count of all global mocks in cobol.
+     * @param mocks - The mocks to generate lines for
+     * @return The generated lines
+     */
     List<String> generateMockCountInitializer(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
         lines.add("       UT-INITIALIZE-MOCK-COUNT SECTION.");
@@ -96,7 +109,8 @@ public class MockGenerator {
         for (Mock mock : mocks){
             lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(02) VALUE ZERO.");
             lines.add("           05  " + mock.getGeneratedMockCountExpectedIdentifier() + "    PIC 9(02) VALUE ZERO.");
-            lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(20) VALUE \"" + mock.getIdentifier() + "\".");
+            lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(20)");
+            lines.add("                   VALUE \"" + mock.getMockDisplayString() + "\".");
         }
         return lines;
     }

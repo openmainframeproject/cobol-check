@@ -39,6 +39,10 @@ public class Mock {
         return "UT-" + getGeneratedMockIdentifier() + "-NAME";
     }
 
+    public String getMockDisplayString(){
+        return type.toUpperCase() + " " + identifier;
+    }
+
     public List<String> getCommentText(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");

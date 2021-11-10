@@ -25,6 +25,7 @@ public class MockRepository {
     }
 
     public Mock getMockFor(String identifier, String testSuite, String testCase){
+        List<Mock> globalMocks = new ArrayList<>();
         for (Mock mock: mocks) {
             if (mock.getIdentifier().equals(identifier)){
                 if (mock.getScope() == MockScope.Local){
@@ -33,12 +34,18 @@ public class MockRepository {
                     }
                 }
                 if (mock.getScope() == MockScope.Global){
-                    if (mock.getTestSuiteName().equals(testSuite)){
-                        return mock;
-                    }
+                    //We need to check all local mocks first, and save global mocks for later
+                    globalMocks.add(mock);
                 }
             }
         }
+        for (Mock mock: globalMocks) {
+            if (mock.getTestSuiteName().equals(testSuite)){
+                return mock;
+            }
+        }
+
+
         return null;
     }
 

@@ -45,6 +45,7 @@ public class TestSuiteParser {
     private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
 
     //Used for mocking
+    MockRepository mockRepository;
     private Mock currentMock;
     private int mockNumber;
     private boolean expectMockIdentifier;
@@ -171,21 +172,21 @@ public class TestSuiteParser {
     private static final String ELEVEN_LEADING_SPACES = "           ";
 
     private static final String COBOL_SET_ACTUAL_MOCK_ACCESSES =
-            "               MOVE %1$s TO %2$sACTUAL-ACCESSES";
+            "           MOVE %1$s TO %2$sACTUAL-ACCESSES";
     private static final String COBOL_SET_EXPECTED_MOCK_ACCESSES =
-            "               MOVE %1$s TO %2$sEXPECTED-ACCESSES";
+            "           MOVE %1$s TO %2$sEXPECTED-ACCESSES";
     private static final String COBOL_SET_MOCK_OPERATION =
-            "               MOVE %1$s TO %2$sMOCK-OPERATION";
+            "           MOVE %1$s TO %2$sMOCK-OPERATION";
     private static final String COBOL_SET_VERIFY_EXACT =
-            "               SET %1$sVERIFY-EXACT TO %2$s";
+            "           SET %1$sVERIFY-EXACT TO %2$s";
     private static final String COBOL_SET_VERIFY_AT_LEAST =
-            "               SET %1$sVERIFY-AT-LEAST TO %2$s";
+            "           SET %1$sVERIFY-AT-LEAST TO %2$s";
     private static final String COBOL_SET_VERIFY_NO_MORE_THAN =
-            "               SET %1$sVERIFY-NO-MORE-THAN TO %2$s";
-    private static final String COBOL_PERFORM_ASSERTACCESS =
-            "               PERFORM %1$sASSERT-ACCESSES";
+            "           SET %1$sVERIFY-NO-MORE-THAN TO %2$s";
+    private static final String COBOL_PERFORM_ASSERT_ACCESS =
+            "           PERFORM %1$sASSERT-ACCESSES";
     private static final String COBOL_MOVE =
-            "               MOVE %1$s TO %2$s";
+            "           MOVE %1$s TO %2$s";
 
 
     private static final String RELATION_EQ = "EQ";
@@ -197,8 +198,9 @@ public class TestSuiteParser {
     private StringBuffer cobolStatement;
     private NumericFields numericFields;
 
-    public TestSuiteParser(KeywordExtractor keywordExtractor) {
+    public TestSuiteParser(KeywordExtractor keywordExtractor, MockRepository mockRepository) {
         this.keywordExtractor = keywordExtractor;
+        this.mockRepository = mockRepository;
         testSuiteTokens = new ArrayList<>();
         emptyTestSuite = true;
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
@@ -212,8 +214,7 @@ public class TestSuiteParser {
      *
      */
     public List<String> getParsedTestSuiteLines(BufferedReader testSuiteReader,
-                                                NumericFields numericFieldsList,
-                                                MockRepository mockList) {
+                                                NumericFields numericFieldsList) {
         List<String> parsedTestSuiteLines = new ArrayList<>();
         numericFields = numericFieldsList;
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
@@ -313,7 +314,7 @@ public class TestSuiteParser {
                             currentMock.setIdentifier(testSuiteToken);
                             currentMock.addLines(getLinesForCurrentMock(testSuiteReader));
                             //We know END-MOCK is reached here
-                            mockList.addMock(currentMock);
+                            mockRepository.addMock(currentMock);
                         }
                         else {
                             currentVerify.setIdentifier(testSuiteToken);
@@ -412,7 +413,7 @@ public class TestSuiteParser {
 
                 case Constants.NEVER_HAPPENED_KEYWORD:
                     currentVerify.expectExact("0");
-                    handleEndOfVerifyStatement(mockList, parsedTestSuiteLines);
+                    handleEndOfVerifyStatement(parsedTestSuiteLines);
                     break;
 
                 case Constants.HAPPENED_KEYWORD:
@@ -420,8 +421,18 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ONCE_KEYWORD:
-                    currentVerify.expectExact("1");
-                    handleEndOfVerifyStatement(mockList, parsedTestSuiteLines);
+                    if (currentVerify.isSetToAtLeast()){
+                        currentVerify.expectAtLeast("1");
+                    }
+                    else {
+                        if(currentVerify.isSetToNoMoreThan()){
+                            currentVerify.expectNoMoreThan("1");
+                        }
+                        else {
+                            currentVerify.expectExact("1");
+                        }
+                    }
+                    handleEndOfVerifyStatement(parsedTestSuiteLines);
                     break;
 
                 case Constants.AT_LEAST_KEYWORD:
@@ -435,7 +446,7 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.TIME_KEYWORD: case Constants.TIMES_KEYWORD:
-                    handleEndOfVerifyStatement(mockList, parsedTestSuiteLines);
+                    handleEndOfVerifyStatement(parsedTestSuiteLines);
                     break;
 
                 case Constants.TO_BE_KEYWORD:
@@ -546,7 +557,14 @@ public class TestSuiteParser {
         }
     }
 
-    private void handleEndOfVerifyStatement (MockRepository mockRepository, List<String> parsedTestSuiteLines){
+    /**
+     * Finds the mock, that the current verify statement is referencing and attaches it.
+     * Generates lines for verify statement and adds them to the given list.
+     * @param parsedTestSuiteLines The parsed lines, that the generated lines are appended to
+     * @throws VerifyReferencesNonexistentMockException if referenced mock, does not exist
+     * @return - the next token from the testSuiteReader.
+     */
+    public void handleEndOfVerifyStatement (List<String> parsedTestSuiteLines){
         verifyInProgress = false;
         currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(),
                 currentTestSuiteName, currentTestCaseName));
@@ -556,9 +574,6 @@ public class TestSuiteParser {
                     currentVerify.getIdentifier() + " in the scope of testsuite: " + currentTestSuiteName +
                     ", testcase: " + currentTestCaseName);
         }
-
-        //TODO:Check if multiple verifies are made for a single mock
-
         addLinesForCurrentVerifyStatement(parsedTestSuiteLines);
     }
 
@@ -680,26 +695,19 @@ public class TestSuiteParser {
 
             //Set comparison
             if (currentVerify.isSetToAtLeast()){
-                parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_EXACT, testCodePrefix, "FALSE"));
                 parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_AT_LEAST, testCodePrefix, "TRUE"));
-                parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_NO_MORE_THAN, testCodePrefix, "FALSE"));
             }
             else{
                 if (currentVerify.isSetToNoMoreThan()){
-                    parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_EXACT, testCodePrefix, "FALSE"));
-                    parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_AT_LEAST, testCodePrefix, "FALSE"));
                     parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_NO_MORE_THAN, testCodePrefix, "TRUE"));
                 }
                 else {
                     parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_EXACT, testCodePrefix, "TRUE"));
-                    parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_AT_LEAST, testCodePrefix, "FALSE"));
-                    parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_NO_MORE_THAN, testCodePrefix, "FALSE"));
                 }
 
             }
-
-            parsedTestSuiteLines.add(String.format(COBOL_PERFORM_ASSERTACCESS, testCodePrefix));
-            currentVerify = null;
+            parsedTestSuiteLines.add(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix));
+            parsedTestSuiteLines.add(String.format(COBOL_PERFORM_ASSERT_ACCESS, testCodePrefix));
     }
 
 
@@ -753,7 +761,8 @@ public class TestSuiteParser {
     List<String> getLinesForCurrentMock(BufferedReader testSuiteReader){
         List<String> lines = new ArrayList<>();
         String line;
-        while (!(line = readNextLineFromTestSuite(testSuiteReader)).toUpperCase().contains(Constants.ENDMOCK_KEYWORD)){
+        while ((line = readNextLineFromTestSuite(testSuiteReader)) != null &&
+                !line.toUpperCase().contains(Constants.ENDMOCK_KEYWORD)){
             lines.add(line);
         }
         return lines;

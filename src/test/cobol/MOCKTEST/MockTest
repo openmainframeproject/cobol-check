@@ -39,6 +39,7 @@
            PERFORM 000-START
            Expect VALUE-1 to be "I'll leave VALUE-2 alone"
            Expect VALUE-2 to be "a mock"
+           VERIFY SECTION 000-START HAPPENED 5 TIMES
            VERIFY SECTION 100-WELCOME HAPPENED NO MORE THAN 10 TIMES
            VERIFY SECTION 500-SWITCH NEVER HAPPENED
 

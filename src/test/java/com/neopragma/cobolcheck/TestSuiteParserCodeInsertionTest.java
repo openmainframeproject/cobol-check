@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.testSuiteParser.MockRepository;
 import com.neopragma.cobolcheck.features.writer.CobolWriter;
 import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
 import com.neopragma.cobolcheck.services.StringHelper;
@@ -242,7 +243,7 @@ public class TestSuiteParserCodeInsertionTest {
         mockedConfig = Mockito.mockStatic(Config.class);
         mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), new MockRepository());
     }
 
     @AfterEach
@@ -251,7 +252,7 @@ public class TestSuiteParserCodeInsertionTest {
     }
 
     @Test
-    public void it_recognizes_the_end_of_a_user_written_cobol_statement_when_it_encounters_a_cobolcheck_keyword_that_can_follow_a_user_written_statement() throws IOException {
+    public void it_recognizes_the_end_of_a_user_written_cobol_statement_when_it_encounters_a_cobolcheck_keyword_that_can_follow_a_user_written_statement() {
         List<String> actualResult;
         List<String> expectedResult = new ArrayList<>();
         String testSuite = "            MOVE \"alpha\" TO WS-FIELDNAME                                           " +
@@ -264,7 +265,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.add(expected2);
 
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite));
-        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, null);
+        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields);
 
         assertEquals(expectedResult, actualResult);
     }
@@ -294,9 +295,11 @@ public class TestSuiteParserCodeInsertionTest {
         String expected1 = "           MOVE \"Test Case Name\"";
         String expected2 = "               TO UT-TEST-CASE-NAME";
         String expected3 = "           PERFORM UT-BEFORE";
+        String expected4 = "           PERFORM UT-INITIALIZE-MOCK-COUNT";
         expectedResult.add(expected1);
         expectedResult.add(expected2);
         expectedResult.add(expected3);
+        expectedResult.add(expected4);
 
         testSuiteParser.addTestCaseNameLines("\"Test Case Name\"", actualResult);
         assertEquals(expectedResult, actualResult);
@@ -318,7 +321,7 @@ public class TestSuiteParserCodeInsertionTest {
             String testSuiteInput,
             String fieldName,
             DataType dataType,
-            String expectedResult) throws IOException {
+            String expectedResult) {
 
         List<String> actualResult;
         List<String> expectedResultList = new ArrayList<>();
@@ -329,7 +332,7 @@ public class TestSuiteParserCodeInsertionTest {
 
         lenient().doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, null);
+        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields);
         assertEquals(expectedResultList, actualResult);
     }
     private static Stream<Arguments> expectationCheckProvider() {

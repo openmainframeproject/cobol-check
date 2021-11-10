@@ -40,8 +40,8 @@ public class TestSuiteParserController {
 
     public TestSuiteParserController(String testFileNames) {
         testSuiteConcatenator = new TestSuiteConcatenator(testFileNames);
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         mockRepository = new MockRepository();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -49,8 +49,8 @@ public class TestSuiteParserController {
     //Used for testing only
     public TestSuiteParserController(BufferedReader reader) {
         testSuiteReader = reader;
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         mockRepository = new MockRepository();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -86,7 +86,7 @@ public class TestSuiteParserController {
      * @param numericFields numeric field values gathered from Interpreter
      */
     public void parseTestSuites(NumericFields numericFields){
-        parsedTestSuiteLines = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, mockRepository);
+        parsedTestSuiteLines = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields);
     }
 
 
@@ -108,11 +108,22 @@ public class TestSuiteParserController {
         lines.addAll(getBoilerplateCodeFromCopybooks(workingStorageCopybookFilename));
 
         //Generates the variables used for counting
-        lines.addAll(mockGenerator.generateWorkingStorageMockCountLines(mockRepository.getMocks()));
+        lines.addAll(generateMockCountingFields());
 
         workingStorageTestCodeHasBeenInserted = true;
 
         return lines;
+    }
+
+    /**Generates the lines for keeping track of mock counting
+     * For each mock a variable are created for:
+     * - Current count
+     * - Expected count
+     * - Mock operation (string showing type and identity)
+     * @return The generated lines
+     */
+    public List<String> generateMockCountingFields(){
+        return mockGenerator.generateWorkingStorageMockCountLines(mockRepository.getMocks());
     }
 
     /**
@@ -137,10 +148,18 @@ public class TestSuiteParserController {
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
 
-        lines.addAll(mockGenerator.generateMockCountInitializer(mockRepository.getMocks()));
+        lines.addAll(generateMockCountInitializer());
 
         lines.addAll(generateMockSections(true));
         return lines;
+    }
+
+    /**Generates the lines for the initializer section.
+     * This resets the current count and expected count of all global mocks in cobol.
+     * @return The generated lines
+     */
+    public List<String> generateMockCountInitializer(){
+        return mockGenerator.generateMockCountInitializer(mockRepository.getMocks());
     }
 
     /**Generates the lines for SECTIONs based on mocks,
@@ -181,7 +200,8 @@ public class TestSuiteParserController {
      */
     private List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
         List<String> lines = new ArrayList<>();
-        InputStream is = this.getClass().getResourceAsStream(Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename);
+        String path = Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename;
+        InputStream is = this.getClass().getResourceAsStream(path);
         BufferedReader secondarySourceBufferedReader = new BufferedReader(new InputStreamReader(is));
         String secondarySourceLine = Constants.EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {

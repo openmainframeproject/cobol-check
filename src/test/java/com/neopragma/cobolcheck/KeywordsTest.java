@@ -108,7 +108,8 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("5473.19");
         assertEquals(Constants.NUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
-        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
+        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN, Constants.TIME_KEYWORD,
+                Constants.TIMES_KEYWORD), keyword.validNextKey());
     }
 
     @Test
