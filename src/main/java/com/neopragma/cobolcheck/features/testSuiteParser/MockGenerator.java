@@ -109,7 +109,7 @@ public class MockGenerator {
         for (Mock mock : mocks){
             lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(02) VALUE ZERO.");
             lines.add("           05  " + mock.getGeneratedMockCountExpectedIdentifier() + "    PIC 9(02) VALUE ZERO.");
-            lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(20)");
+            lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(40)");
             lines.add("                   VALUE \"" + mock.getMockDisplayString() + "\".");
         }
         return lines;

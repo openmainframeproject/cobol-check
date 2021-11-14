@@ -170,8 +170,11 @@ public class InterpreterController {
     /**Updates possibleMockIdentifier if a specific part of the program was just entered.
      * @param line - The line the update is based upon
      */
-    private void updatePossibleMock(CobolLine line) {
+    private void updatePossibleMock(CobolLine line) throws IOException {
         if (didLineJustEnter(Constants.SECTION_TOKEN)){
+            possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
+        }
+        if (Interpreter.isParagraphHeader(line, reader.peekNextMeaningfulLine(), reader.getState())){
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
         }
     }

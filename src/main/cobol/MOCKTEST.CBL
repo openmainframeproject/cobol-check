@@ -24,42 +24,46 @@
            PERFORM 400-CHANGE-2
            PERFORM 500-SWITCH
            PERFORM 999-END
-           .
+           EXIT SECTION.
 
        100-WELCOME SECTION.
-          MOVE "Hello" to VALUE-1
-          MOVE "Hi" to VALUE-2
+           MOVE "Hello" to VALUE-1
+           MOVE "Hi" to VALUE-2
+              EXIT SECTION
           .
 
        200-GOODBYE SECTION.
-          MOVE "Bye" to VALUE-1
-          MOVE "See you" to VALUE-2
+      * Comment for testing purposes
+           MOVE "Bye" to VALUE-1
+           MOVE "See you" to VALUE-2
+              EXIT SECTION
           .
 
-       300-CHANGE-1 SECTION.
-          EVALUATE VALUE-1
-          WHEN "Hello"
-            MOVE "Bye" TO VALUE-1
-          WHEN OTHER
-            MOVE "Hello" TO VALUE-1
-          END-EVALUATE
+       300-CHANGE-1.
+           EVALUATE VALUE-1
+           WHEN "Hello"
+              MOVE "Bye" TO VALUE-1
+           WHEN OTHER
+              MOVE "Hello" TO VALUE-1
+           END-EVALUATE
           .
 
-       400-CHANGE-2 SECTION.
+       400-CHANGE-2
+          .
           EVALUATE VALUE-2
-          WHEN "Hi"
-            MOVE "See you" TO VALUE-2
-          WHEN OTHER
-            MOVE "Hi" TO VALUE-2
-          END-EVALUATE
+           WHEN "Hi"
+              MOVE "See you" TO VALUE-2
+           WHEN OTHER
+              MOVE "Hi" TO VALUE-2
+           END-EVALUATE
           .
 
-       500-SWITCH SECTION.
-          MOVE VALUE-2 TO TEMP
-          MOVE VALUE-1 TO VALUE-2
-          MOVE TEMP TO VALUE-1
-          .
+       500-SWITCH.
+           MOVE VALUE-2 TO TEMP
+           MOVE VALUE-1 TO VALUE-2
+           MOVE TEMP TO VALUE-1
+           .
 
-       999-END SECTION.
+       999-END.
            GOBACK
            .

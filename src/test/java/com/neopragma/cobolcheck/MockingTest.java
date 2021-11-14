@@ -133,6 +133,21 @@ public class MockingTest {
     }
 
     @Test
+    public void paragraph_mock_gets_paragraph_type() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK PARAGRAPH 000-START";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals("PARAGRAPH", mockRepository.getMocks().get(0).getType());
+    }
+
+    @Test
     public void mock_gets_correct_lines() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
@@ -226,6 +241,41 @@ public class MockingTest {
         expected.add("       1-1-1-MOCK SECTION.");
         expected.add("      *****************************************************************");
         expected.add("      *Local mock of: SECTION: 000-START");
+        expected.add("      *In testsuite: \"Name of test suite\"");
+        expected.add("      *In testcase: \"Name of test case\"");
+        expected.add("      *****************************************************************");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
+        expected.add(str4);
+        expected.add(str5);
+        expected.add("       .");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockSections(true);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void single_mock_paragraph_gets_generated_correctly_with_comment() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK PARAGRAPH 000-START";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("      *****************************************************************");
+        expected.add("      *Sections called when mocking");
+        expected.add("      *****************************************************************");
+        expected.add("       1-1-1-MOCK SECTION.");
+        expected.add("      *****************************************************************");
+        expected.add("      *Local mock of: PARAGRAPH: 000-START");
         expected.add("      *In testsuite: \"Name of test suite\"");
         expected.add("      *In testcase: \"Name of test case\"");
         expected.add("      *****************************************************************");
