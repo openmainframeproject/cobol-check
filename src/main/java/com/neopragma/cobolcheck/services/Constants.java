@@ -103,7 +103,7 @@ public final class Constants {
     public static final String TESTS_OPTION = "tests";
     public static final String PROGRAMS_OPTION = "programs";
 
-    // Special values the Generator looks for in the source of the program under test
+    // Special values the Interpreter looks for in the source of the program under test
     public static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
     public static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
     public static final String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
@@ -123,6 +123,10 @@ public final class Constants {
     public static final String COPY_TOKEN = "COPY";
     public static final String SECTION_TOKEN = "SECTION";
     public static final String DECLARATIVES_TOKEN = "DECLARATIVES";
+    public static final String EXIT_TOKEN = "EXIT";
+    public static final String END_SECTION_TOKEN = "END-SECTION";
+    public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
+
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";

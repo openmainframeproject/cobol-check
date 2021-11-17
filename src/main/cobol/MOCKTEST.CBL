@@ -30,7 +30,7 @@
            MOVE "Hello" to VALUE-1
            MOVE "Hi" to VALUE-2
               EXIT SECTION
-          .
+              .
 
        200-GOODBYE SECTION.
       * Comment for testing purposes
@@ -39,14 +39,17 @@
               EXIT SECTION
           .
 
-       300-CHANGE-1.
+       300-CHANGE-1
+      *Comment for testing purposes
+       .
            EVALUATE VALUE-1
            WHEN "Hello"
               MOVE "Bye" TO VALUE-1
-           WHEN OTHER
+           WHEN "Bye"
               MOVE "Hello" TO VALUE-1
-           END-EVALUATE
-          .
+           WHEN OTHER
+              EXIT PARAGRAPH
+           END-EVALUATE.
 
        400-CHANGE-2
           .
@@ -61,8 +64,7 @@
        500-SWITCH.
            MOVE VALUE-2 TO TEMP
            MOVE VALUE-1 TO VALUE-2
-           MOVE TEMP TO VALUE-1
-           .
+           MOVE TEMP TO VALUE-1.
 
        999-END.
            GOBACK

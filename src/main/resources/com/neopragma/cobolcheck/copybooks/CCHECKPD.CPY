@@ -159,30 +159,30 @@
               MOVE SPACES TO ==UT==LABEL-EXPECTED-ACCESS-PL
            ELSE
               MOVE ==UT==CONST-ES TO ==UT==LABEL-EXPECTED-ACCESS-PL
-           END-IF      
+           END-IF
 
            SET ==UT==VERIFY-FAILED TO TRUE
            EVALUATE TRUE
                WHEN ==UT==VERIFY-AT-LEAST
+                    MOVE ==UT==VERIFY-AT-LEAST-STRING TO
+                        ==UT==LABEL-VERIFY-COMPARE
                     IF ==UT==ACTUAL-ACCESSES IS GREATER THAN OR EQUAL TO
                             ==UT==EXPECTED-ACCESSES
                         SET ==UT==VERIFY-PASSED TO TRUE
-                        MOVE ==UT==VERIFY-AT-LEAST-STRING TO
-                            ==UT==LABEL-VERIFY-COMPARE
                     END-IF
                WHEN ==UT==VERIFY-NO-MORE-THAN
+                    MOVE ==UT==VERIFY-NO-MORE-THAN-STRING TO
+                        ==UT==LABEL-VERIFY-COMPARE
                     IF ==UT==ACTUAL-ACCESSES IS LESS THAN OR EQUAL TO
                             ==UT==EXPECTED-ACCESSES
                         SET ==UT==VERIFY-PASSED TO TRUE
-                        MOVE ==UT==VERIFY-NO-MORE-THAN-STRING TO
-                            ==UT==LABEL-VERIFY-COMPARE
                     END-IF
                WHEN OTHER
+                    MOVE ==UT==VERIFY-EXACT-STRING TO
+                        ==UT==LABEL-VERIFY-COMPARE
                     IF ==UT==ACTUAL-ACCESSES IS EQUAL TO
                             ==UT==EXPECTED-ACCESSES
                         SET ==UT==VERIFY-PASSED TO TRUE
-                        MOVE ==UT==VERIFY-EXACT-STRING TO
-                            ==UT==LABEL-VERIFY-COMPARE
                     END-IF
            END-EVALUATE
 
@@ -195,7 +195,7 @@
                       ==UT==LABEL-EXPECTED-ACCESS ' '
                       'TO ' ==UT==MOCK-OPERATION
 
-           ELSE 
+           ELSE
                ADD 1 TO ==UT==NUMBER-FAILED
                MOVE SPACES TO ==UT==DISPLAY-MESSAGE
                STRING

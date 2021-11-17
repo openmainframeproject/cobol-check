@@ -370,7 +370,8 @@ public class MockingTest {
 
         List<String> expected = new ArrayList<>();
         expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
-        expected.add("                WHEN \"Name of test suite\" ALSO ANY");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                ALSO ANY");
         expected.add("                    PERFORM 1-0-1-MOCK");
         expected.add("           WHEN OTHER");
 
@@ -379,7 +380,7 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START");
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
 
         assertEquals(expected, actual);
     }
@@ -395,7 +396,8 @@ public class MockingTest {
 
         List<String> expected = new ArrayList<>();
         expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
-        expected.add("                WHEN \"Name of test suite\" ALSO \"Name of test case\"");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                ALSO \"Name of test case\"");
         expected.add("                    PERFORM 1-1-1-MOCK");
         expected.add("           WHEN OTHER");
 
@@ -404,7 +406,7 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START");
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
 
         assertEquals(expected, actual);
     }
@@ -439,19 +441,24 @@ public class MockingTest {
 
         List<String> expected1 = new ArrayList<>();
         expected1.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
-        expected1.add("                WHEN \"Name of test suite\" ALSO \"Name of test case\"");
+        expected1.add("                WHEN \"Name of test suite\"");
+        expected1.add("                ALSO \"Name of test case\"");
         expected1.add("                    PERFORM 1-1-1-MOCK");
-        expected1.add("                WHEN \"Name of test suite\" ALSO \"test case 2\"");
+        expected1.add("                WHEN \"Name of test suite\"");
+        expected1.add("                ALSO \"test case 2\"");
         expected1.add("                    PERFORM 1-2-1-MOCK");
-        expected1.add("                WHEN \"Test suite 2\" ALSO \"test case 1\"");
+        expected1.add("                WHEN \"Test suite 2\"");
+        expected1.add("                ALSO \"test case 1\"");
         expected1.add("                    PERFORM 2-1-1-MOCK");
-        expected1.add("                WHEN \"Name of test suite\" ALSO ANY");
+        expected1.add("                WHEN \"Name of test suite\"");
+        expected1.add("                ALSO ANY");
         expected1.add("                    PERFORM 1-0-1-MOCK");
         expected1.add("           WHEN OTHER");
 
         List<String> expected2 = new ArrayList<>();
         expected2.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
-        expected2.add("                WHEN \"Name of test suite\" ALSO \"Name of test case\"");
+        expected2.add("                WHEN \"Name of test suite\"");
+        expected2.add("                ALSO \"Name of test case\"");
         expected2.add("                    PERFORM 1-1-2-MOCK");
         expected2.add("           WHEN OTHER");
 
@@ -462,8 +469,8 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual1 = testSuiteParserController.generateMockPerformCalls("000-START");
-        List<String> actual2 = testSuiteParserController.generateMockPerformCalls("100-START");
+        List<String> actual1 = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
+        List<String> actual2 = testSuiteParserController.generateMockPerformCalls("100-START", Constants.SECTION_TOKEN);
 
         assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
@@ -482,7 +489,7 @@ public class MockingTest {
         expected.add("       01  UT-MOCKS-GENERATED.");
         expected.add("           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.");
         expected.add("           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.");
-        expected.add("           05  UT-1-1-1-MOCK-NAME        PIC X(20)");
+        expected.add("           05  UT-1-1-1-MOCK-NAME        PIC X(40)");
         expected.add("                   VALUE \"SECTION 000-START\".");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);

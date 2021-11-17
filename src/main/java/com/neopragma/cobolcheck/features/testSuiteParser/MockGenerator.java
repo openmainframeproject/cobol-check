@@ -8,7 +8,8 @@ import java.util.List;
 public class MockGenerator {
 
     private final String evaluateStartLine = "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME";
-    private final String whenFormat = "                WHEN %1$s ALSO %2$s";
+    private final String whenFormat1 = "                WHEN %s";
+    private final String whenFormat2 = "                ALSO %s";
     private final String performFormat = "                    PERFORM %s";
     private final String whenOtherLine = "           WHEN OTHER";
     private final String endEvaluateLine = "            END-EVALUATE";
@@ -73,21 +74,25 @@ public class MockGenerator {
      * @param mocks - All mocks in all tests
      * @return The generated lines
      */
-    List<String> generateMockPerformCalls(String identifier, List<Mock> mocks){
+    List<String> generateMockPerformCalls(String identifier, String type, List<Mock> mocks){
         List<String> resultLines = new ArrayList<>();
         List<String> localLines = new ArrayList<>();
         List<String> globalLines = new ArrayList<>();
         resultLines.add(evaluateStartLine);
 
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
                 if (mock.getScope() == MockScope.Local){
-                    localLines.add(String.format(whenFormat, mock.getTestSuiteName(), mock.getTestCaseName()));
+                    localLines.add(String.format(whenFormat1, mock.getTestSuiteName()));
+                    localLines.add(String.format(whenFormat2, mock.getTestCaseName()));
                     localLines.add(String.format(performFormat, mock.getGeneratedMockIdentifier()));
+                    mock.markAsUsed();
                 }
                 if (mock.getScope() == MockScope.Global){
-                    globalLines.add(String.format(whenFormat, mock.getTestSuiteName(), anyKeyword));
+                    globalLines.add(String.format(whenFormat1, mock.getTestSuiteName()));
+                    globalLines.add(String.format(whenFormat2, anyKeyword));
                     globalLines.add(String.format(performFormat, mock.getGeneratedMockIdentifier()));
+                    mock.markAsUsed();
                 }
             }
         }

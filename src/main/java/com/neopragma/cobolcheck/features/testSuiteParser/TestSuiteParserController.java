@@ -6,6 +6,7 @@ import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
+import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -170,8 +171,8 @@ public class TestSuiteParserController {
         return mockGenerator.generateMockSections(mockRepository.getMocks(), withComments);
     }
 
-    public boolean mockExistsFor(String identifier){
-        return mockRepository.mockExistsFor(identifier);
+    public boolean mockExistsFor(String identifier, String type){
+        return mockRepository.mockExistsFor(identifier, type);
     }
 
     /**Generates the lines for 'Evaluate when' to perform the correct generated SECTION
@@ -179,8 +180,8 @@ public class TestSuiteParserController {
      * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
      * @return The generated lines
      */
-    public List<String> generateMockPerformCalls(String identifier){
-        return mockGenerator.generateMockPerformCalls(identifier, mockRepository.getMocks());
+    public List<String> generateMockPerformCalls(String identifier, String type){
+        return mockGenerator.generateMockPerformCalls(identifier, type, mockRepository.getMocks());
     }
     /**This line should be inserted at the end of a mocked component,
      * to end the EVALUATE started in the beginning of the mock.
@@ -188,6 +189,14 @@ public class TestSuiteParserController {
      */
     public String getEndEvaluateLine(){
         return mockGenerator.getEndEvaluateLine();
+    }
+
+    public void logUnusedMocks(){
+        for (Mock mock : mockRepository.getMocks()){
+            if (!mock.isUsed()){
+                Log.warn(Messages.get("WRN004", mock.getMockDescription()));
+            }
+        }
     }
 
     /**

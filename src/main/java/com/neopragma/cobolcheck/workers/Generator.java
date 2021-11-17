@@ -88,11 +88,13 @@ public class Generator {
         try {
             while ((sourceLine = interpreter.interpretNextLine()) != null) {
                 processingBeforeEchoingSourceLineToOutput();
+                sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
 
                 writeToSource(sourceLine);
 
                 processingAfterEchoingSourceLineToOutput();
             }
+            testSuiteParserController.logUnusedMocks();
         } catch (IOException ioEx) {
             throw new CobolSourceCouldNotBeReadException(ioEx);
         }
@@ -118,13 +120,21 @@ public class Generator {
                         interpreter.getFileSectionStatements()));
             }
         }
+    }
 
+    private String tryInsertEndEvaluateAtMockedCompomentEnd(String sourceLine) throws IOException {
         if (waitingForMockedComponentToEnd){
-            if (interpreter.doesCurrentLineEndInPeriod()){
-                waitingForMockedComponentToEnd = false;
-                writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
+            if (interpreter.doesCurrentLineEndCurrentComponent()){
+                if (interpreter.shouldEndEvaluateBeInsertedBeforeLine(sourceLine)){
+                    waitingForMockedComponentToEnd = false;
+                    writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
+                }
+                else {
+                    return sourceLine.replace(".", "");
+                }
             }
         }
+        return sourceLine;
     }
 
     /**
@@ -176,8 +186,9 @@ public class Generator {
 
         if (interpreter.isCurrentComponentMockable()){
             String identifier = interpreter.getPossibleMockIdentifier();
-            if (testSuiteParserController.mockExistsFor(identifier)){
-                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier));
+            String type = interpreter.getPossibleMockType();
+            if (testSuiteParserController.mockExistsFor(identifier, type)){
+                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type));
                 waitingForMockedComponentToEnd = true;
             }
         }

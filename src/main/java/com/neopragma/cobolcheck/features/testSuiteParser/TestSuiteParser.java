@@ -401,7 +401,7 @@ public class TestSuiteParser {
                         currentMock.setType(testSuiteToken);
                     }
                     else {
-                        //Do something
+                        currentVerify.setType(testSuiteToken);
                     }
 
                     break;
@@ -460,6 +460,7 @@ public class TestSuiteParser {
             switch (nextAction) {
                 case TESTSUITE_NAME:
                     currentTestSuiteName = testSuiteToken;
+                    currentTestCaseName = "";
                     testSuiteNumber += 1;
                     testCaseNumber = 0;
                     mockNumber = 0;
@@ -566,13 +567,13 @@ public class TestSuiteParser {
      */
     public void handleEndOfVerifyStatement (List<String> parsedTestSuiteLines){
         verifyInProgress = false;
-        currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(),
+        currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(), currentVerify.getType(),
                 currentTestSuiteName, currentTestCaseName));
 
         if (currentVerify.getAttachedMock() == null){
             throw new VerifyReferencesNonexistentMockException("Cannot verify nonexistent mock for: " +
-                    currentVerify.getIdentifier() + " in the scope of testsuite: " + currentTestSuiteName +
-                    ", testcase: " + currentTestCaseName);
+                    currentVerify.getType() + " " + currentVerify.getIdentifier() + " in the scope of testsuite: " +
+                    currentTestSuiteName + ", testcase: " + currentTestCaseName);
         }
         addLinesForCurrentVerifyStatement(parsedTestSuiteLines);
     }

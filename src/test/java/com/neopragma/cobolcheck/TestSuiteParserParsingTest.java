@@ -361,7 +361,7 @@ public class TestSuiteParserParsingTest {
         testSuite.append( "       END-MOCK");
         testSuite.append( "       VERIFY SECTION 100-WELCOME HAPPENED ONCE");
 
-        String expectedResult = "Cannot verify nonexistent mock for: 100-WELCOME in the scope of testsuite:" +
+        String expectedResult = "Cannot verify nonexistent mock for: SECTION 100-WELCOME in the scope of testsuite:" +
                 " \"Name of test suite\", testcase: \"Name of test case\"";
 
         Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () ->
