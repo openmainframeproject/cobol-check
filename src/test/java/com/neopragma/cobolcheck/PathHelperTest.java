@@ -1,5 +1,7 @@
 package com.neopragma.cobolcheck;
+import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.filehelpers.PathHelper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -14,6 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PathHelperTest {
+
+    @BeforeAll
+    static void oneTimeSetup() {
+        Config.load("testconfig.properties");
+    }
 
     @Test
     void cobol_source_directory_exists() {
