@@ -1,13 +1,11 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
-import com.neopragma.cobolcheck.features.TestSuiteConcatenator;
+import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteConcatenator;
+import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
-import com.neopragma.cobolcheck.services.Messages;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TestSuiteConcatenatorIT {
@@ -40,10 +37,9 @@ public class TestSuiteConcatenatorIT {
             testSuiteReader.close();
         }
 
-        TestSuiteConcatenator concat = new TestSuiteConcatenator("GreetingByType");
+        TestSuiteParserController tspController = new TestSuiteParserController("GreetingByType");
+        tspController.concatenateTestSuites("src/test/cobol/GREETING/");
 
-        Reader concatenatedTestSuite =
-                concat.concatenateTestSuites("src/test/cobol/GREETING/");
         StringBuilder actualResult = new StringBuilder();
         testSuiteReader = new BufferedReader(new FileReader(pathToResults));
         while ((line = testSuiteReader.readLine()) != null) {

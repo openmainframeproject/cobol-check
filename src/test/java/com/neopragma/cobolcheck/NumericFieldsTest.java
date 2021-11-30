@@ -1,7 +1,7 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.parser.NumericFields;
+import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

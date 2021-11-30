@@ -48,6 +48,7 @@
            05  ==UT==ACTUAL-ACCESSES-FMT    PIC Z,ZZ9.
            05  ==UT==FAILED                 PIC X(11)  VALUE "**** FAIL: ".
            05  ==UT==PASSED                 PIC X(11)  VALUE "     PASS: ".
+           05  ==UT==TEST-SUITE-NAME        PIC X(80)  VALUE SPACES.
            05  ==UT==TEST-CASE-NAME         PIC X(80)  VALUE SPACES.
            05  ==UT==TEST-CASE-NUMBER       PIC ZZ9.
            05  ==UT==RETCODE                PIC 9(4)   VALUE ZERO.
