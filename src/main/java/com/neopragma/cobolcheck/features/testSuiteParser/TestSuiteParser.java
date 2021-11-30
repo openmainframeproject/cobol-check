@@ -368,6 +368,7 @@ public class TestSuiteParser {
             switch (nextAction) {
                 case TESTSUITE_NAME:
                     currentTestSuiteName = testSuiteToken;
+                    currentTestCaseName = "";
                     testSuiteNumber += 1;
                     testCaseNumber = 0;
                     mockNumber = 0;
