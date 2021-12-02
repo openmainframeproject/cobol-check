@@ -207,7 +207,7 @@ public class TestSuiteParserController {
      * @return A list of the gathered lines
      * @throws IOException - pass any IOExceptions to the caller.
      */
-    private List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
+    public List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
         List<String> lines = new ArrayList<>();
         String path = Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename;
         InputStream is = this.getClass().getResourceAsStream(path);

@@ -44,9 +44,20 @@ public class Generator {
 
     List<String> matchingTestDirectories;
 
-    public Generator() {
+    public Generator() { }
 
+    /**
+     * For testing only
+     */
+    public Generator(InterpreterController interpreter, WriterController writerController,
+                     TestSuiteParserController testSuiteParserController) {
+        this.interpreter = interpreter;
+        this.writerController = writerController;
+        this.testSuiteParserController = testSuiteParserController;
+        mergeTestSuite();
     }
+
+
 
     /**
      * Finds any test-directory that matches the given program name. For each of these directories, all test

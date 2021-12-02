@@ -145,11 +145,13 @@ public class InterpreterController {
      */
     public String interpretNextLine(){
         CobolLine line;
-        if (nextFakeLine != null){
-            String tempLine = nextFakeLine;
-            nextFakeLine = null;
-            return tempLine;
+
+        resetPossibleMockValues();
+        String fakeLine;
+        if ((fakeLine = getNextFakeLineIfExists()) != null){
+            return fakeLine;
         }
+
         try{
             line = reader.readLine();
 
@@ -201,7 +203,6 @@ public class InterpreterController {
         }
 
         if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)){
-            possibleMockIdentifier = null;
             updatePossibleMock(line);
             tryReadBatchFileIOStatement();
         }
@@ -407,5 +408,19 @@ public class InterpreterController {
             stringLines.add(l.getOriginalString());
         }
         return stringLines;
+    }
+
+    private void resetPossibleMockValues(){
+        possibleMockIdentifier = null;
+        possibleMockType = null;
+    }
+
+    private String getNextFakeLineIfExists(){
+        if (nextFakeLine != null){
+            String tempLine = nextFakeLine;
+            nextFakeLine = null;
+            return tempLine;
+        }
+        return null;
     }
 }

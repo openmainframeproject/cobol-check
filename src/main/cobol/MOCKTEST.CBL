@@ -26,7 +26,8 @@
            PERFORM 999-END
            EXIT SECTION.
 
-       100-WELCOME SECTION.
+       100-WELCOME SECTION
+           .
            MOVE "Hello" to VALUE-1
            MOVE "Hi" to VALUE-2
               EXIT SECTION
