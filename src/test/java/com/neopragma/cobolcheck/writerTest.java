@@ -44,10 +44,10 @@ public class writerTest {
 
     @Test
     void it_formats_a_Cobol_continuation_line_based_on_a_long_String_value() throws IOException {
-        String originalText = "           TESTCASE: ''This testcase name makes the line far, far too long for Cobol.''";
-        String expectedLine1 = "           TESTCASE: ''This testcase name makes the line far, far too lo        ";
+        String originalText = "           TESTCASE: \"This testcase name makes the line far, far too long for Cobol.\"";
+        String expectedLine1 = "           TESTCASE: \"This testcase name makes the line far, far too lon        ";
         expectedLine1 += Constants.NEWLINE;
-        String expectedLine2 = "      -    \"ng for Cobol.''                                                     ";
+        String expectedLine2 = "      -    \"g for Cobol.\"                                                       ";
         expectedLine2 += Constants.NEWLINE;
         writerController.writeLine(originalText);
         assertEquals(expectedLine1 + expectedLine2, writer.toString());
@@ -55,16 +55,16 @@ public class writerTest {
 
     @Test
     void it_formats_a_Cobol_continuation_line_based_on_a_long_String_value_into_4_lines() throws IOException {
-        String originalText = "           TESTCASE: ''This testcase name makes the line far, far too " +
+        String originalText = "           TESTCASE: 'This testcase name makes the line far, far tooo " +
                 "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-                "oooooooooooooooooooooooooooooooooooooong for Cobol.''";
-        String expectedLine1 = "           TESTCASE: ''This testcase name makes the line far, far too lo        ";
+                "oooooooooooooooooooooooooooooooooooooong for Cobol.'";
+        String expectedLine1 = "           TESTCASE: 'This testcase name makes the line far, far tooo lo        ";
         expectedLine1 += Constants.NEWLINE;
-        String expectedLine2 = "      -    \"oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        String expectedLine2 = "      -    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
         expectedLine2 += Constants.NEWLINE;
-        String expectedLine3 = "      -    \"oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        String expectedLine3 = "      -    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
         expectedLine3 += Constants.NEWLINE;
-        String expectedLine4 = "      -    \"ng for Cobol.''                                                     ";
+        String expectedLine4 = "      -    'ng for Cobol.'                                                      ";
         expectedLine4 += Constants.NEWLINE;
         writerController.writeLine(originalText);
         assertEquals(expectedLine1 + expectedLine2 + expectedLine3 + expectedLine4, writer.toString());
@@ -81,6 +81,34 @@ public class writerTest {
         String expectedLine3 = "      * ng, that it needs to be multiple lines.                                 ";
         expectedLine3 += Constants.NEWLINE;
         writerController.writeCommentedLine(originalText);
+        assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
+    }
+
+    @Test
+    void it_formats_a_long_Cobol_comment_into_3_lines_without_comment_indicator() throws IOException {
+        String originalText = "        This comment is so loooooooooooooooooooooooooooooooooooooooooooo" +
+                "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong, that it needs to be multiple lines.";
+        String expectedLine1 = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo        ";
+        expectedLine1 += Constants.NEWLINE;
+        String expectedLine2 = "      * oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        expectedLine2 += Constants.NEWLINE;
+        String expectedLine3 = "      * ng, that it needs to be multiple lines.                                 ";
+        expectedLine3 += Constants.NEWLINE;
+        writerController.writeCommentedLine(originalText);
+        assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
+    }
+
+    @Test
+    void it_formats_a_long_Cobol_comment_into_3_lines_without_calling_commentedLine_method() throws IOException {
+        String originalText = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo" +
+                "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong, that it needs to be multiple lines.";
+        String expectedLine1 = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo        ";
+        expectedLine1 += Constants.NEWLINE;
+        String expectedLine2 = "      * oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        expectedLine2 += Constants.NEWLINE;
+        String expectedLine3 = "      * ng, that it needs to be multiple lines.                                 ";
+        expectedLine3 += Constants.NEWLINE;
+        writerController.writeLine(originalText);
         assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
     }
 

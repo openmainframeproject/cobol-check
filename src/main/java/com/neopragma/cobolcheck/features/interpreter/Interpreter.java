@@ -6,6 +6,10 @@ import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ * Used by Writer
+ */
+
 public class Interpreter {
 
     // Source tokens from Procedure Division that begin batch I/O statements
@@ -179,6 +183,10 @@ public class Interpreter {
      */
     public static boolean isComment(CobolLine line) {
         return line.getOriginalString().charAt(commentIndicatorOffset) == commentIndicator;
+    }
+
+    public static boolean isComment(String line) {
+        return line.charAt(commentIndicatorOffset) == commentIndicator;
     }
 
     public static boolean isMeaningful(CobolLine line){

@@ -126,6 +126,7 @@ public final class Constants {
     public static final String EXIT_TOKEN = "EXIT";
     public static final String END_SECTION_TOKEN = "END-SECTION";
     public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
+    public static final String ZERO_TOKEN = "ZERO";
 
 
     public static final String COMP_3_VALUE = "COMP-3";
