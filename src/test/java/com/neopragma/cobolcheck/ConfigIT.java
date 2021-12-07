@@ -15,10 +15,13 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
+import com.neopragma.cobolcheck.services.platform.Platform;
+import com.neopragma.cobolcheck.services.platform.PlatformLookup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +51,7 @@ public class ConfigIT {
 
     @Test
     public void it_throws_when_config_file_is_not_found() {
-        Throwable ex = assertThrows(IOExceptionProcessingConfigFile.class, () -> config.load("bogus name"));
+        Throwable ex = assertThrows(IOExceptionProcessingConfigFile.class, () -> Config.load("bogus name"));
         assertEquals("ERR003: IOException accessing config file <bogus name> in Config.load(configResourceName).",
                 ex.getMessage());
         if (PlatformLookup.get() == Platform.WINDOWS) {

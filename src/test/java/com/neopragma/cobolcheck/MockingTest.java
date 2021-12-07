@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.exceptions.ComponentMockedTwiceInSameScopeException;
 import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
 import com.neopragma.cobolcheck.features.testSuiteParser.MockRepository;
 import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParser;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MockingTest {
 
@@ -492,6 +494,59 @@ public class MockingTest {
 
         assertEquals(expected, actual);
     }
+    @Test
+    public void it_throws_when_identical_mocks_are_in_same_global_scope() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       MOCK SECTION 000-START";
+        String str3 = "          MOVE \"global\" TO this";
+        String str4 = "          MOVE \"mock\" TO other";
+        String str5 = "       END-MOCK";
+        String str6 = "       MOCK SECTION 000-START";
+        String str7 = "          MOVE \"global\" TO this";
+        String str8 = "          MOVE \"mock\" TO other";
+        String str9 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
+                str7, str8, str9, null);
+
+        String expectedMessage = "Mock for 000-START in testsuite: \"Name of test suite\", testcase: N/A" +
+                " already exists in this Global testsuite scope.";
+
+        Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
+                () -> testSuiteParserController.parseTestSuites(numericFields));
+        assertEquals(expectedMessage, ex.getMessage());
+    }
+
+    @Test
+    public void it_throws_when_identical_mocks_are_in_same_local_scope() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK SECTION 000-START";
+        String str4 = "          MOVE \"global\" TO this";
+        String str5 = "          MOVE \"mock\" TO other";
+        String str6 = "       END-MOCK";
+        String str7 = "       MOCK SECTION 000-START";
+        String str8 = "          MOVE \"global\" TO this";
+        String str9 = "          MOVE \"mock\" TO other";
+        String str10 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
+                str7, str8, str9, str10, null);
+
+        String expectedMessage = "Mock for 000-START in testsuite: \"Name of test suite\", testcase: " +
+                "\"Name of test case\" already exists in this Local testcase scope.";
+
+        Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
+                () -> testSuiteParserController.parseTestSuites(numericFields));
+        assertEquals(expectedMessage, ex.getMessage());
+    }
+
+
+
+
+
+
+
 
 
 
