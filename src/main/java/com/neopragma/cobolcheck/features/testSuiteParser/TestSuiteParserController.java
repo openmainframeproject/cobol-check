@@ -19,6 +19,10 @@ public class TestSuiteParserController {
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
 
+    //We parse the test suite early, in order to generate mocks.
+    //Thus, we save the lines we get from parsing, to use them later.
+    private List<String> parsedTestSuiteLines;
+
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
     // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
     private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
@@ -36,8 +40,8 @@ public class TestSuiteParserController {
 
     public TestSuiteParserController(String testFileNames) {
         testSuiteConcatenator = new TestSuiteConcatenator(testFileNames);
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         mockRepository = new MockRepository();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -45,8 +49,8 @@ public class TestSuiteParserController {
     //Used for testing only
     public TestSuiteParserController(BufferedReader reader) {
         testSuiteReader = reader;
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
         mockRepository = new MockRepository();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -75,6 +79,16 @@ public class TestSuiteParserController {
         this.testSuiteReader = new BufferedReader(testSuiteReader);
     }
 
+    /**
+     * Reads through the concatenated testsuites. While reading, test statements, Mocks and Verifiers
+     * will be generated for later use.
+     *
+     * @param numericFields numeric field values gathered from Interpreter
+     */
+    public void parseTestSuites(NumericFields numericFields){
+        parsedTestSuiteLines = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields);
+    }
+
 
     /**
      * Gets the Working-Storage Section test code to be inserted into the program being generated.
@@ -92,19 +106,33 @@ public class TestSuiteParserController {
 
         // Inject boilerplate test code from cobol-check Working-Storage copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(workingStorageCopybookFilename));
+
+        //Generates the variables used for counting
+        lines.addAll(generateMockCountingFields());
+
         workingStorageTestCodeHasBeenInserted = true;
 
         return lines;
     }
 
+    /**Generates the lines for keeping track of mock counting
+     * For each mock a variable are created for:
+     * - Current count
+     * - Expected count
+     * - Mock operation (string showing type and identity)
+     * @return The generated lines
+     */
+    public List<String> generateMockCountingFields(){
+        return mockGenerator.generateWorkingStorageMockCountLines(mockRepository.getMocks());
+    }
+
     /**
      * Gets the PROCEDURE DIVISION test code to be inserted into the program being generated.
      *
-     * @param numericFields numeric field values gathered from Interpreter
      * @return A list of the lines generated
      * @throws IOException - pass any IOExceptions to the caller.
      */
-    public List<String> getProcedureDivisionTestCode(NumericFields numericFields) throws IOException {
+    public List<String> getProcedureDivisionTestCode() throws IOException {
         List<String> lines = new ArrayList<>();
         // Inject test initialization statement
         lines.add(testSuiteParser.getTestInitializationLine());
@@ -114,22 +142,32 @@ public class TestSuiteParserController {
             throw new PossibleInternalLogicErrorException(
                     Messages.get("ERR001", "testSuite", "Generator.runSuite()"));
         }
-        // Parse the concatenated test suite and insert generated Cobol test statements
-        lines.addAll(testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, mockRepository));
+        // Insert generated Cobol test statements, from the testsuite parse
+        lines.addAll(parsedTestSuiteLines);
 
         // Inject boilerplate test code from cobol-check Procedure Division copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
 
-        lines.addAll(generateMockSections());
+        lines.addAll(generateMockCountInitializer());
+
+        lines.addAll(generateMockSections(true));
         return lines;
+    }
+
+    /**Generates the lines for the initializer section.
+     * This resets the current count and expected count of all global mocks in cobol.
+     * @return The generated lines
+     */
+    public List<String> generateMockCountInitializer(){
+        return mockGenerator.generateMockCountInitializer(mockRepository.getMocks());
     }
 
     /**Generates the lines for SECTIONs based on mocks,
      * for each mock in a given list.
      * @return The generated lines
      */
-    public List<String> generateMockSections(){
-        return mockGenerator.generateMockSections(mockRepository.getMocks());
+    public List<String> generateMockSections(boolean withComments){
+        return mockGenerator.generateMockSections(mockRepository.getMocks(), withComments);
     }
 
     public boolean mockExistsFor(String identifier){
@@ -162,7 +200,8 @@ public class TestSuiteParserController {
      */
     private List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
         List<String> lines = new ArrayList<>();
-        InputStream is = this.getClass().getResourceAsStream(Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename);
+        String path = Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename;
+        InputStream is = this.getClass().getResourceAsStream(path);
         BufferedReader secondarySourceBufferedReader = new BufferedReader(new InputStreamReader(is));
         String secondarySourceLine = Constants.EMPTY_STRING;
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {

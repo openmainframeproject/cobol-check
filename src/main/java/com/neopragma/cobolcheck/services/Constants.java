@@ -78,6 +78,14 @@ public final class Constants {
     public static final String MOCK_KEYWORD = "MOCK";
     public static final String MOCK_TYPE = "mock-type";
     public static final String ENDMOCK_KEYWORD = "END-MOCK";
+    public static final String VERIFY_KEYWORD = "VERIFY";
+    public static final String NEVER_HAPPENED_KEYWORD = "NEVER HAPPENED";
+    public static final String HAPPENED_KEYWORD = "HAPPENED";
+    public static final String ONCE_KEYWORD = "ONCE";
+    public static final String AT_LEAST_KEYWORD = "AT LEAST";
+    public static final String NO_MORE_THAN_KEYWORD = "NO MORE THAN";
+    public static final String TIME_KEYWORD = "TIME";
+    public static final String TIMES_KEYWORD = "TIMES";
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";

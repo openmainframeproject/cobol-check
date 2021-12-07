@@ -14,16 +14,54 @@ public class MockGenerator {
     private final String endEvaluateLine = "            END-EVALUATE";
     private final String anyKeyword = "ANY";
 
+
+    /**Generates the lines for keeping track of mock counting
+     * For each mock a variable are created for:
+     * - Current count
+     * - Expected count
+     * - Mock operation (string showing type and identity)
+     * @param mocks - The mocks to generate lines for
+     * @return The generated lines
+     */
+    List<String> generateWorkingStorageMockCountLines(List<Mock> mocks){
+        List<String> lines = new ArrayList<>();
+        lines.add("       01  UT-MOCKS-GENERATED.");
+        lines.addAll(generateMockCountValues(mocks));
+
+        return lines;
+    }
+
+    /**Generates the lines for the initializer section.
+     * This resets the current count and expected count of all global mocks in cobol.
+     * @param mocks - The mocks to generate lines for
+     * @return The generated lines
+     */
+    List<String> generateMockCountInitializer(List<Mock> mocks){
+        List<String> lines = new ArrayList<>();
+        lines.add("       UT-INITIALIZE-MOCK-COUNT SECTION.");
+        lines.add("      *****************************************************************");
+        lines.add(StringHelper.commentOutLine("       Sets all global mock counters and expected count to 0"));
+        lines.add("      *****************************************************************");
+        for (Mock mock : mocks){
+            if (mock.getScope() == MockScope.Global){
+                lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountIdentifier());
+                lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountExpectedIdentifier());
+            }
+        }
+        lines.add("       .");
+        return lines;
+    }
+
     /**Generates the lines for SECTIONs based on mocks,
      * for each mock in a given list.
      * @param mocks - The mocks to generate SECTIONs for
      * @return The generated lines
      */
-    List<String> generateMockSections(List<Mock> mocks){
+    List<String> generateMockSections(List<Mock> mocks, boolean withComments){
 
         List<String> lines = new ArrayList<>(getMockSectionCommentHeader());
         for (Mock mock : mocks){
-            lines.addAll(generateSectionForMock(mock));
+            lines.addAll(generateSectionForMock(mock, withComments));
             lines.add("");
         }
         return lines;
@@ -66,6 +104,17 @@ public class MockGenerator {
         return endEvaluateLine;
     }
 
+    private List<String> generateMockCountValues(List<Mock> mocks) {
+        List<String> lines = new ArrayList<>();
+        for (Mock mock : mocks){
+            lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(02) VALUE ZERO.");
+            lines.add("           05  " + mock.getGeneratedMockCountExpectedIdentifier() + "    PIC 9(02) VALUE ZERO.");
+            lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(20)");
+            lines.add("                   VALUE \"" + mock.getMockDisplayString() + "\".");
+        }
+        return lines;
+    }
+
     private List<String> getMockSectionCommentHeader(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");
@@ -74,10 +123,15 @@ public class MockGenerator {
         return lines;
     }
 
-    private List<String> generateSectionForMock(Mock mock){
+    private List<String> generateSectionForMock(Mock mock, boolean withComment){
         List<String> lines = new ArrayList<>();
-//        lines.add(StringHelper.commentOutLine("       " + mock.getCommentText()));
         lines.add("       " + mock.getGeneratedMockIdentifier() + " SECTION.");
+        if (withComment){
+            for (String line : mock.getCommentText()){
+                lines.add(StringHelper.commentOutLine(line));
+            }
+        }
+        lines.add("           ADD 1 TO " + mock.getGeneratedMockCountIdentifier());
         lines.addAll(mock.getLines());
         lines.add("       .");
         return lines;

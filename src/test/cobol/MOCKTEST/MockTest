@@ -9,6 +9,7 @@
            PERFORM 000-START
            Expect VALUE-1 to be "Hi"
            Expect VALUE-2 to be "Hello"
+           VERIFY SECTION 000-START HAPPENED ONCE
 
            TestCase "Local mock overwrites global mock"
            MOCK SECTION 000-START
@@ -16,21 +17,31 @@
                 MOVE "a mock" TO VALUE-2
            END-MOCK
            PERFORM 000-START
+           PERFORM 000-START
            Expect VALUE-1 to be "This is"
            Expect VALUE-2 to be "a mock"
+           VERIFY SECTION 000-START HAPPENED AT LEAST 2 TIMES
 
            TestCase "Multiple local mocks behaves as intended"
            MOCK SECTION 000-START
                 MOVE "This is" TO VALUE-1
                 MOVE "a mock" TO VALUE-2
                 PERFORM 100-WELCOME
+                PERFORM 100-WELCOME
+                PERFORM 100-WELCOME
            END-MOCK
            MOCK SECTION 100-WELCOME
                 MOVE "I'll leave VALUE-2 alone" TO VALUE-1
            END-MOCK
+           MOCK SECTION 500-SWITCH
+           END-MOCK
+           PERFORM 000-START
            PERFORM 000-START
            Expect VALUE-1 to be "I'll leave VALUE-2 alone"
            Expect VALUE-2 to be "a mock"
+           VERIFY SECTION 000-START HAPPENED 5 TIMES
+           VERIFY SECTION 100-WELCOME HAPPENED NO MORE THAN 10 TIMES
+           VERIFY SECTION 500-SWITCH NEVER HAPPENED
 
            TestCase "Empty local mock makes section do nothing"
            MOCK SECTION 500-SWITCH

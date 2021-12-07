@@ -1,9 +1,9 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.features.testSuiteParser.KeywordAction;
-import com.neopragma.cobolcheck.services.cobolLogic.Keywords;
+import com.neopragma.cobolcheck.features.testSuiteParser.Keywords;
 import com.neopragma.cobolcheck.services.Constants;
-import com.neopragma.cobolcheck.services.cobolLogic.Keyword;
+import com.neopragma.cobolcheck.features.testSuiteParser.Keyword;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -108,7 +108,8 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("5473.19");
         assertEquals(Constants.NUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
-        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN), keyword.validNextKey());
+        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN, Constants.TIME_KEYWORD,
+                Constants.TIMES_KEYWORD), keyword.validNextKey());
     }
 
     @Test
