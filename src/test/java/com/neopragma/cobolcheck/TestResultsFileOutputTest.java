@@ -67,20 +67,21 @@ public class TestResultsFileOutputTest {
         assertEquals(true, new File(tempOutput.toString()).exists());
     }
 
-    @Test
-    public void it_writes_test_results_to_file() throws IOException, InterruptedException {
-        //Arrange
-        BufferedReader reader;
-
-        //Act
-        launcherController.runProgram(tempProc.toString(), tempOutput.toString(), false);
-        reader = new BufferedReader(new FileReader(tempOutput.toString()));
-        String outputLine = reader.readLine();
-        reader.close();
-        //Assert
-        assertEquals("A", outputLine);
-
-    }
+    //TODO: Will be implemented as acceptance test
+//    @Test
+//    public void it_writes_test_results_to_file() throws IOException, InterruptedException {
+//        //Arrange
+//        BufferedReader reader;
+//
+//        //Act
+//        launcherController.runProgram(tempProc.toString(), tempOutput.toString(), false);
+//        reader = new BufferedReader(new FileReader(tempOutput.toString()));
+//        String outputLine = reader.readLine();
+//        reader.close();
+//        //Assert
+//        assertEquals("A", outputLine);
+//
+//    }
 
     void deleteDir(File file) {
         File[] contents = file.listFiles();
