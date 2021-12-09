@@ -1,5 +1,11 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.launcher.LauncherController;
+import com.neopragma.cobolcheck.features.launcher.ProcessLauncher;
+import com.neopragma.cobolcheck.features.launcher.ProcessOutputWriter;
+import com.neopragma.cobolcheck.features.launcher.WindowsProcessLauncher;
+import com.neopragma.cobolcheck.services.Config;
+import com.neopragma.cobolcheck.services.Constants;
 import org.graalvm.compiler.core.match.MatchRule;
 import org.junit.jupiter.api.*;
 
@@ -12,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestResultsFileOutputTest {
 
-    private Config config;
-    private Process process;
+    private LauncherController launcherController;
 
     public Path tempDirectory;
     public Path tempProc;
@@ -21,10 +26,11 @@ public class TestResultsFileOutputTest {
 
     @BeforeEach
     public void commonSetup() throws IOException{
-        config = new Config(new Messages());
-        config.load();
+        Config.load();
 
-        String testSuiteDirectoryPath = config.getTestSuiteDirectoryPathString();
+        launcherController = new LauncherController();
+
+        String testSuiteDirectoryPath = Config.getTestSuiteDirectoryPathString();
 
         tempDirectory = Paths.get("temp");
         tempProc = Paths.get("temp" + Constants.FILE_SEPARATOR+ "proc.cmd");
@@ -46,30 +52,20 @@ public class TestResultsFileOutputTest {
 
     @Test
     public void it_creates_file_if_does_not_exist() throws IOException, InterruptedException {
-        //Arrange
-        ProcessLauncher launcher = new WindowsProcessLauncher(config);
-
-        //Act
-        Process process = launcher.run(tempProc.toString());
-        Driver.writeProcessOutputToFile(process, tempOutput.toString(), false);
-        process.waitFor();
-        //Assert
+        launcherController.runProgram(tempProc.toString(), tempOutput.toString(), false);
         assertEquals(true, new File(tempOutput.toString()).exists());
     }
 
     @Test
     public void it_writes_test_results_to_file() throws IOException, InterruptedException {
         //Arrange
-        ProcessLauncher launcher = new WindowsProcessLauncher(config);
         BufferedReader reader;
 
         //Act
-        Process process = launcher.run(tempProc.toString());
-        Driver.writeProcessOutputToFile(process, tempOutput.toString(), false);
+        launcherController.runProgram(tempProc.toString(), tempOutput.toString(), false);
         reader = new BufferedReader(new FileReader(tempOutput.toString()));
         String outputLine = reader.readLine();
         reader.close();
-        process.waitFor();
         //Assert
         assertEquals("A", outputLine);
 

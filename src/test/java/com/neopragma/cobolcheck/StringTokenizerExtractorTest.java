@@ -16,6 +16,9 @@ limitations under the License.
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
+import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.Messages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +36,7 @@ public class StringTokenizerExtractorTest {
     @BeforeEach
     public void commonSetup() {
         Locale.setDefault(new Locale("en", "US"));
-        extractor = new StringTokenizerExtractor(new Messages());
+        extractor = new StringTokenizerExtractor();
     }
 
     @Test

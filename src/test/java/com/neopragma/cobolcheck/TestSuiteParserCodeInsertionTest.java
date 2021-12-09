@@ -1,16 +1,26 @@
 package com.neopragma.cobolcheck;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.neopragma.cobolcheck.features.writer.CobolWriter;
+import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
+import com.neopragma.cobolcheck.services.StringHelper;
+import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
+import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParser;
+import com.neopragma.cobolcheck.services.Config;
+import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.cobolLogic.DataType;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,6 +30,7 @@ import static org.mockito.Mockito.*;
 public class TestSuiteParserCodeInsertionTest {
 
     Writer testSourceOut;
+    CobolWriter cobolWriter;
     TestSuiteParser testSuiteParser;
     @Mock
     NumericFields numericFields;
@@ -222,58 +233,83 @@ public class TestSuiteParserCodeInsertionTest {
         sb.append(Constants.NEWLINE);
     }
 
-    @Mock
-    Config config;
+    MockedStatic<Config> mockedConfig;
 
     @BeforeEach
     public void commonSetup() {
         testSourceOut = new StringWriter();
-        when(config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
+        cobolWriter = new CobolWriter(testSourceOut);
+        mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), config);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor());
+    }
+
+    @AfterEach
+    public void cleanUp(){
+        mockedConfig.close();
     }
 
     @Test
     public void it_recognizes_the_end_of_a_user_written_cobol_statement_when_it_encounters_a_cobolcheck_keyword_that_can_follow_a_user_written_statement() throws IOException {
+        List<String> actualResult;
+        List<String> expectedResult = new ArrayList<>();
         String testSuite = "            MOVE \"alpha\" TO WS-FIELDNAME                                           " +
                 Constants.NEWLINE +
                 "           EXPECT                                                                    " +
                 Constants.NEWLINE;
+        String expected1 = "            MOVE \"alpha\" TO WS-FIELDNAME";
+        String expected2 = "           ADD 1 TO UT-TEST-CASE-COUNT";
+        expectedResult.add(expected1);
+        expectedResult.add(expected2);
+
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuite));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        String expectedResult = "            MOVE \"alpha\" TO WS-FIELDNAME                                        " +
-                Constants.NEWLINE +
-                "           ADD 1 TO UT-TEST-CASE-COUNT                                          " +
-                Constants.NEWLINE;
-        assertEquals(expectedResult, testSourceOut.toString());
+        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, null);
+
+        assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void it_inserts_cobol_statements_to_display_the_testsuite_name() throws IOException {
-        String expectedResult =
-                "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE
-              + "           DISPLAY \"Test Suite Name\"                                            " + Constants.NEWLINE;
-        testSuiteParser.insertTestSuiteNameIntoTestSource("\"Test Suite Name\"", testSourceOut);
-        assertEquals(expectedResult, testSourceOut.toString());
+    public void it_inserts_cobol_statements_to_display_the_testsuite_name() {
+        List<String> actualResult = new ArrayList<>();
+        List<String> expectedResult = new ArrayList<>();
+
+        String expected1 = "           DISPLAY \"TESTSUITE:\"";
+        String expected2 = "           DISPLAY \"Test Suite Name\"";
+        String expected3 = "           MOVE \"Test Suite Name\"";
+        String expected4 = "               TO UT-TEST-SUITE-NAME";
+        expectedResult.add(expected1);
+        expectedResult.add(expected2);
+        expectedResult.add(expected3);
+        expectedResult.add(expected4);
+
+        testSuiteParser.addTestSuiteNamelines("\"Test Suite Name\"", actualResult);
+        assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void it_inserts_cobol_statements_to_store_the_testcase_name() throws IOException {
-        String expectedResult =
-                "           MOVE \"Test Case Name\"                                                " + Constants.NEWLINE
-              + "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE
-              + "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE;
+    public void it_inserts_cobol_statements_to_store_the_testcase_name() {
+        List<String> actualResult = new ArrayList<>();
+        List<String> expectedResult = new ArrayList<>();
+        String expected1 = "           MOVE \"Test Case Name\"";
+        String expected2 = "               TO UT-TEST-CASE-NAME";
+        String expected3 = "           PERFORM UT-BEFORE";
+        expectedResult.add(expected1);
+        expectedResult.add(expected2);
+        expectedResult.add(expected3);
 
-        testSuiteParser.insertTestCaseNameIntoTestSource("\"Test Case Name\"", testSourceOut);
-        assertEquals(expectedResult, testSourceOut.toString());
+        testSuiteParser.addTestCaseNameLines("\"Test Case Name\"", actualResult);
+        assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void it_inserts_cobol_statements_to_perform_before_each_logic() throws IOException {
-        String expectedResult =
-                "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE;
-        testSuiteParser.insertPerformBeforeEachIntoTestSource(testSourceOut);
-        assertEquals(expectedResult, testSourceOut.toString());
+    public void it_inserts_cobol_statements_to_perform_before_each_logic() {
+        List<String> actualResult = new ArrayList<>();
+        List<String> expectedResult = new ArrayList<>();
+        String expected = "           PERFORM UT-BEFORE";
+        expectedResult.add(expected);
+        testSuiteParser.addPerformBeforeEachLine(actualResult);
+        assertEquals(expectedResult, actualResult);
     }
 
     @ParameterizedTest
@@ -283,10 +319,18 @@ public class TestSuiteParserCodeInsertionTest {
             String fieldName,
             DataType dataType,
             String expectedResult) throws IOException {
+
+        List<String> actualResult;
+        List<String> expectedResultList = new ArrayList<>();
+
+        for (String line : expectedResult.split("\n")){
+            expectedResultList.add(StringHelper.removeTrailingSpaces(line));
+        }
+
         lenient().doReturn(dataType).when(numericFields).dataTypeOf(fieldName);
         BufferedReader testSuiteReader = new BufferedReader(new StringReader(testSuiteInput));
-        testSuiteParser.parseTestSuite(testSuiteReader, testSourceOut, numericFields);
-        assertEquals(expectedResult, testSourceOut.toString());
+        actualResult = testSuiteParser.getParsedTestSuiteLines(testSuiteReader, numericFields, null);
+        assertEquals(expectedResultList, actualResult);
     }
     private static Stream<Arguments> expectationCheckProvider() {
         return Stream.of(

@@ -15,6 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.services.cobolLogic.EIBResponseCodes;
+import com.neopragma.cobolcheck.services.cobolLogic.EIBResponseTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

@@ -1,5 +1,7 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.services.platform.Platform;
+import com.neopragma.cobolcheck.services.platform.PlatformLookup;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;

@@ -15,6 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.interpreter.CopybookExpander;
+import com.neopragma.cobolcheck.services.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,87 +24,80 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.nio.file.Files.readAllBytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class CopybookExpanderIT implements StringHelper {
+public class CopybookExpanderIT {
     private static final String applicationSourceFilenameSuffix = ".CBL";
     private CopybookExpander copybookExpander;
-    private String expectedResult;
+    private List<String> expectedResult;
     private String testCopybookFilename;
     private String testCopybookBasename;
     private static String pathToTestCobolCopybooks;
 
-    @Mock
-    private static Messages messages;
-    @InjectMocks
-    private static Config config;
-
     @BeforeAll
     public static void oneTimeSetup() {
-        config = new Config(new Messages());
-        config.load("testconfig.properties");
+        Config.load("testconfig.properties");
         pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "src/main/cobol/copy");
     }
 
     @BeforeEach
     public void commonSetup() {
-        copybookExpander = new CopybookExpander(config, messages);
+        copybookExpander = new CopybookExpander();
         testCopybookFilename = Constants.EMPTY_STRING;
-        expectedResult = Constants.EMPTY_STRING;
+        expectedResult = new ArrayList<>();
 
     }
 
     @Test
     public void it_expands_a_simple_copybook() throws IOException {
-        Writer expandedSource =
+        List<String> expandedSource =
                 runTestCase("COPY001-padded", "COPY001-padded");
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_expands_nested_copybooks_one_level_deep() throws IOException {
-        Writer expandedSource =
+        List<String> expandedSource =
                 runTestCase("COPY002-padded", "EX002-padded");
-        assertEquals(expectedResult, runTestCase("COPY002-padded", "EX002-padded").toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_expands_nested_copybooks_three_levels_deep() throws IOException {
-        Writer expandedSource =
+        List<String> expandedSource =
                 runTestCase("COPY005-padded", "EX005-padded");
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_handles_lower_case_and_mixed_case_code() throws IOException {
-        Writer expandedSource =
+        List<String> expandedSource =
                 runTestCase("mixed005-padded", "mixedex005-padded");
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @Test
     public void it_handles_copy_replacing() throws IOException {
-        Writer expandedSource =
+        List<String> expandedSource =
                 runTestCase("COPYR001-padded",
                         "EXR001-padded",
                         new StringTuple("A", "ALPHA"),
                         new StringTuple("B", "BETA"),
                         new StringTuple("C", "CHARLIE"),
                         new StringTuple("D", "DELTA"));
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
 
     @ParameterizedTest
@@ -112,11 +107,11 @@ public class CopybookExpanderIT implements StringHelper {
             String replacementText,
             String testCopybookFilename,
             String expectedResultFilename) throws IOException {
-        Writer expandedSource =
+        List<String> expandedSource =
                 runTestCase(testCopybookFilename + "-padded",
                         expectedResultFilename + "-padded",
                         new StringTuple(pseudoTextPattern, replacementText));
-        assertEquals(expectedResult, expandedSource.toString());
+        assertEquals(expectedResult, removeTrailingSpacesFromLines(expandedSource));
     }
     private static Stream<Arguments> textPatternAndTestFilenameProvider() {
         return Stream.of(
@@ -126,38 +121,47 @@ public class CopybookExpanderIT implements StringHelper {
     }
 
 
-    private Writer runTestCase(String testCopybookBasename,
-                               String expectedExpansionBasename) throws IOException {
+    private List<String> runTestCase(String testCopybookBasename,
+                                     String expectedExpansionBasename) throws IOException {
             return runTestCase(testCopybookBasename,
                     expectedExpansionBasename,
                     new StringTuple(null, null));
     }
-        private Writer runTestCase(String testCopybookBasename,
+    private List<String> runTestCase(String testCopybookBasename,
                 String expectedExpansionBasename,
                 StringTuple... textReplacement) throws IOException {
         testCopybookFilename = testCopybookBasename + applicationSourceFilenameSuffix;
         expectedResult = getExpectedResult(expectedExpansionBasename + applicationSourceFilenameSuffix);
-        Writer expandedSource = new StringWriter();
-        expandedSource = copybookExpander.expand(
-                expandedSource,
-                testCopybookBasename,
-                textReplacement);
-        return expandedSource;
+        List<String> expandedLines = new ArrayList<>();
+            expandedLines = copybookExpander.expand(expandedLines, testCopybookBasename, textReplacement);
+        return expandedLines;
     }
 
-    private String getExpectedResult(String copybookFilename) throws IOException {
+    private List<String> getExpectedResult(String copybookFilename) throws IOException {
         File f = new File(pathToTestCobolCopybooks + copybookFilename);
-        return new String(readAllBytes(f.toPath()));
+        String s = new String(readAllBytes(f.toPath()));
+        String[] lines = s.split("\n");
+        return removeTrailingSpacesFromLines(Arrays.asList(lines));
     }
 
     private static String getPathFor(String configPropertyName, String defaultValue) {
         StringBuilder directoryName = new StringBuilder();
         directoryName.append(new File("./").getAbsolutePath());
         directoryName.append(Constants.FILE_SEPARATOR);
-        directoryName.append(config.getString(configPropertyName, "src/main/cobol/copy"));
+        directoryName.append(Config.getString(configPropertyName, "src/main/cobol/copy"));
         if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
             directoryName.append(Constants.FILE_SEPARATOR);
         }
         return directoryName.toString();
+    }
+
+    //Needed as 'expected' and 'actual' have different trailing spaces, even
+    //though their values are essentially the same.
+    private List<String> removeTrailingSpacesFromLines(List<String> lines){
+        List<String> newLines = new ArrayList<>();
+        for (String line : lines){
+            newLines.add(StringHelper.removeTrailingSpaces(line));
+        }
+        return newLines;
     }
 }
