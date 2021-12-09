@@ -1,12 +1,8 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.features.launcher.LauncherController;
-import com.neopragma.cobolcheck.features.launcher.ProcessLauncher;
-import com.neopragma.cobolcheck.features.launcher.ProcessOutputWriter;
-import com.neopragma.cobolcheck.features.launcher.WindowsProcessLauncher;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
-import org.graalvm.compiler.core.match.MatchRule;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
