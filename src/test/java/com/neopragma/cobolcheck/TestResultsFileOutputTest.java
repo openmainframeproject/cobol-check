@@ -1,8 +1,11 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.launcher.Launcher;
 import com.neopragma.cobolcheck.features.launcher.LauncherController;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.platform.Platform;
+import com.neopragma.cobolcheck.services.platform.PlatformLookup;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
@@ -29,15 +32,27 @@ public class TestResultsFileOutputTest {
         String testSuiteDirectoryPath = Config.getTestSuiteDirectoryPathString();
 
         tempDirectory = Paths.get("temp");
-        tempProc = Paths.get("temp" + Constants.FILE_SEPARATOR+ "proc.cmd");
         tempOutput = Paths.get("temp" + Constants.FILE_SEPARATOR + "output.txt");
+
+        String programCode = "";
+
+        if (PlatformLookup.get() == Platform.WINDOWS){
+            tempProc = Paths.get("temp" + Constants.FILE_SEPARATOR+ "proc.cmd");
+            programCode = "echo A" + Constants.NEWLINE;
+        }
+
+        if (PlatformLookup.get() == Platform.LINUX || PlatformLookup.get() == Platform.OSX){
+            tempProc = Paths.get("temp" + Constants.FILE_SEPARATOR+ "proc.sh");
+            programCode = "echo \"A\"" + Constants.NEWLINE;
+        }
+
 
         if (!new File(tempDirectory.toString()).exists()){
             Files.createDirectory(tempDirectory);
         }
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(tempProc.toString()));
-        bw.write("echo A\n");
+        bw.write(programCode);
         bw.close();
     }
 
