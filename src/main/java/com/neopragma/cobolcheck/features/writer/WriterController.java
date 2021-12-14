@@ -13,6 +13,9 @@ public class WriterController {
     public WriterController(Writer testSourceWriter){
         cobolWriter = new CobolWriter(testSourceWriter);
     }
+    public WriterController(CobolWriter cobolWriter){
+        this.cobolWriter = cobolWriter;
+    }
 
     /**
      * Writes a line of cobol code to the test output file. If the given line is too

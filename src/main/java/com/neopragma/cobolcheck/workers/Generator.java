@@ -44,9 +44,20 @@ public class Generator {
 
     List<String> matchingTestDirectories;
 
-    public Generator() {
+    public Generator() { }
 
+    /**
+     * For testing only
+     */
+    public Generator(InterpreterController interpreter, WriterController writerController,
+                     TestSuiteParserController testSuiteParserController) {
+        this.interpreter = interpreter;
+        this.writerController = writerController;
+        this.testSuiteParserController = testSuiteParserController;
+        mergeTestSuite();
     }
+
+
 
     /**
      * Finds any test-directory that matches the given program name. For each of these directories, all test
@@ -88,11 +99,13 @@ public class Generator {
         try {
             while ((sourceLine = interpreter.interpretNextLine()) != null) {
                 processingBeforeEchoingSourceLineToOutput();
+                sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
 
                 writeToSource(sourceLine);
 
                 processingAfterEchoingSourceLineToOutput();
             }
+            testSuiteParserController.logUnusedMocks();
         } catch (IOException ioEx) {
             throw new CobolSourceCouldNotBeReadException(ioEx);
         }
@@ -117,14 +130,24 @@ public class Generator {
                 writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
                         interpreter.getFileSectionStatements()));
             }
+            testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
+            writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());
         }
+    }
 
+    private String tryInsertEndEvaluateAtMockedCompomentEnd(String sourceLine) throws IOException {
         if (waitingForMockedComponentToEnd){
-            if (interpreter.doesCurrentLineEndInPeriod()){
-                waitingForMockedComponentToEnd = false;
-                writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
+            if (interpreter.doesCurrentLineEndCurrentComponent()){
+                if (interpreter.shouldEndEvaluateBeInsertedBeforeLine(sourceLine)){
+                    waitingForMockedComponentToEnd = false;
+                    writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
+                }
+                else {
+                    return sourceLine.replace(".", "");
+                }
             }
         }
+        return sourceLine;
     }
 
     /**
@@ -170,14 +193,14 @@ public class Generator {
         }
 
         if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
-            writerController.writeLines(testSuiteParserController.getProcedureDivisionTestCode(
-                    interpreter.getNumericFields()));
+            writerController.writeLines(testSuiteParserController.getProcedureDivisionTestCode());
         }
 
         if (interpreter.isCurrentComponentMockable()){
             String identifier = interpreter.getPossibleMockIdentifier();
-            if (testSuiteParserController.mockExistsFor(identifier)){
-                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier));
+            String type = interpreter.getPossibleMockType();
+            if (testSuiteParserController.mockExistsFor(identifier, type)){
+                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type));
                 waitingForMockedComponentToEnd = true;
             }
         }

@@ -6,6 +6,15 @@
                10  FILLER                PIC X(06) VALUE 'ACCESS'.
                10  ==UT==LABEL-EXPECTED-ACCESS-PL 
                                          PIC X(02) VALUE SPACES.
+           05  ==UT==LABEL-VERIFY-COMPARE
+                                         PIC X(12) VALUE SPACES.
+           05  ==UT==VERIFY-COMPARE-STRINGS.
+               10  ==UT==VERIFY-EXACT-STRING
+                                         PIC X(05) VALUE 'EXACT'.
+               10  ==UT==VERIFY-AT-LEAST-STRING
+                                         PIC X(08) VALUE 'AT LEAST'.
+               10  ==UT==VERIFY-NO-MORE-THAN-STRING
+                                         PIC X(12) VALUE 'NO MORE THAN'.
            05  ==UT==DISPLAY-MESSAGE     PIC X(256) VALUE SPACES.
            05  FILLER                    PIC X(02) VALUE SPACES.
                88  ==UT==RELATION-EQ               VALUE SPACES, 'EQ'.
@@ -78,6 +87,7 @@
            05  ==UT==MOCK-SET-FILE-STATUS   PIC X(02).
            05  ==UT==MOCK-MAX               PIC 9(02) VALUE 10.
            05  ==UT==MOCK-COUNT             PIC 9(02) VALUE ZERO.
+           05  ==UT==MOCK-OPERATION         PIC X(30).
            05  ==UT==MOCK OCCURS 20 INDEXED BY ==UT==MOCK-IX.
                10  ==UT==MOCK-TYPE          PIC X(04).
                    88  ==UT==MOCK-FILE          VALUE 'FILE'.
@@ -89,8 +99,7 @@
                10  ==UT==MOCK-RECORD        PIC X(8192).    
                10  ==UT==MOCK-DATA          PIC X(806).
                10  ==UT==MOCK-FILE-DATA REDEFINES ==UT==MOCK-DATA.        
-                   15  ==UT==MOCK-FILENAME       PIC X(31).    
-                   15  ==UT==MOCK-OPERATION      PIC X(20).  
+                   15  ==UT==MOCK-FILENAME       PIC X(31).
                    15  ==UT==MOCK-FILE-STATUS    PIC X(02).
                    15  FILLER                 PIC X(753).
                10  ==UT==MOCK-CALL-DATA REDEFINES ==UT==MOCK-DATA.

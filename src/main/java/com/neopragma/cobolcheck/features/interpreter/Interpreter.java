@@ -6,11 +6,19 @@ import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ * Used by Writer
+ */
+
 public class Interpreter {
 
     // Source tokens from Procedure Division that begin batch I/O statements
     private static final List<String> batchFileIOVerbs = Arrays.asList(
             "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
+    );
+
+    private static final List<String> componentEndingTokens = Arrays.asList(
+            Constants.EXIT_TOKEN, Constants.END_SECTION_TOKEN, Constants.END_PARAGRAPH_TOKEN
     );
 
     // Used for handling source lines from copybooks that may not have the standard 80-byte length
@@ -134,13 +142,28 @@ public class Interpreter {
      * @return - true if end of statement is recognized
      */
     public static boolean isEndOfStatement(CobolLine currentLine, CobolLine nextMeaningfulLine) {
+        if (nextMeaningfulLine == null){
+            return true;
+        }
         if (currentLine.getTrimmedString().endsWith(Constants.PERIOD)) {
             return true;
+        }
+        if (containsOnlyPeriod(nextMeaningfulLine)){
+            return false;
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
             return true;
         }
 
+        return false;
+    }
+
+    public static boolean lineContainsComponentEndingToken(CobolLine currentLine) {
+        for (String endingToken : componentEndingTokens){
+            if (currentLine.containsToken(endingToken)){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -162,6 +185,14 @@ public class Interpreter {
         return line.getOriginalString().charAt(commentIndicatorOffset) == commentIndicator;
     }
 
+    public static boolean isComment(String line) {
+        return line.charAt(commentIndicatorOffset) == commentIndicator;
+    }
+
+    public static boolean isMeaningful(CobolLine line){
+        return line != null && !isEmpty(line) && !isComment(line) && !isTooShortToBeMeaningful(line);
+    }
+
     /**
      * @param line
      * @return true if the source line is empty
@@ -176,7 +207,7 @@ public class Interpreter {
      * @return true if the source line should be parsed
      */
     public static boolean shouldLineBeParsed(CobolLine line, State state){
-        if (isTooShortToBeMeaningful(line)){
+        if (isTooShortToBeMeaningful(line) && line.tokensSize() > 0){
             return false;
         }
         if (state.isFlagSetFor(Constants.FILE_SECTION)){
@@ -205,7 +236,7 @@ public class Interpreter {
     }
 
     public static boolean containsOnlyPeriod(CobolLine line){
-        return line.getTrimmedString().equals(Constants.PERIOD);
+        return line == null ? false : line.getTrimmedString().equals(Constants.PERIOD);
     }
 
     /**

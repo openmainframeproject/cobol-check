@@ -60,6 +60,14 @@ public class CobolReader {
         return currentLine;
     }
 
+    //Will potentially make interpretation easier (not used)
+    CobolLine readStatementAsOneLine() throws IOException {
+        while (!Interpreter.isEndOfStatement(currentLine, peekNextMeaningfulLine())){
+            appendNextMeaningfulLineToCurrentLine();
+        }
+        return currentLine;
+    }
+
     /**
      * Sets and unsets flags that signifies the current state of the cobol being read, based
      * on the current line.
@@ -73,7 +81,30 @@ public class CobolReader {
         reader.close();
     }
 
+    CobolLine appendNextMeaningfulLineToCurrentLine() throws IOException{
+        List<CobolLine> statementLines = new ArrayList<>();
+        CobolLine nextMeaningfulLine = peekNextMeaningfulLine();
+        if (Interpreter.containsOnlyPeriod(nextMeaningfulLine)){
+            currentLine = new CobolLine(currentLine.getOriginalString() +
+                    nextMeaningfulLine.getTrimmedString(), tokenExtractor);
+        }
+        else {
+            currentLine = new CobolLine(currentLine.getOriginalString() + " " +
+                    nextMeaningfulLine.getTrimmedString(), tokenExtractor);
+        }
 
+        nextLines.remove(nextLines.size() - 1);
+
+        if (!nextLines.isEmpty()){
+            statementLines.add(currentLine);
+            statementLines.addAll(nextLines);
+            currentStatement = statementLines;
+            nextLines.clear();
+        }
+
+        return currentLine;
+
+    }
 
     /**
      * Peeks the next line of the cobol file that is meaningful - that is; a line that is
@@ -98,7 +129,7 @@ public class CobolReader {
             }
             CobolLine cobolLine = new CobolLine(line, tokenExtractor);
             nextLines.add(cobolLine);
-            if (!Interpreter.isEmpty(cobolLine) && !Interpreter.isComment(cobolLine)){
+            if (Interpreter.isMeaningful(cobolLine)){
                 return cobolLine;
             }
         }

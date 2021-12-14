@@ -8,6 +8,7 @@ public class Mock {
     private String type;
     private List<String> lines;
     private MockScope scope;
+    private boolean isUsed;
     private String testSuiteName;
     private String testCaseName;
     private int testSuiteNumber;
@@ -27,9 +28,38 @@ public class Mock {
         return testSuiteNumber + "-" + testCaseNumber + "-" + mockNumber + "-MOCK";
     }
 
-    public String getCommentText(){
-        return scope.name() + "mock created from test case: " + testCaseName + " in test suite: " + testSuiteName +
-                "for the " + type + ": " + identifier;
+    public String getGeneratedMockCountIdentifier(){
+        return "UT-" + getGeneratedMockIdentifier() + "-COUNT";
+    }
+
+    public String getGeneratedMockCountExpectedIdentifier(){
+        return "UT-" + getGeneratedMockIdentifier() + "-EXPECTED";
+    }
+
+    public String getGeneratedMockStringIdentifierName(){
+        return "UT-" + getGeneratedMockIdentifier() + "-NAME";
+    }
+
+    public String getMockDisplayString(){
+        return type.toUpperCase() + " " + identifier;
+    }
+
+    public String getMockDescription(){
+        return type + " " + identifier + " in testsuite: " + testSuiteName +
+                (testCaseName.equals("") ? "" : ", testcase: " + testCaseName);
+    }
+
+    public List<String> getCommentText(){
+        List<String> lines = new ArrayList<>();
+        lines.add("      *****************************************************************");
+        lines.add(scope.name() + " mock of: " + type + ": " + identifier);
+        lines.add("In testsuite: " + testSuiteName);
+        if (scope == MockScope.Local){
+            lines.add("In testcase: " + testCaseName);
+        }
+        lines.add("      *****************************************************************");
+        return lines;
+
     }
 
     public String getIdentifier() {
@@ -46,6 +76,10 @@ public class Mock {
 
     public MockScope getScope() {
         return scope;
+    }
+
+    public boolean isUsed() {
+        return isUsed;
     }
 
     public String getTestSuiteName() {
@@ -66,6 +100,10 @@ public class Mock {
 
     public void setScope(MockScope scope) {
         this.scope = scope;
+    }
+
+    public void markAsUsed() {
+        isUsed = true;
     }
 
     public void addLine(String line) {

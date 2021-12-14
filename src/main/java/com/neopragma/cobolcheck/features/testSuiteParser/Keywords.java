@@ -13,15 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.neopragma.cobolcheck.services.cobolLogic;
+package com.neopragma.cobolcheck.features.testSuiteParser;
 
-import com.neopragma.cobolcheck.features.testSuiteParser.KeywordAction;
 import com.neopragma.cobolcheck.services.Constants;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This is a container for Keyword records. It is used when parsing test suites to identify cobol-check
@@ -134,7 +130,8 @@ public class Keywords {
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.NUMERIC_LITERAL_KEYWORD,
-                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN, Constants.TIME_KEYWORD,
+                                Constants.TIMES_KEYWORD),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.COBOL_TOKEN,
                 new Keyword(Constants.COBOL_TOKEN,
@@ -154,6 +151,39 @@ public class Keywords {
         keywordInfo.put(Constants.MOCK_TYPE,
                 new Keyword(Constants.MOCK_TYPE,
                         Arrays.asList(Constants.COBOL_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.VERIFY_KEYWORD,
+                new Keyword(Constants.VERIFY_KEYWORD,
+                        Arrays.asList(Constants.MOCK_TYPE),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.NEVER_HAPPENED_KEYWORD,
+                new Keyword(Constants.NEVER_HAPPENED_KEYWORD,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.HAPPENED_KEYWORD,
+                new Keyword(Constants.HAPPENED_KEYWORD,
+                        Arrays.asList(Constants.ONCE_KEYWORD, Constants.AT_LEAST_KEYWORD,
+                                Constants.NO_MORE_THAN_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.ONCE_KEYWORD,
+                new Keyword(Constants.ONCE_KEYWORD,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.AT_LEAST_KEYWORD,
+                new Keyword(Constants.AT_LEAST_KEYWORD,
+                        Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.NO_MORE_THAN_KEYWORD,
+                new Keyword(Constants.NO_MORE_THAN_KEYWORD,
+                        Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.TIME_KEYWORD,
+                new Keyword(Constants.TIME_KEYWORD,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.TIMES_KEYWORD,
+                new Keyword(Constants.TIMES_KEYWORD,
+                        Collections.emptyList(),
                         KeywordAction.NONE));
 
         //TODO: Add other types that can be mocked

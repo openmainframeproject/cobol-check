@@ -21,28 +21,55 @@ public class MockRepository {
         mocks.add(mock);
     }
 
-    public boolean mockExistsFor(String identifier){
+    public List<Mock> getMocks(){
+        return mocks;
+    }
+
+    public boolean mockExistsFor(String identifier, String type){
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
                 return true;
             }
         }
         return false;
+    }
+
+    public Mock getMockFor(String identifier, String type, String testSuite, String testCase){
+        List<Mock> globalMocks = new ArrayList<>();
+        for (Mock mock: mocks) {
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
+                if (mock.getScope() == MockScope.Local){
+                    if (mock.getTestSuiteName().equals(testSuite) && mock.getTestCaseName().equals(testCase)){
+                        return mock;
+                    }
+                }
+                if (mock.getScope() == MockScope.Global){
+                    //We need to check all local mocks first, and save global mocks for later
+                    globalMocks.add(mock);
+                }
+            }
+        }
+        for (Mock mock: globalMocks) {
+            if (mock.getTestSuiteName().equals(testSuite)){
+                return mock;
+            }
+        }
+
+
+        return null;
     }
 
     private boolean mockAlreadyExist(Mock mock){
         for(Mock m : mocks){
             if (mock.getIdentifier().equals(m.getIdentifier())
-            && mock.getScope() == m.getScope()
-            && mock.getTestSuiteName().equals(m.getTestSuiteName())
-            && mock.getTestCaseName().equals(m.getTestCaseName())){
+                    && mock.getScope() == m.getScope()
+                    && mock.getTestSuiteName().equals(m.getTestSuiteName())
+                    && mock.getTestCaseName().equals(m.getTestCaseName())){
                 return true;
             }
         }
         return false;
     }
 
-    public List<Mock> getMocks(){
-        return mocks;
-    }
+
 }

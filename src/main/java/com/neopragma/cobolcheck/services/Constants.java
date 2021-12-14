@@ -78,6 +78,14 @@ public final class Constants {
     public static final String MOCK_KEYWORD = "MOCK";
     public static final String MOCK_TYPE = "mock-type";
     public static final String ENDMOCK_KEYWORD = "END-MOCK";
+    public static final String VERIFY_KEYWORD = "VERIFY";
+    public static final String NEVER_HAPPENED_KEYWORD = "NEVER HAPPENED";
+    public static final String HAPPENED_KEYWORD = "HAPPENED";
+    public static final String ONCE_KEYWORD = "ONCE";
+    public static final String AT_LEAST_KEYWORD = "AT LEAST";
+    public static final String NO_MORE_THAN_KEYWORD = "NO MORE THAN";
+    public static final String TIME_KEYWORD = "TIME";
+    public static final String TIMES_KEYWORD = "TIMES";
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
@@ -95,7 +103,7 @@ public final class Constants {
     public static final String TESTS_OPTION = "tests";
     public static final String PROGRAMS_OPTION = "programs";
 
-    // Special values the Generator looks for in the source of the program under test
+    // Special values the Interpreter looks for in the source of the program under test
     public static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
     public static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
     public static final String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
@@ -115,6 +123,11 @@ public final class Constants {
     public static final String COPY_TOKEN = "COPY";
     public static final String SECTION_TOKEN = "SECTION";
     public static final String DECLARATIVES_TOKEN = "DECLARATIVES";
+    public static final String EXIT_TOKEN = "EXIT";
+    public static final String END_SECTION_TOKEN = "END-SECTION";
+    public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
+    public static final String ZERO_TOKEN = "ZERO";
+
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";
