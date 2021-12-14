@@ -28,14 +28,14 @@
 
        2000-SPEAK.
            IF MESSAGE-IS-GREETING
-               IF WS-FRIEND EQUALS SPACES
+               IF WS-FRIEND EQUAL SPACES
                    MOVE 'World' TO WS-USER-NAME OF WS-GREETING
                ELSE
                    MOVE WS-FRIEND TO WS-USER-NAME OF WS-GREETING
                END-IF
            END-IF  
            IF MESSAGE-IS-FAREWELL
-               IF WS-FRIEND EQUALS SPACES
+               IF WS-FRIEND EQUAL SPACES
                    MOVE 'alligator!' TO WS-USER-NAME OF WS-FAREWELL
                ELSE
                    MOVE WS-FRIEND TO WS-USER-NAME OF WS-FAREWELL
