@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck.features.writer;
 
+import com.neopragma.cobolcheck.features.interpreter.Interpreter;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.io.IOException;
@@ -29,6 +30,8 @@ public class CobolWriter {
             writer.write(line);
         }
         else {
+            //We need to check if this line is to be commented out or if it is already a comment
+            currentLineIsComment = currentLineIsComment || Interpreter.isComment(line);
             writeMultiLine(line, currentLineIsComment);
         }
         currentLineIsComment = false;
@@ -98,7 +101,13 @@ public class CobolWriter {
         String line2 = line.substring(72);
         writeLine(line1);
         if (line2.length() > 0 && !isComment) {
-            line2 = ("      -    \"" + line2);
+            if (line.contains("\"") || line.contains("'"))
+            if (StringHelper.occursFirst(line, '\'', '"')){
+                line2 = ("      -    '" + line2);
+            }
+            else {
+                line2 = ("      -    \"" + line2);
+            }
         }
         else if (line2.length() > 0 && isComment){
             line2 = ("      * " + line2);

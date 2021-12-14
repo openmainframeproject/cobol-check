@@ -6,6 +6,7 @@ import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.DataType;
+import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +21,11 @@ public class InterpreterController {
     private CobolReader reader;
     private LineRepository lineRepository;
     private NumericFields numericFields;
+    private TokenExtractor tokenExtractor;
     private boolean hasReadLine;
     private String possibleMockIdentifier;
+    private String possibleMockType;
+    private String nextFakeLine;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -31,6 +35,7 @@ public class InterpreterController {
         reader = new CobolReader(sourceReader);
         lineRepository = new LineRepository();
         numericFields = new NumericFields();
+        tokenExtractor = new StringTokenizerExtractor();
     }
 
     //Getters for lists of specific source lines
@@ -71,6 +76,7 @@ public class InterpreterController {
     //Mock info
     public boolean isCurrentComponentMockable() { return possibleMockIdentifier != null; }
     public String getPossibleMockIdentifier() { return possibleMockIdentifier; }
+    public String getPossibleMockType() { return possibleMockType; }
 
     public boolean shouldCurrentLineBeParsed(){
         return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
@@ -89,8 +95,36 @@ public class InterpreterController {
         return false;
     }
 
-    public boolean doesCurrentLineEndInPeriod() {
-        return Interpreter.doesCurrentLineEndInPeriod(reader.getCurrentLine());
+    public boolean doesCurrentLineEndCurrentComponent() {
+        return Interpreter.doesCurrentLineEndInPeriod(reader.getCurrentLine()) ||
+                Interpreter.lineContainsComponentEndingToken(reader.getCurrentLine());
+    }
+
+    public boolean shouldEndEvaluateBeInsertedBeforeLine(String line) throws IOException {
+        CobolLine cobolLine = new CobolLine(line, tokenExtractor);
+        if (Interpreter.containsOnlyPeriod(cobolLine)){
+            return true;
+        }
+
+        if (Interpreter.lineContainsComponentEndingToken(cobolLine)){
+            if (cobolLine.containsToken(Constants.EXIT_TOKEN)){
+                return Interpreter.doesCurrentLineEndInPeriod(cobolLine) ||
+                        Interpreter.containsOnlyPeriod(reader.peekNextMeaningfulLine());
+            }
+            else {
+                return true;
+            }
+        }
+
+        if (Interpreter.doesCurrentLineEndInPeriod(cobolLine)){
+            //In this case there is some important code before the period EX.: 'MOVE 5 TO VALUE.'
+            //We want 'END-EVALUATE' to be on a line between the code and the period.
+            nextFakeLine = "           .";
+            return false;
+        }
+        else{
+            throw new PossibleInternalLogicErrorException("END-EVALUATE cannot be inserted, when line has no sign of ending a component");
+        }
     }
 
     /**Interprets the next line from the source file. Based on the line, the following values
@@ -111,6 +145,13 @@ public class InterpreterController {
      */
     public String interpretNextLine(){
         CobolLine line;
+
+        resetPossibleMockValues();
+        String fakeLine;
+        if ((fakeLine = getNextFakeLineIfExists()) != null){
+            return fakeLine;
+        }
+
         try{
             line = reader.readLine();
 
@@ -121,7 +162,7 @@ public class InterpreterController {
                 return null;
             }
 
-            if (!Interpreter.isTooShortToBeMeaningful(line) && !Interpreter.isComment(line)){
+            if (Interpreter.isMeaningful(line)){
                 updateDependencies(line);
                 hasReadLine = true;
 
@@ -130,7 +171,8 @@ public class InterpreterController {
             throw new CobolSourceCouldNotBeReadException(ex);
         }
 
-        return line.getOriginalString();
+        //Current line might change from when it was originally read
+        return reader.getCurrentLine().getOriginalString();
     }
 
     public void closeReader(){
@@ -161,7 +203,6 @@ public class InterpreterController {
         }
 
         if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)){
-            possibleMockIdentifier = null;
             updatePossibleMock(line);
             tryReadBatchFileIOStatement();
         }
@@ -170,9 +211,24 @@ public class InterpreterController {
     /**Updates possibleMockIdentifier if a specific part of the program was just entered.
      * @param line - The line the update is based upon
      */
-    private void updatePossibleMock(CobolLine line) {
-        if (didLineJustEnter(Constants.SECTION_TOKEN)){
+
+    private void updatePossibleMock(CobolLine line) throws IOException {
+        CobolLine nextLine = reader.peekNextMeaningfulLine();
+        if (didLineJustEnter(Constants.SECTION_TOKEN) && Interpreter.getBeginningArea(line, true) == Area.A){
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
+            possibleMockType = Constants.SECTION_TOKEN;
+        }
+        if (Interpreter.isParagraphHeader(line, nextLine, reader.getState())){
+            possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
+            possibleMockType = Constants.PARAGRAPH_TOKEN;
+        }
+
+        if (possibleMockIdentifier != null
+                && !Interpreter.doesCurrentLineEndInPeriod(line)
+                && Interpreter.containsOnlyPeriod(nextLine)){
+            //We might generate code after the current line, thus if the period is on the next line,
+            //we append it to this line. This prevents us generating code in the wrong place.
+            reader.appendNextMeaningfulLineToCurrentLine();
         }
     }
 
@@ -354,5 +410,19 @@ public class InterpreterController {
             stringLines.add(l.getOriginalString());
         }
         return stringLines;
+    }
+
+    private void resetPossibleMockValues(){
+        possibleMockIdentifier = null;
+        possibleMockType = null;
+    }
+
+    private String getNextFakeLineIfExists(){
+        if (nextFakeLine != null){
+            String tempLine = nextFakeLine;
+            nextFakeLine = null;
+            return tempLine;
+        }
+        return null;
     }
 }

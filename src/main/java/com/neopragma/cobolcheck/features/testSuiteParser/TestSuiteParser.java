@@ -321,6 +321,12 @@ public class TestSuiteParser {
                         }
 
                     }
+                    if (verifyInProgress){
+                        if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)){
+                            currentVerify.setExpectedCount("0");
+                        }
+                    }
+
                     break;
 
                 case Constants.ALPHANUMERIC_LITERAL_KEYWORD:
@@ -352,17 +358,7 @@ public class TestSuiteParser {
                         toBeInProgress = false;
                     }
                     if (verifyInProgress){
-                        if (currentVerify.isSetToAtLeast()){
-                            currentVerify.expectAtLeast(testSuiteToken);
-                        }
-                        else {
-                            if(currentVerify.isSetToNoMoreThan()){
-                                currentVerify.expectNoMoreThan(testSuiteToken);
-                            }
-                            else {
-                                currentVerify.expectExact(testSuiteToken);
-                            }
-                        }
+                        currentVerify.setExpectedCount(testSuiteToken);
                     }
                     break;
 
@@ -401,12 +397,17 @@ public class TestSuiteParser {
                         currentMock.setType(testSuiteToken);
                     }
                     else {
-                        //Do something
+                        currentVerify.setType(testSuiteToken);
                     }
 
                     break;
 
                 case Constants.VERIFY_KEYWORD:
+                    if (cobolStatementInProgress) {
+                        addUserWrittenCobolStatement(parsedTestSuiteLines);
+                    }
+                    cobolStatementInProgress = false;
+                    initializeCobolStatement();
                     verifyInProgress = true;
                     currentVerify = new VerifyMockCount();
                     break;
@@ -421,17 +422,7 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ONCE_KEYWORD:
-                    if (currentVerify.isSetToAtLeast()){
-                        currentVerify.expectAtLeast("1");
-                    }
-                    else {
-                        if(currentVerify.isSetToNoMoreThan()){
-                            currentVerify.expectNoMoreThan("1");
-                        }
-                        else {
-                            currentVerify.expectExact("1");
-                        }
-                    }
+                    currentVerify.setExpectedCount("1");
                     handleEndOfVerifyStatement(parsedTestSuiteLines);
                     break;
 
@@ -567,13 +558,13 @@ public class TestSuiteParser {
      */
     public void handleEndOfVerifyStatement (List<String> parsedTestSuiteLines){
         verifyInProgress = false;
-        currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(),
+        currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(), currentVerify.getType(),
                 currentTestSuiteName, currentTestCaseName));
 
         if (currentVerify.getAttachedMock() == null){
             throw new VerifyReferencesNonexistentMockException("Cannot verify nonexistent mock for: " +
-                    currentVerify.getIdentifier() + " in the scope of testsuite: " + currentTestSuiteName +
-                    ", testcase: " + currentTestCaseName);
+                    currentVerify.getType() + " " + currentVerify.getIdentifier() + " in the scope of testsuite: " +
+                    currentTestSuiteName + ", testcase: " + currentTestCaseName);
         }
         addLinesForCurrentVerifyStatement(parsedTestSuiteLines);
     }

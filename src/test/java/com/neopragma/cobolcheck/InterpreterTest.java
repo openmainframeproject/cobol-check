@@ -1,10 +1,7 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.features.interpreter.CobolLine;
-import com.neopragma.cobolcheck.features.interpreter.Interpreter;
-import com.neopragma.cobolcheck.features.interpreter.State;
-import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
+import com.neopragma.cobolcheck.features.interpreter.*;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
 import org.junit.jupiter.api.BeforeEach;
@@ -146,6 +143,44 @@ public class InterpreterTest {
         boolean isBatchFileIOStatement = Interpreter.checkForBatchFileIOStatement(line);
 
         assertFalse(isBatchFileIOStatement);
+    }
+
+    @Test
+    public void it_recognizes_sequence_number_area(){
+        CobolLine line = new CobolLine ("001200 DATA DIVISION.", tokenExtractor);
+        assertEquals(Area.SEQUENCE_NUMBER, Interpreter.getBeginningArea(line, false));
+    }
+
+    @Test
+    public void it_recognizes_indicator_area_while_ignoring_sequence_number_area(){
+        CobolLine line = new CobolLine ("001200-              \"World\"", tokenExtractor);
+        assertEquals(Area.INDICATOR, Interpreter.getBeginningArea(line, true));
+    }
+
+    @Test
+    public void it_recognizes_a_area(){
+        CobolLine line = new CobolLine ("       000-START SECTION.", tokenExtractor);
+        assertEquals(Area.A, Interpreter.getBeginningArea(line, false));
+    }
+
+    @Test
+    public void it_recognizes_b_area(){
+        CobolLine line = new CobolLine ("           PERFORM 003-DO-SOMETHING", tokenExtractor);
+        assertEquals(Area.B, Interpreter.getBeginningArea(line, false));
+    }
+
+    @Test
+    public void it_returns_none_if_outside_areas(){
+        CobolLine line = new CobolLine ("                                                                     " +
+                "    Too many spaces!", tokenExtractor);
+        assertEquals(Area.NONE, Interpreter.getBeginningArea(line, false));
+    }
+
+    @Test
+    public void it_returns_none_if_ignoring_sequence_area_but_string_is_too_short(){
+        String none      = ("01");
+        CobolLine line = new CobolLine ("01", tokenExtractor);
+        assertEquals(Area.NONE, Interpreter.getBeginningArea(line, true));
     }
 
 

@@ -15,7 +15,6 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck.services;
 
-import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.util.Locale;
@@ -106,6 +105,26 @@ public class StringHelper {
         //Regex for trailing spaces
         String regex = "\\s+$";
         return line.replaceAll(regex, "");
+    }
+
+    /**
+     * Checks if a character occurs before another
+     *
+     * @param expectedFirst - The char expected to be first
+     * @param expectedSecond - The char expected to be second
+     * @return - True if the first char occurs before the second.
+     * False if second occurs first or string doesn't contain the chars
+     */
+    public static boolean occursFirst (String text, char expectedFirst, char expectedSecond){
+        for (char c : text.toCharArray()){
+            if (c == expectedFirst){
+                return true;
+            }
+            if (c == expectedSecond){
+                return false;
+            }
+        }
+        return false;
     }
 
 

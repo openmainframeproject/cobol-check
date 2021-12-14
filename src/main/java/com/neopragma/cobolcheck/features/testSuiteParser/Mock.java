@@ -8,6 +8,7 @@ public class Mock {
     private String type;
     private List<String> lines;
     private MockScope scope;
+    private boolean isUsed;
     private String testSuiteName;
     private String testCaseName;
     private int testSuiteNumber;
@@ -43,6 +44,11 @@ public class Mock {
         return type.toUpperCase() + " " + identifier;
     }
 
+    public String getMockDescription(){
+        return type + " " + identifier + " in testsuite: " + testSuiteName +
+                (testCaseName.equals("") ? "" : ", testcase: " + testCaseName);
+    }
+
     public List<String> getCommentText(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");
@@ -72,6 +78,10 @@ public class Mock {
         return scope;
     }
 
+    public boolean isUsed() {
+        return isUsed;
+    }
+
     public String getTestSuiteName() {
         return testSuiteName;
     }
@@ -90,6 +100,10 @@ public class Mock {
 
     public void setScope(MockScope scope) {
         this.scope = scope;
+    }
+
+    public void markAsUsed() {
+        isUsed = true;
     }
 
     public void addLine(String line) {

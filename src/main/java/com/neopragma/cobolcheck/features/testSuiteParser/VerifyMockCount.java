@@ -2,10 +2,11 @@ package com.neopragma.cobolcheck.features.testSuiteParser;
 
 public class VerifyMockCount{
     private Mock attachedMock;
-    private String expectedCount;
+    private String expectedCount = "0";
     private boolean atLeast;
     private boolean noMoreThan;
     private String identifier;
+    private String type;
 
     public String getExpectedCount() {
         return expectedCount;
@@ -27,6 +28,14 @@ public class VerifyMockCount{
         return identifier;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
@@ -34,6 +43,8 @@ public class VerifyMockCount{
     public void setAttachedMock(Mock attachedMock) {
         this.attachedMock = attachedMock;
     }
+
+    public void setExpectedCount(String expectedCount) { this.expectedCount = expectedCount; }
 
     void expectExact(String expectedCount){
         this.expectedCount = expectedCount;

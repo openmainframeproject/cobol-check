@@ -5,6 +5,15 @@
            PERFORM 500-SWITCH
            END-MOCK
 
+           MOCK PARAGRAPH 300-CHANGE-1
+              EVALUATE VALUE-1
+              WHEN "Hello"
+                MOVE "MOCKED" TO VALUE-1
+              WHEN OTHER
+                MOVE "mocked" TO VALUE-1
+              END-EVALUATE
+           END-MOCK
+
            TestCase "Global mock behaves as intended"
            PERFORM 000-START
            Expect VALUE-1 to be "Hi"
@@ -33,7 +42,7 @@
            MOCK SECTION 100-WELCOME
                 MOVE "I'll leave VALUE-2 alone" TO VALUE-1
            END-MOCK
-           MOCK SECTION 500-SWITCH
+           MOCK PARAGRAPH 500-SWITCH
            END-MOCK
            PERFORM 000-START
            PERFORM 000-START
@@ -41,15 +50,16 @@
            Expect VALUE-2 to be "a mock"
            VERIFY SECTION 000-START HAPPENED 5 TIMES
            VERIFY SECTION 100-WELCOME HAPPENED NO MORE THAN 10 TIMES
-           VERIFY SECTION 500-SWITCH NEVER HAPPENED
+           VERIFY PARAGRAPH 500-SWITCH NEVER HAPPENED
 
            TestCase "Empty local mock makes section do nothing"
-           MOCK SECTION 500-SWITCH
+           MOCK PARAGRAPH 500-SWITCH
            END-MOCK
            PERFORM 100-WELCOME
            PERFORM 500-SWITCH
            Expect VALUE-1 to be "Hello"
            Expect VALUE-2 to be "Hi"
+           VERIFY PARAGRAPH 500-SWITCH HAPPENED ONCE
 
            TestCase "Local and global mocks can be used together"
            MOCK SECTION 100-WELCOME
@@ -63,4 +73,10 @@
            TestCase "If no local or global mock run source code"
            PERFORM 100-WELCOME
            Expect VALUE-1 to be "Hello"
+           Expect VALUE-2 to be "Hi"
+
+           TestCase "Global paragraph mock works"
+           PERFORM 100-WELCOME
+           PERFORM 300-CHANGE-1
+           Expect VALUE-1 to be "MOCKED"
            Expect VALUE-2 to be "Hi"

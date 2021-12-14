@@ -25,19 +25,19 @@ public class MockRepository {
         return mocks;
     }
 
-    public boolean mockExistsFor(String identifier){
+    public boolean mockExistsFor(String identifier, String type){
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
                 return true;
             }
         }
         return false;
     }
 
-    public Mock getMockFor(String identifier, String testSuite, String testCase){
+    public Mock getMockFor(String identifier, String type, String testSuite, String testCase){
         List<Mock> globalMocks = new ArrayList<>();
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
                 if (mock.getScope() == MockScope.Local){
                     if (mock.getTestSuiteName().equals(testSuite) && mock.getTestCaseName().equals(testCase)){
                         return mock;

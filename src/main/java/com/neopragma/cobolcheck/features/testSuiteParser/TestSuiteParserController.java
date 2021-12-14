@@ -6,6 +6,7 @@ import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
+import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ public class TestSuiteParserController {
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
     // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
     private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
-    private static final String procedureDivisionCopybookFilename = "CCHECKPD.CPY";
+    private static final String procedureDivisionResultCopybookFilename = "CCHECKRESULTPD.CPY";
+    private static final String procedureDivisionParagraphCopybookFilename = "CCHECKPARAGRAPHSPD.CPY";
 
     private final String workingStorageHeader = ("       WORKING-STORAGE SECTION.");
 
@@ -115,6 +117,20 @@ public class TestSuiteParserController {
         return lines;
     }
 
+    /**
+     * Gets the Working-Storage part of the generated code for mocks
+     *
+     * @return A list of the lines generated
+     */
+    public List<String> getWorkingStorageMockCode() {
+        List<String> lines = new ArrayList<>();
+        //Generates the variables used for counting
+        lines.addAll(generateMockCountingFields());
+        return lines;
+    }
+
+
+
     /**Generates the lines for keeping track of mock counting
      * For each mock a variable are created for:
      * - Current count
@@ -145,12 +161,15 @@ public class TestSuiteParserController {
         // Insert generated Cobol test statements, from the testsuite parse
         lines.addAll(parsedTestSuiteLines);
 
-        // Inject boilerplate test code from cobol-check Procedure Division copybook
-        lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
+        // Inject boilerplate test code from cobol-check Result Procedure Division copybook
+        lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionResultCopybookFilename));
 
+        //Paragraphs generated in between boilerplate code
         lines.addAll(generateMockCountInitializer());
-
         lines.addAll(generateMockSections(true));
+
+        // Inject boilerplate test code from cobol-check Paragraph Procedure Division copybook
+        lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionParagraphCopybookFilename));
         return lines;
     }
 
@@ -167,11 +186,11 @@ public class TestSuiteParserController {
      * @return The generated lines
      */
     public List<String> generateMockSections(boolean withComments){
-        return mockGenerator.generateMockSections(mockRepository.getMocks(), withComments);
+        return mockGenerator.generateMockParagraphs(mockRepository.getMocks(), withComments);
     }
 
-    public boolean mockExistsFor(String identifier){
-        return mockRepository.mockExistsFor(identifier);
+    public boolean mockExistsFor(String identifier, String type){
+        return mockRepository.mockExistsFor(identifier, type);
     }
 
     /**Generates the lines for 'Evaluate when' to perform the correct generated SECTION
@@ -179,8 +198,8 @@ public class TestSuiteParserController {
      * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
      * @return The generated lines
      */
-    public List<String> generateMockPerformCalls(String identifier){
-        return mockGenerator.generateMockPerformCalls(identifier, mockRepository.getMocks());
+    public List<String> generateMockPerformCalls(String identifier, String type){
+        return mockGenerator.generateMockPerformCalls(identifier, type, mockRepository.getMocks());
     }
     /**This line should be inserted at the end of a mocked component,
      * to end the EVALUATE started in the beginning of the mock.
@@ -188,6 +207,14 @@ public class TestSuiteParserController {
      */
     public String getEndEvaluateLine(){
         return mockGenerator.getEndEvaluateLine();
+    }
+
+    public void logUnusedMocks(){
+        for (Mock mock : mockRepository.getMocks()){
+            if (!mock.isUsed()){
+                Log.warn(Messages.get("WRN004", mock.getMockDescription()));
+            }
+        }
     }
 
     /**
@@ -198,7 +225,7 @@ public class TestSuiteParserController {
      * @return A list of the gathered lines
      * @throws IOException - pass any IOExceptions to the caller.
      */
-    private List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
+    public List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
         List<String> lines = new ArrayList<>();
         String path = Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename;
         InputStream is = this.getClass().getResourceAsStream(path);
