@@ -26,49 +26,61 @@ public class MockGenerator {
      */
     List<String> generateWorkingStorageMockCountLines(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
+        if (mocks.isEmpty())
+            return lines;
+
         lines.add("       01  UT-MOCKS-GENERATED.");
         lines.addAll(generateMockCountValues(mocks));
 
         return lines;
     }
 
-    /**Generates the lines for the initializer section.
+    /**Generates the lines for the initializer paragraph.
      * This resets the current count and expected count of all global mocks in cobol.
      * @param mocks - The mocks to generate lines for
      * @return The generated lines
      */
     List<String> generateMockCountInitializer(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
-        lines.add("       UT-INITIALIZE-MOCK-COUNT SECTION.");
+        lines.add("       UT-INITIALIZE-MOCK-COUNT.");
         lines.add("      *****************************************************************");
         lines.add(StringHelper.commentOutLine("       Sets all global mock counters and expected count to 0"));
         lines.add("      *****************************************************************");
+
+        if (mocks.isEmpty()){
+            lines.add("           .");
+            return lines;
+        }
+
         for (Mock mock : mocks){
             if (mock.getScope() == MockScope.Global){
                 lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountIdentifier());
                 lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountExpectedIdentifier());
             }
         }
-        lines.add("       .");
+        lines.add("           .");
         return lines;
     }
 
-    /**Generates the lines for SECTIONs based on mocks,
+    /**Generates the lines for Paragraphs based on mocks,
      * for each mock in a given list.
-     * @param mocks - The mocks to generate SECTIONs for
+     * @param mocks - The mocks to generate Paragraphs for
      * @return The generated lines
      */
-    List<String> generateMockSections(List<Mock> mocks, boolean withComments){
+    List<String> generateMockParagraphs(List<Mock> mocks, boolean withComments){
+        List<String> lines = new ArrayList<>();
+        if (mocks.isEmpty())
+            return lines;
 
-        List<String> lines = new ArrayList<>(getMockSectionCommentHeader());
+        lines.addAll(getMockParagraphCommentHeader());
         for (Mock mock : mocks){
-            lines.addAll(generateSectionForMock(mock, withComments));
+            lines.addAll(generateParagraphsForMock(mock, withComments));
             lines.add("");
         }
         return lines;
     }
 
-    /**Generates the lines for 'Evaluate when' to perform the correct generated SECTION
+    /**Generates the lines for 'Evaluate when' to perform the correct generated Paragraphs
      * for a specific identifier.
      * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
      * @param mocks - All mocks in all tests
@@ -78,6 +90,10 @@ public class MockGenerator {
         List<String> resultLines = new ArrayList<>();
         List<String> localLines = new ArrayList<>();
         List<String> globalLines = new ArrayList<>();
+
+        if (mocks.isEmpty())
+            return resultLines;
+
         resultLines.add(evaluateStartLine);
 
         for (Mock mock: mocks) {
@@ -120,17 +136,17 @@ public class MockGenerator {
         return lines;
     }
 
-    private List<String> getMockSectionCommentHeader(){
+    private List<String> getMockParagraphCommentHeader(){
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");
-        lines.add(StringHelper.commentOutLine("       Sections called when mocking"));
+        lines.add(StringHelper.commentOutLine("       Paragraphs called when mocking"));
         lines.add("      *****************************************************************");
         return lines;
     }
 
-    private List<String> generateSectionForMock(Mock mock, boolean withComment){
+    private List<String> generateParagraphsForMock(Mock mock, boolean withComment){
         List<String> lines = new ArrayList<>();
-        lines.add("       " + mock.getGeneratedMockIdentifier() + " SECTION.");
+        lines.add("       " + mock.getGeneratedMockIdentifier() + ".");
         if (withComment){
             for (String line : mock.getCommentText()){
                 lines.add(StringHelper.commentOutLine(line));

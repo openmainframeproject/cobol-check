@@ -223,7 +223,9 @@ public class InterpreterController {
             possibleMockType = Constants.PARAGRAPH_TOKEN;
         }
 
-        if (possibleMockIdentifier != null && Interpreter.containsOnlyPeriod(nextLine)){
+        if (possibleMockIdentifier != null
+                && !Interpreter.doesCurrentLineEndInPeriod(line)
+                && Interpreter.containsOnlyPeriod(nextLine)){
             //We might generate code after the current line, thus if the period is on the next line,
             //we append it to this line. This prevents us generating code in the wrong place.
             reader.appendNextMeaningfulLineToCurrentLine();

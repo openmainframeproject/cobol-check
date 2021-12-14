@@ -27,7 +27,8 @@ public class TestSuiteParserController {
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
     // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
     private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
-    private static final String procedureDivisionCopybookFilename = "CCHECKPD.CPY";
+    private static final String procedureDivisionResultCopybookFilename = "CCHECKRESULTPD.CPY";
+    private static final String procedureDivisionParagraphCopybookFilename = "CCHECKPARAGRAPHSPD.CPY";
 
     private final String workingStorageHeader = ("       WORKING-STORAGE SECTION.");
 
@@ -116,6 +117,20 @@ public class TestSuiteParserController {
         return lines;
     }
 
+    /**
+     * Gets the Working-Storage part of the generated code for mocks
+     *
+     * @return A list of the lines generated
+     */
+    public List<String> getWorkingStorageMockCode() {
+        List<String> lines = new ArrayList<>();
+        //Generates the variables used for counting
+        lines.addAll(generateMockCountingFields());
+        return lines;
+    }
+
+
+
     /**Generates the lines for keeping track of mock counting
      * For each mock a variable are created for:
      * - Current count
@@ -146,12 +161,15 @@ public class TestSuiteParserController {
         // Insert generated Cobol test statements, from the testsuite parse
         lines.addAll(parsedTestSuiteLines);
 
-        // Inject boilerplate test code from cobol-check Procedure Division copybook
-        lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionCopybookFilename));
+        // Inject boilerplate test code from cobol-check Result Procedure Division copybook
+        lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionResultCopybookFilename));
 
+        //Paragraphs generated in between boilerplate code
         lines.addAll(generateMockCountInitializer());
-
         lines.addAll(generateMockSections(true));
+
+        // Inject boilerplate test code from cobol-check Paragraph Procedure Division copybook
+        lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionParagraphCopybookFilename));
         return lines;
     }
 
@@ -168,7 +186,7 @@ public class TestSuiteParserController {
      * @return The generated lines
      */
     public List<String> generateMockSections(boolean withComments){
-        return mockGenerator.generateMockSections(mockRepository.getMocks(), withComments);
+        return mockGenerator.generateMockParagraphs(mockRepository.getMocks(), withComments);
     }
 
     public boolean mockExistsFor(String identifier, String type){

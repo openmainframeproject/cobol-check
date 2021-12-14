@@ -101,13 +101,13 @@ public class CobolWriter {
         String line2 = line.substring(72);
         writeLine(line1);
         if (line2.length() > 0 && !isComment) {
-            if (line.contains("'")){
+            if (line.contains("\"") || line.contains("'"))
+            if (StringHelper.occursFirst(line, '\'', '"')){
                 line2 = ("      -    '" + line2);
             }
             else {
                 line2 = ("      -    \"" + line2);
             }
-
         }
         else if (line2.length() > 0 && isComment){
             line2 = ("      * " + line2);

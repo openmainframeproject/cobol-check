@@ -39,7 +39,7 @@ public class MockIT {
 
     private List<String> boilerPLateWS;
     private List<String> boilerPLateDP;
-    List<String> boilerPlateTags = Arrays.asList("* CCHECKWS.CPY", "* CCHECKPD.CPY");
+    List<String> boilerPlateTags = Arrays.asList("* CCHECKWS.CPY", "* CCHECKPARAGRAPHSPD.CPY", "* CCHECKRESULTPD.CPY");
 
     @BeforeAll
     static void oneTimeSetup() {
@@ -60,7 +60,7 @@ public class MockIT {
 
         if (boilerPLateWS == null){
             boilerPLateWS = testSuiteParserController.getBoilerplateCodeFromCopybooks("CCHECKWS.CPY");
-            boilerPLateDP = testSuiteParserController.getBoilerplateCodeFromCopybooks("CCHECKPD.CPY");
+            boilerPLateDP = testSuiteParserController.getBoilerplateCodeFromCopybooks("CCHECKPARAGRAPHSPD.CPY");
         }
     }
 
@@ -133,6 +133,29 @@ public class MockIT {
         assertEquals(getTrimmedList(expected2), actual);
     }
 
+    @Test
+    public void it_generates_code_correctly_when_no_mock_is_presennt() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       000-START SECTION.";
+        String s4 = "           MOVE \"Value1\" to VALUE-1";
+        String s5 = "           EXIT SECTION";
+        String s6 = "           .";
+
+        String t1 = "           TestSuite \"No mocks\"";
+        String t2 = "           TESTCASE \"My testCase\"";
+        String t3 = "               EXPECT VALUE-1 TO BE \"something\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(getTrimmedList(expected3), actual);
+    }
+
     private List<String> getTrimmedList(String text){
         String[] lines = text.split(Constants.NEWLINE);
         List<String> result = new ArrayList<>();
@@ -186,17 +209,17 @@ public class MockIT {
                     "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
                     "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
-                    "       UT-INITIALIZE-MOCK-COUNT SECTION.                                        " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "           MOVE 0 TO UT-1-0-1-MOCK-COUNT                                        " + Constants.NEWLINE +
                     "           MOVE 0 TO UT-1-0-1-MOCK-EXPECTED                                     " + Constants.NEWLINE +
-                    "       .                                                                        " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
-                    "      *Sections called when mocking                                             " + Constants.NEWLINE +
+                    "      *Paragraphs called when mocking                                           " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
-                    "       1-0-1-MOCK SECTION.                                                      " + Constants.NEWLINE +
+                    "       1-0-1-MOCK.                                                              " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Global mock of: SECTION: 000-START                                       " + Constants.NEWLINE +
                     "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
@@ -263,17 +286,17 @@ public class MockIT {
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
-            "       UT-INITIALIZE-MOCK-COUNT SECTION.                                        " + Constants.NEWLINE +
+            "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "           MOVE 0 TO UT-1-0-1-MOCK-COUNT                                        " + Constants.NEWLINE +
             "           MOVE 0 TO UT-1-0-1-MOCK-EXPECTED                                     " + Constants.NEWLINE +
-            "       .                                                                        " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
-            "      *Sections called when mocking                                             " + Constants.NEWLINE +
+            "      *Paragraphs called when mocking                                           " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
-            "       1-0-1-MOCK SECTION.                                                      " + Constants.NEWLINE +
+            "       1-0-1-MOCK.                                                              " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Global mock of: SECTION: 000-START                                       " + Constants.NEWLINE +
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
@@ -282,7 +305,7 @@ public class MockIT {
             "           PERFORM 100-WELCOME                                                  " + Constants.NEWLINE +
             "       .                                                                        " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
-            "       1-1-1-MOCK SECTION.                                                      " + Constants.NEWLINE +
+            "       1-1-1-MOCK.                                                              " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Local mock of: SECTION: 000-START                                        " + Constants.NEWLINE +
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
@@ -292,7 +315,7 @@ public class MockIT {
             "                MOVE \"This is\" TO VALUE-1                                       " + Constants.NEWLINE +
             "       .                                                                        " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
-            "       1-2-1-MOCK SECTION.                                                      " + Constants.NEWLINE +
+            "       1-2-1-MOCK.                                                              " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Local mock of: SECTION: 000-START                                        " + Constants.NEWLINE +
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
@@ -301,7 +324,7 @@ public class MockIT {
             "           ADD 1 TO UT-1-2-1-MOCK-COUNT                                         " + Constants.NEWLINE +
             "       .                                                                        " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
-            "       1-2-2-MOCK SECTION.                                                      " + Constants.NEWLINE +
+            "       1-2-2-MOCK.                                                              " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Local mock of: SECTION: 100-WELCOME                                      " + Constants.NEWLINE +
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
@@ -310,7 +333,7 @@ public class MockIT {
             "           ADD 1 TO UT-1-2-2-MOCK-COUNT                                         " + Constants.NEWLINE +
             "       .                                                                        " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
-            "       1-2-3-MOCK SECTION.                                                      " + Constants.NEWLINE +
+            "       1-2-3-MOCK.                                                              " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Local mock of: SECTION: 200-GOODBYE                                      " + Constants.NEWLINE +
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
@@ -353,6 +376,37 @@ public class MockIT {
             "           MOVE \"Bye\" to VALUE-1                                                " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "          .     " + Constants.NEWLINE;
+
+    private String expected3 =
+            "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+                    "           DISPLAY \"No mocks\"                                                   " + Constants.NEWLINE +
+                    "           MOVE \"No mocks\"                                                      " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           MOVE \"My testCase\"                                                   " + Constants.NEWLINE +
+                    "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+                    "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+                    "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
+                    "           SET UT-NORMAL-COMPARE TO TRUE                                        " + Constants.NEWLINE +
+                    "           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  " + Constants.NEWLINE +
+                    "           MOVE VALUE-1 TO UT-ACTUAL                                            " + Constants.NEWLINE +
+                    "           MOVE \"something\"                                                     " + Constants.NEWLINE +
+                    "               TO UT-EXPECTED                                                   " + Constants.NEWLINE +
+                    "           SET UT-RELATION-EQ TO TRUE                                           " + Constants.NEWLINE +
+                    "           PERFORM UT-CHECK-EXPECTATION                                         " + Constants.NEWLINE +
+                    "           PERFORM UT-AFTER                                                     " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "       000-START SECTION.                                                       " + Constants.NEWLINE +
+                    "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
+                    "           EXIT SECTION                                                         " + Constants.NEWLINE +
+                    "           .                                                                   " + Constants.NEWLINE;
 
 }
 

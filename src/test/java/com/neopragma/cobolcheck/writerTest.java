@@ -54,6 +54,28 @@ public class writerTest {
     }
 
     @Test
+    void it_formats_a_Cobol_continuation_line_when_string_contains_2_types_of_apostrophes() throws IOException {
+        String originalText = "           TESTCASE: \"This testcase name makes the line far, far too long for 'Cobol'.\"";
+        String expectedLine1 = "           TESTCASE: \"This testcase name makes the line far, far too lon        ";
+        expectedLine1 += Constants.NEWLINE;
+        String expectedLine2 = "      -    \"g for 'Cobol'.\"                                                     ";
+        expectedLine2 += Constants.NEWLINE;
+        writerController.writeLine(originalText);
+        assertEquals(expectedLine1 + expectedLine2, writer.toString());
+    }
+
+    @Test
+    void it_formats_a_Cobol_continuation_line_when_string_contains_2_types_of_apostrophes_switched() throws IOException {
+        String originalText = "           TESTCASE: 'This testcase name makes the line far, far too long for \"Cobol\".'";
+        String expectedLine1 = "           TESTCASE: 'This testcase name makes the line far, far too lon        ";
+        expectedLine1 += Constants.NEWLINE;
+        String expectedLine2 = "      -    'g for \"Cobol\".'                                                     ";
+        expectedLine2 += Constants.NEWLINE;
+        writerController.writeLine(originalText);
+        assertEquals(expectedLine1 + expectedLine2, writer.toString());
+    }
+
+    @Test
     void it_formats_a_Cobol_continuation_line_based_on_a_long_String_value_into_4_lines() throws IOException {
         String originalText = "           TESTCASE: 'This testcase name makes the line far, far tooo " +
                 "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
