@@ -105,6 +105,11 @@ public class TestResultsFileOutputIT {
         if (result.length() > 0)
             result = result.substring(0, result.length()-1);
 
+        System.out.println("Expected: " + expected);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("Actual: " + result);
+
+
         //Assert
         assertEquals(expected, result);
 
