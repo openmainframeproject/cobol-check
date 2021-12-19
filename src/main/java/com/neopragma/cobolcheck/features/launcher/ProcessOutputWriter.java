@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck.features.launcher;
 
+import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Messages;
@@ -11,12 +12,21 @@ public class ProcessOutputWriter {
 
     String testResultsFilePath;
 
-    public ProcessOutputWriter() throws FileNotFoundException {
+    public ProcessOutputWriter() {
         testResultsFilePath = Config.getTestResultFilePathString();
-        new PrintWriter(testResultsFilePath).close();
+        try {
+            new PrintWriter(testResultsFilePath).close();
+        } catch (FileNotFoundException ex){
+            throw new IOExceptionProcessingTestResultFile(
+                    Messages.get("ERR030", testResultsFilePath), ex);
+        }
+
         Log.info(Messages.get("INF010", testResultsFilePath));
     }
 
+    public String getTestResultsFilePath() {
+        return testResultsFilePath;
+    }
 
     public void writeProcessOutputToTestResultsFile(Process proc, boolean outputToConsole) {
         writeProcessOutputToFile(proc, testResultsFilePath, outputToConsole);
@@ -46,9 +56,10 @@ public class ProcessOutputWriter {
 
             }
             bw.close();
-        }catch (IOException e)
+        }catch (IOException ex)
         {
-            throw new PossibleInternalLogicErrorException("Could not write to file: " + path);
+            throw new IOExceptionProcessingTestResultFile(
+                    Messages.get("ERR031", path), ex);
         }
 
     }

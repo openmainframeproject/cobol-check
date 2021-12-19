@@ -1,0 +1,20 @@
+TESTSUITE:
+Tests of alphanumeric expectations
+     PASS:   1. Equality with an alphanumeric literal using TO BE                               
+     PASS:   2. Equality with an alphanumeric literal using TO EQUAL                            
+     PASS:   3. Equality with an alphanumeric literal using '='                                 
+     PASS:   4. Equality with an alphanumeric literal and reference modification                
+     PASS:   5. Non-equality with an alphanumeric literal using TO BE                           
+     PASS:   6. Non-equality with an alphanumeric literal using TO EQUAL                        
+     PASS:   7. Non-equality with an alphanumeric literal using '!='                            
+     PASS:   8. Non-equality with an alphanumeric literal and reference modification            
+     PASS:   9. Greater-than sign with an alphanumeric literal                                  
+     PASS:  10. Less-than sign with an alphanumeric literal                                     
+     PASS:  11. Not greater-than sign with an alphanumeric literal                              
+     PASS:  12. Not less-than sign with an alphanumeric literal                                 
+     PASS:  13. Display numeric                                                                 
+ 
+ 13 TEST CASES WERE EXECUTED
+ 13 PASSED
+  0 FAILED
+=================================================

@@ -1,5 +1,7 @@
 package com.neopragma.cobolcheck.features.launcher;
 
+import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
+import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.TestResultsInputFileNotFoundException;
 import com.neopragma.cobolcheck.services.Config;
@@ -19,11 +21,7 @@ public class LauncherController {
 
     public LauncherController(){
         launcher = new Launcher();
-        try{
-            processOutputWriter = new ProcessOutputWriter();
-        } catch (FileNotFoundException ex){
-            //TODO: do something about it
-        }
+        processOutputWriter = new ProcessOutputWriter();
 
     }
 
@@ -47,6 +45,7 @@ public class LauncherController {
         int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath(), (proc) ->
                 processOutputWriter.writeProcessOutputToTestResultsFile(proc, true));
 
+        Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
         Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));
     }
 
@@ -69,6 +68,7 @@ public class LauncherController {
         int exitCode = launcher.launchProgram(pLauncher, programPath, (proc) ->
                 processOutputWriter.writeProcessOutputToFile(proc, outPutFilePath, outputToConsole));
 
+        Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
         Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));
     }
 
