@@ -76,9 +76,7 @@ public class LinuxProcessLauncher implements ProcessLauncher {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
-        File outputFile = new File(Config.getTestResultFilePathString());
-        processBuilder.redirectOutput(outputFile);
-        processBuilder.redirectInput(outputFile);
+
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
         String delim = Constants.EMPTY_STRING;
