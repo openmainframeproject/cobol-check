@@ -75,7 +75,6 @@ public class LinuxProcessLauncher implements ProcessLauncher {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
-        processBuilder.inheritIO();
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
         String delim = Constants.EMPTY_STRING;

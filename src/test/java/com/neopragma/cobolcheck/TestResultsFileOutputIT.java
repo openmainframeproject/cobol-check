@@ -102,7 +102,8 @@ public class TestResultsFileOutputIT {
         while ((line = reader.readLine()) != null) {
             result += line + "\n";
         }
-        result = result.substring(0, result.length()-1);
+        if (result.length() > 0)
+            result = result.substring(0, result.length()-1);
 
         //Assert
         assertEquals(expected, result);
