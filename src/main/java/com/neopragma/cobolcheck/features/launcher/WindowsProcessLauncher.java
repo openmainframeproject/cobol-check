@@ -69,6 +69,8 @@ public class WindowsProcessLauncher implements ProcessLauncher {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
+        File outputFile = new File(Config.getTestResultFilePathString());
+        processBuilder.redirectOutput(outputFile);
 
         Process process = null;
         StringBuilder processArguments = new StringBuilder();

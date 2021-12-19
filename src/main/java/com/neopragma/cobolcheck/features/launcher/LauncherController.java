@@ -42,8 +42,10 @@ public class LauncherController {
             throw new PossibleInternalLogicErrorException(errorMessage);
         }
 
-        int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath(), (proc) ->
-                processOutputWriter.writeProcessOutputToTestResultsFile(proc, true));
+//        int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath(), (proc) ->
+//                processOutputWriter.writeProcessOutputToTestResultsFile(proc, true));
+
+        int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath());
 
         Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
         Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));

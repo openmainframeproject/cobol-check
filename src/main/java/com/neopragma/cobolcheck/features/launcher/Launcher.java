@@ -29,6 +29,15 @@ public class Launcher {
         return exitCode;
     }
 
+    int launchProgram(ProcessLauncher launcher, String programPath) throws InterruptedException {
+        if (launcher == null) return -1;
+        Process process = launcher.run(programPath);
+
+        int exitCode = 1;
+        exitCode = process.waitFor();
+        return exitCode;
+    }
+
     /**
      * Gets a launcher based on the current platform: Linux, Windows, OSX, ZOS or Unix.
      * NOTE: Currently not supporting OSX or ZOS.
