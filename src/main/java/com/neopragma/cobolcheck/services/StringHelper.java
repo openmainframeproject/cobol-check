@@ -154,4 +154,11 @@ public class StringHelper {
         buffer.append(Constants.QUOTE);
         return buffer.toString();
     }
+
+    public static String removeLastIndex(String value){
+        if (value != null && !isBlank(value)){
+            return value.substring(0, value.length() - 2);
+        }
+        return value;
+    }
 }

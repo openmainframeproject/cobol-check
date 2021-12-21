@@ -3,7 +3,9 @@ package com.neopragma.cobolcheck.features.launcher;
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.services.Config;
+import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
+import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -11,14 +13,16 @@ import java.io.*;
 public class ProcessOutputWriter {
 
     String testResultsFilePath;
+    boolean writeWasSuccesful = false;
+    String processInput;
+    String processError;
 
     public ProcessOutputWriter() {
         testResultsFilePath = Config.getTestResultFilePathString();
         try {
             new PrintWriter(testResultsFilePath).close();
         } catch (FileNotFoundException ex){
-            throw new IOExceptionProcessingTestResultFile(
-                    Messages.get("ERR030", testResultsFilePath), ex);
+            Log.warn(Messages.get("WRN005", testResultsFilePath));
         }
 
         Log.info(Messages.get("INF010", testResultsFilePath));
@@ -28,39 +32,68 @@ public class ProcessOutputWriter {
         return testResultsFilePath;
     }
 
-    public void writeProcessOutputToTestResultsFile(Process proc, boolean outputToConsole) {
-        writeProcessOutputToFile(proc, testResultsFilePath, outputToConsole);
+    public boolean WriteWasSuccesful() {
+        return writeWasSuccesful;
     }
 
-    public static void writeProcessOutputToFile(Process proc, String path, boolean outputToConsole) {
+    public void writeProcessOutputToTestResultsFile(Process proc, boolean outputToConsole) {
+        getProcessOut(proc);
+        writeOutPutToConsole();
+        writeWasSuccesful = writeProcessOutputToFile(testResultsFilePath);
+    }
+
+    private void getProcessOut(Process proc) {
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+        processInput = "";
+        processError = "";
 
         try{
-            FileWriter fw = new FileWriter(path, true);
-            BufferedWriter bw = new BufferedWriter(fw);
             String s = null;
             while ((s = stdInput.readLine()) != null){
-                bw.write(s);
-                bw.newLine();
-                if (outputToConsole){
-                    System.out.println(s);
-                }
+                if (s != null)
+                    processInput += s + Constants.NEWLINE;
             }
 
             while ((s = stdError.readLine()) != null){
-                if (outputToConsole){
-                    System.out.println(s);
-                }
-
+                if (s != null)
+                    processError += s + Constants.NEWLINE;
             }
+            //Remove extra NEWLINE:
+            processInput = StringHelper.removeLastIndex(processInput);
+            processError = StringHelper.removeLastIndex(processError);
+
             stdInput.close();
             stdError.close();
-            bw.close();
         }catch (IOException ex)
         {
-            throw new IOExceptionProcessingTestResultFile(
-                    Messages.get("ERR031", path), ex);
+            Log.warn(Messages.get("WRN007"));
+        }
+    }
+
+    private void writeOutPutToConsole() {
+        System.out.println(processInput);
+        System.out.println(processError);
+    }
+
+
+    private boolean writeProcessOutputToFile(String path) {
+        try{
+            FileWriter fw = new FileWriter(path, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            String[] lines = processInput.split(Constants.NEWLINE);
+            for (String line : lines){
+                bw.write(line);
+                bw.newLine();
+            }
+
+            bw.close();
+            return true;
+        }
+        catch (IOException ex)
+        {
+            Log.warn(Messages.get("WRN006", path));
+            return false;
         }
 
     }
