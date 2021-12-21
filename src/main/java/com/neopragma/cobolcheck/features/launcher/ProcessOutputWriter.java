@@ -65,7 +65,8 @@ public class ProcessOutputWriter {
 
             stdInput.close();
             stdError.close();
-        }catch (IOException ex)
+        }
+        catch (IOException ex)
         {
             Log.warn(Messages.get("WRN007"));
         }
