@@ -39,6 +39,8 @@ public class TestResultsFileOutputIT {
             return;
         }
 
+        System.out.println("PLATFORM = " + PlatformLookup.get().toString());
+
         //Arrange
         String[] args = new String[2];
         args[0] = "-p";
