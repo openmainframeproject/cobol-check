@@ -59,7 +59,6 @@ public class ProcessOutputWriter {
             bw.close();
         }catch (IOException ex)
         {
-            System.out.println("exception:" + ex.getMessage());
             throw new IOExceptionProcessingTestResultFile(
                     Messages.get("ERR031", path), ex);
         }
