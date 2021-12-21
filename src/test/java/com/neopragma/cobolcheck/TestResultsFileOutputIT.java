@@ -131,6 +131,7 @@ public class TestResultsFileOutputIT {
                 "  2 PASSED\n" +
                 "  0 FAILED\n" +
                 "=================================================";
+        System.out.println("PlATFORM: " + PlatformLookup.get().name());
         Main.main(args);
         String fileResult = Config.getTestResultFilePathString();
         BufferedReader reader = new BufferedReader(new FileReader(fileResult));
