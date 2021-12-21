@@ -1,6 +1,9 @@
 package com.neopragma.cobolcheck.features.launcher;
 
+import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
+import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.exceptions.TestResultsInputFileNotFoundException;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
@@ -9,11 +12,17 @@ import com.neopragma.cobolcheck.services.filehelpers.PathHelper;
 import com.neopragma.cobolcheck.services.log.Log;
 import com.neopragma.cobolcheck.services.platform.PlatformLookup;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class LauncherController {
     private Launcher launcher;
+    private ProcessOutputWriter processOutputWriter;
 
     public LauncherController(){
         launcher = new Launcher();
+        processOutputWriter = new ProcessOutputWriter();
+
     }
 
     /**
@@ -33,9 +42,12 @@ public class LauncherController {
             throw new PossibleInternalLogicErrorException(errorMessage);
         }
 
-        int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath());
+        int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath(), (proc) ->
+                processOutputWriter.writeProcessOutputToTestResultsFile(proc, true));
+
+        if (processOutputWriter.writeWasSuccesful){
+            Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
+        }
         Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));
     }
-
-
 }

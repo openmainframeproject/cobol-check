@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import static com.neopragma.cobolcheck.services.StringHelper.adjustPathString;
+
 /**
  * Loads and manages configuration settings.
  *
@@ -45,6 +47,7 @@ public class Config {
     public static final String NONE = "none";
     public static final String DEFAULT_CONFIG_FILE_PATH = "config.properties";
     public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
+    public static final String TEST_RESULTS_FILE_CONFIG_KEY = "test.results.file";
     public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
 
@@ -93,12 +96,16 @@ public class Config {
 
 
     public static String getTestSuiteDirectoryPathString() {
-        return StringHelper.adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,
+        return adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,
                 Constants.CURRENT_DIRECTORY));
     }
 
+    public static String getTestResultFilePathString() {
+        return adjustPathString(settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+    }
+
     public static String getApplicationSourceDirectoryPathString() {
-        return StringHelper.adjustPathString(settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
+        return adjustPathString(settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
                 DEFAULT_APPLICATION_SOURCE_DIRECTORY));
     }
 

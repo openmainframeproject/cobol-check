@@ -23,6 +23,7 @@ import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -75,7 +76,7 @@ public class LinuxProcessLauncher implements ProcessLauncher {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, programName);
-        processBuilder.inheritIO();
+
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
         String delim = Constants.EMPTY_STRING;
