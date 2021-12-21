@@ -54,6 +54,8 @@ public class ProcessOutputWriter {
                 }
 
             }
+            stdInput.close();
+            stdError.close();
             bw.close();
         }catch (IOException ex)
         {
