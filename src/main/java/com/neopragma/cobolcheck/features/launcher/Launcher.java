@@ -47,14 +47,17 @@ public class Launcher {
         switch (platform) {
             case LINUX :
                 Log.debug("Initializer launching Linux process");
+                System.out.println("Initializer launching Linux process");
                 launcher = new LinuxProcessLauncher("linux");
                 break;
             case WINDOWS :
                 Log.debug("Initializer launching Windows process");
+                System.out.println("Initializer launching Windows process");
                 launcher = new WindowsProcessLauncher("windows");
                 break;
             case OSX :
                 Log.debug("Initializer launching OS X process");
+                System.out.println("Initializer launching OS X process");
                 //launcher = new OSXProcessLauncher(config, "osx");
                 break;
             case ZOS :

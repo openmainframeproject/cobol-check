@@ -40,9 +40,7 @@ public class ProcessOutputWriter {
             FileWriter fw = new FileWriter(path, true);
             BufferedWriter bw = new BufferedWriter(fw);
             String s = null;
-            System.out.println("Is it empty?");
             while ((s = stdInput.readLine()) != null){
-                System.out.println("Nope");
                 bw.write(s);
                 bw.newLine();
                 if (outputToConsole){
@@ -56,7 +54,6 @@ public class ProcessOutputWriter {
                 }
 
             }
-            System.out.println("Closing");
             bw.close();
         }catch (IOException ex)
         {
