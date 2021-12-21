@@ -18,3 +18,47 @@ Tests of alphanumeric expectations
  13 PASSED
   0 FAILED
 =================================================
+TESTSUITE:
+General tests
+     PASS:   1. Welcome section performs as intended                                            
+     PASS:   2. Welcome section performs as intended                                            
+     PASS:   3. Goodbye section performs as intended                                            
+     PASS:   4. Goodbye section performs as intended                                            
+     PASS:   5. Change-1 changes hello to bye                                                   
+     PASS:   6. Change-1 changes hello to bye                                                   
+     PASS:   7. Change-1 changes bye to hello                                                   
+     PASS:   8. Change-1 changes bye to hello                                                   
+     PASS:   9. Change-2 changes hi to see you                                                  
+     PASS:  10. Change-2 changes hi to see you                                                  
+     PASS:  11. Change-2 changes see you to hi                                                  
+     PASS:  12. Change-2 changes see you to hi                                                  
+     PASS:  13. Switches values                                                                 
+     PASS:  14. Switches values                                                                 
+TESTSUITE:
+Mocking tests
+     PASS:  15. Global mock behaves as intended                                                 
+     PASS:  16. Global mock behaves as intended                                                 
+     PASS:  17. VERIFY EXACT           1 ACCESS   TO SECTION 000-START             
+     PASS:  18. Local mock overwrites global mock                                               
+     PASS:  19. Local mock overwrites global mock                                               
+     PASS:  20. VERIFY AT LEAST        2 ACCESSES TO SECTION 000-START             
+     PASS:  21. Multiple local mocks behaves as intended                                        
+     PASS:  22. Multiple local mocks behaves as intended                                        
+**** FAIL:  23. VERIFY ACCESSES TO SECTION 000-START                                                                                                                                                                                                            
+   EXPECTED EXACT            5 ACCESSES, WAS     2                                                                                                                                                                                                              
+     PASS:  24. VERIFY NO MORE THAN   10 ACCESSES TO SECTION 100-WELCOME           
+     PASS:  25. VERIFY EXACT           0 ACCESSES TO PARAGRAPH 500-SWITCH          
+     PASS:  26. Empty local mock makes section do nothing                                       
+     PASS:  27. Empty local mock makes section do nothing                                       
+     PASS:  28. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 500-SWITCH          
+     PASS:  29. Local and global mocks can be used together                                     
+     PASS:  30. Local and global mocks can be used together                                     
+     PASS:  31. If no local or global mock run source code                                      
+     PASS:  32. If no local or global mock run source code                                      
+     PASS:  33. Global paragraph mock works                                                     
+     PASS:  34. Global paragraph mock works                                                     
+ 
+ 34 TEST CASES WERE EXECUTED
+ 33 PASSED
+  1 FAILED
+=================================================
