@@ -12,7 +12,7 @@ group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
 
 def approvalExpectedOutput = "approval-test-expected.txt"
-def approvalActualOutput = "approval-test-actual.txt"
+def approvalActualOutput = "testResults.txt"
 
 sonarqube {
     properties {
@@ -160,7 +160,7 @@ def approvalTest = tasks.register("approvalTest", Test) {
     dependsOn fatJar
     def output = -1
 
-    println "${OS_NAME}"
+    println "OS NAME: ${OS_NAME}"
     if ("${OS_NAME}" == "linux") {
         println "Linux detected"
         def proc = "./approvaltest".execute()

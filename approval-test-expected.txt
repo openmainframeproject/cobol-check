@@ -81,11 +81,6 @@ Verify Cobol Check handles numeric relations properly
  26 PASSED
  25 FAILED
 =================================================
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:874: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-LOOKUP-FILE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:1100: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-BEFORE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:1101: warning: ignoring redundant .
 TESTSUITE:
 Tests of alphanumeric expectations
      PASS:   1. Equality with an alphanumeric literal using TO BE
@@ -106,11 +101,6 @@ Tests of alphanumeric expectations
  13 PASSED
   0 FAILED
 =================================================
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:357: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-LOOKUP-FILE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:583: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-BEFORE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:584: warning: ignoring redundant .
 TESTSUITE:
 Greeting includes the user name when it is provided
 **** FAIL:   1. When message type is greeting it returns Hello, James!
@@ -134,13 +124,6 @@ Greeting returns the appropriate message based on message type
   2 PASSED
   6 FAILED
 =================================================
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:312: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-LOOKUP-FILE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:538: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-BEFORE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:539: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph '2000-SPEAK':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:567: warning: ignoring redundant .
 TESTSUITE:
 Tests for a sequential file copy program
      PASS:   1. Output fields are populated from the input record
@@ -150,11 +133,6 @@ Tests for a sequential file copy program
   2 PASSED
   0 FAILED
 =================================================
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:200: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-LOOKUP-FILE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:426: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-BEFORE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:427: warning: ignoring redundant .
 TESTSUITE:
 General tests
      PASS:   1. Welcome section performs as intended
@@ -199,7 +177,3 @@ Mocking tests
  33 PASSED
   1 FAILED
 =================================================
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-LOOKUP-FILE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:895: warning: ignoring redundant .
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL: in paragraph 'UT-BEFORE':
-C:\Users\bdudak\Desktop\workspace\cobol-check-main\CC##99.CBL:896: warning: ignoring redundant .
