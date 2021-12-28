@@ -2,3 +2,4 @@
 ./cobolcheck -p ALPHA >> approval-test-actual.txt
 ./cobolcheck -p GREETING >> approval-test-actual.txt
 ./cobolcheck -p FILECOPY >> approval-test-actual.txt
+./cobolcheck -p MOCKTEST >> approval-test-actual.txt
