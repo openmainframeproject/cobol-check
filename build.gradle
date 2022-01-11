@@ -204,12 +204,14 @@ task osInfo {
     }
 }
 
-public class BuildHelper{
-    public int compareFiles(String file1, String file2, boolean trimLines){
+class BuildHelper{
+    int compareFiles(String file1, String file2, boolean trimLines){
+        BufferedReader reader1
+        BufferedReader reader2
         try{
-            BufferedReader reader1 = new BufferedReader(new FileReader(file1))
-            BufferedReader reader2 = new BufferedReader(new FileReader(file2))
-            int lineCount = 0;
+            reader1 = new BufferedReader(new FileReader(file1))
+            reader2 = new BufferedReader(new FileReader(file2))
+            int lineCount = 0
             String line1 = ""
             String line2 = ""
             while ((line1 = reader1.readLine()) != null && (line2 = reader2.readLine()) != null){
@@ -229,6 +231,9 @@ public class BuildHelper{
         } catch( Exception e){
             println("Error while comparing: ${e.message}")
             return -1
+        } finally{
+            if (reader1 != null) reader1.close()
+            if (reader2 != null) reader2.close()
         }
 
     }
