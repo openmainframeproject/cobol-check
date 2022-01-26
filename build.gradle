@@ -160,7 +160,6 @@ def approvalTest = tasks.register("approvalTest", Test) {
     dependsOn fatJar
     def output = -1
 
-    println "OS NAME: ${OS_NAME}"
     if ("${OS_NAME}" == "linux") {
         println "Linux detected"
         def proc = "./approvaltest".execute()

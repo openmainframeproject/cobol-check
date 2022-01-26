@@ -1,7 +1,6 @@
 package com.neopragma.cobolcheck;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.filehelpers.PathHelper;
-import com.neopragma.cobolcheck.services.log.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -36,17 +35,7 @@ public class PathHelperTest {
     @Test
     void test_source_out_path_exists() {
         String path = PathHelper.getTestSourceOutPath();
-        Log.info("Checking if path: " + path +" exists");
         File file = new File(path);
-        Log.info("file created");
-        boolean result = false;
-        try{
-            result = file.exists();
-        } catch (SecurityException e){
-            Log.info("Security exception thrown: " + e.getMessage());
-        }
-        Log.info("Result: " + result);
-
         assertTrue(file.exists());
     }
 
