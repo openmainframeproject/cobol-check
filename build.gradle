@@ -12,7 +12,7 @@ group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
 
 def approvalExpectedOutput = "approval-test-expected.txt"
-def approvalActualOutput = "approval-test-actual.txt"
+def approvalActualOutput = "testResults.txt"
 
 sonarqube {
     properties {
@@ -60,7 +60,7 @@ jacocoTestCoverageVerification {
 }
 
 ext {
-    mainClassName = 'com.neopragma.cobolcheck.Driver'
+    mainClassName = 'com.neopragma.cobolcheck.Main'
 }
 
 java {
@@ -158,21 +158,27 @@ task prepareDistribution(type: Zip) {
 def approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
     dependsOn fatJar
-    doLast {
-        if ("${OS_NAME}" == "linux") {
-            println "Linux detected"
-            def proc = "./approvaltest".execute()
-            proc.waitForProcessOutput(System.out, System.err)
-            proc = "diff ${approvalExpectedOutput} ${approvalActualOutput}".execute()
-            proc.waitForProcessOutput(System.out, System.err)
+    def output = -1
 
-            println "exit code from diff: ${proc.exitValue()}"
-            if (proc.exitValue() > 0) {
-                throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
-            } else {
-                println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
-            }
-        }
+    if ("${OS_NAME}" == "linux") {
+        println "Linux detected"
+        def proc = "./approvaltest".execute()
+        proc.waitForProcessOutput(System.out, System.err)
+    }
+    if ("${OS_NAME}".toLowerCase().contains("windows")) {
+        println "Windows detected"
+        def proc = "./approvaltestWin.cmd".execute()
+        proc.waitForProcessOutput(System.out, System.err)
+    }
+
+    output = new BuildHelper().compareFiles(approvalExpectedOutput, approvalActualOutput, true)
+    println "exit from compare: ${output}"
+
+    if (output != 0) {
+        println "*** FAIL ***"
+        throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+    } else {
+        println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
     }
 }
 
@@ -194,5 +200,40 @@ task osInfo {
         println "Family:       ${OS_NAME}"
         println "Version:      ${OS_VERSION}"
         println "Architecture: ${OS_ARCH}"
+    }
+}
+
+class BuildHelper{
+    int compareFiles(String file1, String file2, boolean trimLines){
+        BufferedReader reader1
+        BufferedReader reader2
+        try{
+            reader1 = new BufferedReader(new FileReader(file1))
+            reader2 = new BufferedReader(new FileReader(file2))
+            int lineCount = 0
+            String line1 = ""
+            String line2 = ""
+            while ((line1 = reader1.readLine()) != null && (line2 = reader2.readLine()) != null){
+                lineCount++
+                if (trimLines){
+                    line1 = line1.trim()
+                    line2 = line2.trim()
+                }
+                if (!line1.equals(line2)){
+                    println("Difference on line ${lineCount}:")
+                    println("   ${file1}: ${line1}")
+                    println("   ${file2}: ${line2}")
+                    return 1
+                }
+            }
+            return 0
+        } catch( Exception e){
+            println("Error while comparing: ${e.message}")
+            return -1
+        } finally{
+            if (reader1 != null) reader1.close()
+            if (reader2 != null) reader2.close()
+        }
+
     }
 }

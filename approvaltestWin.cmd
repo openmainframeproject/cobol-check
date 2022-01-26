@@ -1,0 +1,1 @@
+./cobolcheck -p NUMBERS ALPHA GREETING FILECOPY MOCKTEST > approval-test-actual.txt
