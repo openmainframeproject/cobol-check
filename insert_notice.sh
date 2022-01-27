@@ -17,7 +17,7 @@ for filename in ./** ./..?* ; do
         echo "File $filename already contains copyright notice" 
       else 
         echo "Inserting copyright notice into file $filename"
-        cat copyright_notice.txt "$filename" > temp.txt
+        cat notice.txt "$filename" > temp.txt
         mv temp.txt "$filename"
       fi
     fi
