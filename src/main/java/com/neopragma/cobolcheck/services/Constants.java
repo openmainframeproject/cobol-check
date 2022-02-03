@@ -122,10 +122,16 @@ public final class Constants {
     public static final String LEVEL_01_TOKEN = "01";
     public static final String COPY_TOKEN = "COPY";
     public static final String SECTION_TOKEN = "SECTION";
+    public static final String CALL_TOKEN = "CALL";
+    public static final String USING_TOKEN = "USING";
+    public static final String BY_REFERENCE_TOKEN = "BY REFERENCE";
+    public static final String BY_CONTENT_TOKEN = "BY CONTENT";
+    public static final String BY_VALUE_TOKEN = "BY VALUE";
     public static final String DECLARATIVES_TOKEN = "DECLARATIVES";
     public static final String EXIT_TOKEN = "EXIT";
     public static final String END_SECTION_TOKEN = "END-SECTION";
     public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
+    public static final String END_CALL_TOKEN = "END-CALL";
     public static final String ZERO_TOKEN = "ZERO";
 
 

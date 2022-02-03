@@ -15,7 +15,8 @@ public class MockRepository {
             throw new ComponentMockedTwiceInSameScopeException("Mock for " + mock.getIdentifier() + " in " +
                     "testsuite: " + mock.getTestSuiteName() + ", testcase: " +
                     ((mock.getTestCaseName().equals("")) ? "N/A" : mock.getTestCaseName()) +
-                    " already exists in this "+ mock.getScope().name() +
+                    " already exists " + (mock.getArguments().isEmpty() ? "" : "with the given arguments ") +
+                    "in this "+ mock.getScope().name() +
                     ((mock.getScope() == MockScope.Local) ? " testcase " : " testsuite ") + "scope.");
         }
         mocks.add(mock);
@@ -25,19 +26,21 @@ public class MockRepository {
         return mocks;
     }
 
-    public boolean mockExistsFor(String identifier, String type){
+    public boolean mockExistsFor(String identifier, String type, List<String> arguments){
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
+                    && mock.getArguments().equals(arguments)){
                 return true;
             }
         }
         return false;
     }
 
-    public Mock getMockFor(String identifier, String type, String testSuite, String testCase){
+    public Mock getMockFor(String identifier, String type, String testSuite, String testCase, List<String> arguments){
         List<Mock> globalMocks = new ArrayList<>();
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
+                    && (mock.getArguments().equals(arguments))){
                 if (mock.getScope() == MockScope.Local){
                     if (mock.getTestSuiteName().equals(testSuite) && mock.getTestCaseName().equals(testCase)){
                         return mock;
@@ -54,17 +57,17 @@ public class MockRepository {
                 return mock;
             }
         }
-
-
         return null;
     }
+
 
     private boolean mockAlreadyExist(Mock mock){
         for(Mock m : mocks){
             if (mock.getIdentifier().equals(m.getIdentifier())
                     && mock.getScope() == m.getScope()
                     && mock.getTestSuiteName().equals(m.getTestSuiteName())
-                    && mock.getTestCaseName().equals(m.getTestCaseName())){
+                    && mock.getTestCaseName().equals(m.getTestCaseName())
+                    && mock.getArguments().equals(m.getArguments())) {
                 return true;
             }
         }

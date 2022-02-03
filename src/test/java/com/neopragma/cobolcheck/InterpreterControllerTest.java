@@ -172,6 +172,76 @@ public class InterpreterControllerTest {
     }
 
     @Test
+    public void it_sets_possible_mock_identifier_to_call_program_name() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "           CALL 'PROG1'";
+        String actual = "";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+            actual = interpreterController.getPossibleMockIdentifier();
+        }
+
+        assertEquals("'PROG1'", actual);
+    }
+
+    @Test
+    public void it_sets_possible_mock_args() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "           CALL 'PROG1' USING VALUE-1";
+        List<String> actual = new ArrayList<>();
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+            actual = interpreterController.getPossibleMockArgs();
+        }
+
+        assertEquals("REFERENCE VALUE-1", actual.get(0));
+    }
+
+    @Test
+    public void it_sets_possible_mock_args_with_content_reference() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "           CALL 'PROG3' USING  BY CONTENT VALUE-1, BY REFERENCE VALUE-2";
+        List<String> actual = new ArrayList<>();
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+            actual = interpreterController.getPossibleMockArgs();
+        }
+
+        assertEquals("CONTENT VALUE-1", actual.get(0));
+        assertEquals("REFERENCE VALUE-2", actual.get(1));
+    }
+
+    @Test
+    public void it_sets_possible_mock_args_with_content_reference_multiline() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "           CALL 'PROG3' USING";
+        String str3 = "             BY CONTENT VALUE-1,";
+        String str4 = "             BY VALUE VALUE-2,";
+        String str5 = "             VALUE-3";
+        List<String> actual = new ArrayList<>();
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+            actual = interpreterController.getPossibleMockArgs();
+        }
+
+        assertEquals("CONTENT VALUE-1", actual.get(0));
+        assertEquals("VALUE VALUE-2", actual.get(1));
+        assertEquals("REFERENCE VALUE-3", actual.get(2));
+    }
+
+    @Test
     public void it_ignores_lines_that_does_not_change_flags() throws IOException {
 
         boolean hasLine1Changed = false;

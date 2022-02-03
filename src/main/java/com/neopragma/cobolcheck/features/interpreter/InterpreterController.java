@@ -3,17 +3,12 @@ package com.neopragma.cobolcheck.features.interpreter;
 import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.services.Messages;
-import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
+import com.neopragma.cobolcheck.services.cobolLogic.*;
 import com.neopragma.cobolcheck.services.Constants;
-import com.neopragma.cobolcheck.services.cobolLogic.DataType;
-import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +20,8 @@ public class InterpreterController {
     private boolean hasReadLine;
     private String possibleMockIdentifier;
     private String possibleMockType;
-    private String nextFakeLine;
+    private List<String> possibleMockArgs;
+    private boolean insideSectionOrParagraphMockBody;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -77,6 +73,11 @@ public class InterpreterController {
     public boolean isCurrentComponentMockable() { return possibleMockIdentifier != null; }
     public String getPossibleMockIdentifier() { return possibleMockIdentifier; }
     public String getPossibleMockType() { return possibleMockType; }
+    public List<String> getPossibleMockArgs() { return possibleMockArgs; }
+    public boolean isInsideSectionOrParagraphMockBody() {return insideSectionOrParagraphMockBody;}
+    public void setInsideSectionOrParagraphMockBody(boolean insideSectionOrParagraphMockBody) {
+        this.insideSectionOrParagraphMockBody = insideSectionOrParagraphMockBody;
+    }
 
     public boolean shouldCurrentLineBeParsed(){
         return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
@@ -95,36 +96,26 @@ public class InterpreterController {
         return false;
     }
 
-    public boolean doesCurrentLineEndCurrentComponent() {
-        return Interpreter.doesCurrentLineEndInPeriod(reader.getCurrentLine()) ||
-                Interpreter.lineContainsComponentEndingToken(reader.getCurrentLine());
+    public boolean isCurrentLineEndingSectionOrParagraph() throws IOException {
+        CobolLine nextLine = reader.peekNextMeaningfulLine();
+        CobolLine lineFollowingNext = reader.peekNextMeaningfulLine();
+
+        return Interpreter.lineEndsParagraphOrSection(reader.getCurrentLine(), nextLine, lineFollowingNext, reader.getState());
     }
 
-    public boolean shouldEndEvaluateBeInsertedBeforeLine(String line) throws IOException {
-        CobolLine cobolLine = new CobolLine(line, tokenExtractor);
-        if (Interpreter.containsOnlyPeriod(cobolLine)){
+    public boolean canWriteEndEvaluateBeforeCurrentLine(){
+        if (Interpreter.containsOnlyPeriod(reader.getCurrentLine()))
             return true;
-        }
-
-        if (Interpreter.lineContainsComponentEndingToken(cobolLine)){
-            if (cobolLine.containsToken(Constants.EXIT_TOKEN)){
-                return Interpreter.doesCurrentLineEndInPeriod(cobolLine) ||
-                        Interpreter.containsOnlyPeriod(reader.peekNextMeaningfulLine());
-            }
-            else {
+        else {
+            if (Interpreter.containsParagraphOrSectionEndingToken(reader.getCurrentLine()))
                 return true;
+            if (Interpreter.endsInPeriod(reader.getCurrentLine())){
+                    reader.putNextLine("           .");
+                    return false;
             }
         }
+        return false;
 
-        if (Interpreter.doesCurrentLineEndInPeriod(cobolLine)){
-            //In this case there is some important code before the period EX.: 'MOVE 5 TO VALUE.'
-            //We want 'END-EVALUATE' to be on a line between the code and the period.
-            nextFakeLine = "           .";
-            return false;
-        }
-        else{
-            throw new PossibleInternalLogicErrorException("END-EVALUATE cannot be inserted, when line has no sign of ending a component");
-        }
     }
 
     /**Interprets the next line from the source file. Based on the line, the following values
@@ -147,11 +138,6 @@ public class InterpreterController {
         CobolLine line;
 
         resetPossibleMockValues();
-        String fakeLine;
-        if ((fakeLine = getNextFakeLineIfExists()) != null){
-            return fakeLine;
-        }
-
         try{
             line = reader.readLine();
 
@@ -165,7 +151,6 @@ public class InterpreterController {
             if (Interpreter.isMeaningful(line)){
                 updateDependencies(line);
                 hasReadLine = true;
-
             }
         } catch (IOException ex){
             throw new CobolSourceCouldNotBeReadException(ex);
@@ -208,23 +193,36 @@ public class InterpreterController {
         }
     }
 
-    /**Updates possibleMockIdentifier if a specific part of the program was just entered.
+    /**Updates possibleMockIdentifier, possibleMockType and possibleMockArgs
+     * if a specific part of the program was just entered.
      * @param line - The line the update is based upon
      */
-
     private void updatePossibleMock(CobolLine line) throws IOException {
+        boolean periodShouldBeOnThisLine = false;
         CobolLine nextLine = reader.peekNextMeaningfulLine();
-        if (didLineJustEnter(Constants.SECTION_TOKEN) && Interpreter.getBeginningArea(line, true) == Area.A){
+        if (Interpreter.isSectionHeader(line, reader.getState())){
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
             possibleMockType = Constants.SECTION_TOKEN;
+            possibleMockArgs = new ArrayList<>();
+            periodShouldBeOnThisLine = true;
         }
         if (Interpreter.isParagraphHeader(line, nextLine, reader.getState())){
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
             possibleMockType = Constants.PARAGRAPH_TOKEN;
+            possibleMockArgs = new ArrayList<>();
+            periodShouldBeOnThisLine = true;
+        }
+        if (didLineJustEnter(Constants.CALL_TOKEN)){
+            CobolLine statement = reader.readStatementAsOneLine();
+            possibleMockIdentifier = statement.getToken(statement.getTokenIndexOf(Constants.CALL_TOKEN)+1);
+            possibleMockType = Constants.CALL_TOKEN;
+            possibleMockArgs = Interpreter.getUsingArgs(statement);
+            if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(statement))
+                reader.putNextLine("           .");
         }
 
-        if (possibleMockIdentifier != null
-                && !Interpreter.doesCurrentLineEndInPeriod(line)
+        if (possibleMockIdentifier != null && periodShouldBeOnThisLine
+                && !Interpreter.endsInPeriod(line)
                 && Interpreter.containsOnlyPeriod(nextLine)){
             //We might generate code after the current line, thus if the period is on the next line,
             //we append it to this line. This prevents us generating code in the wrong place.
@@ -415,14 +413,5 @@ public class InterpreterController {
     private void resetPossibleMockValues(){
         possibleMockIdentifier = null;
         possibleMockType = null;
-    }
-
-    private String getNextFakeLineIfExists(){
-        if (nextFakeLine != null){
-            String tempLine = nextFakeLine;
-            nextFakeLine = null;
-            return tempLine;
-        }
-        return null;
     }
 }

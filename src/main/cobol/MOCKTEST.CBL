@@ -11,6 +11,7 @@
        01  FILLER.
            05  VALUE-1           PIC X(80).
            05  VALUE-2           PIC X(80).
+           05  VALUE-3           PIC X(80).
            05  TEMP              PIC X(80).
 
        PROCEDURE DIVISION.
@@ -54,7 +55,7 @@
 
        400-CHANGE-2
           .
-          EVALUATE VALUE-2
+           EVALUATE VALUE-2
            WHEN "Hi"
               MOVE "See you" TO VALUE-2
            WHEN OTHER
@@ -66,6 +67,31 @@
            MOVE VALUE-2 TO TEMP
            MOVE VALUE-1 TO VALUE-2
            MOVE TEMP TO VALUE-1.
+
+       600-MAKE-CALL.
+           MOVE "arg1" to VALUE-1
+           MOVE "arg2" to VALUE-2
+           CALL 'PROG1'
+           .
+
+       700-MAKE-CALL.
+           MOVE "arg1" to VALUE-1
+           MOVE "arg2" to VALUE-2
+           CALL VALUE-2 USING VALUE-1
+           END-CALL.
+
+       800-MAKE-CALL.
+           MOVE "arg1" to VALUE-1
+           MOVE "arg2" to VALUE-2
+           MOVE "arg3" to VALUE-3
+           CALL 'PROG3' USING 
+              BY CONTENT VALUE-1,
+              BY VALUE VALUE-2,  
+              VALUE-3.
+           CALL 'PROG3' USING 
+              BY CONTENT VALUE-1,
+              BY VALUE VALUE-2,  
+              VALUE-3.
 
        999-END.
            GOBACK

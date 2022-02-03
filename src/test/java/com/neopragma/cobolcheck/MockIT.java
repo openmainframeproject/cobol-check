@@ -153,6 +153,56 @@ public class MockIT {
         assertEquals(getTrimmedList(expected3), actual);
     }
 
+    @Test
+    public void it_inserts_call_mocks_correctly() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       000-START SECTION.";
+        String s4 = "           MOVE \"Value1\" to VALUE-1";
+        String s5 = "           EXIT SECTION.";
+        String s6 = "       100-WELCOME SECTION.";
+        String s7 = "           CALL 'prog1' USING";
+        String s8 = "               BY CONTENT VALUE-1, VALUE-2.";
+        String s9 = "           MOVE \"Hello\" to VALUE-1.";
+        String s10 = "       200-GOODBYE SECTION.";
+        String s11 = "          MOVE \"Bye\" to VALUE-1";
+        String s12 = "          CALL 'prog2' USING VALUE-1";
+        String s13 = "          CALL 'prog2' USING VALUE-1.";
+        String s14 = "          .";
+
+        String t1 = "           TestSuite \"Mocking tests\"";
+        String t2 = "           MOCK SECTION 100-WELCOME";
+        String t3 = "               MOVE \"mock\" TO VALUE-1";
+        String t4 = "           END-MOCK";
+        String t5 = "           MOCK CALL 'prog2' USING VALUE-1";
+        String t6 = "               MOVE \"prog2\" TO VALUE-1";
+        String t7 = "           END-MOCK";
+        String t8 = "           TestCase \"Local mock overwrites global mock\"";
+        String t9 = "           MOCK SECTION 200-GOODBYE";
+        String t10 = "                MOVE \"Goodbye\" TO VALUE-1";
+        String t11 = "           END-MOCK";
+        String t12 = "           PERFORM 200-GOODBYE";
+        String t13 = "           Expect VALUE-1 to be \"Goodbye\"";
+        String t14 = "           TestCase \"Simply a test\"";
+        String t15 = "           MOCK SECTION 000-START";
+        String t16 = "           END-MOCK";
+        String t17 = "           MOCK CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2";
+        String t18 = "           END-MOCK";
+        String t19 = "           MOCK SECTION 200-GOODBYE";
+        String t20 = "           END-MOCK";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10,
+                s11, s12, s13, s14, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                t12, t13, t14, t15, t16, t17, t18, t19, t20, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(getTrimmedList(expected4), actual);
+    }
+
     private List<String> getTrimmedList(String text){
         String[] lines = text.split(Constants.NEWLINE);
         List<String> result = new ArrayList<>();
@@ -404,6 +454,175 @@ public class MockIT {
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
                     "           .                                                                   " + Constants.NEWLINE;
+
+    private String expected4 =
+            "       WORKING-STORAGE SECTION.                                                 " +     Constants.NEWLINE +
+            "       01  UT-MOCKS-GENERATED.                                                  " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
+            "                   VALUE \"SECTION 100-WELCOME\".                                 " + Constants.NEWLINE +
+            "           05  UT-1-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-2-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
+            "                   VALUE \"CALL 'prog2'\".                                        " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
+            "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
+            "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
+            "                   VALUE \"CALL 'prog1'\".                                        " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
+            "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
+            "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
+            "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+            "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+            "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
+            "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
+            "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+            "           MOVE \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
+            "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "            PERFORM 200-GOODBYE                                                 " + Constants.NEWLINE +
+            "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
+            "           SET UT-NORMAL-COMPARE TO TRUE                                        " + Constants.NEWLINE +
+            "           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  " + Constants.NEWLINE +
+            "           MOVE VALUE-1 TO UT-ACTUAL                                            " + Constants.NEWLINE +
+            "           MOVE \"Goodbye\"                                                       " + Constants.NEWLINE +
+            "               TO UT-EXPECTED                                                   " + Constants.NEWLINE +
+            "           SET UT-RELATION-EQ TO TRUE                                           " + Constants.NEWLINE +
+            "           PERFORM UT-CHECK-EXPECTATION                                         " + Constants.NEWLINE +
+            "           PERFORM UT-AFTER                                                     " + Constants.NEWLINE +
+            "           MOVE \"Simply a test\"                                                 " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
+            "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           MOVE 0 TO UT-1-0-1-MOCK-COUNT                                        " + Constants.NEWLINE +
+            "           MOVE 0 TO UT-1-0-1-MOCK-EXPECTED                                     " + Constants.NEWLINE +
+            "           MOVE 0 TO UT-1-0-2-MOCK-COUNT                                        " + Constants.NEWLINE +
+            "           MOVE 0 TO UT-1-0-2-MOCK-EXPECTED                                     " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Paragraphs called when mocking                                           " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "       1-0-1-MOCK.                                                              " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Global mock of: SECTION: 100-WELCOME                                     " + Constants.NEWLINE +
+            "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           ADD 1 TO UT-1-0-1-MOCK-COUNT                                         " + Constants.NEWLINE +
+            "               MOVE \"mock\" TO VALUE-1                                           " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       1-0-2-MOCK.                                                              " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Global mock of: CALL: 'prog2'                                            " + Constants.NEWLINE +
+            "      *With args: REFERENCE VALUE-1                                             " + Constants.NEWLINE +
+            "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           ADD 1 TO UT-1-0-2-MOCK-COUNT                                         " + Constants.NEWLINE +
+            "               MOVE \"prog2\" TO VALUE-1                                          " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       1-1-1-MOCK.                                                              " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Local mock of: SECTION: 200-GOODBYE                                      " + Constants.NEWLINE +
+            "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "      *In testcase: \"Local mock overwrites global mock\"                         " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           ADD 1 TO UT-1-1-1-MOCK-COUNT                                         " + Constants.NEWLINE +
+            "                MOVE \"Goodbye\" TO VALUE-1                                       " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       1-2-1-MOCK.                                                              " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Local mock of: SECTION: 000-START                                        " + Constants.NEWLINE +
+            "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "      *In testcase: \"Simply a test\"                                             " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           ADD 1 TO UT-1-2-1-MOCK-COUNT                                         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       1-2-2-MOCK.                                                              " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Local mock of: CALL: 'prog1'                                             " + Constants.NEWLINE +
+            "      *With args: CONTENT VALUE-1, REFERENCE VALUE-2                            " + Constants.NEWLINE +
+            "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "      *In testcase: \"Simply a test\"                                             " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           ADD 1 TO UT-1-2-2-MOCK-COUNT                                         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       1-2-3-MOCK.                                                              " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *Local mock of: SECTION: 200-GOODBYE                                      " + Constants.NEWLINE +
+            "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "      *In testcase: \"Simply a test\"                                             " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "           ADD 1 TO UT-1-2-3-MOCK-COUNT                                         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       000-START SECTION.                                                       " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                    PERFORM 1-2-1-MOCK                                          " + Constants.NEWLINE +
+            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
+            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                    PERFORM 1-0-1-MOCK                                          " + Constants.NEWLINE +
+            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "      *    CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2.                      " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                    PERFORM 1-2-2-MOCK                                          " + Constants.NEWLINE +
+            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
+            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
+            "       200-GOODBYE SECTION.                                                     " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO \"Local mock overwrites global mock\"                        " + Constants.NEWLINE +
+            "                    PERFORM 1-1-1-MOCK                                          " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                    PERFORM 1-2-3-MOCK                                          " + Constants.NEWLINE +
+            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "          MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
+            "      *   CALL 'prog2' USING VALUE-1                                            " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                    PERFORM 1-0-2-MOCK                                          " + Constants.NEWLINE +
+            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "      *   CALL 'prog2' USING VALUE-1.                                           " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
+            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                    PERFORM 1-0-2-MOCK                                          " + Constants.NEWLINE +
+            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "          .                                                                    ";
 
 }
 

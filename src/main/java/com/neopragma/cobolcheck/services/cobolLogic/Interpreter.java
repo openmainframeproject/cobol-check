@@ -1,10 +1,13 @@
-package com.neopragma.cobolcheck.features.interpreter;
+package com.neopragma.cobolcheck.services.cobolLogic;
 
+import com.neopragma.cobolcheck.features.interpreter.Area;
+import com.neopragma.cobolcheck.features.interpreter.State;
 import com.neopragma.cobolcheck.services.Constants;
-import com.neopragma.cobolcheck.services.cobolLogic.CobolVerbs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /*
  * Used by Writer
@@ -17,7 +20,7 @@ public class Interpreter {
             "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
     );
 
-    private static final List<String> componentEndingTokens = Arrays.asList(
+    private static final List<String> paragraphAndSectionEndingTokens = Arrays.asList(
             Constants.EXIT_TOKEN, Constants.END_SECTION_TOKEN, Constants.END_PARAGRAPH_TOKEN
     );
 
@@ -41,7 +44,7 @@ public class Interpreter {
      * @param state - current state of flags
      * @return - the part of the program just entered or null if no part was entered
      */
-    static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state){
+    public static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state){
         String partOfProgram = null;
         if (line.containsToken(Constants.IDENTIFICATION_DIVISION)) {
             state.setFlagFor(Constants.IDENTIFICATION_DIVISION);
@@ -127,6 +130,11 @@ public class Interpreter {
             state.setFlagFor(Constants.PARAGRAPH_TOKEN);
             partOfProgram = Constants.PARAGRAPH_TOKEN;
         }
+        if (line.containsToken(Constants.CALL_TOKEN)) {
+            state.unsetFlagFor(Constants.CALL_TOKEN);
+            state.setFlagFor(Constants.CALL_TOKEN);
+            partOfProgram = Constants.CALL_TOKEN;
+        }
 
         return partOfProgram;
     }
@@ -158,11 +166,23 @@ public class Interpreter {
         return false;
     }
 
-    public static boolean lineContainsComponentEndingToken(CobolLine currentLine) {
-        for (String endingToken : componentEndingTokens){
-            if (currentLine.containsToken(endingToken)){
+    public static boolean lineEndsParagraphOrSection(CobolLine currentLine, CobolLine nextLine, CobolLine lineFollowingNext, State state) {
+        if (currentLine == null || nextLine == null || lineFollowingNext == null)
+            return true;
+
+        if (containsParagraphOrSectionEndingToken(currentLine))
+            return true;
+
+        if (endsInPeriod(currentLine) || containsOnlyPeriod(currentLine)){
+            return (isSectionHeader(nextLine, state) || isParagraphHeader(nextLine, lineFollowingNext, state));
+        }
+        return false;
+    }
+
+    public static boolean containsParagraphOrSectionEndingToken(CobolLine currentLine){
+        for (String keyword : paragraphAndSectionEndingTokens){
+            if (currentLine.containsToken(keyword))
                 return true;
-            }
         }
         return false;
     }
@@ -227,7 +247,7 @@ public class Interpreter {
      */
     public static boolean shouldLineBeCommentedOut(CobolLine line, State state){
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)){
-            if (checkForBatchFileIOStatement(line))
+            if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN))
             {
                 return true;
             }
@@ -274,6 +294,12 @@ public class Interpreter {
         }
     }
 
+    public static boolean isSectionHeader(CobolLine line, State state){
+        return state.isFlagSetFor(Constants.PROCEDURE_DIVISION)
+                && line.containsToken(Constants.SECTION_TOKEN)
+                && getBeginningArea(line, true) == Area.A;
+    }
+
     /**
      * As paragraph headers are not associated with any keyword, the method matches the
      * source line against specific attributes that makes up a paragraph header.
@@ -310,6 +336,30 @@ public class Interpreter {
             }
         }
         return false;
+    }
+
+    public static List<String> getUsingArgs(CobolLine line) {
+        List<String> arguments = new ArrayList<>();
+        List<String> argumentReferences = Arrays.asList(Constants.BY_REFERENCE_TOKEN,
+                Constants.BY_CONTENT_TOKEN, Constants.BY_VALUE_TOKEN);
+        String currentArgumentReference = Constants.BY_REFERENCE_TOKEN;
+        if (line.containsToken(Constants.USING_TOKEN)){
+            int usingIndex = line.getTokenIndexOf(Constants.USING_TOKEN);
+
+            for(int i = usingIndex + 1; i < line.tokensSize(); i++){
+                if (line.getToken(i).toUpperCase(Locale.ROOT).equals(Constants.END_CALL_TOKEN))
+                    break;
+                if (argumentReferences.contains(line.getToken(i).toUpperCase(Locale.ROOT))){
+                    currentArgumentReference = line.getToken(i).toUpperCase();
+                    continue;
+                }
+
+                currentArgumentReference = currentArgumentReference.replace("BY ", "");
+                arguments.add(currentArgumentReference + " " + line.getToken(i).replace(",",""));
+                currentArgumentReference = Constants.BY_REFERENCE_TOKEN;
+            }
+        }
+        return arguments;
     }
 
     /**
@@ -349,7 +399,7 @@ public class Interpreter {
      * @param line - the line to check
      * @return true if the trimmed line ends with a period
      */
-    public static boolean doesCurrentLineEndInPeriod(CobolLine line) {
+    public static boolean endsInPeriod(CobolLine line) {
         return line.getTrimmedString().endsWith(Constants.PERIOD);
     }
 }

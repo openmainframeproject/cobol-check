@@ -150,30 +150,46 @@ General tests
      PASS:  13. Switches values
      PASS:  14. Switches values
 TESTSUITE:
-Mocking tests
-     PASS:  15. Global mock behaves as intended
-     PASS:  16. Global mock behaves as intended
-     PASS:  17. VERIFY EXACT           1 ACCESS   TO SECTION 000-START
-     PASS:  18. Local mock overwrites global mock
-     PASS:  19. Local mock overwrites global mock
-     PASS:  20. VERIFY AT LEAST        2 ACCESSES TO SECTION 000-START
-     PASS:  21. Multiple local mocks behaves as intended
-     PASS:  22. Multiple local mocks behaves as intended
-**** FAIL:  23. VERIFY ACCESSES TO SECTION 000-START
+Mock Call statements test
+     PASS:  15. Simple call mock works
+     PASS:  16. Simple call mock works
+     PASS:  17. Simple global call mock works
+     PASS:  18. Simple global call mock works
+     PASS:  19. Call mock with argument works
+     PASS:  20. Call mock with argument works
+     PASS:  21. Call mock with content reference for arguments work
+     PASS:  22. Call mock with content reference for arguments work
+     PASS:  23. Call mock with content reference for arguments work
+     PASS:  24. Paragraph mock is called and call mock is ignored
+     PASS:  25. Paragraph mock is called and call mock is ignored
+     PASS:  26. Paragraph mock is called and call mock is ignored
+**** FAIL:  27. Global call mock is not overwritten by local call mock (Should fail)
+    EXPECTED <Global PROG1>, WAS <Local PROG1>
+TESTSUITE:
+Mock Sections And Paragraphs
+     PASS:  28. Global mock behaves as intended
+     PASS:  29. Global mock behaves as intended
+     PASS:  30. VERIFY EXACT           1 ACCESS   TO SECTION 000-START
+     PASS:  31. Local mock overwrites global mock
+     PASS:  32. Local mock overwrites global mock
+     PASS:  33. VERIFY AT LEAST        2 ACCESSES TO SECTION 000-START
+     PASS:  34. Multiple local mocks behaves as intended (First Verify should fail)
+     PASS:  35. Multiple local mocks behaves as intended (First Verify should fail)
+**** FAIL:  36. VERIFY ACCESSES TO SECTION 000-START
    EXPECTED EXACT            5 ACCESSES, WAS     2
-     PASS:  24. VERIFY NO MORE THAN   10 ACCESSES TO SECTION 100-WELCOME
-     PASS:  25. VERIFY EXACT           0 ACCESSES TO PARAGRAPH 500-SWITCH
-     PASS:  26. Empty local mock makes section do nothing
-     PASS:  27. Empty local mock makes section do nothing
-     PASS:  28. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 500-SWITCH
-     PASS:  29. Local and global mocks can be used together
-     PASS:  30. Local and global mocks can be used together
-     PASS:  31. If no local or global mock run source code
-     PASS:  32. If no local or global mock run source code
-     PASS:  33. Global paragraph mock works
-     PASS:  34. Global paragraph mock works
+     PASS:  37. VERIFY NO MORE THAN   10 ACCESSES TO SECTION 100-WELCOME
+     PASS:  38. VERIFY EXACT           0 ACCESSES TO PARAGRAPH 500-SWITCH
+     PASS:  39. Empty local mock makes section do nothing
+     PASS:  40. Empty local mock makes section do nothing
+     PASS:  41. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 500-SWITCH
+     PASS:  42. Local and global mocks can be used together
+     PASS:  43. Local and global mocks can be used together
+     PASS:  44. If no local or global mock run source code
+     PASS:  45. If no local or global mock run source code
+     PASS:  46. Global paragraph mock works
+     PASS:  47. Global paragraph mock works
 
- 34 TEST CASES WERE EXECUTED
- 33 PASSED
-  1 FAILED
+ 47 TEST CASES WERE EXECUTED
+ 45 PASSED
+  2 FAILED
 =================================================

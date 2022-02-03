@@ -7,6 +7,7 @@ public class Mock {
     private String identifier;
     private String type;
     private List<String> lines;
+    private List<String> arguments;
     private MockScope scope;
     private boolean isUsed;
     private String testSuiteName;
@@ -22,6 +23,7 @@ public class Mock {
         this.testCaseNumber = testCaseNumber;
         this.mockNumber = mockNumber;
         lines = new ArrayList<>();
+        arguments = new ArrayList<>();
     }
 
     public String getGeneratedMockIdentifier(){
@@ -53,6 +55,9 @@ public class Mock {
         List<String> lines = new ArrayList<>();
         lines.add("      *****************************************************************");
         lines.add(scope.name() + " mock of: " + type + ": " + identifier);
+        if (!arguments.isEmpty()){
+            lines.add("With args: " + getArgumentText());
+        }
         lines.add("In testsuite: " + testSuiteName);
         if (scope == MockScope.Local){
             lines.add("In testcase: " + testCaseName);
@@ -73,6 +78,8 @@ public class Mock {
     public List<String> getLines() {
         return lines;
     }
+
+    public List<String> getArguments() {return arguments;}
 
     public MockScope getScope() {
         return scope;
@@ -112,5 +119,15 @@ public class Mock {
 
     public void addLines(List<String> lines) {
         this.lines.addAll(lines);
+    }
+
+    public void addArgument(String argument) {arguments.add(argument);}
+
+    private String getArgumentText(){
+        String combinedArgs = "";
+        for (String arg : arguments){
+            combinedArgs += arg + ", ";
+        }
+        return combinedArgs.substring(0, combinedArgs.length() - 2);
     }
 }

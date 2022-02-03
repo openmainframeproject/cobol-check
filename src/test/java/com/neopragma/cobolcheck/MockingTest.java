@@ -54,6 +54,12 @@ public class MockingTest {
         numericFields = new NumericFields();
     }
 
+    /********* TEST: *****************
+    *   Call exceptions
+    *   END-MOCK on same line
+    *   Call recognition
+     *******************************/
+
     @Test
     public void it_creates_a_new_section_mock() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
@@ -82,6 +88,36 @@ public class MockingTest {
 
         testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
         assertEquals("000-START", mockRepository.getMocks().get(0).getIdentifier());
+    }
+
+    @Test
+    public void call_mock_gets_correct_identifier() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1'";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals("'prog1'", mockRepository.getMocks().get(0).getIdentifier());
+    }
+
+    @Test
+    public void call_mock_gets_correct_identifier_when_variable() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL VALUE-1";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals("VALUE-1", mockRepository.getMocks().get(0).getIdentifier());
     }
 
     @Test
@@ -150,6 +186,21 @@ public class MockingTest {
     }
 
     @Test
+    public void call_mock_gets_call_type() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK call 'prog1'";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals("CALL", mockRepository.getMocks().get(0).getType());
+    }
+
+    @Test
     public void mock_gets_correct_lines() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
@@ -166,6 +217,70 @@ public class MockingTest {
 
         testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
         assertEquals(expected, mockRepository.getMocks().get(0).getLines());
+    }
+
+    @Test
+    public void call_mock_gets_correct_lines() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1'";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add(str4);
+        expected.add(str5);
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals(expected, mockRepository.getMocks().get(0).getLines());
+    }
+
+    @Test
+    public void call_mock_gets_correct_lines_with_args() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING VALUE-1";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add(str4);
+        expected.add(str5);
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals(expected, mockRepository.getMocks().get(0).getLines());
+    }
+
+    @Test
+    public void call_mock_gets_correct_arguments() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING BY CONTENT VALUE-1,";
+        String str4 = "             BY REFERENCE VALUE-2,";
+        String str5 = "             BY VALUE VALUE-3,";
+        String str6 = "             VALUE-4, BY CONTENT VALUE-5";
+        String str7 = "          MOVE \"something\" TO this";
+        String str8 = "          MOVE \"something else\" TO other";
+        String str9 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("CONTENT VALUE-1");
+        expected.add("REFERENCE VALUE-2");
+        expected.add("VALUE VALUE-3");
+        expected.add("REFERENCE VALUE-4");
+        expected.add("CONTENT VALUE-5");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8,
+                str9, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals(expected, mockRepository.getMocks().get(0).getArguments());
     }
 
     @Test
@@ -298,6 +413,77 @@ public class MockingTest {
     }
 
     @Test
+    public void single_mock_call_gets_generated_correctly_with_comment() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1'";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("      *****************************************************************");
+        expected.add("      *Paragraphs called when mocking");
+        expected.add("      *****************************************************************");
+        expected.add("       1-1-1-MOCK.");
+        expected.add("      *****************************************************************");
+        expected.add("      *Local mock of: CALL: 'prog1'");
+        expected.add("      *In testsuite: \"Name of test suite\"");
+        expected.add("      *In testcase: \"Name of test case\"");
+        expected.add("      *****************************************************************");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
+        expected.add(str4);
+        expected.add(str5);
+        expected.add("       .");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockSections(true);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void single_mock_call_with_args_gets_generated_correctly_with_comment() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING BY CONTENT V-1, V-2";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("      *****************************************************************");
+        expected.add("      *Paragraphs called when mocking");
+        expected.add("      *****************************************************************");
+        expected.add("       1-1-1-MOCK.");
+        expected.add("      *****************************************************************");
+        expected.add("      *Local mock of: CALL: 'prog1'");
+        expected.add("      *With args: CONTENT V-1, REFERENCE V-2");
+        expected.add("      *In testsuite: \"Name of test suite\"");
+        expected.add("      *In testcase: \"Name of test case\"");
+        expected.add("      *****************************************************************");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
+        expected.add(str4);
+        expected.add(str5);
+        expected.add("       .");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockSections(true);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void multiple_mock_sections_gets_generated_correctly() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
@@ -398,7 +584,8 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START",
+                Constants.SECTION_TOKEN, new ArrayList<>());
 
         assertEquals(expected, actual);
     }
@@ -424,7 +611,35 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START",
+                Constants.SECTION_TOKEN, new ArrayList<>());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void single_local_mock_call_perform_evaluate_is_generated_correctly() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING VALUE-1";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                ALSO \"Name of test case\"");
+        expected.add("                    PERFORM 1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'prog1'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1"));
 
         assertEquals(expected, actual);
     }
@@ -487,12 +702,16 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual1 = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
-        List<String> actual2 = testSuiteParserController.generateMockPerformCalls("100-START", Constants.SECTION_TOKEN);
+        List<String> actual1 = testSuiteParserController.generateMockPerformCalls("000-START",
+                Constants.SECTION_TOKEN, new ArrayList<>());
+        List<String> actual2 = testSuiteParserController.generateMockPerformCalls("100-START",
+                Constants.SECTION_TOKEN, new ArrayList<>());
 
         assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
     }
+
+
 
     @Test
     public void no_evaluate_perform_is_generated_when_no_mock_present() throws IOException {
@@ -505,7 +724,8 @@ public class MockingTest {
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
 
-        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START", Constants.SECTION_TOKEN);
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START",
+                Constants.SECTION_TOKEN, new ArrayList<>());
 
         assertTrue(actual.isEmpty());
     }
@@ -663,6 +883,30 @@ public class MockingTest {
 
         String expectedMessage = "Mock for 000-START in testsuite: \"Name of test suite\", testcase: " +
                 "\"Name of test case\" already exists in this Local testcase scope.";
+
+        Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
+                () -> testSuiteParserController.parseTestSuites(numericFields));
+        assertEquals(expectedMessage, ex.getMessage());
+    }
+
+    @Test
+    public void it_throws_when_identical_call_mocks_are_in_same_local_scope() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING V1, V2";
+        String str4 = "          MOVE \"global\" TO this";
+        String str5 = "          MOVE \"mock\" TO other";
+        String str6 = "       END-MOCK";
+        String str7 = "       MOCK CALL 'prog1' USING V1, V2";
+        String str8 = "          MOVE \"global\" TO this";
+        String str9 = "          MOVE \"mock\" TO other";
+        String str10 = "       END-MOCK";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
+                str7, str8, str9, str10, null);
+
+        String expectedMessage = "Mock for 'prog1' in testsuite: \"Name of test suite\", testcase: " +
+                "\"Name of test case\" already exists with the given arguments in this Local testcase scope.";
 
         Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
                 () -> testSuiteParserController.parseTestSuites(numericFields));

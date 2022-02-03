@@ -1,6 +1,6 @@
 package com.neopragma.cobolcheck.features.writer;
 
-import com.neopragma.cobolcheck.features.interpreter.Interpreter;
+import com.neopragma.cobolcheck.services.cobolLogic.Interpreter;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.io.IOException;

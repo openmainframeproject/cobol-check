@@ -52,6 +52,7 @@ public class StringTokenizerExtractor implements TokenExtractor {
         expectedTokens.put("LINKAGE", Arrays.asList("SECTION"));
         expectedTokens.put("WORKING-STORAGE", Arrays.asList("SECTION"));
         expectedTokens.put("LOCAL-STORAGE", Arrays.asList("SECTION"));
+        expectedTokens.put("BY", Arrays.asList("REFERENCE", "CONTENT", "VALUE"));
     }
 
     /**
