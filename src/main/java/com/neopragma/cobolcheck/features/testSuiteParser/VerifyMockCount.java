@@ -1,5 +1,8 @@
 package com.neopragma.cobolcheck.features.testSuiteParser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VerifyMockCount{
     private Mock attachedMock;
     private String expectedCount = "0";
@@ -7,6 +10,11 @@ public class VerifyMockCount{
     private boolean noMoreThan;
     private String identifier;
     private String type;
+    private List<String> arguments;
+
+    public VerifyMockCount(){
+        arguments = new ArrayList<>();
+    }
 
     public String getExpectedCount() {
         return expectedCount;
@@ -62,5 +70,13 @@ public class VerifyMockCount{
         this.expectedCount = expectedCount;
         atLeast = false;
         noMoreThan = true;
+    }
+
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    public void addArgument(String argument) {
+        arguments.add(argument);
     }
 }
