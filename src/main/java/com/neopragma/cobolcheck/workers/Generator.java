@@ -22,6 +22,7 @@ import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParserControll
 import com.neopragma.cobolcheck.features.writer.WriterController;
 import com.neopragma.cobolcheck.features.prepareMerge.PrepareMergeController;
 import com.neopragma.cobolcheck.services.*;
+import com.neopragma.cobolcheck.services.cobolLogic.Interpreter;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -39,8 +40,6 @@ public class Generator {
     private InterpreterController interpreter;
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
-
-    private boolean waitingForMockedComponentToEnd = false;
 
     List<String> matchingTestDirectories;
 
@@ -136,15 +135,14 @@ public class Generator {
     }
 
     private String tryInsertEndEvaluateAtMockedCompomentEnd(String sourceLine) throws IOException {
-        if (waitingForMockedComponentToEnd){
-            if (interpreter.doesCurrentLineEndCurrentComponent()){
-                if (interpreter.shouldEndEvaluateBeInsertedBeforeLine(sourceLine)){
-                    waitingForMockedComponentToEnd = false;
+        if (interpreter.isInsideSectionOrParagraphMockBody()){
+            if (interpreter.isCurrentLineEndingSectionOrParagraph()){
+                if (interpreter.canWriteEndEvaluateBeforeCurrentLine()){
+                    interpreter.setInsideSectionOrParagraphMockBody(false);
                     writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
                 }
-                else {
+                else
                     return sourceLine.replace(".", "");
-                }
             }
         }
         return sourceLine;
@@ -199,9 +197,11 @@ public class Generator {
         if (interpreter.isCurrentComponentMockable()){
             String identifier = interpreter.getPossibleMockIdentifier();
             String type = interpreter.getPossibleMockType();
-            if (testSuiteParserController.mockExistsFor(identifier, type)){
-                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type));
-                waitingForMockedComponentToEnd = true;
+            List<String> arguments = interpreter.getPossibleMockArgs();
+            if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
+                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
+                    interpreter.setInsideSectionOrParagraphMockBody(true);
             }
         }
     }

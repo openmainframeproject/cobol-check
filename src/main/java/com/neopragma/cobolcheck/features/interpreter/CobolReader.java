@@ -1,6 +1,8 @@
 package com.neopragma.cobolcheck.features.interpreter;
 
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.services.cobolLogic.CobolLine;
+import com.neopragma.cobolcheck.services.cobolLogic.Interpreter;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
 
 import java.io.*;
@@ -133,6 +135,14 @@ public class CobolReader {
                 return cobolLine;
             }
         }
+    }
+
+    void putNextLine(CobolLine line){
+        nextLines.add(0, line);
+    }
+
+    void putNextLine(String line){
+        nextLines.add(0, new CobolLine(line, tokenExtractor));
     }
 
     /**

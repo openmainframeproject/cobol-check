@@ -1,4 +1,4 @@
-package com.neopragma.cobolcheck.features.interpreter;
+package com.neopragma.cobolcheck.services.cobolLogic;
 
 import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
@@ -19,16 +19,16 @@ public class CobolLine {
         tokens = tokenExtractor.extractTokensFrom(line);
     }
 
-    String getOriginalString() {
+    public String getOriginalString() {
         return originalString;
     }
     public String getTrimmedString() { return trimmedString; }
-    List<String> getTokens() {
+    public List<String> getTokens() {
         return tokens;
     }
-    String getToken(int index) { return tokens.get(index); }
+    public String getToken(int index) { return tokens.get(index); }
 
-    int tokensSize() { return tokens.size(); }
+    public int tokensSize() { return tokens.size(); }
 
     /**
      * Checks if this line contains the specified string - not case-sensitive. The string
@@ -38,7 +38,23 @@ public class CobolLine {
      *
      * @return (boolean) true if this line contains the token
      */
-    boolean containsToken(String tokenValue) {
+    public boolean containsToken(String tokenValue) {
         return tokens.size() > 0 && tokens.contains(tokenValue.toUpperCase(Locale.ROOT));
+    }
+
+    /**
+     * Looks through the list of tokens for the specified string and finds the index. - not case-sensitive. The string
+     * has to be a single token.
+     *
+     * @param tokenValue - The string token, to look for. Not case-sensitive. Has to be a single token.
+     *
+     * @return (int) index of the string. If the string is not found, -1 is returned.
+     */
+    public int getTokenIndexOf(String tokenValue) {
+        for (int i = 0; i < tokens.size(); i++){
+            if (tokens.get(i).equals(tokenValue.toUpperCase(Locale.ROOT)))
+                return i;
+        }
+        return -1;
     }
 }

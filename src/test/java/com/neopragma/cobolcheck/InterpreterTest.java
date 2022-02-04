@@ -1,8 +1,9 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.features.interpreter.*;
 import com.neopragma.cobolcheck.services.Constants;
+import com.neopragma.cobolcheck.services.cobolLogic.CobolLine;
+import com.neopragma.cobolcheck.services.cobolLogic.Interpreter;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

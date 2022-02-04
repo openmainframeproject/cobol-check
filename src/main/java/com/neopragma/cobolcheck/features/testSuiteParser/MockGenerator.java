@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck.features.testSuiteParser;
 
+import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class MockGenerator {
      * @param mocks - All mocks in all tests
      * @return The generated lines
      */
-    List<String> generateMockPerformCalls(String identifier, String type, List<Mock> mocks){
+    List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments, List<Mock> mocks){
         List<String> resultLines = new ArrayList<>();
         List<String> localLines = new ArrayList<>();
         List<String> globalLines = new ArrayList<>();
@@ -97,7 +98,8 @@ public class MockGenerator {
         resultLines.add(evaluateStartLine);
 
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)){
+            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
+                    && mock.getArguments().equals(arguments)){
                 if (mock.getScope() == MockScope.Local){
                     localLines.add(String.format(whenFormat1, mock.getTestSuiteName()));
                     localLines.add(String.format(whenFormat2, mock.getTestCaseName()));
@@ -116,7 +118,10 @@ public class MockGenerator {
         // Thus we need to have local mocks on top of global mocks
         resultLines.addAll(localLines);
         resultLines.addAll(globalLines);
-        resultLines.add(whenOtherLine);
+        if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
+            resultLines.add(whenOtherLine);
+        else
+            resultLines.add(getEndEvaluateLine());
 
         return resultLines;
     }

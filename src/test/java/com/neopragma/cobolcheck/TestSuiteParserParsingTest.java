@@ -352,6 +352,62 @@ public class TestSuiteParserParsingTest {
     }
 
     @Test
+    public void verify_can_attach_to_call_mock_with_no_arguments() {
+        testSuite.append("       TESTSUITE \"Name of test suite\"");
+        testSuite.append("       TESTCASE \"Name of test case\"");
+        testSuite.append("       MOCK CALL 'PROG1'");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        List<String> actualResult = new ArrayList<>();
+        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void verify_can_attach_to_call_mock_with_arguments() {
+        testSuite.append("       TESTSUITE \"Name of test suite\"");
+        testSuite.append("       TESTCASE \"Name of test case\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this, BY CONTENT other");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this, BY CONTENT other");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        List<String> actualResult = new ArrayList<>();
+        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
     public void it_throws_if_the_mock_that_verify_references_does_not_exist() {
         testSuite.append("       TESTSUITE \"Name of test suite\"");
         testSuite.append("       TESTCASE \"Name of test case\"");

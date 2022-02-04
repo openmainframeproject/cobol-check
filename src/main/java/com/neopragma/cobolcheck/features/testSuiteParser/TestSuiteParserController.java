@@ -189,8 +189,8 @@ public class TestSuiteParserController {
         return mockGenerator.generateMockParagraphs(mockRepository.getMocks(), withComments);
     }
 
-    public boolean mockExistsFor(String identifier, String type){
-        return mockRepository.mockExistsFor(identifier, type);
+    public boolean mockExistsFor(String identifier, String type, List<String> arguments){
+        return mockRepository.mockExistsFor(identifier, type, arguments);
     }
 
     /**Generates the lines for 'Evaluate when' to perform the correct generated SECTION
@@ -198,8 +198,8 @@ public class TestSuiteParserController {
      * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
      * @return The generated lines
      */
-    public List<String> generateMockPerformCalls(String identifier, String type){
-        return mockGenerator.generateMockPerformCalls(identifier, type, mockRepository.getMocks());
+    public List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments){
+        return mockGenerator.generateMockPerformCalls(identifier, type, arguments, mockRepository.getMocks());
     }
     /**This line should be inserted at the end of a mocked component,
      * to end the EVALUATE started in the beginning of the mock.

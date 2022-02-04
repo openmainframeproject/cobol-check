@@ -18,6 +18,7 @@ package com.neopragma.cobolcheck.features.testSuiteParser;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
+import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import com.neopragma.cobolcheck.services.cobolLogic.*;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
@@ -40,6 +41,7 @@ import java.util.Locale;
 public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private List<String> testSuiteTokens;
+    private String currentTestSuiteLine;
 
     // Source tokens used in fully-qualified data item names
     private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
@@ -47,8 +49,11 @@ public class TestSuiteParser {
     //Used for mocking
     MockRepository mockRepository;
     private Mock currentMock;
+    private String currentMockArgument = "";
     private int mockNumber;
     private boolean expectMockIdentifier;
+    boolean expectUsing;
+    boolean expectMockArguments;
     private boolean ignoreCobolStatementKeyAction;
     private VerifyMockCount currentVerify;
     private boolean verifyInProgress;
@@ -311,16 +316,51 @@ public class TestSuiteParser {
                         expectMockIdentifier = false;
                         ignoreCobolStatementKeyAction = true;
                         if (!verifyInProgress){
+                            if (currentMock.getType().equals(Constants.CALL_TOKEN)){
+                                expectUsing = true;
+                                expectMockArguments = true;
+                            }
                             currentMock.setIdentifier(testSuiteToken);
-                            currentMock.addLines(getLinesForCurrentMock(testSuiteReader));
-                            //We know END-MOCK is reached here
-                            mockRepository.addMock(currentMock);
+                            if (!expectMockArguments) {
+                                currentMock.addLines(getLinesForCurrentMock(testSuiteReader, true));
+                                //We know END-MOCK is reached here
+                                mockRepository.addMock(currentMock);
+                            }
                         }
                         else {
+                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)){
+                                expectUsing = true;
+                                expectMockArguments = true;
+                            }
                             currentVerify.setIdentifier(testSuiteToken);
                         }
-
+                        break;
                     }
+
+                    if (expectMockArguments){
+                        boolean currentLineContainsArgument = false;
+                        if (!expectUsing){
+                            currentLineContainsArgument = true;
+                            ignoreCobolStatementKeyAction = true;
+                            if (verifyInProgress)
+                                currentVerify.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
+                            else
+                                currentMock.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
+
+                            currentMockArgument = "";
+                            if (testSuiteToken.endsWith(","))
+                                break;
+                        }
+                        //Contains no arguments or all arguments has been added
+                        expectMockArguments = false;
+                        expectUsing = false;
+                        if (!verifyInProgress){
+                            ignoreCobolStatementKeyAction = true;
+                            currentMock.addLines(getLinesForCurrentMock(testSuiteReader, currentLineContainsArgument));
+                            mockRepository.addMock(currentMock);
+                        }
+                    }
+
                     if (verifyInProgress){
                         if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)){
                             currentVerify.setExpectedCount("0");
@@ -341,6 +381,29 @@ public class TestSuiteParser {
                         currentTestCaseName = testSuiteToken;
                         addTestCaseNameLines(currentTestCaseName, parsedTestSuiteLines);
                         initializeCobolStatement();
+                    }
+                    if (expectMockIdentifier){
+                        expectMockIdentifier = false;
+                        if (!verifyInProgress){
+                            if (currentMock.getType().equals(Constants.CALL_TOKEN)){
+                                expectUsing = true;
+                                expectMockArguments = true;
+                            }
+                            currentMock.setIdentifier(testSuiteToken);
+                            if (!expectMockArguments) {
+                                currentMock.addLines(getLinesForCurrentMock(testSuiteReader, true));
+                                //We know END-MOCK is reached here
+                                mockRepository.addMock(currentMock);
+                            }
+                        }
+                        else {
+                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)){
+                                expectUsing = true;
+                                expectMockArguments = true;
+                            }
+                            currentVerify.setIdentifier(testSuiteToken);
+                        }
+                        break;
                     }
                     if (toBeInProgress) {
                         if (testSuiteToken.startsWith(Constants.QUOTE) || testSuiteToken.startsWith(Constants.APOSTROPHE)) {
@@ -380,6 +443,10 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.MOCK_KEYWORD:
+                    if (cobolStatementInProgress) {
+                        addUserWrittenCobolStatement(parsedTestSuiteLines);
+                    }
+                    cobolStatementInProgress = false;
                     mockNumber += 1;
                     currentMock = new Mock(currentTestSuiteName, currentTestCaseName,
                             testSuiteNumber, testCaseNumber, mockNumber);
@@ -402,6 +469,18 @@ public class TestSuiteParser {
 
                     break;
 
+                case Constants.USING_TOKEN:
+                    if (expectUsing && expectMockArguments)
+                        expectUsing = false;
+                    break;
+
+                case Constants.BY_REFERENCE_TOKEN:
+                case Constants.BY_CONTENT_TOKEN:
+                case Constants.BY_VALUE_TOKEN:
+                    if (expectMockArguments)
+                        currentMockArgument = testSuiteToken.toUpperCase().replace("BY ", "");
+                    break;
+
                 case Constants.VERIFY_KEYWORD:
                     if (cobolStatementInProgress) {
                         addUserWrittenCobolStatement(parsedTestSuiteLines);
@@ -413,12 +492,13 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.NEVER_HAPPENED_KEYWORD:
+                    expectMockArguments = false;
                     currentVerify.expectExact("0");
                     handleEndOfVerifyStatement(parsedTestSuiteLines);
                     break;
 
                 case Constants.HAPPENED_KEYWORD:
-
+                    expectMockArguments = false;
                     break;
 
                 case Constants.ONCE_KEYWORD:
@@ -531,17 +611,16 @@ public class TestSuiteParser {
      * @return - line of source from the testSuiteReader.
      */
     private String readNextLineFromTestSuite(BufferedReader testSuiteReader) {
-        String testSuiteLine;
         try {
-            testSuiteLine = testSuiteReader.readLine();
-            if (testSuiteLine == null) {
+            currentTestSuiteLine = testSuiteReader.readLine();
+            if (currentTestSuiteLine == null) {
                 if (emptyTestSuite) {
                     throw new PossibleInternalLogicErrorException(Messages.get("ERR010"));
                 }
                 return null;
             }
             emptyTestSuite = false;
-            return testSuiteLine;
+            return currentTestSuiteLine;
         } catch (IOException ioEx) {
             throw new TestSuiteCouldNotBeReadException(ioEx);
         } catch (Exception ex) {
@@ -559,7 +638,7 @@ public class TestSuiteParser {
     public void handleEndOfVerifyStatement (List<String> parsedTestSuiteLines){
         verifyInProgress = false;
         currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(), currentVerify.getType(),
-                currentTestSuiteName, currentTestCaseName));
+                currentTestSuiteName, currentTestCaseName, currentVerify.getArguments()));
 
         if (currentVerify.getAttachedMock() == null){
             throw new VerifyReferencesNonexistentMockException("Cannot verify nonexistent mock for: " +
@@ -567,6 +646,23 @@ public class TestSuiteParser {
                     currentTestSuiteName + ", testcase: " + currentTestCaseName);
         }
         addLinesForCurrentVerifyStatement(parsedTestSuiteLines);
+    }
+
+    /**
+     * Gets an argument for a call based on the given reference type and token. If the
+     * reference type is empty, the default ref-type (REFERENCE) will be assigned. All commas
+     * is removed in the returned argument.
+     * @param referenceType The ref-type of the argument. Can be REFERENCE, CONTENT or VALUE
+     * @param value The value/variable given as argument
+     * @return - The argument in the format '[ref-type] [value]'
+     */
+    private String getCallArgument(String referenceType, String value) {
+        String outPut = "";
+        if (referenceType.isEmpty())
+            outPut = ("REFERENCE " + value.replace(",", ""));
+        else
+            outPut = (referenceType + " " + value.replace(",", ""));
+        return outPut;
     }
 
     // Helper methods to insert code into the test program being generated based on interpretation of user-written
@@ -750,13 +846,40 @@ public class TestSuiteParser {
         parsedTestSuiteLines.add(cobolStatement.toString());
     }
 
-    List<String> getLinesForCurrentMock(BufferedReader testSuiteReader){
+    private List<String> getArgumentsForCurrentMock(BufferedReader testSuiteReader) {
+        List<String> usingKeywords = Arrays.asList(
+                Constants.BY_REFERENCE_TOKEN,
+                Constants.BY_CONTENT_TOKEN,
+                Constants.BY_VALUE_TOKEN);
+        String usingLine = "";
+        String line;
+        boolean hasEncounteredUsingKeyword = false;
+        while ((line = readNextLineFromTestSuite(testSuiteReader)) != null){
+            if (line.toUpperCase().contains(Constants.USING_TOKEN)){
+                if (hasEncounteredUsingKeyword)
+                    break;
+                hasEncounteredUsingKeyword = true;
+            }
+            if (!usingKeywords.contains(line.toUpperCase().trim()) && !usingLine.endsWith(",")){
+                break;
+            }
+            usingLine += (" " + line);
+        }
+        return Interpreter.getUsingArgs(new CobolLine(usingLine, new StringTokenizerExtractor()));
+    }
+
+    private List<String> getLinesForCurrentMock(BufferedReader testSuiteReader, boolean skipCurrentLine){
         List<String> lines = new ArrayList<>();
+        if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(Constants.ENDMOCK_KEYWORD))
+            return lines;
+        if (!skipCurrentLine)
+            lines.add(currentTestSuiteLine);
         String line;
         while ((line = readNextLineFromTestSuite(testSuiteReader)) != null &&
                 !line.toUpperCase().contains(Constants.ENDMOCK_KEYWORD)){
             lines.add(line);
         }
+        testSuiteTokens.clear();
         return lines;
     }
 

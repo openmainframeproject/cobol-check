@@ -152,6 +152,25 @@ public class Keywords {
                 new Keyword(Constants.MOCK_TYPE,
                         Arrays.asList(Constants.COBOL_TOKEN),
                         KeywordAction.NONE));
+        keywordInfo.put(Constants.USING_TOKEN,
+                new Keyword(Constants.USING_TOKEN,
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BY_REFERENCE_TOKEN,
+                                Constants.BY_CONTENT_TOKEN,
+                                Constants.BY_VALUE_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.BY_REFERENCE_TOKEN,
+                new Keyword(Constants.BY_REFERENCE_TOKEN,
+                        Arrays.asList(Constants.COBOL_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.BY_CONTENT_TOKEN,
+                new Keyword(Constants.BY_CONTENT_TOKEN,
+                        Arrays.asList(Constants.COBOL_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.BY_VALUE_TOKEN,
+                new Keyword(Constants.BY_VALUE_TOKEN,
+                        Arrays.asList(Constants.COBOL_TOKEN),
+                        KeywordAction.NONE));
         keywordInfo.put(Constants.VERIFY_KEYWORD,
                 new Keyword(Constants.VERIFY_KEYWORD,
                         Arrays.asList(Constants.MOCK_TYPE),
@@ -187,7 +206,7 @@ public class Keywords {
                         KeywordAction.NONE));
 
         //TODO: Add other types that can be mocked
-        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN);
+        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.CALL_TOKEN);
     }
 
 

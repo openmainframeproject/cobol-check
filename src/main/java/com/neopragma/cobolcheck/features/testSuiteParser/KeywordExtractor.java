@@ -40,6 +40,7 @@ public class KeywordExtractor implements TokenExtractor {
         multiWordTokens.put("NEVER", Arrays.asList("HAPPENED"));
         multiWordTokens.put("AT", Arrays.asList("LEAST"));
         multiWordTokens.put("NO", Arrays.asList("MORE", "THAN"));
+        multiWordTokens.put("BY", Arrays.asList("REFERENCE", "CONTENT", "VALUE"));
 
     }
 
