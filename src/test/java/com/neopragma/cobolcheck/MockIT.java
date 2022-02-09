@@ -252,10 +252,23 @@ public class MockIT {
                     "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
                     "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
                     "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"Mocking tests\" =============*                             " + Constants.NEWLINE +
                     "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
                     "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
                     "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "       .                                                                        " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "       .                                                                        " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -263,6 +276,7 @@ public class MockIT {
                     "           MOVE 0 TO UT-1-0-1-MOCK-COUNT                                        " + Constants.NEWLINE +
                     "           MOVE 0 TO UT-1-0-1-MOCK-EXPECTED                                     " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Paragraphs called when mocking                                           " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -276,9 +290,10 @@ public class MockIT {
                     "       .                                                                        " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       000-START SECTION.                                                       " + Constants.NEWLINE +
-                    "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+                    "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+                    "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
                     "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-                    "                ALSO ANY                                                        " + Constants.NEWLINE +
+                    "                   ALSO ANY                                                     " + Constants.NEWLINE +
                     "                    PERFORM 1-0-1-MOCK                                          " + Constants.NEWLINE +
                     "           WHEN OTHER                                                           " + Constants.NEWLINE +
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
@@ -311,13 +326,17 @@ public class MockIT {
             "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
             "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+            "      *============= \"Mocking tests\" =============*                             " + Constants.NEWLINE +
             "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
             "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
             "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+            "      *-------- \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-BEFORE-EACH                                               " + Constants.NEWLINE +
             "           MOVE \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
-            "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
             "            PERFORM 000-START                                                   " + Constants.NEWLINE +
             "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
@@ -328,11 +347,31 @@ public class MockIT {
             "               TO UT-EXPECTED                                                   " + Constants.NEWLINE +
             "           SET UT-RELATION-EQ TO TRUE                                           " + Constants.NEWLINE +
             "           PERFORM UT-CHECK-EXPECTATION                                         " + Constants.NEWLINE +
-            "           PERFORM UT-AFTER                                                     " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
+            "      *-------- \"Simply a test\"                                                 " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-BEFORE-EACH                                               " + Constants.NEWLINE +
             "           MOVE \"Simply a test\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
-            "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
+            "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -340,6 +379,7 @@ public class MockIT {
             "           MOVE 0 TO UT-1-0-1-MOCK-COUNT                                        " + Constants.NEWLINE +
             "           MOVE 0 TO UT-1-0-1-MOCK-EXPECTED                                     " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Paragraphs called when mocking                                           " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
@@ -390,15 +430,16 @@ public class MockIT {
             "       .                                                                        " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       000-START SECTION.                                                       " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Local mock overwrites global mock\"                        " + Constants.NEWLINE +
+            "                   ALSO \"Local mock overwrites global mock\"                     " + Constants.NEWLINE +
             "                    PERFORM 1-1-1-MOCK                                          " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM 1-2-1-MOCK                                          " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM 1-0-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
@@ -406,18 +447,20 @@ public class MockIT {
             "           EXIT SECTION.                                                        " + Constants.NEWLINE +
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM 1-2-2-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "       200-GOODBYE SECTION                   .                                  " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM 1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "           MOVE \"Bye\" to VALUE-1                                                " + Constants.NEWLINE +
@@ -428,13 +471,17 @@ public class MockIT {
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
                     "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
                     "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"No mocks\" =============*                                  " + Constants.NEWLINE +
                     "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
                     "           DISPLAY \"No mocks\"                                                   " + Constants.NEWLINE +
                     "           MOVE \"No mocks\"                                                      " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "      *-------- \"My testCase\"                                                   " + Constants.NEWLINE +
+                    "           MOVE SPACES                                                          " + Constants.NEWLINE +
+                    "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+                    "           PERFORM UT-BEFORE-EACH                                               " + Constants.NEWLINE +
                     "           MOVE \"My testCase\"                                                   " + Constants.NEWLINE +
                     "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
-                    "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
                     "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
                     "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
                     "           SET UT-NORMAL-COMPARE TO TRUE                                        " + Constants.NEWLINE +
@@ -444,12 +491,27 @@ public class MockIT {
                     "               TO UT-EXPECTED                                                   " + Constants.NEWLINE +
                     "           SET UT-RELATION-EQ TO TRUE                                           " + Constants.NEWLINE +
                     "           PERFORM UT-CHECK-EXPECTATION                                         " + Constants.NEWLINE +
-                    "           PERFORM UT-AFTER                                                     " + Constants.NEWLINE +
+                    "           MOVE SPACES                                                          " + Constants.NEWLINE +
+                    "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+                    "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "       .                                                                        " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "       .                                                                        " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
                     "       000-START SECTION.                                                       " + Constants.NEWLINE +
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
@@ -484,13 +546,17 @@ public class MockIT {
             "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
             "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+            "      *============= \"Mocking tests\" =============*                             " + Constants.NEWLINE +
             "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
             "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
             "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+            "      *-------- \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-BEFORE-EACH                                               " + Constants.NEWLINE +
             "           MOVE \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
-            "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
             "            PERFORM 200-GOODBYE                                                 " + Constants.NEWLINE +
             "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
@@ -501,11 +567,31 @@ public class MockIT {
             "               TO UT-EXPECTED                                                   " + Constants.NEWLINE +
             "           SET UT-RELATION-EQ TO TRUE                                           " + Constants.NEWLINE +
             "           PERFORM UT-CHECK-EXPECTATION                                         " + Constants.NEWLINE +
-            "           PERFORM UT-AFTER                                                     " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
+            "      *-------- \"Simply a test\"                                                 " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-BEFORE-EACH                                               " + Constants.NEWLINE +
             "           MOVE \"Simply a test\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
-            "           PERFORM UT-BEFORE                                                    " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "           MOVE SPACES                                                          " + Constants.NEWLINE +
+            "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
+            "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
+            "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+            "      *****************************************************************         " + Constants.NEWLINE +
+            "       .                                                                        " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -515,6 +601,7 @@ public class MockIT {
             "           MOVE 0 TO UT-1-0-2-MOCK-COUNT                                        " + Constants.NEWLINE +
             "           MOVE 0 TO UT-1-0-2-MOCK-EXPECTED                                     " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *Paragraphs called when mocking                                           " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
@@ -576,49 +663,55 @@ public class MockIT {
             "       .                                                                        " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       000-START SECTION.                                                       " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM 1-2-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "           EXIT SECTION.                                                        " + Constants.NEWLINE +
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM 1-0-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "      *    CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2.                      " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM 1-2-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "       200-GOODBYE SECTION.                                                     " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Local mock overwrites global mock\"                        " + Constants.NEWLINE +
+            "                   ALSO \"Local mock overwrites global mock\"                     " + Constants.NEWLINE +
             "                    PERFORM 1-1-1-MOCK                                          " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO \"Simply a test\"                                            " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM 1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "          MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1                                            " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM 1-0-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1.                                           " + Constants.NEWLINE +
-            "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME                  " + Constants.NEWLINE +
+            "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
+            "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                ALSO ANY                                                        " + Constants.NEWLINE +
+            "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM 1-0-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +

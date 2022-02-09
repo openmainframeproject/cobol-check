@@ -91,7 +91,8 @@
            CALL 'PROG3' USING 
               BY CONTENT VALUE-1,
               BY VALUE VALUE-2,  
-              VALUE-3.
+              VALUE-3
+          CALL 'PROG3' USING VALUE-1.
 
        999-END.
            GOBACK

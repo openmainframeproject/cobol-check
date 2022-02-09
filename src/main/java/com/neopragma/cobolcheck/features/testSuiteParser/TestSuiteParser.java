@@ -46,6 +46,8 @@ public class TestSuiteParser {
     // Source tokens used in fully-qualified data item names
     private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
 
+    private final BeforeAfterRepo beforeAfterRepo;
+
     //Used for mocking
     MockRepository mockRepository;
     private Mock currentMock;
@@ -102,7 +104,7 @@ public class TestSuiteParser {
     private static final String COBOL_STORE_TESTSUITE_NAME_2 =
             "               TO %sTEST-SUITE-NAME";
     private static final String COBOL_PERFORM_BEFORE =
-            "           PERFORM %sBEFORE";
+            "           PERFORM %sBEFORE-EACH";
     private static final String COBOL_PERFORM_INITIALIZE_MOCK_COUNT =
             "           PERFORM %sINITIALIZE-MOCK-COUNT";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT =
@@ -173,7 +175,7 @@ public class TestSuiteParser {
     private static final String COBOL_CHECK_EXPECTATION =
             "           PERFORM %sCHECK-EXPECTATION";
     private static final String COBOL_PERFORM_AFTER =
-            "           PERFORM %sAFTER";
+            "           PERFORM %sAFTER-EACH";
     private static final String ELEVEN_LEADING_SPACES = "           ";
 
     private static final String COBOL_SET_ACTUAL_MOCK_ACCESSES =
@@ -203,9 +205,10 @@ public class TestSuiteParser {
     private StringBuffer cobolStatement;
     private NumericFields numericFields;
 
-    public TestSuiteParser(KeywordExtractor keywordExtractor, MockRepository mockRepository) {
+    public TestSuiteParser(KeywordExtractor keywordExtractor, MockRepository mockRepository, BeforeAfterRepo beforeAfterRepo) {
         this.keywordExtractor = keywordExtractor;
         this.mockRepository = mockRepository;
+        this.beforeAfterRepo = beforeAfterRepo;
         testSuiteTokens = new ArrayList<>();
         emptyTestSuite = true;
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
@@ -322,7 +325,7 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                currentMock.addLines(getLinesForCurrentMock(testSuiteReader, true));
+                                currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true));
                                 //We know END-MOCK is reached here
                                 mockRepository.addMock(currentMock);
                             }
@@ -356,7 +359,7 @@ public class TestSuiteParser {
                         expectUsing = false;
                         if (!verifyInProgress){
                             ignoreCobolStatementKeyAction = true;
-                            currentMock.addLines(getLinesForCurrentMock(testSuiteReader, currentLineContainsArgument));
+                            currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, currentLineContainsArgument));
                             mockRepository.addMock(currentMock);
                         }
                     }
@@ -391,7 +394,7 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                currentMock.addLines(getLinesForCurrentMock(testSuiteReader, true));
+                                currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true));
                                 //We know END-MOCK is reached here
                                 mockRepository.addMock(currentMock);
                             }
@@ -440,6 +443,16 @@ public class TestSuiteParser {
                         }
                         cobolStatementInProgress = false;
                     }
+                    break;
+
+                case Constants.BEFORE_EACH_TOKEN:
+                    List<String> beforeLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_BEFORE_TOKEN, true);
+                    beforeAfterRepo.addBeforeEachItem(testSuiteNumber, currentTestSuiteName, beforeLines);
+                    break;
+
+                case Constants.AFTER_EACH_TOKEN:
+                    List<String> afterLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_AFTER_TOKEN, true);
+                    beforeAfterRepo.addAfterEachItem(testSuiteNumber, currentTestSuiteName, afterLines);
                     break;
 
                 case Constants.MOCK_KEYWORD:
@@ -573,6 +586,9 @@ public class TestSuiteParser {
         if (cobolStatementInProgress) {
             addUserWrittenCobolStatement(parsedTestSuiteLines);
         }
+        if (testCaseNumber != 0){
+            addPerformAfterEachLine(parsedTestSuiteLines);
+        }
         return parsedTestSuiteLines;
     }
 
@@ -674,6 +690,11 @@ public class TestSuiteParser {
     }
 
     public void addTestSuiteNamelines(String testSuiteName, List<String> parsedTestSuiteLines) {
+        if (testSuiteNumber != 0)
+            addPerformAfterEachLine(parsedTestSuiteLines);
+
+        parsedTestSuiteLines.add("      *============= " + testSuiteName + " =============*");
+
         parsedTestSuiteLines.add(COBOL_DISPLAY_TESTSUITE);
         parsedTestSuiteLines.add(String.format(COBOL_DISPLAY_NAME, testSuiteName));
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTSUITE_NAME_1, testSuiteName));
@@ -681,14 +702,27 @@ public class TestSuiteParser {
     }
 
     public void addTestCaseNameLines(String testCaseName, List<String> parsedTestSuiteLines) {
+        if (testCaseNumber != 0)
+            addPerformAfterEachLine(parsedTestSuiteLines);
+
+        parsedTestSuiteLines.add("      *-------- " + testCaseName);
+        addPerformBeforeEachLine(parsedTestSuiteLines);
+
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName));
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix));
-        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_BEFORE, testCodePrefix));
         parsedTestSuiteLines.add(String.format(COBOL_PERFORM_INITIALIZE_MOCK_COUNT, testCodePrefix));
     }
 
     public void addPerformBeforeEachLine(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_1, "SPACES"));
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix));
         parsedTestSuiteLines.add(String.format(COBOL_PERFORM_BEFORE, testCodePrefix));
+    }
+
+    public void addPerformAfterEachLine(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_1, "SPACES"));
+        parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_AFTER, testCodePrefix));
     }
 
     void addIncrementTestCaseCountLine(List<String> parsedTestSuiteLines) {
@@ -806,7 +840,6 @@ public class TestSuiteParser {
      */
     void addFinalLines(List<String> parsedTestSuiteLines) {
         parsedTestSuiteLines.add(String.format(COBOL_CHECK_EXPECTATION, testCodePrefix));
-        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_AFTER, testCodePrefix));
     }
 
     /**
@@ -868,15 +901,15 @@ public class TestSuiteParser {
         return Interpreter.getUsingArgs(new CobolLine(usingLine, new StringTokenizerExtractor()));
     }
 
-    private List<String> getLinesForCurrentMock(BufferedReader testSuiteReader, boolean skipCurrentLine){
+    private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword, boolean skipCurrentLine){
         List<String> lines = new ArrayList<>();
-        if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(Constants.ENDMOCK_KEYWORD))
+        if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT)))
             return lines;
         if (!skipCurrentLine)
             lines.add(currentTestSuiteLine);
         String line;
         while ((line = readNextLineFromTestSuite(testSuiteReader)) != null &&
-                !line.toUpperCase().contains(Constants.ENDMOCK_KEYWORD)){
+                !line.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){
             lines.add(line);
         }
         testSuiteTokens.clear();

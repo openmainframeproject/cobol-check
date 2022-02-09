@@ -132,6 +132,10 @@ public final class Constants {
     public static final String END_SECTION_TOKEN = "END-SECTION";
     public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
     public static final String END_CALL_TOKEN = "END-CALL";
+    public static final String BEFORE_EACH_TOKEN = "BEFORE EACH";
+    public static final String END_BEFORE_TOKEN = "END-BEFORE";
+    public static final String AFTER_EACH_TOKEN = "AFTER EACH";
+    public static final String END_AFTER_TOKEN = "END-AFTER";
     public static final String ZERO_TOKEN = "ZERO";
 
 

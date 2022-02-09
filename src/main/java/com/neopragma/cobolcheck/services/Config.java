@@ -94,6 +94,12 @@ public class Config {
 
     public static Locale getDefaultLocale() { return (Locale) settings.get(DEFAULT_LOCALE_CONFIG_KEY); }
 
+    private static String testCodePrefix = "";
+    public static String getTestCodePrefix() {
+        if (testCodePrefix.isEmpty())
+            testCodePrefix = getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        return testCodePrefix;
+    }
 
     public static String getTestSuiteDirectoryPathString() {
         return adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,

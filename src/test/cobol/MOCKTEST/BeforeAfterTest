@@ -1,0 +1,102 @@
+           TestSuite "Before and after tests 1"
+
+            BEFORE EACH
+                MOVE "prepare" TO VALUE-1
+            END-BEFORE
+
+            AFTER EACH
+                MOVE "clean" TO VALUE-2
+            END-AFTER
+
+           TestCase "Before sets value"
+           EXPECT VALUE-1 TO BE "prepare"
+
+           TestCase "After sets value"
+           EXPECT VALUE-2 TO BE "clean"
+
+           TestCase "Before happens before Testcase"
+           MOVE "during" TO VALUE-1
+           EXPECT VALUE-1 TO BE "during"
+
+           TestCase "After happens after Testcase (part 1)"
+           MOVE "during" TO VALUE-2
+           EXPECT VALUE-2 TO BE "during"
+
+           TestCase "After happens after Testcase (part 2)"
+           EXPECT VALUE-2 TO BE "clean"
+
+
+           TestSuite "Before and after tests 2"
+            BEFORE EACH
+                MOVE "before1" TO VALUE-1
+                MOVE "before2" TO VALUE-2
+                PERFORM 000-START
+            END-BEFORE
+
+            AFTER EACH
+                MOVE "clean up" TO VALUE-3
+                PERFORM 100-WELCOME
+            END-AFTER
+
+
+           MOCK SECTION 000-START
+                MOVE "GlobalMockedSection1" TO VALUE-1
+           END-MOCK
+
+           MOCK SECTION 100-WELCOME
+                MOVE "GlobalMockedSection2" TO VALUE-3
+           END-MOCK
+
+           TestCase "Performs of mocked items does not influence count"
+           VERIFY SECTION 000-START HAPPENED 0 TIMES
+           VERIFY SECTION 100-WELCOME NEVER HAPPENED
+
+           TestCase "Only global mocks apply in before/after (part 1)"
+           MOVE "arg3" TO VALUE-3
+           MOCK SECTION 000-START
+                MOVE "LocalMockedSection1" TO VALUE-1
+           END-MOCK
+           MOCK SECTION 100-WELCOME
+                MOVE "LocalMockedSection2" TO VALUE-3
+           END-MOCK
+           EXPECT VALUE-1 TO BE "GlobalMockedSection1"
+           EXPECT VALUE-2 TO BE "before2"
+           EXPECT VALUE-3 TO BE "arg3"
+
+           TestCase "Only global mocks apply in before/after (part 2)"
+           MOCK SECTION 000-START
+                MOVE "LocalMockedSection1" TO VALUE-1
+           END-MOCK
+           MOCK SECTION 100-WELCOME
+                MOVE "LocalMockedSection2" TO VALUE-3
+           END-MOCK
+           EXPECT VALUE-1 TO BE "GlobalMockedSection1"
+           EXPECT VALUE-2 TO BE "before2"
+           EXPECT VALUE-3 TO BE "GlobalMockedSection2"
+
+           TestCase "Only global mocks apply in before/after (part 3)"
+           MOCK SECTION 000-START
+                MOVE "LocalMockedSection1" TO VALUE-1
+           END-MOCK
+           MOCK SECTION 100-WELCOME
+                MOVE "LocalMockedSection2" TO VALUE-3
+           END-MOCK
+           EXPECT VALUE-1 TO BE "GlobalMockedSection1"
+           EXPECT VALUE-2 TO BE "before2"
+           EXPECT VALUE-3 TO BE "GlobalMockedSection2"
+
+           TestSuite "Before and after tests 3"
+
+            BEFORE EACH
+                MOVE "before" TO VALUE-1
+            END-BEFORE
+
+            AFTER EACH
+                MOVE "after" TO VALUE-1
+            END-AFTER
+
+           TestCase "Before proceeds after from last testcase (part 1)"
+           EXPECT VALUE-1 TO BE "before"
+
+           TestCase "Before proceeds after from last testcase (part 2)"
+           EXPECT VALUE-1 TO BE "before"

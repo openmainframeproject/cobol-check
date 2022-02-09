@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck.features.testSuiteParser;
 
+import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.StringHelper;
 
@@ -8,13 +9,10 @@ import java.util.List;
 
 public class MockGenerator {
 
-    private final String evaluateStartLine = "            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME";
-    private final String whenFormat1 = "                WHEN %s";
-    private final String whenFormat2 = "                ALSO %s";
+    private final String testSuiteIdentifier = "%sTEST-SUITE-NAME";
+    private final String testCaseIdentifier = "%sTEST-CASE-NAME";
     private final String performFormat = "                    PERFORM %s";
-    private final String whenOtherLine = "           WHEN OTHER";
     private final String endEvaluateLine = "            END-EVALUATE";
-    private final String anyKeyword = "ANY";
 
 
     /**Generates the lines for keeping track of mock counting
@@ -44,9 +42,7 @@ public class MockGenerator {
     List<String> generateMockCountInitializer(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
         lines.add("       UT-INITIALIZE-MOCK-COUNT.");
-        lines.add("      *****************************************************************");
-        lines.add(StringHelper.commentOutLine("       Sets all global mock counters and expected count to 0"));
-        lines.add("      *****************************************************************");
+        lines.addAll(CobolGenerator.generateCommentBlock("Sets all global mock counters and expected count to 0"));
 
         if (mocks.isEmpty()){
             lines.add("           .");
@@ -73,7 +69,7 @@ public class MockGenerator {
         if (mocks.isEmpty())
             return lines;
 
-        lines.addAll(getMockParagraphCommentHeader());
+        lines.addAll(CobolGenerator.generateCommentBlock("Paragraphs called when mocking"));
         for (Mock mock : mocks){
             lines.addAll(generateParagraphsForMock(mock, withComments));
             lines.add("");
@@ -88,42 +84,37 @@ public class MockGenerator {
      * @return The generated lines
      */
     List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments, List<Mock> mocks){
-        List<String> resultLines = new ArrayList<>();
-        List<String> localLines = new ArrayList<>();
-        List<String> globalLines = new ArrayList<>();
+        EvaluationGenerator evaluationGenerator = new EvaluationGenerator(String.format(testSuiteIdentifier, Config.getTestCodePrefix()),
+                String.format(testCaseIdentifier, Config.getTestCodePrefix()));
+        List<Mock> globalMocks = new ArrayList<>();
 
         if (mocks.isEmpty())
-            return resultLines;
-
-        resultLines.add(evaluateStartLine);
+            return new ArrayList<>();
 
         for (Mock mock: mocks) {
             if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
                     && mock.getArguments().equals(arguments)){
                 if (mock.getScope() == MockScope.Local){
-                    localLines.add(String.format(whenFormat1, mock.getTestSuiteName()));
-                    localLines.add(String.format(whenFormat2, mock.getTestCaseName()));
-                    localLines.add(String.format(performFormat, mock.getGeneratedMockIdentifier()));
+                    String line = String.format(performFormat, mock.getGeneratedMockIdentifier());
+                    evaluationGenerator.addEvaluationItem(line, mock.getTestSuiteName(), mock.getTestCaseName());
                     mock.markAsUsed();
                 }
                 if (mock.getScope() == MockScope.Global){
-                    globalLines.add(String.format(whenFormat1, mock.getTestSuiteName()));
-                    globalLines.add(String.format(whenFormat2, anyKeyword));
-                    globalLines.add(String.format(performFormat, mock.getGeneratedMockIdentifier()));
-                    mock.markAsUsed();
+                    globalMocks.add(mock);
                 }
             }
         }
-        //If a local mock exists, that mock should apply
-        // Thus we need to have local mocks on top of global mocks
-        resultLines.addAll(localLines);
-        resultLines.addAll(globalLines);
+        //Global mocks should be at the bottom
+        for (Mock mock : globalMocks){
+            String line = String.format(performFormat, mock.getGeneratedMockIdentifier());
+            evaluationGenerator.addEvaluationItem(line, mock.getTestSuiteName(), "ANY");
+            mock.markAsUsed();
+        }
         if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
-            resultLines.add(whenOtherLine);
-        else
-            resultLines.add(getEndEvaluateLine());
+            return evaluationGenerator.getEvaluationLines(true, new ArrayList<>(), false);
 
-        return resultLines;
+        else
+            return evaluationGenerator.getEvaluationLines(false, null, true);
     }
 
     String getEndEvaluateLine() {
@@ -141,27 +132,17 @@ public class MockGenerator {
         return lines;
     }
 
-    private List<String> getMockParagraphCommentHeader(){
-        List<String> lines = new ArrayList<>();
-        lines.add("      *****************************************************************");
-        lines.add(StringHelper.commentOutLine("       Paragraphs called when mocking"));
-        lines.add("      *****************************************************************");
-        return lines;
-    }
-
     private List<String> generateParagraphsForMock(Mock mock, boolean withComment){
-        List<String> lines = new ArrayList<>();
-        lines.add("       " + mock.getGeneratedMockIdentifier() + ".");
+        List<String> comments = new ArrayList<>();
         if (withComment){
             for (String line : mock.getCommentText()){
-                lines.add(StringHelper.commentOutLine(line));
+                comments.add(StringHelper.commentOutLine(line));
             }
         }
-        lines.add("           ADD 1 TO " + mock.getGeneratedMockCountIdentifier());
-        lines.addAll(mock.getLines());
-        lines.add("       .");
-        return lines;
+
+        List<String> body = new ArrayList<>();
+        body.add("           ADD 1 TO " + mock.getGeneratedMockCountIdentifier());
+        body.addAll(mock.getLines());
+        return CobolGenerator.generateParagraphLines(mock.getGeneratedMockIdentifier(), comments, body);
     }
-
-
 }

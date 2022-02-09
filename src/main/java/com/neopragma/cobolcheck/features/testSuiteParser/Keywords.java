@@ -144,6 +144,14 @@ public class Keywords {
                 new Keyword(Constants.BOOLEAN_VALUE,
                         Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
                         KeywordAction.BOOLEAN_COMPARE));
+        keywordInfo.put(Constants.BEFORE_EACH_TOKEN,
+                new Keyword(Constants.BEFORE_EACH_TOKEN,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.AFTER_EACH_TOKEN,
+                new Keyword(Constants.AFTER_EACH_TOKEN,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
         keywordInfo.put(Constants.MOCK_KEYWORD,
                 new Keyword(Constants.MOCK_KEYWORD,
                         Arrays.asList(Constants.MOCK_TYPE),
