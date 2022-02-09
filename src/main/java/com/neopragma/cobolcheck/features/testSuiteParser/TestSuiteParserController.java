@@ -17,6 +17,7 @@ public class TestSuiteParserController {
     private final TestSuiteParser testSuiteParser;
     TestSuiteConcatenator testSuiteConcatenator;
     private MockRepository mockRepository;
+    private BeforeAfterRepo beforeAfterRepo;
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
 
@@ -43,7 +44,8 @@ public class TestSuiteParserController {
     public TestSuiteParserController(String testFileNames) {
         testSuiteConcatenator = new TestSuiteConcatenator(testFileNames);
         mockRepository = new MockRepository();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
+        beforeAfterRepo = new BeforeAfterRepo();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -52,7 +54,8 @@ public class TestSuiteParserController {
     public TestSuiteParserController(BufferedReader reader) {
         testSuiteReader = reader;
         mockRepository = new MockRepository();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
+        beforeAfterRepo = new BeforeAfterRepo();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -165,7 +168,13 @@ public class TestSuiteParserController {
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionResultCopybookFilename));
 
         //Paragraphs generated in between boilerplate code
+        lines.addAll(generateBeforeParagraph());
+        lines.add("");
+        lines.addAll(generateAfterParagraph());
+        lines.add("");
+        lines.addAll(generateBeforeAfterBranchParagraphs(true));
         lines.addAll(generateMockCountInitializer());
+        lines.add("");
         lines.addAll(generateMockSections(true));
 
         // Inject boilerplate test code from cobol-check Paragraph Procedure Division copybook
@@ -187,6 +196,28 @@ public class TestSuiteParserController {
      */
     public List<String> generateMockSections(boolean withComments){
         return mockGenerator.generateMockParagraphs(mockRepository.getMocks(), withComments);
+    }
+
+    /**Generates the lines for BEFORE-EACH paragraph,
+     * @return The generated lines
+     */
+    public List<String> generateBeforeParagraph(){
+        return beforeAfterRepo.getBeforeEachParagraphLines();
+    }
+
+    /**Generates the lines for AFTER-EACH paragraph,
+     * @return The generated lines
+     */
+    public List<String> generateAfterParagraph(){
+        return beforeAfterRepo.getAfterEachParagraphLines();
+    }
+
+    /**Generates the lines for the paragraphs that branches out before/after,
+     * @param withComments determines if a comment should be included in each paragraph
+     * @return The generated lines
+     */
+    public List<String> generateBeforeAfterBranchParagraphs(boolean withComments){
+        return beforeAfterRepo.getAllBranchingParagraphs(withComments);
     }
 
     public boolean mockExistsFor(String identifier, String type, List<String> arguments){

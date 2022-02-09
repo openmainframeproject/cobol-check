@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck;
 
+import com.neopragma.cobolcheck.features.testSuiteParser.BeforeAfterRepo;
 import com.neopragma.cobolcheck.features.testSuiteParser.MockRepository;
 import com.neopragma.cobolcheck.features.writer.CobolWriter;
 import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
@@ -230,8 +231,6 @@ public class TestSuiteParserCodeInsertionTest {
     private static void appendCommonLastLines(StringBuilder sb) {
         sb.append("           PERFORM UT-CHECK-EXPECTATION                                         ");
         sb.append(Constants.NEWLINE);
-        sb.append("           PERFORM UT-AFTER                                                     ");
-        sb.append(Constants.NEWLINE);
     }
 
     MockedStatic<Config> mockedConfig;
@@ -243,7 +242,7 @@ public class TestSuiteParserCodeInsertionTest {
         mockedConfig = Mockito.mockStatic(Config.class);
         mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), new MockRepository());
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), new MockRepository(), new BeforeAfterRepo());
     }
 
     @AfterEach
@@ -275,10 +274,12 @@ public class TestSuiteParserCodeInsertionTest {
         List<String> actualResult = new ArrayList<>();
         List<String> expectedResult = new ArrayList<>();
 
+        String expected = "      *============= \"Test Suite Name\" =============*";
         String expected1 = "           DISPLAY \"TESTSUITE:\"";
         String expected2 = "           DISPLAY \"Test Suite Name\"";
         String expected3 = "           MOVE \"Test Suite Name\"";
         String expected4 = "               TO UT-TEST-SUITE-NAME";
+        expectedResult.add(expected);
         expectedResult.add(expected1);
         expectedResult.add(expected2);
         expectedResult.add(expected3);
@@ -292,14 +293,20 @@ public class TestSuiteParserCodeInsertionTest {
     public void it_inserts_cobol_statements_to_store_the_testcase_name() {
         List<String> actualResult = new ArrayList<>();
         List<String> expectedResult = new ArrayList<>();
-        String expected1 = "           MOVE \"Test Case Name\"";
-        String expected2 = "               TO UT-TEST-CASE-NAME";
-        String expected3 = "           PERFORM UT-BEFORE";
-        String expected4 = "           PERFORM UT-INITIALIZE-MOCK-COUNT";
+        String expected1 = "      *-------- \"Test Case Name\"";
+        String expected2 = "           MOVE SPACES";
+        String expected3 = "               TO UT-TEST-CASE-NAME";
+        String expected4 = "           PERFORM UT-BEFORE-EACH";
+        String expected5 = "           MOVE \"Test Case Name\"";
+        String expected6 = "               TO UT-TEST-CASE-NAME";
+        String expected7 = "           PERFORM UT-INITIALIZE-MOCK-COUNT";
         expectedResult.add(expected1);
         expectedResult.add(expected2);
         expectedResult.add(expected3);
         expectedResult.add(expected4);
+        expectedResult.add(expected5);
+        expectedResult.add(expected6);
+        expectedResult.add(expected7);
 
         testSuiteParser.addTestCaseNameLines("\"Test Case Name\"", actualResult);
         assertEquals(expectedResult, actualResult);
@@ -309,8 +316,12 @@ public class TestSuiteParserCodeInsertionTest {
     public void it_inserts_cobol_statements_to_perform_before_each_logic() {
         List<String> actualResult = new ArrayList<>();
         List<String> expectedResult = new ArrayList<>();
-        String expected = "           PERFORM UT-BEFORE";
-        expectedResult.add(expected);
+        String expected1 = "           MOVE SPACES";
+        String expected2 = "               TO UT-TEST-CASE-NAME";
+        String expected3 = "           PERFORM UT-BEFORE-EACH";
+        expectedResult.add(expected1);
+        expectedResult.add(expected2);
+        expectedResult.add(expected3);
         testSuiteParser.addPerformBeforeEachLine(actualResult);
         assertEquals(expectedResult, actualResult);
     }

@@ -37,6 +37,8 @@ public class KeywordExtractor implements TokenExtractor {
         nextExpectedTokens = new ArrayList<>();
         multiWordTokens = new HashMap<>();
         multiWordTokens.put("TO", Arrays.asList("BE", "EQUAL"));
+        multiWordTokens.put("BEFORE", Arrays.asList("EACH"));
+        multiWordTokens.put("AFTER", Arrays.asList("EACH"));
         multiWordTokens.put("NEVER", Arrays.asList("HAPPENED"));
         multiWordTokens.put("AT", Arrays.asList("LEAST"));
         multiWordTokens.put("NO", Arrays.asList("MORE", "THAN"));

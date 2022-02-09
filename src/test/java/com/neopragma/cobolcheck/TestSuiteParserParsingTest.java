@@ -1,19 +1,16 @@
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
-import com.neopragma.cobolcheck.features.argumentHandler.ArgumentHandler;
-import com.neopragma.cobolcheck.features.testSuiteParser.MockRepository;
+import com.neopragma.cobolcheck.features.testSuiteParser.*;
 import com.neopragma.cobolcheck.features.writer.CobolWriter;
-import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
-import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParser;
 import com.neopragma.cobolcheck.services.Config;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.BufferedReader;
@@ -29,8 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 public class TestSuiteParserParsingTest {
     private TestSuiteParser testSuiteParser;
+    private TestSuiteParserController testSuiteParserController;
+    private BufferedReader mockedReader;
     private StringBuilder testSuite;
     private MockRepository mockRepository;
+    private BeforeAfterRepo beforeAfterRepo;
 
     CobolWriter cobolWriter;
     @Mock
@@ -46,7 +46,10 @@ public class TestSuiteParserParsingTest {
     @BeforeEach
     void commonSetup() {
         mockRepository = new MockRepository();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
+        beforeAfterRepo = new BeforeAfterRepo();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
+        mockedReader = Mockito.mock(BufferedReader.class);
+        testSuiteParserController = new TestSuiteParserController(mockedReader);
         testSuite = new StringBuilder();
         cobolWriter = new CobolWriter(mockTestProgramSource);
     }
@@ -424,6 +427,190 @@ public class TestSuiteParserParsingTest {
                 testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
                         numericFields));
         assertEquals(expectedResult, ex.getMessage());
+    }
+
+    @Test
+    public void it_generates_before_each_paragraph_correctly() throws IOException {
+        String str1 = "       TESTSUITE \"TestSuite1\"";
+        String str2 = "            BEFORE EACH";
+        String str3 = "                MOVE \"prepare\" TO VALUE-1";
+        String str4 = "            END-BEFORE";
+        String str5 = "       TESTCASE \"TestCase1\"";
+        String str6 = "            MOVE \"hello\" TO VALUE-1";
+        String str7 = "       TESTSUITE \"TestSuite2\"";
+        String str8 = "            BEFORE EACH";
+        String str9 = "                MOVE \"prepare\" TO VALUE-1";
+        String str10 = "            END-BEFORE";
+        String str11 = "       TESTCASE \"TestCase2\"";
+        String str12 = "            MOVE \"hello\" TO VALUE-1";
+        String str13 = "       TESTSUITE \"TestSuite3\"";
+        String str14 = "            BEFORE EACH";
+        String str15 = "                MOVE \"prepare\" TO VALUE-1";
+        String str16 = "            END-BEFORE";
+        String str17 = "       TESTCASE \"TestCase3\"";
+        String str18 = "            MOVE \"hello\" TO VALUE-1";
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("       UT-BEFORE-EACH.");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("      *This is performed before each Test Case");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expectedResult.add("                WHEN \"TestSuite1\"");
+        expectedResult.add("           PERFORM UT-BEFORE-EACH-BRANCH-1");
+        expectedResult.add("                WHEN \"TestSuite2\"");
+        expectedResult.add("           PERFORM UT-BEFORE-EACH-BRANCH-2");
+        expectedResult.add("                WHEN \"TestSuite3\"");
+        expectedResult.add("           PERFORM UT-BEFORE-EACH-BRANCH-3");
+        expectedResult.add("            END-EVALUATE");
+        expectedResult.add("       .");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9,
+                str10, str11, str12, str13, str14, str15, str16, str17, str18, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actualResult = testSuiteParserController.generateBeforeParagraph();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_generates_after_each_paragraph_correctly() throws IOException {
+        String str1 = "       TESTSUITE \"TestSuite1\"";
+        String str2 = "            AFTER EACH";
+        String str3 = "                MOVE \"cleanup\" TO VALUE-1";
+        String str4 = "            END-AFTER";
+        String str5 = "       TESTCASE \"TestCase1\"";
+        String str6 = "            MOVE \"hello\" TO VALUE-1";
+        String str7 = "       TESTSUITE \"TestSuite2\"";
+        String str8 = "            AFTER EACH";
+        String str9 = "                MOVE \"cleanup\" TO VALUE-1";
+        String str10 = "            END-AFTER";
+        String str11 = "       TESTCASE \"TestCase2\"";
+        String str12 = "            MOVE \"hello\" TO VALUE-1";
+        String str13 = "       TESTSUITE \"TestSuite3\"";
+        String str14 = "            AFTER EACH";
+        String str15 = "                MOVE \"cleanup\" TO VALUE-1";
+        String str16 = "            END-AFTER";
+        String str17 = "       TESTCASE \"TestCase3\"";
+        String str18 = "            MOVE \"hello\" TO VALUE-1";
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("       UT-AFTER-EACH.");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("      *This is performed after each Test Case");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expectedResult.add("                WHEN \"TestSuite1\"");
+        expectedResult.add("           PERFORM UT-AFTER-EACH-BRANCH-1");
+        expectedResult.add("                WHEN \"TestSuite2\"");
+        expectedResult.add("           PERFORM UT-AFTER-EACH-BRANCH-2");
+        expectedResult.add("                WHEN \"TestSuite3\"");
+        expectedResult.add("           PERFORM UT-AFTER-EACH-BRANCH-3");
+        expectedResult.add("            END-EVALUATE");
+        expectedResult.add("       .");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9,
+                str10, str11, str12, str13, str14, str15, str16, str17, str18, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actualResult = testSuiteParserController.generateAfterParagraph();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_generates_after_each_branching_paragraphs_correctly_with_comments() throws IOException {
+        String str1 = "       TESTSUITE \"TestSuite1\"";
+        String str2 = "            BEFORE EACH";
+        String str3 = "                MOVE \"prepare\" TO VALUE-1";
+        String str4 = "            END-BEFORE";
+        String str5 = "            AFTER EACH";
+        String str6 = "                MOVE \"cleanup\" TO VALUE-1";
+        String str7 = "            END-AFTER";
+        String str8 = "       TESTCASE \"TestCase1\"";
+        String str9 = "            MOVE \"hello\" TO VALUE-1";
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("       UT-BEFORE-EACH-BRANCH-1.");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("      *Called before Test Cases in Test Suite:");
+        expectedResult.add("      *\"TestSuite1\"");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("                MOVE \"prepare\" TO VALUE-1");
+        expectedResult.add("       .");
+        expectedResult.add("");
+        expectedResult.add("       UT-AFTER-EACH-BRANCH-1.");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("      *Called after Test Cases in Test Suite:");
+        expectedResult.add("      *\"TestSuite1\"");
+        expectedResult.add("      *****************************************************************");
+        expectedResult.add("                MOVE \"cleanup\" TO VALUE-1");
+        expectedResult.add("       .");
+        expectedResult.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
+                str7, str8, str9, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actualResult = testSuiteParserController.generateBeforeAfterBranchParagraphs(true);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_generates_after_each_branching_paragraphs_correctly_no_comments() throws IOException {
+        String str1 = "       TESTSUITE \"TestSuite1\"";
+        String str2 = "            BEFORE EACH";
+        String str3 = "                MOVE \"test1B\" TO VALUE-1";
+        String str4 = "            END-BEFORE";
+        String str5 = "            AFTER EACH";
+        String str6 = "                MOVE \"test1A\" TO VALUE-1";
+        String str7 = "            END-AFTER";
+        String str8 = "       TESTCASE \"TestCase1\"";
+        String str9 = "            MOVE \"hello\" TO VALUE-1";
+        String str10 = "       TESTSUITE \"TestSuite2\"";
+        String str11 = "            AFTER EACH";
+        String str12 = "                MOVE \"test2A\" TO VALUE-1";
+        String str13 = "            END-AFTER";
+        String str14 = "       TESTCASE \"TestCase2\"";
+        String str15 = "            MOVE \"hello\" TO VALUE-1";
+        String str16 = "       TESTSUITE \"TestSuite3\"";
+        String str17 = "            BEFORE EACH";
+        String str18 = "                MOVE \"test3B\" TO VALUE-1";
+        String str19 = "            END-BEFORE";
+        String str20 = "       TESTCASE \"TestCase3\"";
+        String str21 = "            MOVE \"hello\" TO VALUE-1";
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("       UT-BEFORE-EACH-BRANCH-1.");
+        expectedResult.add("                MOVE \"test1B\" TO VALUE-1");
+        expectedResult.add("       .");
+        expectedResult.add("");
+        expectedResult.add("       UT-BEFORE-EACH-BRANCH-3.");
+        expectedResult.add("                MOVE \"test3B\" TO VALUE-1");
+        expectedResult.add("       .");
+        expectedResult.add("");
+        expectedResult.add("       UT-AFTER-EACH-BRANCH-1.");
+        expectedResult.add("                MOVE \"test1A\" TO VALUE-1");
+        expectedResult.add("       .");
+        expectedResult.add("");
+        expectedResult.add("       UT-AFTER-EACH-BRANCH-2.");
+        expectedResult.add("                MOVE \"test2A\" TO VALUE-1");
+        expectedResult.add("       .");
+        expectedResult.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9,
+                str10, str11, str12, str13, str14, str15, str16, str17, str18, str19, str20, str21, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actualResult = testSuiteParserController.generateBeforeAfterBranchParagraphs(false);
+        assertEquals(expectedResult, actualResult);
     }
 
 

@@ -1,10 +1,7 @@
 package com.neopragma.cobolcheck;
 
 import com.neopragma.cobolcheck.exceptions.ComponentMockedTwiceInSameScopeException;
-import com.neopragma.cobolcheck.features.testSuiteParser.KeywordExtractor;
-import com.neopragma.cobolcheck.features.testSuiteParser.MockRepository;
-import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParser;
-import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParserController;
+import com.neopragma.cobolcheck.features.testSuiteParser.*;
 import com.neopragma.cobolcheck.features.writer.CobolWriter;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
@@ -32,6 +29,7 @@ public class MockingTest {
     private TestSuiteParserController testSuiteParserController;
     private BufferedReader mockedReader;
     private MockRepository mockRepository;
+    private BeforeAfterRepo beforeAfterRepo;
 
     CobolWriter cobolWriter;
     @Mock
@@ -47,7 +45,8 @@ public class MockingTest {
     @BeforeEach
     void commonSetup() {
         mockRepository = new MockRepository();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository);
+        beforeAfterRepo = new BeforeAfterRepo();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
         mockedReader = Mockito.mock(BufferedReader.class);
         testSuiteParserController = new TestSuiteParserController(mockedReader);
         cobolWriter = new CobolWriter(mockTestProgramSource);
@@ -573,9 +572,10 @@ public class MockingTest {
         String str5 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
         expected.add("                WHEN \"Name of test suite\"");
-        expected.add("                ALSO ANY");
+        expected.add("                   ALSO ANY");
         expected.add("                    PERFORM 1-0-1-MOCK");
         expected.add("           WHEN OTHER");
 
@@ -600,9 +600,10 @@ public class MockingTest {
         String str6 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
         expected.add("                WHEN \"Name of test suite\"");
-        expected.add("                ALSO \"Name of test case\"");
+        expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM 1-1-1-MOCK");
         expected.add("           WHEN OTHER");
 
@@ -627,9 +628,10 @@ public class MockingTest {
         String str6 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
         expected.add("                WHEN \"Name of test suite\"");
-        expected.add("                ALSO \"Name of test case\"");
+        expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM 1-1-1-MOCK");
         expected.add("            END-EVALUATE");
 
@@ -673,25 +675,27 @@ public class MockingTest {
         String str25 = "       END-MOCK";
 
         List<String> expected1 = new ArrayList<>();
-        expected1.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected1.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected1.add("                   ALSO UT-TEST-CASE-NAME");
         expected1.add("                WHEN \"Name of test suite\"");
-        expected1.add("                ALSO \"Name of test case\"");
+        expected1.add("                   ALSO \"Name of test case\"");
         expected1.add("                    PERFORM 1-1-1-MOCK");
         expected1.add("                WHEN \"Name of test suite\"");
-        expected1.add("                ALSO \"test case 2\"");
+        expected1.add("                   ALSO \"test case 2\"");
         expected1.add("                    PERFORM 1-2-1-MOCK");
         expected1.add("                WHEN \"Test suite 2\"");
-        expected1.add("                ALSO \"test case 1\"");
+        expected1.add("                   ALSO \"test case 1\"");
         expected1.add("                    PERFORM 2-1-1-MOCK");
         expected1.add("                WHEN \"Name of test suite\"");
-        expected1.add("                ALSO ANY");
+        expected1.add("                   ALSO ANY");
         expected1.add("                    PERFORM 1-0-1-MOCK");
         expected1.add("           WHEN OTHER");
 
         List<String> expected2 = new ArrayList<>();
-        expected2.add("            EVALUATE UT-TEST-SUITE-NAME ALSO UT-TEST-CASE-NAME");
+        expected2.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected2.add("                   ALSO UT-TEST-CASE-NAME");
         expected2.add("                WHEN \"Name of test suite\"");
-        expected2.add("                ALSO \"Name of test case\"");
+        expected2.add("                   ALSO \"Name of test case\"");
         expected2.add("                    PERFORM 1-1-2-MOCK");
         expected2.add("           WHEN OTHER");
 
