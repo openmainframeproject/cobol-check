@@ -1,5 +1,7 @@
 package com.neopragma.cobolcheck.features.testSuiteParser;
 
+import com.neopragma.cobolcheck.services.Config;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,20 +28,24 @@ public class Mock {
         arguments = new ArrayList<>();
     }
 
-    public String getGeneratedMockIdentifier(){
+    public String getGeneratedMockIdentifierRoot(){
         return testSuiteNumber + "-" + testCaseNumber + "-" + mockNumber + "-MOCK";
     }
 
+    public String getGeneratedMockIdentifier(){
+        return Config.getTestCodePrefix() + getGeneratedMockIdentifierRoot();
+    }
+
     public String getGeneratedMockCountIdentifier(){
-        return "UT-" + getGeneratedMockIdentifier() + "-COUNT";
+        return Config.getTestCodePrefix() + getGeneratedMockIdentifierRoot() + "-COUNT";
     }
 
     public String getGeneratedMockCountExpectedIdentifier(){
-        return "UT-" + getGeneratedMockIdentifier() + "-EXPECTED";
+        return Config.getTestCodePrefix() + getGeneratedMockIdentifierRoot() + "-EXPECTED";
     }
 
     public String getGeneratedMockStringIdentifierName(){
-        return "UT-" + getGeneratedMockIdentifier() + "-NAME";
+        return Config.getTestCodePrefix() + getGeneratedMockIdentifierRoot() + "-NAME";
     }
 
     public String getMockDisplayString(){

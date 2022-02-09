@@ -96,8 +96,16 @@ public class Config {
 
     private static String testCodePrefix = "";
     public static String getTestCodePrefix() {
-        if (testCodePrefix.isEmpty())
+        if (testCodePrefix.isEmpty()){
             testCodePrefix = getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+            if (testCodePrefix.length() > 3)
+                throw new PossibleInternalLogicErrorException("cobolcheck prefix defined in 'config.properties' must be 3 or less characters long. Given value: '"
+                    + testCodePrefix + "' is too long");
+            if (testCodePrefix.length() == 0)
+                throw new PossibleInternalLogicErrorException("cobolcheck prefix defined in 'config.properties' cannot be empty");
+
+        }
+
         return testCodePrefix;
     }
 
