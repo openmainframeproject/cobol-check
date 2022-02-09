@@ -14,7 +14,7 @@ public class MockGenerator {
     private final String performFormat = "                    PERFORM %s";
     private final String endEvaluateLine = "            END-EVALUATE";
 
-    private final String countMockInitialWSHeader = "       01 %sMOCKS-GENERATED.";
+    private final String countMockInitialWSHeader = "       01  %sMOCKS-GENERATED.";
     private final String initializeMockCountParagraphHeader = "       %sINITIALIZE-MOCK-COUNT.";
 
 
