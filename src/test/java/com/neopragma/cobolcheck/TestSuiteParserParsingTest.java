@@ -612,8 +612,4 @@ public class TestSuiteParserParsingTest {
         List<String> actualResult = testSuiteParserController.generateBeforeAfterBranchParagraphs(false);
         assertEquals(expectedResult, actualResult);
     }
-
-
-
-
 }

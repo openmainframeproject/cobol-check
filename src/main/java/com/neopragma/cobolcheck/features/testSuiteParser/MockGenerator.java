@@ -14,6 +14,11 @@ public class MockGenerator {
     private final String performFormat = "                    PERFORM %s";
     private final String endEvaluateLine = "            END-EVALUATE";
 
+    private final String countMockInitialWSHeader = "       01 %sMOCKS-GENERATED.";
+    private final String initializeMockCountParagraphHeader = "       %sINITIALIZE-MOCK-COUNT.";
+
+
+
 
     /**Generates the lines for keeping track of mock counting
      * For each mock a variable are created for:
@@ -28,7 +33,7 @@ public class MockGenerator {
         if (mocks.isEmpty())
             return lines;
 
-        lines.add("       01  UT-MOCKS-GENERATED.");
+        lines.add(String.format(countMockInitialWSHeader, Config.getTestCodePrefix()));
         lines.addAll(generateMockCountValues(mocks));
 
         return lines;
@@ -41,7 +46,7 @@ public class MockGenerator {
      */
     List<String> generateMockCountInitializer(List<Mock> mocks){
         List<String> lines = new ArrayList<>();
-        lines.add("       UT-INITIALIZE-MOCK-COUNT.");
+        lines.add(String.format(initializeMockCountParagraphHeader, Config.getTestCodePrefix()));
         lines.addAll(CobolGenerator.generateCommentBlock("Sets all global mock counters and expected count to 0"));
 
         if (mocks.isEmpty()){

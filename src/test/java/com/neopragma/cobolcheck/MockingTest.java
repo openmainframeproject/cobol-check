@@ -148,10 +148,10 @@ public class MockingTest {
                 str20, str21, null);
 
         testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
-        assertEquals("1-1-1-MOCK", mockRepository.getMocks().get(0).getGeneratedMockIdentifier());
-        assertEquals("1-1-2-MOCK", mockRepository.getMocks().get(1).getGeneratedMockIdentifier());
-        assertEquals("1-2-1-MOCK", mockRepository.getMocks().get(2).getGeneratedMockIdentifier());
-        assertEquals("2-1-1-MOCK", mockRepository.getMocks().get(3).getGeneratedMockIdentifier());
+        assertEquals("UT-1-1-1-MOCK", mockRepository.getMocks().get(0).getGeneratedMockIdentifier());
+        assertEquals("UT-1-1-2-MOCK", mockRepository.getMocks().get(1).getGeneratedMockIdentifier());
+        assertEquals("UT-1-2-1-MOCK", mockRepository.getMocks().get(2).getGeneratedMockIdentifier());
+        assertEquals("UT-2-1-1-MOCK", mockRepository.getMocks().get(3).getGeneratedMockIdentifier());
     }
 
     @Test
@@ -324,7 +324,7 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Paragraphs called when mocking");
         expected.add("      *****************************************************************");
-        expected.add("       1-1-1-MOCK.");
+        expected.add("       UT-1-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
@@ -354,7 +354,7 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Paragraphs called when mocking");
         expected.add("      *****************************************************************");
-        expected.add("       1-1-1-MOCK.");
+        expected.add("       UT-1-1-1-MOCK.");
         expected.add("      *****************************************************************");
         expected.add("      *Local mock of: SECTION: 000-START");
         expected.add("      *In testsuite: \"Name of test suite\"");
@@ -389,7 +389,7 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Paragraphs called when mocking");
         expected.add("      *****************************************************************");
-        expected.add("       1-1-1-MOCK.");
+        expected.add("       UT-1-1-1-MOCK.");
         expected.add("      *****************************************************************");
         expected.add("      *Local mock of: PARAGRAPH: 000-START");
         expected.add("      *In testsuite: \"Name of test suite\"");
@@ -424,7 +424,7 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Paragraphs called when mocking");
         expected.add("      *****************************************************************");
-        expected.add("       1-1-1-MOCK.");
+        expected.add("       UT-1-1-1-MOCK.");
         expected.add("      *****************************************************************");
         expected.add("      *Local mock of: CALL: 'prog1'");
         expected.add("      *In testsuite: \"Name of test suite\"");
@@ -459,7 +459,7 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Paragraphs called when mocking");
         expected.add("      *****************************************************************");
-        expected.add("       1-1-1-MOCK.");
+        expected.add("       UT-1-1-1-MOCK.");
         expected.add("      *****************************************************************");
         expected.add("      *Local mock of: CALL: 'prog1'");
         expected.add("      *With args: CONTENT V-1, REFERENCE V-2");
@@ -510,25 +510,25 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Paragraphs called when mocking");
         expected.add("      *****************************************************************");
-        expected.add("       1-1-1-MOCK.");
+        expected.add("       UT-1-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
         expected.add("       .");
         expected.add("");
-        expected.add("       1-1-2-MOCK.");
+        expected.add("       UT-1-1-2-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-2-MOCK-COUNT");
         expected.add(str8);
         expected.add(str9);
         expected.add("       .");
         expected.add("");
-        expected.add("       1-2-1-MOCK.");
+        expected.add("       UT-1-2-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-2-1-MOCK-COUNT");
         expected.add(str13);
         expected.add(str14);
         expected.add("       .");
         expected.add("");
-        expected.add("       2-1-1-MOCK.");
+        expected.add("       UT-2-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-2-1-1-MOCK-COUNT");
         expected.add(str19);
         expected.add(str20);
@@ -576,7 +576,7 @@ public class MockingTest {
         expected.add("                   ALSO UT-TEST-CASE-NAME");
         expected.add("                WHEN \"Name of test suite\"");
         expected.add("                   ALSO ANY");
-        expected.add("                    PERFORM 1-0-1-MOCK");
+        expected.add("                    PERFORM UT-1-0-1-MOCK");
         expected.add("           WHEN OTHER");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
@@ -604,7 +604,7 @@ public class MockingTest {
         expected.add("                   ALSO UT-TEST-CASE-NAME");
         expected.add("                WHEN \"Name of test suite\"");
         expected.add("                   ALSO \"Name of test case\"");
-        expected.add("                    PERFORM 1-1-1-MOCK");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -632,7 +632,7 @@ public class MockingTest {
         expected.add("                   ALSO UT-TEST-CASE-NAME");
         expected.add("                WHEN \"Name of test suite\"");
         expected.add("                   ALSO \"Name of test case\"");
-        expected.add("                    PERFORM 1-1-1-MOCK");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -679,16 +679,16 @@ public class MockingTest {
         expected1.add("                   ALSO UT-TEST-CASE-NAME");
         expected1.add("                WHEN \"Name of test suite\"");
         expected1.add("                   ALSO \"Name of test case\"");
-        expected1.add("                    PERFORM 1-1-1-MOCK");
+        expected1.add("                    PERFORM UT-1-1-1-MOCK");
         expected1.add("                WHEN \"Name of test suite\"");
         expected1.add("                   ALSO \"test case 2\"");
-        expected1.add("                    PERFORM 1-2-1-MOCK");
+        expected1.add("                    PERFORM UT-1-2-1-MOCK");
         expected1.add("                WHEN \"Test suite 2\"");
         expected1.add("                   ALSO \"test case 1\"");
-        expected1.add("                    PERFORM 2-1-1-MOCK");
+        expected1.add("                    PERFORM UT-2-1-1-MOCK");
         expected1.add("                WHEN \"Name of test suite\"");
         expected1.add("                   ALSO ANY");
-        expected1.add("                    PERFORM 1-0-1-MOCK");
+        expected1.add("                    PERFORM UT-1-0-1-MOCK");
         expected1.add("           WHEN OTHER");
 
         List<String> expected2 = new ArrayList<>();
@@ -696,7 +696,7 @@ public class MockingTest {
         expected2.add("                   ALSO UT-TEST-CASE-NAME");
         expected2.add("                WHEN \"Name of test suite\"");
         expected2.add("                   ALSO \"Name of test case\"");
-        expected2.add("                    PERFORM 1-1-2-MOCK");
+        expected2.add("                    PERFORM UT-1-1-2-MOCK");
         expected2.add("           WHEN OTHER");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
