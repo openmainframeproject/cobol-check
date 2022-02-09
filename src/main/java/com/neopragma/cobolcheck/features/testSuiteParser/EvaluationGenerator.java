@@ -1,9 +1,5 @@
 package com.neopragma.cobolcheck.features.testSuiteParser;
 
-import com.neopragma.cobolcheck.services.Config;
-import com.neopragma.cobolcheck.services.Constants;
-import com.sun.org.apache.bcel.internal.Const;
-
 import java.util.*;
 
 public class EvaluationGenerator {
