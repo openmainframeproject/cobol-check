@@ -1,1 +1,1 @@
-./cobolcheck -p NUMBERS ALPHA GREETING FILECOPY MOCKTEST > approval-test-actual.txt
+./cobolcheck -p NUMBERS ALPHA GREETING FILECOPY MOCKTEST DPICNUMBERS > approval-test-actual.txt

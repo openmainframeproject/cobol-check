@@ -223,3 +223,13 @@ Mock Sections And Paragraphs
  69 PASSED
   2 FAILED
 =================================================
+TESTSUITE:
+Verify Cobol Check handles decimal is comma properly
+     PASS:   1. simple expect for number
+     PASS:   2. simple expect for number
+     PASS:   3. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 100-ASSIGN
+
+  3 TEST CASES WERE EXECUTED
+  3 PASSED
+  0 FAILED
+=================================================

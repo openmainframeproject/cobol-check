@@ -58,6 +58,10 @@ public class Interpreter {
             state.setFlagFor(Constants.CONFIGURATION_SECTION);
             partOfProgram = Constants.CONFIGURATION_SECTION;
         }
+        if (line.containsToken(Constants.SPECIAL_NAMES_PARAGRAPH)) {
+            state.setFlagFor(Constants.SPECIAL_NAMES_PARAGRAPH);
+            partOfProgram = Constants.SPECIAL_NAMES_PARAGRAPH;
+        }
         if (line.containsToken(Constants.INPUT_OUTPUT_SECTION)) {
             state.setFlagFor(Constants.INPUT_OUTPUT_SECTION);
             partOfProgram = Constants.INPUT_OUTPUT_SECTION;
@@ -389,6 +393,12 @@ public class Interpreter {
         if (index < B_AreaEnd) return Area.B;
 
         return Area.NONE;
+    }
+
+    public static boolean isInNumericFormat(String token){
+        List<Character> numberCharacters = Arrays.asList('9', 'Z', 'V', 'S', '*', '$');
+        char firstLetter = token.toCharArray()[0];
+        return numberCharacters.contains(Character.toUpperCase(firstLetter));
     }
 
     /**

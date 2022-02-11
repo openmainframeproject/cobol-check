@@ -127,6 +127,24 @@ public class StringHelper {
         return false;
     }
 
+    /**
+     * Swaps two characters in a given string.
+     * Example: swapChars("1.000.000,00", '.', ',') => "1,000,000.00"
+     * @param c1 - One of the chars to swap
+     * @param c2 - One of the chars to swap
+     * @return - The given string with the given char values swapped
+     */
+    public static String swapChars(String text, char c1, char c2){
+        char[] textArray = text.toCharArray();
+        for (int i = 0; i < text.length(); i++){
+            if (textArray[i] == c1)
+                textArray[i] = c2;
+            else if(textArray[i] == c2)
+                textArray[i] = c1;
+        }
+        return new String(textArray);
+    }
+
 
     public static String commentOutLine(String line){
         if (line.startsWith("       ")){

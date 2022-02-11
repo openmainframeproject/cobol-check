@@ -5,12 +5,14 @@ import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
+import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.services.cobolLogic.NumericFields;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TestSuiteParserController {
 
@@ -31,6 +33,8 @@ public class TestSuiteParserController {
     private static final String procedureDivisionResultCopybookFilename = "CCHECKRESULTPD.CPY";
     private static final String procedureDivisionParagraphCopybookFilename = "CCHECKPARAGRAPHSPD.CPY";
 
+    private static final String[] copyBookTokensWithPeriodAsDecimalPoint = new String[]{"Z,ZZ9"};
+
     private final String workingStorageHeader = ("       WORKING-STORAGE SECTION.");
 
     // Optionally replace identifier prefixes in cobol-check copybook lines and generated source lines,
@@ -47,7 +51,7 @@ public class TestSuiteParserController {
         beforeAfterRepo = new BeforeAfterRepo();
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
         mockGenerator = new MockGenerator();
-        testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        testCodePrefix = Config.getTestCodePrefix();
     }
 
     //Used for testing only
@@ -258,6 +262,7 @@ public class TestSuiteParserController {
      */
     public List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
         List<String> lines = new ArrayList<>();
+        boolean isComma = Config.isDecimalPointComma();
         String path = Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename;
         InputStream is = this.getClass().getResourceAsStream(path);
         BufferedReader secondarySourceBufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -265,6 +270,15 @@ public class TestSuiteParserController {
         while ((secondarySourceLine = secondarySourceBufferedReader.readLine()) != null) {
             secondarySourceLine = secondarySourceLine
                     .replaceAll(Constants.TEST_CODE_PREFIX_PLACEHOLDER, testCodePrefix);
+            if (Config.isDecimalPointComma()){
+                for (String token : copyBookTokensWithPeriodAsDecimalPoint){
+                    if (secondarySourceLine.toUpperCase(Locale.ROOT).contains(token.toUpperCase(Locale.ROOT))){
+                        String replacement = StringHelper.swapChars(token, ',', '.');
+                        secondarySourceLine = secondarySourceLine.replaceAll(token, replacement);
+                    }
+
+                }
+            }
             lines.add(secondarySourceLine);
         }
         secondarySourceBufferedReader.close();
@@ -277,5 +291,9 @@ public class TestSuiteParserController {
         } catch (IOException e){
             throw new TestSuiteCouldNotBeReadException(e);
         }
+    }
+
+    public void prepareNextParse() {
+        Config.setDecimalPointIsCommaFromFile();
     }
 }
