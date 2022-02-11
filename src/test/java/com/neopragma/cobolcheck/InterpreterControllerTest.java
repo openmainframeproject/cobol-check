@@ -81,6 +81,25 @@ public class InterpreterControllerTest {
     }
 
     @Test
+    public void it_sets_decimal_point_is_comma() throws IOException {
+        String str1 = "       ENVIRONMENT DIVISION. ";
+        String str2 = "       CONFIGURATION SECTION.";
+        String str3 = "       SPECIAL-NAMES.";
+        String str4 = "           DECIMAL-POINT IS COMMA.";
+        String str5 = "       INPUT-OUTPUT SECTION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(Config.isDecimalPointComma());
+        assertFalse(interpreterController.isReading(Constants.SPECIAL_NAMES_PARAGRAPH));
+    }
+
+
+    @Test
     public void it_recognizes_paragraph_header_format() throws IOException {
         String str1 = "       PROCEDURE DIVISION.";
         String str2 = "       5400-WRITE-OUTPUT-RECORD.";

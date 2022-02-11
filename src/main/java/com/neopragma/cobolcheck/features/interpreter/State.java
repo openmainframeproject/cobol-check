@@ -31,6 +31,7 @@ public class State {
         flags.put(Constants.IDENTIFICATION_DIVISION, new Flag());
         flags.put(Constants.ENVIRONMENT_DIVISION, new Flag());
         flags.put(Constants.CONFIGURATION_SECTION, new Flag());
+        flags.put(Constants.SPECIAL_NAMES_PARAGRAPH, new Flag());
         flags.put(Constants.INPUT_OUTPUT_SECTION, new Flag());
         flags.put(Constants.FILE_CONTROL, new Flag());
         flags.put(Constants.DATA_DIVISION, new Flag());
@@ -63,6 +64,9 @@ public class State {
 //CONFIGURATION_SECTION
         mutuallyExclusiveFlagsFor(Constants.CONFIGURATION_SECTION,
                 Constants.INPUT_OUTPUT_SECTION);
+        dependentFlagsFor(Constants.CONFIGURATION_SECTION,
+                Constants.SPECIAL_NAMES_PARAGRAPH);
+
 
 //INPUT_OUTPUT_SECTION
         mutuallyExclusiveFlagsFor(Constants.INPUT_OUTPUT_SECTION,
@@ -124,12 +128,13 @@ public class State {
 
 // SECTION
         mutuallyExclusiveFlagsFor(Constants.SECTION_TOKEN,
-                Constants.PARAGRAPH_TOKEN, Constants.CALL_TOKEN);
+                Constants.PARAGRAPH_TOKEN);
+        dependentFlagsFor(Constants.SECTION_TOKEN,
+                Constants.CALL_TOKEN);
 
-// CALL
-        mutuallyExclusiveFlagsFor(Constants.CALL_TOKEN,
-                Constants.PARAGRAPH_TOKEN, Constants.SECTION_TOKEN);
-
+// PARAGRAPH
+        dependentFlagsFor(Constants.PARAGRAPH_TOKEN,
+                Constants.CALL_TOKEN);
     }
 
     public Map<String, Flag> getFlags() {

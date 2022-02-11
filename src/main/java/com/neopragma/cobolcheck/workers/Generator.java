@@ -105,6 +105,7 @@ public class Generator {
                 processingAfterEchoingSourceLineToOutput();
             }
             testSuiteParserController.logUnusedMocks();
+            testSuiteParserController.prepareNextParse();
         } catch (IOException ioEx) {
             throw new CobolSourceCouldNotBeReadException(ioEx);
         }

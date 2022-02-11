@@ -2,6 +2,7 @@ package com.neopragma.cobolcheck.features.interpreter;
 
 import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.cobolLogic.*;
 import com.neopragma.cobolcheck.services.Constants;
@@ -183,6 +184,10 @@ public class InterpreterController {
         reader.updateState();
         updateLineRepository(line);
 
+        if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)){
+            updateDecimalPointIsComma(line);
+        }
+
         if (reader.isFlagSet(Constants.DATA_DIVISION)){
             updateNumericFields(line);
         }
@@ -190,6 +195,15 @@ public class InterpreterController {
         if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)){
             updatePossibleMock(line);
             tryReadBatchFileIOStatement();
+        }
+    }
+
+    private void updateDecimalPointIsComma(CobolLine line) {
+        List<String> orderedDecimalIsCommaKeywords = Arrays.asList(Constants.DECIMAL_POINT_KEYWORD,
+                Constants.IS_TOKEN, Constants.COMMA_KEYWORD);
+
+        if (line.containsAllTokensInConsecutiveOrder(orderedDecimalIsCommaKeywords)){
+            Config.setDecimalPointIsComma(true);
         }
     }
 
@@ -261,10 +275,7 @@ public class InterpreterController {
                     for (String token : line.getTokens()) {
                         if (token.equalsIgnoreCase(Constants.PIC_VALUE)
                                 || (token.equalsIgnoreCase(Constants.PICTURE_VALUE))) {
-                            Pattern pattern = Pattern.compile(Constants.NUMERIC_PICTURE_CLAUSE_PATTERN);
-                            Matcher matcher = pattern.matcher(line.getToken(ix + 1));
-                            boolean matched = matcher.find();
-                            if (matched) {
+                            if (Interpreter.isInNumericFormat(line.getToken(ix + 1))) {
                                 numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.DISPLAY_NUMERIC);
                             }
                             break;

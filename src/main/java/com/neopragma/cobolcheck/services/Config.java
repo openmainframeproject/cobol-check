@@ -36,6 +36,7 @@ import static com.neopragma.cobolcheck.services.StringHelper.adjustPathString;
  */
 public class Config {
 
+    public static final String DECIMAL_POINT_IS_COMMA_CONFIG_KEY = "cobolcheck.decimalPointIsComma";
     public static final String LOCALE_LANGUAGE_CONFIG_KEY = "locale.language";
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
     public static final String LOCALE_VARIANT_CONFIG_KEY = "locale.variant";
@@ -73,6 +74,7 @@ public class Config {
                             "configResourceName", "Config.load(configResourceName)"),
                             npe);
         }
+        setDecimalPointIsCommaFromFile();
         setDefaultLocaleOverride();
         Log.info(Messages.get("INF002", configResourceName));
 
@@ -107,6 +109,21 @@ public class Config {
         }
 
         return testCodePrefix;
+    }
+
+    static boolean decimalPointIsComma = false;
+    public static void setDecimalPointIsCommaFromFile() {
+        String value = adjustPathString(settings.getProperty(DECIMAL_POINT_IS_COMMA_CONFIG_KEY,
+                Constants.CURRENT_DIRECTORY));
+            decimalPointIsComma = Boolean.parseBoolean(value.trim());
+    }
+
+    public static  boolean isDecimalPointComma() {
+        return decimalPointIsComma;
+    }
+
+    public static void setDecimalPointIsComma(boolean value) {
+        decimalPointIsComma = value;
     }
 
     public static String getTestSuiteDirectoryPathString() {

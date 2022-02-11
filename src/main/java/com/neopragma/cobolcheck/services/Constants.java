@@ -107,6 +107,7 @@ public final class Constants {
     public static final String IDENTIFICATION_DIVISION = "IDENTIFICATION DIVISION";
     public static final String ENVIRONMENT_DIVISION = "ENVIRONMENT DIVISION";
     public static final String CONFIGURATION_SECTION = "CONFIGURATION SECTION";
+    public static final String SPECIAL_NAMES_PARAGRAPH = "SPECIAL-NAMES";
     public static final String INPUT_OUTPUT_SECTION = "INPUT-OUTPUT SECTION";
     public static final String FILE_CONTROL = "FILE-CONTROL";
     public static final String DATA_DIVISION = "DATA DIVISION";
@@ -118,6 +119,8 @@ public final class Constants {
     public static final String SELECT_TOKEN = "SELECT";
     public static final String FILE_STATUS_TOKEN = "FILE STATUS";
     public static final String IS_TOKEN = "IS";
+    public static final String DECIMAL_POINT_KEYWORD = "DECIMAL-POINT";
+    public static final String COMMA_KEYWORD = "COMMA";
     public static final String FD_TOKEN = "FD";
     public static final String LEVEL_01_TOKEN = "01";
     public static final String COPY_TOKEN = "COPY";

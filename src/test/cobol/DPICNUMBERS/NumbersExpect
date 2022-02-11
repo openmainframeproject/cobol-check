@@ -1,0 +1,13 @@
+           TestSuite "Verify Cobol Check handles decimal is comma properly"
+
+           TestCase "simple expect for number"
+           Move 25,74 to VALUE-1
+           Expect VALUE-1 = 25,74
+
+           TestCase "simple expect for number"
+           MOCK PARAGRAPH 100-ASSIGN
+               MOVE 105 TO VALUE-1
+           END-MOCK
+           PERFORM 100-ASSIGN
+           EXPECT VALUE-1 = 00105
+           VERIFY PARAGRAPH 100-ASSIGN HAPPENED ONCE
