@@ -53,12 +53,6 @@ public class MockingTest {
         numericFields = new NumericFields();
     }
 
-    /********* TEST: *****************
-    *   Call exceptions
-    *   END-MOCK on same line
-    *   Call recognition
-     *******************************/
-
     @Test
     public void it_creates_a_new_section_mock() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";

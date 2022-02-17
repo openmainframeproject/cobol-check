@@ -1277,7 +1277,7 @@
       *****************************************************************         
       *Paragraphs called when mocking                                           
       *****************************************************************         
-       2-0-1-MOCK.                                                              
+       UT-2-0-1-MOCK.                                                           
       *****************************************************************         
       *Global mock of: SECTION: 000-START                                       
       *In testsuite: "Before and after tests 2"                                 
@@ -1286,7 +1286,7 @@
                 MOVE "GlobalMockedSection1" TO VALUE-1                          
        .                                                                        
                                                                                 
-       2-0-2-MOCK.                                                              
+       UT-2-0-2-MOCK.                                                           
       *****************************************************************         
       *Global mock of: SECTION: 100-WELCOME                                     
       *In testsuite: "Before and after tests 2"                                 
@@ -1295,7 +1295,7 @@
                 MOVE "GlobalMockedSection2" TO VALUE-3                          
        .                                                                        
                                                                                 
-       2-2-1-MOCK.                                                              
+       UT-2-2-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 000-START                                        
       *In testsuite: "Before and after tests 2"                                 
@@ -1305,7 +1305,7 @@
                 MOVE "LocalMockedSection1" TO VALUE-1                           
        .                                                                        
                                                                                 
-       2-2-2-MOCK.                                                              
+       UT-2-2-2-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 100-WELCOME                                      
       *In testsuite: "Before and after tests 2"                                 
@@ -1315,7 +1315,7 @@
                 MOVE "LocalMockedSection2" TO VALUE-3                           
        .                                                                        
                                                                                 
-       2-3-1-MOCK.                                                              
+       UT-2-3-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 000-START                                        
       *In testsuite: "Before and after tests 2"                                 
@@ -1325,7 +1325,7 @@
                 MOVE "LocalMockedSection1" TO VALUE-1                           
        .                                                                        
                                                                                 
-       2-3-2-MOCK.                                                              
+       UT-2-3-2-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 100-WELCOME                                      
       *In testsuite: "Before and after tests 2"                                 
@@ -1335,7 +1335,7 @@
                 MOVE "LocalMockedSection2" TO VALUE-3                           
        .                                                                        
                                                                                 
-       2-4-1-MOCK.                                                              
+       UT-2-4-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 000-START                                        
       *In testsuite: "Before and after tests 2"                                 
@@ -1345,7 +1345,7 @@
                 MOVE "LocalMockedSection1" TO VALUE-1                           
        .                                                                        
                                                                                 
-       2-4-2-MOCK.                                                              
+       UT-2-4-2-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 100-WELCOME                                      
       *In testsuite: "Before and after tests 2"                                 
@@ -1355,7 +1355,7 @@
                 MOVE "LocalMockedSection2" TO VALUE-3                           
        .                                                                        
                                                                                 
-       5-0-1-MOCK.                                                              
+       UT-5-0-1-MOCK.                                                           
       *****************************************************************         
       *Global mock of: CALL: 'PROG1'                                            
       *In testsuite: "Mock Call statements test"                                
@@ -1364,7 +1364,7 @@
                 MOVE "Global PROG1" TO VALUE-1                                  
        .                                                                        
                                                                                 
-       5-1-1-MOCK.                                                              
+       UT-5-1-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: CALL: 'PROG1'                                             
       *In testsuite: "Mock Call statements test"                                
@@ -1374,7 +1374,7 @@
                 MOVE "From mocked PROG1" TO VALUE-1                             
        .                                                                        
                                                                                 
-       5-3-1-MOCK.                                                              
+       UT-5-3-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: CALL: VALUE-2                                             
       *With args: REFERENCE VALUE-1                                             
@@ -1385,7 +1385,7 @@
                 MOVE "From mocked PROG2" TO VALUE-1                             
        .                                                                        
                                                                                 
-       5-4-1-MOCK.                                                              
+       UT-5-4-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: CALL: 'PROG3'                                             
       *With args: CONTENT VALUE-1, VALUE VALUE-2, REFERENCE VALUE-3             
@@ -1399,7 +1399,7 @@
                 MOVE "reference" TO VALUE-3                                     
        .                                                                        
                                                                                 
-       5-5-1-MOCK.                                                              
+       UT-5-5-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: CALL: 'PROG3'                                             
       *With args: CONTENT VALUE-1, VALUE VALUE-2, REFERENCE VALUE-3             
@@ -1412,7 +1412,7 @@
                 MOVE "reference" TO VALUE-3                                     
        .                                                                        
                                                                                 
-       5-5-2-MOCK.                                                              
+       UT-5-5-2-MOCK.                                                           
       *****************************************************************         
       *Local mock of: PARAGRAPH: 800-MAKE-CALL                                  
       *In testsuite: "Mock Call statements test"                                
@@ -1422,7 +1422,7 @@
              MOVE "overwritten" TO VALUE-1                                      
        .                                                                        
                                                                                 
-       5-6-1-MOCK.                                                              
+       UT-5-6-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: CALL: 'PROG1'                                             
       *In testsuite: "Mock Call statements test"                                
@@ -1433,7 +1433,7 @@
                 MOVE "Local PROG1" TO VALUE-1                                   
        .                                                                        
                                                                                 
-       6-0-1-MOCK.                                                              
+       UT-6-0-1-MOCK.                                                           
       *****************************************************************         
       *Global mock of: SECTION: 000-START                                       
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1443,7 +1443,7 @@
            PERFORM 500-SWITCH                                                   
        .                                                                        
                                                                                 
-       6-0-2-MOCK.                                                              
+       UT-6-0-2-MOCK.                                                           
       *****************************************************************         
       *Global mock of: PARAGRAPH: 300-CHANGE-1                                  
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1457,7 +1457,7 @@
               END-EVALUATE                                                      
        .                                                                        
                                                                                 
-       6-2-1-MOCK.                                                              
+       UT-6-2-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 000-START                                        
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1468,7 +1468,7 @@
                 MOVE "a mock" TO VALUE-2                                        
        .                                                                        
                                                                                 
-       6-3-1-MOCK.                                                              
+       UT-6-3-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 000-START                                        
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1483,7 +1483,7 @@
                 PERFORM 100-WELCOME                                             
        .                                                                        
                                                                                 
-       6-3-2-MOCK.                                                              
+       UT-6-3-2-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 100-WELCOME                                      
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1494,7 +1494,7 @@
                 MOVE "I'll leave VALUE-2 alone" TO VALUE-1                      
        .                                                                        
                                                                                 
-       6-3-3-MOCK.                                                              
+       UT-6-3-3-MOCK.                                                           
       *****************************************************************         
       *Local mock of: PARAGRAPH: 500-SWITCH                                     
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1504,7 +1504,7 @@
            ADD 1 TO UT-6-3-3-MOCK-COUNT                                         
        .                                                                        
                                                                                 
-       6-4-1-MOCK.                                                              
+       UT-6-4-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: PARAGRAPH: 500-SWITCH                                     
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1513,7 +1513,7 @@
            ADD 1 TO UT-6-4-1-MOCK-COUNT                                         
        .                                                                        
                                                                                 
-       6-5-1-MOCK.                                                              
+       UT-6-5-1-MOCK.                                                           
       *****************************************************************         
       *Local mock of: SECTION: 100-WELCOME                                      
       *In testsuite: "Mock Sections And Paragraphs"                             
@@ -1767,28 +1767,28 @@
                 WHEN "Before and after tests 2"                                 
                    ALSO "Only global mocks apply in before/after (part 1        
       -    ")"                                                                  
-                    PERFORM 2-2-1-MOCK                                          
+                    PERFORM UT-2-2-1-MOCK                                       
                 WHEN "Before and after tests 2"                                 
                    ALSO "Only global mocks apply in before/after (part 2        
       -    ")"                                                                  
-                    PERFORM 2-3-1-MOCK                                          
+                    PERFORM UT-2-3-1-MOCK                                       
                 WHEN "Before and after tests 2"                                 
                    ALSO "Only global mocks apply in before/after (part 3        
       -    ")"                                                                  
-                    PERFORM 2-4-1-MOCK                                          
+                    PERFORM UT-2-4-1-MOCK                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO "Local mock overwrites global mock"                     
-                    PERFORM 6-2-1-MOCK                                          
+                    PERFORM UT-6-2-1-MOCK                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO "Multiple local mocks behaves as intended (First        
       -    " Verify should fail)"                                               
-                    PERFORM 6-3-1-MOCK                                          
+                    PERFORM UT-6-3-1-MOCK                                       
                 WHEN "Before and after tests 2"                                 
                    ALSO ANY                                                     
-                    PERFORM 2-0-1-MOCK                                          
+                    PERFORM UT-2-0-1-MOCK                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO ANY                                                     
-                    PERFORM 6-0-1-MOCK                                          
+                    PERFORM UT-6-0-1-MOCK                                       
            WHEN OTHER                                                           
            MOVE "Value1" to VALUE-1                                             
            MOVE "Value2" to VALUE-2                                             
@@ -1807,25 +1807,25 @@
                 WHEN "Before and after tests 2"                                 
                    ALSO "Only global mocks apply in before/after (part 1        
       -    ")"                                                                  
-                    PERFORM 2-2-2-MOCK                                          
+                    PERFORM UT-2-2-2-MOCK                                       
                 WHEN "Before and after tests 2"                                 
                    ALSO "Only global mocks apply in before/after (part 2        
       -    ")"                                                                  
-                    PERFORM 2-3-2-MOCK                                          
+                    PERFORM UT-2-3-2-MOCK                                       
                 WHEN "Before and after tests 2"                                 
                    ALSO "Only global mocks apply in before/after (part 3        
       -    ")"                                                                  
-                    PERFORM 2-4-2-MOCK                                          
+                    PERFORM UT-2-4-2-MOCK                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO "Multiple local mocks behaves as intended (First        
       -    " Verify should fail)"                                               
-                    PERFORM 6-3-2-MOCK                                          
+                    PERFORM UT-6-3-2-MOCK                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO "Local and global mocks can be used together"           
-                    PERFORM 6-5-1-MOCK                                          
+                    PERFORM UT-6-5-1-MOCK                                       
                 WHEN "Before and after tests 2"                                 
                    ALSO ANY                                                     
-                    PERFORM 2-0-2-MOCK                                          
+                    PERFORM UT-2-0-2-MOCK                                       
            WHEN OTHER                                                           
            MOVE "Hello" to VALUE-1                                              
            MOVE "Hi" to VALUE-2                                                 
@@ -1846,7 +1846,7 @@
                    ALSO UT-TEST-CASE-NAME                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO ANY                                                     
-                    PERFORM 6-0-2-MOCK                                          
+                    PERFORM UT-6-0-2-MOCK                                       
            WHEN OTHER                                                           
            EVALUATE VALUE-1                                                     
            WHEN "Hello"                                                         
@@ -1873,10 +1873,10 @@
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO "Multiple local mocks behaves as intended (First        
       -    " Verify should fail)"                                               
-                    PERFORM 6-3-3-MOCK                                          
+                    PERFORM UT-6-3-3-MOCK                                       
                 WHEN "Mock Sections And Paragraphs"                             
                    ALSO "Empty local mock makes section do nothing"             
-                    PERFORM 6-4-1-MOCK                                          
+                    PERFORM UT-6-4-1-MOCK                                       
            WHEN OTHER                                                           
            MOVE VALUE-2 TO TEMP                                                 
            MOVE VALUE-1 TO VALUE-2                                              
@@ -1892,14 +1892,14 @@
                    ALSO UT-TEST-CASE-NAME                                       
                 WHEN "Mock Call statements test"                                
                    ALSO "Simple call mock works"                                
-                    PERFORM 5-1-1-MOCK                                          
+                    PERFORM UT-5-1-1-MOCK                                       
                 WHEN "Mock Call statements test"                                
                    ALSO "Global call mock is not overwritten by local ca        
       -    "ll mock (Should fail)"                                              
-                    PERFORM 5-6-1-MOCK                                          
+                    PERFORM UT-5-6-1-MOCK                                       
                 WHEN "Mock Call statements test"                                
                    ALSO ANY                                                     
-                    PERFORM 5-0-1-MOCK                                          
+                    PERFORM UT-5-0-1-MOCK                                       
             END-EVALUATE                                                        
            .                                                                    
                                                                                 
@@ -1911,7 +1911,7 @@
                    ALSO UT-TEST-CASE-NAME                                       
                 WHEN "Mock Call statements test"                                
                    ALSO "Call mock with argument works"                         
-                    PERFORM 5-3-1-MOCK                                          
+                    PERFORM UT-5-3-1-MOCK                                       
             END-EVALUATE                                                        
            .                                                                    
                                                                                 
@@ -1921,7 +1921,7 @@
                 WHEN "Mock Call statements test"                                
                    ALSO "Paragraph mock is called and call mock is ignor        
       -    "ed"                                                                 
-                    PERFORM 5-5-2-MOCK                                          
+                    PERFORM UT-5-5-2-MOCK                                       
            WHEN OTHER                                                           
            MOVE "arg1" to VALUE-1                                               
            MOVE "arg2" to VALUE-2                                               
@@ -1933,11 +1933,11 @@
                 WHEN "Mock Call statements test"                                
                    ALSO "Call mock with content reference for arguments         
       -    "work"                                                               
-                    PERFORM 5-4-1-MOCK                                          
+                    PERFORM UT-5-4-1-MOCK                                       
                 WHEN "Mock Call statements test"                                
                    ALSO "Paragraph mock is called and call mock is ignor        
       -    "ed"                                                                 
-                    PERFORM 5-5-1-MOCK                                          
+                    PERFORM UT-5-5-1-MOCK                                       
             END-EVALUATE                                                        
       *    CALL 'PROG3' USING  BY CONTENT VALUE-1, BY VALUE VALUE-2, VAL        
       * UE-3                                                                    
@@ -1946,11 +1946,11 @@
                 WHEN "Mock Call statements test"                                
                    ALSO "Call mock with content reference for arguments         
       -    "work"                                                               
-                    PERFORM 5-4-1-MOCK                                          
+                    PERFORM UT-5-4-1-MOCK                                       
                 WHEN "Mock Call statements test"                                
                    ALSO "Paragraph mock is called and call mock is ignor        
       -    "ed"                                                                 
-                    PERFORM 5-5-1-MOCK                                          
+                    PERFORM UT-5-5-1-MOCK                                       
             END-EVALUATE                                                        
       *   CALL 'PROG3' USING VALUE-1                                            
             END-EVALUATE                                                        

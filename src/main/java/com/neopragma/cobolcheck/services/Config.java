@@ -37,6 +37,8 @@ import static com.neopragma.cobolcheck.services.StringHelper.adjustPathString;
 public class Config {
 
     public static final String DECIMAL_POINT_IS_COMMA_CONFIG_KEY = "cobolcheck.decimalPointIsComma";
+    public static final String INJECT_START_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.start";
+    public static final String INJECT_END_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.end";
     public static final String LOCALE_LANGUAGE_CONFIG_KEY = "locale.language";
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
     public static final String LOCALE_VARIANT_CONFIG_KEY = "locale.variant";
@@ -128,6 +130,16 @@ public class Config {
 
     public static String getTestSuiteDirectoryPathString() {
         return adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,
+                Constants.CURRENT_DIRECTORY));
+    }
+
+    public static String getInjectStartTag(){
+        return adjustPathString(settings.getProperty(INJECT_START_TAG_CONFIG_KEY,
+                Constants.CURRENT_DIRECTORY));
+    }
+
+    public static String getInjectEndTag(){
+        return adjustPathString(settings.getProperty(INJECT_END_TAG_CONFIG_KEY,
                 Constants.CURRENT_DIRECTORY));
     }
 
