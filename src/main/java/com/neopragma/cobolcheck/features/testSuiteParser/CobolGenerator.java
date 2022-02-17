@@ -1,5 +1,6 @@
 package com.neopragma.cobolcheck.features.testSuiteParser;
 
+import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
@@ -45,5 +46,26 @@ public class CobolGenerator {
         return commentLines;
     }
 
+    static String getInjectStartTagComment(){
+        String tag = Config.getInjectStartTag();
+        if (tag.equalsIgnoreCase("NULL"))
+            return "";
+        else
+            return StringHelper.commentOutLine(tag);
+    }
 
+    static String getInjectEndTagComment(){
+        String tag = Config.getInjectEndTag();
+        if (tag.equalsIgnoreCase("NULL"))
+            return "";
+        else
+            return StringHelper.commentOutLine(tag);
+    }
+
+    static void addStartAndEndTags(List<String> lines){
+        if (!getInjectStartTagComment().isEmpty())
+            lines.add(0, getInjectStartTagComment());
+        if (!getInjectEndTagComment().isEmpty())
+            lines.add(getInjectEndTagComment());
+    }
 }

@@ -64,7 +64,7 @@ public class TestSuiteParserController {
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
 
-    public boolean hasWorkingStorageTestCodeHasBeenInserted() {
+    public boolean hasWorkingStorageTestCodeBeenInserted() {
         return workingStorageTestCodeHasBeenInserted;
     }
 
@@ -119,6 +119,8 @@ public class TestSuiteParserController {
         //Generates the variables used for counting
         lines.addAll(generateMockCountingFields());
 
+        CobolGenerator.addStartAndEndTags(lines);
+
         workingStorageTestCodeHasBeenInserted = true;
 
         return lines;
@@ -133,6 +135,7 @@ public class TestSuiteParserController {
         List<String> lines = new ArrayList<>();
         //Generates the variables used for counting
         lines.addAll(generateMockCountingFields());
+        CobolGenerator.addStartAndEndTags(lines);
         return lines;
     }
 
@@ -183,6 +186,8 @@ public class TestSuiteParserController {
 
         // Inject boilerplate test code from cobol-check Paragraph Procedure Division copybook
         lines.addAll(getBoilerplateCodeFromCopybooks(procedureDivisionParagraphCopybookFilename));
+
+        CobolGenerator.addStartAndEndTags(lines);
         return lines;
     }
 
@@ -234,14 +239,20 @@ public class TestSuiteParserController {
      * @return The generated lines
      */
     public List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments){
-        return mockGenerator.generateMockPerformCalls(identifier, type, arguments, mockRepository.getMocks());
+        List<String> lines = mockGenerator.generateMockPerformCalls(identifier, type, arguments, mockRepository.getMocks());
+        CobolGenerator.addStartAndEndTags(lines);
+        return lines;
     }
     /**This line should be inserted at the end of a mocked component,
      * to end the EVALUATE started in the beginning of the mock.
+     * Becomes three lines, if start- and end-tags are inserted.
      * @return END-EVALUATE line
      */
-    public String getEndEvaluateLine(){
-        return mockGenerator.getEndEvaluateLine();
+    public List<String> getEndEvaluateLine(){
+        List<String> lines = new ArrayList<>();
+        lines.add(mockGenerator.getEndEvaluateLine());
+        CobolGenerator.addStartAndEndTags(lines);
+        return lines;
     }
 
     public void logUnusedMocks(){

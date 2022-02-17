@@ -22,7 +22,6 @@ import com.neopragma.cobolcheck.features.testSuiteParser.TestSuiteParserControll
 import com.neopragma.cobolcheck.features.writer.WriterController;
 import com.neopragma.cobolcheck.features.prepareMerge.PrepareMergeController;
 import com.neopragma.cobolcheck.services.*;
-import com.neopragma.cobolcheck.services.cobolLogic.Interpreter;
 import com.neopragma.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -124,7 +123,7 @@ public class Generator {
     private void processingBeforeEchoingSourceLineToOutput() throws IOException {
 
         if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
-            if (!testSuiteParserController.hasWorkingStorageTestCodeHasBeenInserted()) {
+            if (!testSuiteParserController.hasWorkingStorageTestCodeBeenInserted()) {
                 writerController.writeLine(testSuiteParserController.getWorkingStorageHeader());
 
                 writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
@@ -140,7 +139,7 @@ public class Generator {
             if (interpreter.isCurrentLineEndingSectionOrParagraph()){
                 if (interpreter.canWriteEndEvaluateBeforeCurrentLine()){
                     interpreter.setInsideSectionOrParagraphMockBody(false);
-                    writerController.writeLine(testSuiteParserController.getEndEvaluateLine());
+                    writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
                 }
                 else
                     return sourceLine.replace(".", "");

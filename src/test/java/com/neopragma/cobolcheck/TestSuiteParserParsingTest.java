@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -611,5 +612,32 @@ public class TestSuiteParserParsingTest {
 
         List<String> actualResult = testSuiteParserController.generateBeforeAfterBranchParagraphs(false);
         assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_inserts_start_and_end_tag_as_comments() throws IOException {
+        String str1 = "       TESTSUITE \"TestSuite1\"";
+        String str2 = "       TESTCASE \"TestCase1\"";
+        String str3 = "            MOVE \"hello\" TO VALUE-1";
+        String str4 = "            EXPECT VALUE-1 TO BE \"hello\"";
+
+
+        String expectedStartTag = "      *###INJECT START###";
+        String expectedEndTag = "      *###INJECT END###";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        List<String> actualResult = new ArrayList<>();
+
+        try (MockedStatic<Config> configMockedStatic = Mockito.mockStatic(Config.class)) {
+            configMockedStatic.when(Config::getInjectStartTag).thenReturn("###INJECT START###");
+            configMockedStatic.when(Config::getInjectEndTag).thenReturn("###INJECT END###");
+
+            testSuiteParserController.parseTestSuites(numericFields);
+            actualResult = testSuiteParserController.getProcedureDivisionTestCode();
+        }
+
+        assertEquals(expectedStartTag, actualResult.get(0));
+        assertEquals(expectedEndTag, actualResult.get(actualResult.size() - 1));
     }
 }
