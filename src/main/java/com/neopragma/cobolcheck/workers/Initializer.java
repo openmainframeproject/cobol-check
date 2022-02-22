@@ -77,4 +77,10 @@ public class Initializer {
 
     public void exitProgram(){ statusController.exitProgram();}
 
+    public boolean isLastSourceProgram(String name)
+    {
+        String[] sourceProgams = getSourceProgramNames();
+        return name.equals(sourceProgams[sourceProgams.length-1]);
+    }
+
 }

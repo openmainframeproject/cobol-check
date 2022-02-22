@@ -2,13 +2,20 @@ package com.neopragma.cobolcheck.features.launcher;
 
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.Formatter.Formats.Formatter;
+import com.neopragma.cobolcheck.features.Formatter.Formats.TestOutputFormat;
+import com.neopragma.cobolcheck.features.Formatter.Formats.XMLFormat;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.services.log.Log;
 
+import javax.xml.bind.JAXBException;
 import java.io.*;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class ProcessOutputWriter {
 
@@ -16,6 +23,7 @@ public class ProcessOutputWriter {
     boolean writeWasSuccesful = false;
     String processInput;
     String processError;
+    XMLFormat xmlFormat;
 
     public ProcessOutputWriter() {
         testResultsFilePath = Config.getTestResultFilePathString();
@@ -36,10 +44,22 @@ public class ProcessOutputWriter {
         return writeWasSuccesful;
     }
 
-    public void writeProcessOutputToTestResultsFile(Process proc, boolean outputToConsole) {
+    public void writeProcessOutputToTestResultsFile(Process proc, TestOutputFormat format, DataTransferObjectStyle style,
+                                                    String programName, boolean outputToConsole, boolean isLastRun) {
         getProcessOut(proc);
-        writeOutPutToConsole();
-        writeWasSuccesful = writeProcessOutputToFile(testResultsFilePath);
+        if (outputToConsole)
+            writeOutPutToConsole();
+        cleanupOldTestResults();
+        switch (format){
+            case txt:
+                writeWasSuccesful = writeProcessOutputToFile(testResultsFilePath);
+                break;
+            case XML:
+                if (xmlFormat == null)
+                    xmlFormat = new XMLFormat(style);
+                writeProcessOutputWithFormat(xmlFormat, programName, isLastRun);
+                break;
+        }
     }
 
     private void getProcessOut(Process proc) {
@@ -80,7 +100,7 @@ public class ProcessOutputWriter {
 
     private boolean writeProcessOutputToFile(String path) {
         try{
-            FileWriter fw = new FileWriter(path, true);
+            FileWriter fw = new FileWriter(StringHelper.changeFileExtension(path, "txt"), true);
             BufferedWriter bw = new BufferedWriter(fw);
             String[] lines = processInput.split(Constants.NEWLINE);
             for (String line : lines){
@@ -97,5 +117,50 @@ public class ProcessOutputWriter {
             return false;
         }
 
+    }
+
+    private void writeProcessOutputWithFormat(Formatter formatter, String programName, boolean writeToFile){
+        formatter.parseText(processInput, programName);
+
+        if (writeToFile)
+        {
+            try {
+                formatter.getFormattedString(testResultsFilePath);
+                writeWasSuccesful = true;
+            } catch (Exception e) {
+                writeWasSuccesful = false;
+            }
+        }
+    }
+
+    private void cleanupOldTestResults() {
+        if (testResultsFilePath.contains("."))
+            testResultsFilePath = testResultsFilePath.split("\\.")[0];
+
+        File oldTestResultsFile = new File(testResultsFilePath);
+
+//        int fileNameSplitIndex = testResultsFilePath.lastIndexOf(Constants.FILE_SEPARATOR);
+//        String fileName = "";
+//        String directoryPath = "";
+//        if (fileNameSplitIndex == -1){
+//            fileName = testResultsFilePath;
+//            directoryPath = System.getProperty("user.dir");
+//        }
+//        else {
+//            fileName = testResultsFilePath.substring(fileNameSplitIndex + 1);
+//            directoryPath = testResultsFilePath.substring(0, fileNameSplitIndex);
+//        }
+//
+//
+//        File directory = new File(directoryPath);
+//        String finalDirectoryPath = directoryPath;
+//        File[] potentialTestResultFiles = Arrays.stream(directory.listFiles()).filter(file ->
+//                file.getPath().substring(0, file.getPath().lastIndexOf(Constants.FILE_SEPARATOR))
+//                        .equals(finalDirectoryPath)).toArray(File[]::new);
+//
+//        for (File file : potentialTestResultFiles){
+//            if (file.getName().equals(fileName))
+//                testResultsFilePath = file.getAbsolutePath();
+//        }
     }
 }

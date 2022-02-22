@@ -96,6 +96,9 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     implementation 'org.jetbrains:annotations:15.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
     testImplementation('org.junit.jupiter:junit-jupiter:5.6.1')
     testImplementation('org.junit.jupiter:junit-jupiter-params:5.7.0')
     testImplementation 'org.mockito:mockito-inline:3.6.0'
