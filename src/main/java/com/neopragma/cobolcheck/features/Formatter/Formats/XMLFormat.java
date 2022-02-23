@@ -1,7 +1,6 @@
 package com.neopragma.cobolcheck.features.Formatter.Formats;
 
 import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
-import com.neopragma.cobolcheck.services.StringHelper;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,12 +14,12 @@ public class XMLFormat extends Formatter{
     }
 
     @Override
-    public String getFormattedString(String path) throws JAXBException {
-        Object dataTransferObject = dataTransferObjectAdapter.getDataTransferObject();
+    public String writeInFormat(String path) throws JAXBException {
+        Object dataTransferObject = this.dataTransferObject.getDataTransferObject();
         JAXBContext context = JAXBContext.newInstance(dataTransferObject.getClass());
         Marshaller mar= context.createMarshaller();
         mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        mar.marshal(dataTransferObject, new File(StringHelper.changeFileExtension(path, "xml")));
+        mar.marshal(dataTransferObject, new File(path));
         return mar.toString();
     }
 }

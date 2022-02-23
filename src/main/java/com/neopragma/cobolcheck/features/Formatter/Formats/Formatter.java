@@ -1,7 +1,8 @@
 package com.neopragma.cobolcheck.features.Formatter.Formats;
 
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectAdapter;
+import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObject;
 import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.JUnitDto;
 import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;
@@ -28,17 +29,28 @@ public abstract class Formatter {
     private String currentTestSuite;
     private boolean expectFailMessage;
 
-    protected DataTransferObjectAdapter dataTransferObjectAdapter;
+    protected DataTransferObject dataTransferObject;
     private boolean expectNumberPassed;
     private boolean expectNumberFailed;
 
-
-    public abstract String getFormattedString(String path) throws Exception;
+    /**
+     * Writes text in a specific format to a file. The format is written in the style of the Formatter's
+     * DataTransferObject. This method is expected to be called after text has been parsed to the
+     * DataTransferObject.
+     * @param path The name of the source program.
+     */
+    public abstract String writeInFormat(String path) throws Exception;
 
     public Formatter(DataTransferObjectStyle dataTransferObjectStyle){
-        dataTransferObjectAdapter = new DataTransferObjectAdapter(dataTransferObjectStyle);
+        dataTransferObject = instantiateBasedOnStyle(dataTransferObjectStyle);
     }
 
+    /**
+     * Parses text from text results to a data transfer object style. The style is given
+     * in the constructor of the Formmatter.
+     * @param text Test results returned from test program.
+     * @param testSuitePackage The package(program) for the testsuite(s) in the text.
+     */
     public void parseText(String text, String testSuitePackage){
         String[] lines = text.split(Constants.NEWLINE);
 
@@ -53,21 +65,21 @@ public abstract class Formatter {
 
             else if (expectTestSuiteName)
             {
-                dataTransferObjectAdapter.moveToNextTestSuite();
-                dataTransferObjectAdapter.setCurrentTestSuitePackage(testSuitePackage);
-                dataTransferObjectAdapter.setCurrentTestSuiteName(line.trim());
+                dataTransferObject.moveToNextTestSuite();
+                dataTransferObject.setCurrentTestSuitePackage(testSuitePackage);
+                dataTransferObject.setCurrentTestSuiteName(line.trim());
                 expectTestSuiteName = false;
             }
 
             else if (expectFailMessage){
-                dataTransferObjectAdapter.setCurrentTestCaseFailure(line.trim(), getFailureType(line));
+                dataTransferObject.setCurrentTestCaseFailure(line.trim(), getFailureType(line));
                 expectFailMessage = false;
             }
 
             else if (line.toUpperCase(Locale.ROOT).contains(testCasesExecutedText)){
                 String[] tokens = line.trim().split(" ");
                 if (tokens.length == 5){
-                    dataTransferObjectAdapter.setNumberOfAllTests(tokens[0]);
+                    dataTransferObject.setNumberOfAllTests(tokens[0]);
                     expectNumberPassed = true;
                 }
             }
@@ -80,7 +92,7 @@ public abstract class Formatter {
             else if (expectNumberFailed){
                 expectNumberFailed = false;
                 String[] tokens = line.trim().split(" ");
-                dataTransferObjectAdapter.setNumberOffAllFailures(tokens[0]);
+                dataTransferObject.setNumberOffAllFailures(tokens[0]);
             }
 
             else
@@ -92,8 +104,8 @@ public abstract class Formatter {
         String[] partedLine = line.split("\\.");
         String[] tokens = partedLine[0].split(" ");
         if (tokens.length > 0){
-            dataTransferObjectAdapter.moveToNextTestCase();
-            dataTransferObjectAdapter.setCurrentTestCaseName(partedLine[1].trim());
+            dataTransferObject.moveToNextTestCase();
+            dataTransferObject.setCurrentTestCaseName(partedLine[1].trim());
             if (tokens[0].equalsIgnoreCase(passKeyword)){
                 //Test passed
             }
@@ -117,6 +129,15 @@ public abstract class Formatter {
             }
         }
         return "";
+    }
+
+    private DataTransferObject instantiateBasedOnStyle(DataTransferObjectStyle style){
+        switch (style){
+            case JUnit:
+                return new JUnitDto();
+            default:
+                return new JUnitDto();
+        }
     }
 
 }

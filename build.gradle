@@ -12,7 +12,7 @@ group = 'com.neopragma'
 description = 'Unit testing framework for Cobol'
 
 def approvalExpectedOutput = "approval-test-expected.txt"
-def approvalActualOutput = "testResults.txt"
+def approvalActualOutput = "output/testResults.txt"
 
 sonarqube {
     properties {

@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import static com.neopragma.cobolcheck.services.StringHelper.adjustPathString;
+import static com.neopragma.cobolcheck.services.StringHelper.changeFileExtension;
 
 /**
  * Loads and manages configuration settings.
@@ -148,7 +149,8 @@ public class Config {
     }
 
     public static String getTestResultFilePathString() {
-        return adjustPathString(settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+        String pathFromConfig = settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        return adjustPathString(changeFileExtension(pathFromConfig, getTestResultFormat().name()));
     }
 
     public static TestOutputFormat getTestResultFormat() {
@@ -157,7 +159,7 @@ public class Config {
         switch (format.toUpperCase(Locale.ROOT)){
 
             case "XML":
-                return TestOutputFormat.XML;
+                return TestOutputFormat.xml;
             case "TXT":
             default:
                 return TestOutputFormat.txt;

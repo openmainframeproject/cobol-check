@@ -96,9 +96,10 @@ public class StringHelper {
 
     public static String changeFileExtension(String path, String extension){
         if (path.contains(".")){
-            path = path.split("\\.")[0];
+            int dotIndex = path.indexOf(".");
+            path = path.substring(0, dotIndex);
         }
-        return path + ("." + extension);
+        return path + "." + extension;
     }
 
     /**

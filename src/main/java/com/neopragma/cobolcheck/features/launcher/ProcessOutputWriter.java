@@ -1,7 +1,5 @@
 package com.neopragma.cobolcheck.features.launcher;
 
-import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
 import com.neopragma.cobolcheck.features.Formatter.Formats.Formatter;
 import com.neopragma.cobolcheck.features.Formatter.Formats.TestOutputFormat;
@@ -12,10 +10,7 @@ import com.neopragma.cobolcheck.services.Messages;
 import com.neopragma.cobolcheck.services.StringHelper;
 import com.neopragma.cobolcheck.services.log.Log;
 
-import javax.xml.bind.JAXBException;
 import java.io.*;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class ProcessOutputWriter {
 
@@ -27,13 +22,7 @@ public class ProcessOutputWriter {
 
     public ProcessOutputWriter() {
         testResultsFilePath = Config.getTestResultFilePathString();
-        try {
-            new PrintWriter(testResultsFilePath).close();
-        } catch (FileNotFoundException ex){
-            Log.warn(Messages.get("WRN005", testResultsFilePath));
-        }
-
-        Log.info(Messages.get("INF010", testResultsFilePath));
+        cleanupOldTestResults();
     }
 
     public String getTestResultsFilePath() {
@@ -49,12 +38,11 @@ public class ProcessOutputWriter {
         getProcessOut(proc);
         if (outputToConsole)
             writeOutPutToConsole();
-        cleanupOldTestResults();
         switch (format){
             case txt:
                 writeWasSuccesful = writeProcessOutputToFile(testResultsFilePath);
                 break;
-            case XML:
+            case xml:
                 if (xmlFormat == null)
                     xmlFormat = new XMLFormat(style);
                 writeProcessOutputWithFormat(xmlFormat, programName, isLastRun);
@@ -100,7 +88,7 @@ public class ProcessOutputWriter {
 
     private boolean writeProcessOutputToFile(String path) {
         try{
-            FileWriter fw = new FileWriter(StringHelper.changeFileExtension(path, "txt"), true);
+            FileWriter fw = new FileWriter(path, true);
             BufferedWriter bw = new BufferedWriter(fw);
             String[] lines = processInput.split(Constants.NEWLINE);
             for (String line : lines){
@@ -116,16 +104,14 @@ public class ProcessOutputWriter {
             Log.warn(Messages.get("WRN006", path));
             return false;
         }
-
     }
 
     private void writeProcessOutputWithFormat(Formatter formatter, String programName, boolean writeToFile){
         formatter.parseText(processInput, programName);
 
-        if (writeToFile)
-        {
+        if (writeToFile) {
             try {
-                formatter.getFormattedString(testResultsFilePath);
+                formatter.writeInFormat(testResultsFilePath);
                 writeWasSuccesful = true;
             } catch (Exception e) {
                 writeWasSuccesful = false;
@@ -134,33 +120,22 @@ public class ProcessOutputWriter {
     }
 
     private void cleanupOldTestResults() {
-        if (testResultsFilePath.contains("."))
-            testResultsFilePath = testResultsFilePath.split("\\.")[0];
-
-        File oldTestResultsFile = new File(testResultsFilePath);
-
-//        int fileNameSplitIndex = testResultsFilePath.lastIndexOf(Constants.FILE_SEPARATOR);
-//        String fileName = "";
-//        String directoryPath = "";
-//        if (fileNameSplitIndex == -1){
-//            fileName = testResultsFilePath;
-//            directoryPath = System.getProperty("user.dir");
-//        }
-//        else {
-//            fileName = testResultsFilePath.substring(fileNameSplitIndex + 1);
-//            directoryPath = testResultsFilePath.substring(0, fileNameSplitIndex);
-//        }
-//
-//
-//        File directory = new File(directoryPath);
-//        String finalDirectoryPath = directoryPath;
-//        File[] potentialTestResultFiles = Arrays.stream(directory.listFiles()).filter(file ->
-//                file.getPath().substring(0, file.getPath().lastIndexOf(Constants.FILE_SEPARATOR))
-//                        .equals(finalDirectoryPath)).toArray(File[]::new);
-//
-//        for (File file : potentialTestResultFiles){
-//            if (file.getName().equals(fileName))
-//                testResultsFilePath = file.getAbsolutePath();
-//        }
+        //Clear current testResults file
+        try {
+            if (testResultsFilePath.contains(Constants.FILE_SEPARATOR)){
+                String dir = testResultsFilePath.substring(0, testResultsFilePath.lastIndexOf(Constants.FILE_SEPARATOR));
+                new File(dir).mkdir();
+            }
+            new PrintWriter(testResultsFilePath).close();
+            Log.info(Messages.get("INF010", testResultsFilePath));
+        } catch (FileNotFoundException ex){
+            Log.warn(Messages.get("WRN005", testResultsFilePath));
+        }
+        //If any other test results files with a different file extension still exists, delete them
+        for (TestOutputFormat extension : TestOutputFormat.values()){
+            File oldTestResultsFile = new File(StringHelper.changeFileExtension(testResultsFilePath, extension.name()));
+            if (oldTestResultsFile.exists() && !oldTestResultsFile.getPath().equals(testResultsFilePath))
+                oldTestResultsFile.delete();
+        }
     }
 }

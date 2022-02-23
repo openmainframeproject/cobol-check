@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JUnitDto {
+public class JUnitDto extends DataTransferObject{
     private Testsuites testsuites = new Testsuites();
 
     public Testsuites getTestsuites() { return testsuites; }
@@ -34,7 +34,75 @@ public class JUnitDto {
         getTestsuites().setFailures(Integer.toString(allFailures));
     }
 
+    @Override
+    public void moveToNextTestSuite() {
+        super.moveToNextTestSuite();
+        getTestsuites().addTestSuite(new Testsuite());
+        getTestsuites().getTestsuites().get(testSuiteIndex).setID(Integer.toString(testSuiteIndex));
+    }
 
+    @Override
+    public void moveToNextTestCase() {
+        super.moveToNextTestCase();
+        getTestsuites().getTestsuites().get(testSuiteIndex).addTestCase(new Testcase());
+    }
+
+    @Override
+    public Object getDataTransferObject() {
+        setTestCounts();
+        return getTestsuites();
+    }
+
+    @Override
+    public void setNumberOfAllTests(String numberofTests) {
+        //Not needed
+    }
+
+    @Override
+    public void setNumberOffAllFailures(String numberOfFailures) {
+        //Not needed
+    }
+
+    @Override
+    public void setCurrentTestSuiteName(String name) {
+        getTestsuites().getTestsuites().get(testSuiteIndex).setName(name);
+    }
+
+    @Override
+    public void setCurrentTestSuiteTests(String numberofTests) {
+        getTestsuites().getTestsuites().get(testSuiteIndex).setTests(numberofTests);
+    }
+
+    @Override
+    public void setCurrentTestSuiteFailures(String numberOfFailures) {
+        getTestsuites().getTestsuites().get(testSuiteIndex).setFailures(numberOfFailures);
+    }
+
+    @Override
+    public void setCurrentTestSuitePackage(String testSuitePackage) {
+        getTestsuites().getTestsuites().get(testSuiteIndex).setTestsuitePackage(testSuitePackage);
+    }
+
+    @Override
+    public void setCurrentTestCaseName(String name) {
+        getTestsuites().getTestsuites().get(testSuiteIndex).getTestcase().get(testCaseIndex).setName(name);
+    }
+
+    @Override
+    public void setCurrentTestCaseFailure(String message, String type) {
+        Error failure = new Error();
+        failure.setMessage(message);
+        failure.setType(type);
+        getTestsuites().getTestsuites().get(testSuiteIndex).getTestcase().get(testCaseIndex).setFailure(failure);
+    }
+
+    @Override
+    public void setCurrentTestCaseErrorMessage(String message, String type) {
+        Error error = new Error();
+        error.setMessage(message);
+        error.setType(type);
+        getTestsuites().getTestsuites().get(testSuiteIndex).getTestcase().get(testCaseIndex).setError(error);
+    }
 }
 
 // Testsuites.java
