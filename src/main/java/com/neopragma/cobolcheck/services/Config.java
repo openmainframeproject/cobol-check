@@ -15,6 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck.services;
 
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
 import com.neopragma.cobolcheck.services.log.Log;
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
@@ -27,6 +29,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import static com.neopragma.cobolcheck.services.StringHelper.adjustPathString;
+import static com.neopragma.cobolcheck.services.StringHelper.changeFileExtension;
 
 /**
  * Loads and manages configuration settings.
@@ -51,6 +54,8 @@ public class Config {
     public static final String DEFAULT_CONFIG_FILE_PATH = "config.properties";
     public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
     public static final String TEST_RESULTS_FILE_CONFIG_KEY = "test.results.file";
+    public static final String TEST_RESULTS_FORMAT_CONFIG_KEY = "test.results.format";
+    public static final String TEST_RESULTS_FORMAT_STYLE_CONFIG_KEY = "test.results.format.style";
     public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
 
@@ -144,7 +149,34 @@ public class Config {
     }
 
     public static String getTestResultFilePathString() {
-        return adjustPathString(settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+        String pathFromConfig = settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        return adjustPathString(changeFileExtension(pathFromConfig, getTestResultFormat().name()));
+    }
+
+    public static TestOutputFormat getTestResultFormat() {
+        String format = adjustPathString(settings.getProperty(TEST_RESULTS_FORMAT_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+
+        switch (format.toUpperCase(Locale.ROOT)){
+
+            case "XML":
+                return TestOutputFormat.xml;
+            case "TXT":
+            default:
+                return TestOutputFormat.txt;
+        }
+    }
+
+    public static DataTransferObjectStyle getTestResultFormatStyle() {
+        String style = adjustPathString(settings.getProperty(TEST_RESULTS_FORMAT_STYLE_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+
+        switch (style.toUpperCase(Locale.ROOT)){
+
+            case "JUNIT":
+                return DataTransferObjectStyle.JUnit;
+            case "DIRECTOUTPUT":
+            default:
+                return DataTransferObjectStyle.directOutput;
+        }
     }
 
     public static String getApplicationSourceDirectoryPathString() {

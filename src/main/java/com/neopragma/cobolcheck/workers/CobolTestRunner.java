@@ -2,6 +2,9 @@ package com.neopragma.cobolcheck.workers;
 
 import com.neopragma.cobolcheck.features.launcher.LauncherController;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class CobolTestRunner {
     LauncherController controller = new LauncherController();
 
@@ -11,7 +14,9 @@ public class CobolTestRunner {
      *
      * @throws InterruptedException - pass any InterruptedException up to the caller
      */
-    public void run() throws InterruptedException {
-        controller.runTestProgram();
+    public void run(String programName, boolean isLastRun) throws InterruptedException {
+        Path path = Paths.get(programName);
+        programName = path.getFileName().toString();
+        controller.runTestProgram(programName, isLastRun);
     }
 }

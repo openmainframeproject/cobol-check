@@ -14,6 +14,8 @@ import com.neopragma.cobolcheck.services.platform.PlatformLookup;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class LauncherController {
     private Launcher launcher;
@@ -30,7 +32,7 @@ public class LauncherController {
      *
      * @throws InterruptedException - pass any InterruptedException to the caller.
      */
-    public void runTestProgram() throws InterruptedException {
+    public void runTestProgram(String programName, boolean isLastRun) throws InterruptedException {
         // Compile and run the test program
         ProcessLauncher pLauncher = launcher.getPlatformSpecificLauncher(PlatformLookup.get());
         String processConfigKey = pLauncher.getProcessConfigKeyPrefix() + Constants.PROCESS_CONFIG_KEY;
@@ -43,7 +45,8 @@ public class LauncherController {
         }
 
         int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath(), (proc) ->
-                processOutputWriter.writeProcessOutputToTestResultsFile(proc, true));
+                processOutputWriter.writeProcessOutputToTestResultsFile(proc, Config.getTestResultFormat(),
+                        Config.getTestResultFormatStyle(), programName, true, isLastRun));
 
         if (processOutputWriter.writeWasSuccesful){
             Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));

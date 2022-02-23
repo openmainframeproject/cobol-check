@@ -94,6 +94,14 @@ public class StringHelper {
         return result;
     }
 
+    public static String changeFileExtension(String path, String extension){
+        if (path.contains(".")){
+            int dotIndex = path.indexOf(".");
+            path = path.substring(0, dotIndex);
+        }
+        return path + "." + extension;
+    }
+
     /**
      * Trims only the end of the string.
      * Ex.: "     Hey  \n" => "     Hey"

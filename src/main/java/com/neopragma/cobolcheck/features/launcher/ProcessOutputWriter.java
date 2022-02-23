@@ -1,7 +1,9 @@
 package com.neopragma.cobolcheck.features.launcher;
 
-import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingTestResultFile;
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.Formatter;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.XMLFormat;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;
@@ -16,16 +18,11 @@ public class ProcessOutputWriter {
     boolean writeWasSuccesful = false;
     String processInput;
     String processError;
+    XMLFormat xmlFormat;
 
     public ProcessOutputWriter() {
         testResultsFilePath = Config.getTestResultFilePathString();
-        try {
-            new PrintWriter(testResultsFilePath).close();
-        } catch (FileNotFoundException ex){
-            Log.warn(Messages.get("WRN005", testResultsFilePath));
-        }
-
-        Log.info(Messages.get("INF010", testResultsFilePath));
+        cleanupOldTestResults();
     }
 
     public String getTestResultsFilePath() {
@@ -36,10 +33,21 @@ public class ProcessOutputWriter {
         return writeWasSuccesful;
     }
 
-    public void writeProcessOutputToTestResultsFile(Process proc, boolean outputToConsole) {
+    public void writeProcessOutputToTestResultsFile(Process proc, TestOutputFormat format, DataTransferObjectStyle style,
+                                                    String programName, boolean outputToConsole, boolean isLastRun) {
         getProcessOut(proc);
-        writeOutPutToConsole();
-        writeWasSuccesful = writeProcessOutputToFile(testResultsFilePath);
+        if (outputToConsole)
+            writeOutPutToConsole();
+        switch (format){
+            case txt:
+                writeWasSuccesful = writeProcessOutputToFile(testResultsFilePath);
+                break;
+            case xml:
+                if (xmlFormat == null)
+                    xmlFormat = new XMLFormat(style);
+                writeProcessOutputWithFormat(xmlFormat, programName, isLastRun);
+                break;
+        }
     }
 
     private void getProcessOut(Process proc) {
@@ -96,6 +104,38 @@ public class ProcessOutputWriter {
             Log.warn(Messages.get("WRN006", path));
             return false;
         }
+    }
 
+    private void writeProcessOutputWithFormat(Formatter formatter, String programName, boolean writeToFile){
+        formatter.parseText(processInput, programName);
+
+        if (writeToFile) {
+            try {
+                formatter.writeInFormat(testResultsFilePath);
+                writeWasSuccesful = true;
+            } catch (Exception e) {
+                writeWasSuccesful = false;
+            }
+        }
+    }
+
+    private void cleanupOldTestResults() {
+        //Clear current testResults file
+        try {
+            if (testResultsFilePath.contains(Constants.FILE_SEPARATOR)){
+                String dir = testResultsFilePath.substring(0, testResultsFilePath.lastIndexOf(Constants.FILE_SEPARATOR));
+                new File(dir).mkdir();
+            }
+            new PrintWriter(testResultsFilePath).close();
+            Log.info(Messages.get("INF010", testResultsFilePath));
+        } catch (FileNotFoundException ex){
+            Log.warn(Messages.get("WRN005", testResultsFilePath));
+        }
+        //If any other test results files with a different file extension still exists, delete them
+        for (TestOutputFormat extension : TestOutputFormat.values()){
+            File oldTestResultsFile = new File(StringHelper.changeFileExtension(testResultsFilePath, extension.name()));
+            if (oldTestResultsFile.exists() && !oldTestResultsFile.getPath().equals(testResultsFilePath))
+                oldTestResultsFile.delete();
+        }
     }
 }
