@@ -1,4 +1,4 @@
-package com.neopragma.cobolcheck.features.Formatter.DataTransferObjects;
+package com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects;
 
 public abstract class DataTransferObject {
     int testSuiteIndex = -1;

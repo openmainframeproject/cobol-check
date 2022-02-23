@@ -1,8 +1,8 @@
-package com.neopragma.cobolcheck.features.Formatter.Formats;
+package com.neopragma.cobolcheck.features.launcher.Formatter.Formats;
 
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObject;
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.JUnitDto;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObject;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.JUnitDto;
 import com.neopragma.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.cobolLogic.TokenExtractor;

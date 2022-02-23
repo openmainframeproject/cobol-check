@@ -1,6 +1,6 @@
-package com.neopragma.cobolcheck.features.Formatter.Formats;
+package com.neopragma.cobolcheck.features.launcher.Formatter.Formats;
 
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

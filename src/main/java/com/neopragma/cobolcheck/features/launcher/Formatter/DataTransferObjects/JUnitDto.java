@@ -1,4 +1,4 @@
-package com.neopragma.cobolcheck.features.Formatter.DataTransferObjects;
+package com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects;
 
 //Generated from https://jsonformatter.org/ (with some alterations)
 // based on XML from: https://llg.cubic.org/docs/junit/

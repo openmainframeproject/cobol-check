@@ -1,9 +1,9 @@
 package com.neopragma.cobolcheck.features.launcher;
 
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
-import com.neopragma.cobolcheck.features.Formatter.Formats.Formatter;
-import com.neopragma.cobolcheck.features.Formatter.Formats.TestOutputFormat;
-import com.neopragma.cobolcheck.features.Formatter.Formats.XMLFormat;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.Formatter;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.XMLFormat;
 import com.neopragma.cobolcheck.services.Config;
 import com.neopragma.cobolcheck.services.Constants;
 import com.neopragma.cobolcheck.services.Messages;

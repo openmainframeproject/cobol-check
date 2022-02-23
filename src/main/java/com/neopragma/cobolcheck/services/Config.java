@@ -15,8 +15,8 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck.services;
 
-import com.neopragma.cobolcheck.features.Formatter.DataTransferObjects.DataTransferObjectStyle;
-import com.neopragma.cobolcheck.features.Formatter.Formats.TestOutputFormat;
+import com.neopragma.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import com.neopragma.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
 import com.neopragma.cobolcheck.services.log.Log;
 import com.neopragma.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
