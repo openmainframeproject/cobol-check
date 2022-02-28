@@ -8,7 +8,7 @@ plugins {
 
 def productVersion = '0.1.0'
 def productName = 'cobol-check'
-group = 'com.neopragma'
+group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
 
 def approvalExpectedOutput = "approval-test-expected.txt"
@@ -60,7 +60,7 @@ jacocoTestCoverageVerification {
 }
 
 ext {
-    mainClassName = 'com.neopragma.cobolcheck.Main'
+    mainClassName = 'org.openmainframeproject.cobolcheck.Main'
 }
 
 java {
@@ -109,7 +109,7 @@ def unitTest = tasks.register("unitTest", Test) {
     description 'Run unit tests only'
     useJUnitPlatform()
     filter {
-        includeTestsMatching "com.neopragma.cobolcheck.*Test"
+        includeTestsMatching "org.openmainframeproject.cobolcheck.*Test"
     }
 }
 def integrationTest = tasks.register("integrationTest", Test) {
@@ -117,7 +117,7 @@ def integrationTest = tasks.register("integrationTest", Test) {
     dependsOn unitTest
     useJUnitPlatform()
     filter {
-        includeTestsMatching "com.neopragma.cobolcheck.*IT"
+        includeTestsMatching "org.openmainframeproject.cobolcheck.*IT"
     }
 }
 
