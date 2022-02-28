@@ -15,9 +15,9 @@ limitations under the License.
 */
 package com.neopragma.cobolcheck;
 
-import com.neopragma.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
-import com.neopragma.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import com.neopragma.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
+import CobolSourceCouldNotBeReadException;
+import PossibleInternalLogicErrorException;
+import TestSuiteCouldNotBeReadException;
 
 import java.io.*;
 import java.util.*;
