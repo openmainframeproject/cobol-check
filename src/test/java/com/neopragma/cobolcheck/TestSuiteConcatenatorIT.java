@@ -29,7 +29,7 @@ public class TestSuiteConcatenatorIT {
         StringBuilder expectedResult = new StringBuilder();
         String line;
         BufferedReader testSuiteReader;
-        for (String filename : new String[] { "src/test/cobol/GREETING/GreetingByType" }) {
+        for (String filename : new String[] { "src/test/cobol/GREETING/GreetingByType.cut" }) {
             testSuiteReader = new BufferedReader(new FileReader(filename));
             while ((line = testSuiteReader.readLine()) != null) {
                 expectedResult.append(line);
@@ -37,7 +37,7 @@ public class TestSuiteConcatenatorIT {
             testSuiteReader.close();
         }
 
-        TestSuiteParserController tspController = new TestSuiteParserController("GreetingByType");
+        TestSuiteParserController tspController = new TestSuiteParserController("GreetingByType.cut");
         tspController.concatenateTestSuites("src/test/cobol/GREETING/");
 
         StringBuilder actualResult = new StringBuilder();

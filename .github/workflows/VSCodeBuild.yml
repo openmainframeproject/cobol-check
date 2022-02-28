@@ -1,0 +1,28 @@
+name: VSCodeBuild
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./vs code extension
+    environment: production
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.NODE_VERSION }}
+    - name: npm install and build
+      run: |
+        npm install
+        npm run compile --if-present
