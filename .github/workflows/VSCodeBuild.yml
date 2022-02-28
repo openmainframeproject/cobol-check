@@ -1,4 +1,4 @@
-name: Build
+name: VSCodeBuild
 
 on:
   push:
@@ -12,6 +12,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./vs code extension
     environment: production
     steps:
     - uses: actions/checkout@v2
