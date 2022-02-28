@@ -26,6 +26,14 @@ src/test/cobol/TESTPRG.CBL
 *.dll
 *.exe
 
+#Cobol-check VS CODE extension
+vs code extension/**/package-lock.json
+vs code extension/**/out
+vs code extension/**/node_modules
+vs code extension/**/client/server
+vs code extension/**/.vscode-test
+vs code extension/**/Jenkinsfile
+
 
 # Java-related gitignore entries from: https://gist.github.com/dedunumax/54e82214715e35439227
 ##############################

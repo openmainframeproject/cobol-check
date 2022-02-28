@@ -1,0 +1,10 @@
+.vscode/**
+.gitignore
+cobol-unit-test*.vsix
+**/*.ts
+**/*.map
+**/tsconfig.json
+**/tsconfig.base.json
+contributing.md
+.travis.yml
+

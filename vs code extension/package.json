@@ -1,0 +1,163 @@
+{
+    "name": "cobol-check-extension",
+    "displayName": "CUT language extension",
+    "publisher": "OpenMainframeProject",
+    "categories": [
+        "Programming Languages",
+        "Snippets"
+    ],
+    "description": "Wrapper for cobol-check and language extension for COBOL unit tests",
+    "version": "1.1.0-alpha",
+    "engines": {
+        "vscode": "^1.46.0"
+    },
+    "activationEvents": [
+        "onLanguage:cut"
+    ],
+    "main": "./client/out/extension",
+    "contributes": {
+        "languages": [
+            {
+                "id": "cut",
+                "aliases": [
+                    "COBOL unit test",
+                    "cut"
+                ],
+                "extensions": [
+                    "*UNITTEST*"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "cut",
+                "scopeName": "source.cut",
+                "path": "./syntaxes/cut.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "cut",
+                "path": "./snippets/cut-snippets.json"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "COBOL unit test syntax",
+            "properties": {
+                "cut.maxNumberOfProblems": {
+                    "scope": "resource",
+                    "type": "number",
+                    "default": 100,
+                    "description": "Controls the maximum number of problems produced by the server for debugging purposes. Limit to be removed on first release."
+                },
+                "cut.loglevel": {
+                    "description": "Desired level of detail in logging.",
+                    "type": "string",
+                    "default": "ALL",
+                    "enum": [
+                        "ALL",
+                        "DEBUG",
+                        "INFO",
+                        "WARN",
+                        "ERROR",
+                        "FATAL",
+                        "OFF"
+                    ],
+                    "enumDescriptions": [
+                        "All levels including custom levels.",
+                        "Designates fine-grained informational events that are most useful to debug an application.",
+                        "Designates informational messages that highlight the progress of the application at coarse-grained level.",
+                        "Designates potentially harmful situations.",
+                        "Designates error events that might still allow the application to continue running.",
+                        "Designates very severe error events that will presumably lead the application to abort.",
+                        "The highest possible rank and is intended to turn off logging."
+                    ]
+                },
+                "cut.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "messages",
+                    "description": "Determines the level of detail of communication with the language server displayed in the output channel."
+                },
+                "cut.tabstops": {
+                    "scope": "window",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "uniqueItems": true,
+                    "default": [
+                        0,
+                        6,
+                        7,
+                        11
+                    ],
+                    "description": "Set tab stop locations for the CUT language."
+                }
+            }
+        },
+        "configurationDefaults": {
+            "[cut]": {
+                "files.autoGuessEncoding": true,
+                "editor.formatOnType": true,
+                "editor.rulers": [
+                    0,
+                    6,
+                    7,
+                    11,
+                    72
+                ],
+                "editor.tabSize": 3,
+                "editor.useTabStops": false,
+                "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?"
+            }
+        },
+        "commands": [
+            {
+                "command": "zopeneditor.tab",
+                "title": "%zopeneditor.tab%",
+                "comment": "TODO: Remove Open Editor tab dependency. Also in keybindings"
+            },
+            {
+                "command": "zopeneditor.revtab",
+                "title": "%zopeneditor.revtab%",
+                "comment": "TODO: Remove Open Editor tab dependency. Also in keybindings"
+            }
+        ],
+        "keybindings": [
+            {
+                "key": "tab",
+                "command": "zopeneditor.tab",
+                "when": "editorLangId == cut && !inSnippetMode"
+            },
+            {
+                "key": "shift+tab",
+                "command": "zopeneditor.revtab",
+                "when": "editorLangId == cut && !inSnippetMode"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w",
+        "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+        "pretest": "npm run compile",
+        "test": "node ./client/out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/mocha": "^8.0.3",
+        "@types/node": "^12.12.0",
+        "@typescript-eslint/parser": "^2.3.0",
+        "eslint": "^6.4.0",
+        "mocha": "^8.1.1",
+        "typescript": "^4.2.2"
+    }
+}
