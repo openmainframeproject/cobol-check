@@ -1,9 +1,9 @@
 {
 	"name": "cobol-check-extension-client",
-	"description": "VSCode part of a language extension for cut",
+	"description": "Cobol-check extension to run cobol unit tests",
 	"author": "Open Mainframe Project",
 	"license": "MIT",
-	"version": "1.1.0-alpha",
+	"version": "0.1.0",
 	"publisher": "Open Mainframe Project",
 	"engines": {
 		"vscode": "^1.52.0"

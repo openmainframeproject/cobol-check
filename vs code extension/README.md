@@ -1,4 +1,4 @@
-# cobol-unit-test-language-extension README
+# cobol-check-extension README
 [![Build](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/build.yml/badge.svg)](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/build.yml)
 
 [![Feature test](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/features.yml/badge.svg)](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/features.yml)
