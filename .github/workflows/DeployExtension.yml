@@ -1,7 +1,9 @@
 on:
   push:
     branches:
-      - '*'
+      - 'main'
+    paths:
+      - 'vs code extension/**'
 
 name: Deploy Extension
 jobs:
