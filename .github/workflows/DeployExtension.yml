@@ -16,7 +16,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: install npm
       - run: npm install
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
