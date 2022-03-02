@@ -4,7 +4,7 @@
 	"author": "Open Mainframe Project",
 	"license": "MIT",
 	"version": "0.1.0",
-	"publisher": "Open Mainframe Project",
+	"publisher": "openmainframeproject",
 	"engines": {
 		"vscode": "^1.52.0"
 	},

@@ -1,7 +1,7 @@
 {
     "name": "cobol-check-extension",
     "displayName": "Cobol-check Extension",
-    "publisher": "OpenMainframeProject",
+    "publisher": "openmainframeproject",
     "categories": [
         "Programming Languages",
         "Snippets"
