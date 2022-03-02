@@ -1,13 +1,13 @@
 {
     "name": "cobol-check-extension",
-    "displayName": "CUT language extension",
-    "publisher": "OpenMainframeProject",
+    "displayName": "Cobol-check Extension",
+    "publisher": "openmainframeproject",
     "categories": [
         "Programming Languages",
         "Snippets"
     ],
-    "description": "Wrapper for cobol-check and language extension for COBOL unit tests",
-    "version": "1.1.0-alpha",
+    "description": "Extension for running unit tests in Cobol",
+    "version": "0.1.0",
     "engines": {
         "vscode": "^1.46.0"
     },

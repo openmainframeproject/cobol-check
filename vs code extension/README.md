@@ -1,15 +1,31 @@
-# cobol-unit-test-language-extension README
-[![Build](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/build.yml/badge.svg)](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/build.yml)
+# Cobol Check Extension
 
-[![Feature test](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/features.yml/badge.svg)](https://github.com/Bankdata/cobol-unit-test-language-extension/actions/workflows/features.yml)
+Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java.
 
-A VSCode package for the Cobol unit test language(CUT). At this time, the extension has the following features:
+This package delivers the functionality of Cobol Check(not yet implemented) along with the Cobol unit test language(CUT). This is the language used to write unit tests for Cobol Check.
+
+Currently the extension has the following features pertaining the the CUT langauge:
 1. Syntax highlighting
 2. Auto completion using snippets
 3. Error reporting of mismatched delimiters
 
-The extension is meant as a quality of life improvement for unit testing in COBOL. The unit test language, for which the extension is designed, can be found here:
-https://github.com/neopragma/cobol-unit-test.
+## Requirements
+
+The cobol-unit-test-syntax package references the COBOL grammar, defined in IBM Z Open Editor, for inline COBOL.
+Additionally, tab behavior is handled by referencing the custom tab function defined in aforementioned extension.
+
+## Extension Settings
+
+This extension contributes the following settings:
+
+* `cut.tabstops`: Set tab stop locations for the CUT language.
+* `cut.trace.server`: Determines the level of detail of communication with the language server displayed in the output channel.
+* `cut.loglevel`: Desired level of detail in logging.
+* `cut.maxNumberOfProblems`: Controls the maximum number of problems produced by the server for debugging purposes. Limit to be removed on first release.
+
+## Contributing
+
+If you are interested in contributing to Cobol Check or this extension, start here: https://github.com/openmainframeproject/cobol-check
 
 The extension client is implemented for VScode, while the server is entirely decoupled, such that it can be 'attached' to an arbitrary client and used with any IDE.
 
@@ -27,22 +43,3 @@ features described in CONTRIBUTING.md.
 Logging:
 There is a dedicated logger for both client and server that gets its level of detail from settings. The logger in client can be used at arbitrary positions, while
 the server logger must be used in the context of an open textdocument. For additional logging needs, server side, use connection.console.log().
-
-Installation:
-There are two options:
-1. Drag and drop the entire sourcecode into the vscode extensions folder C:\Users\'youruser'\.vscode\extensions.
-2. Build the extension to a .vsix file and drop it into the extension tab of your VScode window.
-
-## Requirements
-
-The cobol-unit-test-syntax package references the COBOL grammar, defined in IBM Z Open Editor, for inline COBOL.
-Additionally, tab behavior is handled by referencing the custom tab function defined in aforementioned extension.
-
-## Extension Settings
-
-This extension contributes the following settings:
-
-* `cut.tabstops`: Set tab stop locations for the CUT language.
-* `cut.trace.server`: Determines the level of detail of communication with the language server displayed in the output channel.
-* `cut.loglevel`: Desired level of detail in logging.
-* `cut.maxNumberOfProblems`: Controls the maximum number of problems produced by the server for debugging purposes. Limit to be removed on first release.
