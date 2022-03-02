@@ -23,3 +23,4 @@ jobs:
           pat: ${{ secrets.VS_CODE_EXTENTION_SECRET }}
           registryUrl: https://marketplace.visualstudio.com
           packagePath: ./vs code extension
+          noVerify: true
