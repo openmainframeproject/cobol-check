@@ -84,4 +84,8 @@ public class Initializer {
         return name.equals(sourceProgams[sourceProgams.length-1]);
     }
 
+    public boolean launchTestProgram(){
+        return Config.getRunGeneratedTest();
+    }
+
 }
