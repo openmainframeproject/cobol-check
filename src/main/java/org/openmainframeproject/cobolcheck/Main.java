@@ -23,7 +23,8 @@ class Main {
 
             generator.prepareAndRunMerge(programName, initializer.getTestFileNames());
 
-            testRunner.run(programName, initializer.isLastSourceProgram(programName));
+            if (initializer.launchTestProgram())
+                testRunner.run(programName, initializer.isLastSourceProgram(programName));
         }
 
         initializer.exitProgram();

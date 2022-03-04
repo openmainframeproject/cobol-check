@@ -43,6 +43,7 @@ public class Config {
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
     public static final String LOCALE_VARIANT_CONFIG_KEY = "locale.variant";
     public static final String DEFAULT_LOCALE_CONFIG_KEY = "default.locale";
+    public static final String RUN_GENERATED_TESTS = "cobolcheck.test.run";
     public static final String RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX = "resolved.application.source.filename.suffix";
     public static final String APPLICATION_SOURCE_FILENAME_SUFFIX = "application.source.filename.suffix";
     public static final String RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX = "resolved.application.copybook.filename.suffix";
@@ -174,6 +175,12 @@ public class Config {
             default:
                 return DataTransferObjectStyle.directOutput;
         }
+    }
+
+    public static boolean getRunGeneratedTest() {
+        String value = StringHelper.adjustPathString(settings.getProperty(RUN_GENERATED_TESTS,
+                Constants.CURRENT_DIRECTORY));
+        return Boolean.parseBoolean(value.trim());
     }
 
     public static String getApplicationSourceDirectoryPathString() {
