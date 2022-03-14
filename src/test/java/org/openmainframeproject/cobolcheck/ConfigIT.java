@@ -48,8 +48,9 @@ public class ConfigIT {
     @Test
     public void it_throws_when_config_file_is_not_found() {
         Throwable ex = assertThrows(IOExceptionProcessingConfigFile.class, () -> Config.load("bogus name"));
-        assertEquals("ERR003: IOException accessing config file <bogus name> in Config.load(configResourceName).",
-                ex.getMessage());
+        String expectedPath = new File("bogus name").getAbsolutePath();
+        assertEquals("ERR003: IOException accessing config file <" + expectedPath +
+                        "> in Config.load(configResourceName).", ex.getMessage());
 //        if (PlatformLookup.get() == Platform.WINDOWS) {
 //            assertEquals("bogus name (The system cannot find the file specified)",
 //                ex.getCause().getMessage());

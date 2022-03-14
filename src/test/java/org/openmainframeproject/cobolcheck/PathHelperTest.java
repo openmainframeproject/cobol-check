@@ -24,14 +24,6 @@ public class PathHelperTest {
     }
 
 
-
-    @Test
-    void cobol_source_directory_exists() {
-        String path = PathHelper.getCobolSourceDirectory();
-        File file = new File(path);
-        assertTrue(file.exists());
-    }
-
     @Test
     void test_source_out_path_exists() {
         String path = PathHelper.getTestSourceOutPath();

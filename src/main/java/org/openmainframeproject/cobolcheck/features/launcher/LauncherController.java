@@ -14,9 +14,10 @@ public class LauncherController {
     private ProcessOutputWriter processOutputWriter;
 
     public LauncherController(){
-        launcher = new Launcher();
-        processOutputWriter = new ProcessOutputWriter();
-
+        if (Config.getRunGeneratedTest()){
+            launcher = new Launcher();
+            processOutputWriter = new ProcessOutputWriter();
+        }
     }
 
     /**
