@@ -8,6 +8,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -48,6 +49,7 @@ public class ProcessOutputWriter {
                 writeProcessOutputWithFormat(xmlFormat, programName, isLastRun);
                 break;
         }
+        FilePermission.setFilePermissionForAllUsers(testResultsFilePath, Config.getGeneratedFilesPermissionAll());
     }
 
     private void getProcessOut(Process proc) {

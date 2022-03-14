@@ -43,8 +43,6 @@ public class ArgumentHandler {
     private static final List<String> canTakeMultipleArguments =
             Arrays.asList("t", "tests", "p", "programs");
 
-    private String applicationSourceDirectory;
-
     /**
      * Parse command-line options using the optionsString to validate.
      *
@@ -55,7 +53,6 @@ public class ArgumentHandler {
     public ArgumentHandler(String[] args, String optionsString) {
         options = new HashMap<>();
         if (StringHelper.isEmptyArray(args)) return;
-        applicationSourceDirectory = Config.getApplicationSourceDirectoryPathString();
         storeOptionSettings(optionsString);
         processCommandLineArgumentArray(args);
     }
@@ -133,17 +130,7 @@ public class ArgumentHandler {
                 if (canTakeMultipleArguments.contains(stripPrefix(argValue))) {
                     multipleArgumentsPossible = true;
                 }
-                // These arg values may come in as expanded globs - prefix values with application source directory
-                if (argValue.equals("-p") || argValue.equals("--programs")) {
-                    processingProgramNames = true;
-                } else {
-                    processingProgramNames = false;
-                }
             } else {
-                if (processingProgramNames) {
-                    argValue = StringHelper.adjustPathString(applicationSourceDirectory +
-                            Constants.FILE_SEPARATOR + argValue);
-                }
                 atLeastOneArgumentWasPassed = true;
                 if (multipleArgumentsPossible) {
                     if (optionValue.argumentValue.length() > 0) {
@@ -162,6 +149,22 @@ public class ArgumentHandler {
         if (expectValueNext && !atLeastOneArgumentWasPassed) throw new CommandLineArgumentException(
                 Messages.get("ERR004", lastOption, "(none)")
         );
+    }
+
+    public void loadArgProgramPaths(){
+        String applicationSourceDirectory = Config.getApplicationSourceDirectoryPathString();
+        for (OptionKey optionKey : options.keySet()) {
+            if (optionKey.shortKey.equals(Constants.PROGRAMS_OPTION) || optionKey.longKey.equals(Constants.PROGRAMS_OPTION)) {
+                String programArgs = options.get(optionKey).argumentValue;
+                String newValue = "";
+                for (String program : programArgs.split(Constants.COLON)){
+                    newValue += StringHelper.adjustPathString(applicationSourceDirectory +
+                            Constants.FILE_SEPARATOR + program);
+                    newValue += Constants.COLON;
+                }
+                options.get(optionKey).argumentValue = newValue.substring(0, newValue.length()-1);
+            }
+        }
     }
 
     private OptionValue lookupOption(String requestedOption) {

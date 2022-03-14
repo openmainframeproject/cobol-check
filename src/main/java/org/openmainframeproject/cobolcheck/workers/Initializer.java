@@ -34,7 +34,6 @@ public class Initializer {
     private StatusController statusController;
 
     public Initializer(String[] args) {
-        Config.load();
         argumentController = new ArgumentHandlerController(args);
         environmentController = new EnvironmentSetupController();
         statusController = new StatusController();
@@ -55,13 +54,13 @@ public class Initializer {
             statusController.setExitStatusHalt();
             return;
         }
+        environmentController.runSetup(argumentController.getKeyValue("config-file"),
+                argumentController.getKeyValue("log-level"));
 
+        argumentController.loadSettingsFromArguments();
         String programNames = argumentController.getKeyValue(Constants.PROGRAMS_OPTION);
         statusController.setSourceProgramNames(programNames.split(Constants.COLON));
         statusController.setTestFileNames(argumentController.getKeyValue(Constants.TESTS_OPTION));
-
-        environmentController.runSetup(argumentController.getKeyValue("config-file"),
-                argumentController.getKeyValue("log-level"));
     }
 
     public String[] getSourceProgramNames(){

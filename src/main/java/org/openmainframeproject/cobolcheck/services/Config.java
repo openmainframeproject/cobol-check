@@ -21,6 +21,7 @@ import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class Config {
     public static final String DECIMAL_POINT_IS_COMMA_CONFIG_KEY = "cobolcheck.decimalPointIsComma";
     public static final String INJECT_START_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.start";
     public static final String INJECT_END_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.end";
+    public static final String GENERATED_CODE_PATH = "cobolcheck.test.program.path";
+    public static final String GENERATED_FILES_PERMISSION_ALL = "generated.files.permission.all";
     public static final String LOCALE_LANGUAGE_CONFIG_KEY = "locale.language";
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
     public static final String LOCALE_VARIANT_CONFIG_KEY = "locale.variant";
@@ -71,8 +74,9 @@ public class Config {
             settings = new Properties();
             settings.load(configSettings);
         } catch (IOException ioe) {
+            File f = new File(configResourceName);
             throw new IOExceptionProcessingConfigFile(
-                    Messages.get("ERR003", configResourceName), ioe);
+                    Messages.get("ERR003", f.getAbsolutePath()), ioe);
         } catch (NullPointerException npe) {
             throw new PossibleInternalLogicErrorException(
                     Messages.get("ERR001",
@@ -136,6 +140,19 @@ public class Config {
                 Constants.CURRENT_DIRECTORY));
     }
 
+    public static String getGeneratedTestCodePath() {
+        return StringHelper.adjustPathString(settings.getProperty(GENERATED_CODE_PATH,
+                Constants.CURRENT_DIRECTORY));
+    }
+
+    public static String getGeneratedFilesPermissionAll() {
+        String permissions = settings.getProperty(GENERATED_FILES_PERMISSION_ALL, Constants.CURRENT_DIRECTORY);
+        if (permissions.toUpperCase(Locale.ROOT).trim().equals("NONE"))
+            return "";
+        else
+            return permissions;
+    }
+
     public static String getInjectStartTag(){
         return StringHelper.adjustPathString(settings.getProperty(INJECT_START_TAG_CONFIG_KEY,
                 Constants.CURRENT_DIRECTORY));
@@ -149,6 +166,32 @@ public class Config {
     public static String getTestResultFilePathString() {
         String pathFromConfig = settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
         return StringHelper.adjustPathString(StringHelper.changeFileExtension(pathFromConfig, getTestResultFormat().name()));
+    }
+
+    static String generatedTestFileName = "";
+    public static String getGeneratedTestFileName() {
+        if (generatedTestFileName.isEmpty()){
+            generatedTestFileName = settings.getProperty(Constants.TEST_PROGRAM_NAME_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+        }
+        return generatedTestFileName;
+    }
+
+    public static void setGeneratedTestFileName(String keyValue) {
+        generatedTestFileName = keyValue;
+    }
+
+    static String concatenatedTestSuitePath = "";
+    public static String getConcatenatedTestSuitesPath(){
+        if (concatenatedTestSuitePath.isEmpty()){
+            concatenatedTestSuitePath = StringHelper.adjustPathString(settings.getProperty(
+                    Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+        }
+        return concatenatedTestSuitePath;
+    }
+
+    public static void setConcatenatedTestSuitesPath(String keyValue)
+    {
+        concatenatedTestSuitePath = StringHelper.adjustPathString(keyValue);
     }
 
     public static TestOutputFormat getTestResultFormat() {

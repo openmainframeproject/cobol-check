@@ -22,6 +22,7 @@ import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuitePar
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -81,6 +82,7 @@ public class Generator {
             Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
 
             mergeTestSuite();
+            Log.info(Messages.get("INF012", programName));
 
             closeReadersAndWriters(programName);
         }

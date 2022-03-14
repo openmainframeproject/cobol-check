@@ -11,10 +11,12 @@ class Main {
 
     public static void main(String[] args) throws InterruptedException {
         Initializer initializer = new Initializer(args);
+        initializer.run();
+
         Generator generator = new Generator();
         CobolTestRunner testRunner = new CobolTestRunner();
 
-        initializer.run();
+
         if (initializer.isExitStatusHalt()) {
             initializer.exitProgram();
         }

@@ -4,7 +4,9 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -22,7 +24,7 @@ public class IO_FileGetter {
      * @param programName - The name of the file its reading from.
      */
     static Reader getSourceReader(String programName){
-        String cobolSourceInPath = PathHelper.getCobolSourceDirectory() + programName;
+        String cobolSourceInPath = new File(programName).getPath();
         cobolSourceInPath = PathHelper.appendMatchingFileSuffix(cobolSourceInPath, Config.getApplicationFilenameSuffixes());
         cobolSourceInPath = StringHelper.adjustPathString(cobolSourceInPath);
 
@@ -47,6 +49,8 @@ public class IO_FileGetter {
         Writer testSourceWriter;
         try {
             testSourceWriter = new FileWriter(testSourceOutPath);
+            FilePermission.setFilePermissionForAllUsers(testSourceOutPath, Config.getGeneratedFilesPermissionAll());
+            Log.info(Messages.get("INF013", testSourceOutPath));
         } catch (IOException testSourceOutException) {
             throw new PossibleInternalLogicErrorException(
                     Messages.get("ERR016", sourceFile));
