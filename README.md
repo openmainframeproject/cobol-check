@@ -10,9 +10,10 @@ A big thank you to [Vicom Infinity](https://www.vicominfinity.com/) for kindly p
 
 ## Immediate needs 
 
-As of March 2021 we could use help with: 
+As of March 2022 we could use help with: 
 
-- review of localized messages by native speakers and creation of additional localized message files
+- 1 or 2 additional team members - interns OK. 
+- review of localized messages by native speakers and creation of additional localized message files.
 
 ## Downloads 
 
