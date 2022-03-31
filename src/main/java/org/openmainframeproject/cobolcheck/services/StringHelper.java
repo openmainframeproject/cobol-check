@@ -17,6 +17,7 @@ package org.openmainframeproject.cobolcheck.services;
 
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
+import java.util.Collection;
 import java.util.Locale;
 
 /**
@@ -81,7 +82,6 @@ public class StringHelper {
     public static String adjustPathString(String pathString) {
         Log.debug("StringHelper.adjustPathString() original string: <" + pathString + ">");
         Log.debug("StringHelper.adjustPathString() Constants.FILE_SEPARATOR: <" + Constants.FILE_SEPARATOR + ">");
-
         Log.debug("StringHelper.adjustPathString() os.name is <" + System.getProperty("os.name") + ">");
 
         String result = pathString;
@@ -186,5 +186,38 @@ public class StringHelper {
             return value.substring(0, value.length() - 2);
         }
         return value;
+    }
+
+    public static boolean equalsAny(String value, Collection<String> collection){
+        if (value == null || value.isEmpty() || collection == null)
+            return false;
+
+        for (String c : collection){
+            if (value.equals(c))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean containsAny(String value, Collection<String> collection){
+        if (value == null || value.isEmpty() || collection == null)
+            return false;
+
+        for (String c : collection){
+            if (value.contains(c))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean startsWithAny(String value, Collection<String> collection){
+        if (value == null || value.isEmpty() || collection == null)
+            return false;
+
+        for (String c : collection){
+            if (value.startsWith(c))
+                return true;
+        }
+        return false;
     }
 }

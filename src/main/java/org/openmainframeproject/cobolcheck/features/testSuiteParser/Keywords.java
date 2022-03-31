@@ -16,6 +16,7 @@ limitations under the License.
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.util.*;
 
@@ -124,6 +125,19 @@ public class Keywords {
                                 Constants.TRUE,
                                 Constants.FALSE),
                         KeywordAction.EXPECTED_VALUE));
+        keywordInfo.put(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                new Keyword(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                        Arrays.asList(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                Constants.TO_BE_KEYWORD,
+                                Constants.TO_EQUAL_KEYWORD,
+                                Constants.NOT_KEYWORD,
+                                Constants.EQUAL_SIGN_KEYWORD,
+                                Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_SIGN_KEYWORD,
+                                Constants.LESS_THAN_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD),
+                        KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                         Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
@@ -150,6 +164,15 @@ public class Keywords {
                         KeywordAction.NONE));
         keywordInfo.put(Constants.AFTER_EACH_TOKEN,
                 new Keyword(Constants.AFTER_EACH_TOKEN,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
+        //TODO: Remove hyphen keyword option? Backwards compatibility
+        keywordInfo.put(Constants.BEFORE_EACH_TOKEN_HYPHEN,
+                new Keyword(Constants.BEFORE_EACH_TOKEN_HYPHEN,
+                        Collections.emptyList(),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.AFTER_EACH_TOKEN_HYPHEN,
+                new Keyword(Constants.AFTER_EACH_TOKEN_HYPHEN,
                         Collections.emptyList(),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.MOCK_KEYWORD,
@@ -214,16 +237,20 @@ public class Keywords {
                         KeywordAction.NONE));
 
         //TODO: Add other types that can be mocked
-        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.CALL_TOKEN);
+        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.PARA_TOKEN, Constants.CALL_TOKEN);
     }
 
 
 
     public static Keyword getKeywordFor(String key) {
         Keyword result = null;
-        if (key != null) {
+        if (key != null && ! key.isEmpty()) {
+            Log.debug("Key: " + key);
             if (key.startsWith("\"") || key.startsWith("'")) {
                 key = Constants.ALPHANUMERIC_LITERAL_KEYWORD;
+            }
+            if (key.startsWith("(")){
+                key = Constants.PARENTHESIS_ENCLOSED_KEYWORD;
             } else {
                 if (Character.isDigit(key.charAt(0))) {
                     boolean isNumeric = true;

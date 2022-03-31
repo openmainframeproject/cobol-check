@@ -97,7 +97,7 @@ public class MockGenerator {
             return new ArrayList<>();
 
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
+            if (mock.getIdentifier().equalsIgnoreCase(identifier) && mock.getType().equals(type)
                     && mock.getArguments().equals(arguments)){
                 if (mock.getScope() == MockScope.Local){
                     String line = String.format(performFormat, mock.getGeneratedMockIdentifier());

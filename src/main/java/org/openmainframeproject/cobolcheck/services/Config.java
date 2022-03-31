@@ -20,6 +20,7 @@ import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.T
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import org.openmainframeproject.cobolcheck.services.platform.Platform;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,6 +42,11 @@ public class Config {
     public static final String INJECT_START_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.start";
     public static final String INJECT_END_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.end";
     public static final String GENERATED_CODE_PATH = "cobolcheck.test.program.path";
+    public static final String IO_ENCODING_LINUX_KEY = "cobolcheck.file.encoding.linux";
+    public static final String IO_ENCODING_MACOSX_KEY = "cobolcheck.file.encoding.macosx";
+    public static final String IO_ENCODING_WINDOWS_KEY = "cobolcheck.file.encoding.windows";
+    public static final String IO_ENCODING_ZOS_KEY = "cobolcheck.file.encoding.zos";
+    public static final String IO_ENCODING_UNIX_KEY = "cobolcheck.file.encoding.unix";
     public static final String GENERATED_FILES_PERMISSION_ALL = "generated.files.permission.all";
     public static final String LOCALE_LANGUAGE_CONFIG_KEY = "locale.language";
     public static final String LOCALE_COUNTRY_CONFIG_KEY = "locale.country";
@@ -204,6 +210,23 @@ public class Config {
             case "TXT":
             default:
                 return TestOutputFormat.txt;
+        }
+    }
+
+    public static String getCharsetForPlatform(Platform platform) {
+        switch (platform){
+            case LINUX:
+                return settings.getProperty(IO_ENCODING_LINUX_KEY, Constants.CURRENT_DIRECTORY);
+            case UNIX:
+                return settings.getProperty(IO_ENCODING_UNIX_KEY, Constants.CURRENT_DIRECTORY);
+            case WINDOWS:
+                return settings.getProperty(IO_ENCODING_WINDOWS_KEY, Constants.CURRENT_DIRECTORY);
+            case OSX:
+                return settings.getProperty(IO_ENCODING_MACOSX_KEY, Constants.CURRENT_DIRECTORY);
+            case ZOS:
+                return settings.getProperty(IO_ENCODING_ZOS_KEY, Constants.CURRENT_DIRECTORY);
+            default:
+                return "default";
         }
     }
 

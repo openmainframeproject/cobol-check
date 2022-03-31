@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 import org.openmainframeproject.cobolcheck.services.log.Log;
@@ -30,7 +31,7 @@ public class IO_FileGetter {
 
         Reader sourceReader;
         try {
-            sourceReader = new FileReader(cobolSourceInPath);
+            sourceReader = EncodingIO.getReaderWithCorrectEncoding(cobolSourceInPath);
         } catch (IOException cobolSourceInException) {
             throw new PossibleInternalLogicErrorException(
                     Messages.get("ERR018", programName));
@@ -46,9 +47,12 @@ public class IO_FileGetter {
      */
     static Writer getTestSourceWriter(String sourceFile){
         String testSourceOutPath = PathHelper.getTestSourceOutPath();
-        Writer testSourceWriter;
+        Writer testSourceWriter = null;
         try {
-            testSourceWriter = new FileWriter(testSourceOutPath);
+            File testSourceOutFile = new File(testSourceOutPath);
+            if (testSourceOutFile.exists())
+                testSourceOutFile.delete();
+            testSourceWriter = EncodingIO.getWriterWithCorrectEncoding(testSourceOutPath);
             FilePermission.setFilePermissionForAllUsers(testSourceOutPath, Config.getGeneratedFilesPermissionAll());
             Log.info(Messages.get("INF013", testSourceOutPath));
         } catch (IOException testSourceOutException) {

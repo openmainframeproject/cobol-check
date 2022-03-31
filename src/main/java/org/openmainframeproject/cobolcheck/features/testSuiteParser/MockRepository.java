@@ -28,7 +28,7 @@ public class MockRepository {
 
     public boolean mockExistsFor(String identifier, String type, List<String> arguments){
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
+            if (mock.getIdentifier().equalsIgnoreCase(identifier) && mock.getType().equals(type)
                     && mock.getArguments().equals(arguments)){
                 return true;
             }
@@ -39,7 +39,7 @@ public class MockRepository {
     public Mock getMockFor(String identifier, String type, String testSuite, String testCase, List<String> arguments){
         List<Mock> globalMocks = new ArrayList<>();
         for (Mock mock: mocks) {
-            if (mock.getIdentifier().equals(identifier) && mock.getType().equals(type)
+            if (mock.getIdentifier().equalsIgnoreCase(identifier) && mock.getType().equals(type)
                     && (mock.getArguments().equals(arguments))){
                 if (mock.getScope() == MockScope.Local){
                     if (mock.getTestSuiteName().equals(testSuite) && mock.getTestCaseName().equals(testCase)){
@@ -63,7 +63,7 @@ public class MockRepository {
 
     private boolean mockAlreadyExist(Mock mock){
         for(Mock m : mocks){
-            if (mock.getIdentifier().equals(m.getIdentifier())
+            if (mock.getIdentifier().equalsIgnoreCase(m.getIdentifier())
                     && mock.getScope() == m.getScope()
                     && mock.getTestSuiteName().equals(m.getTestSuiteName())
                     && mock.getTestCaseName().equals(m.getTestCaseName())

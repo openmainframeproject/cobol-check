@@ -37,7 +37,7 @@ public class PlatformLookup {
         if (value.startsWith("linux"))   return Platform.LINUX;
         if (value.startsWith("macosx"))  return Platform.OSX;
         if (value.startsWith("windows")) return Platform.WINDOWS;
-        if (value.startsWith("zos"))     return Platform.ZOS;
+        if (value.startsWith("z/os")) return Platform.ZOS;
         return Platform.UNIX;
     }
 }

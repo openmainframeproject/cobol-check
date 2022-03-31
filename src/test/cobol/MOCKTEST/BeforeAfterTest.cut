@@ -1,10 +1,10 @@
            TestSuite "Before and after tests 1"
 
-            BEFORE EACH
+            BEFORE-EACH
                 MOVE "prepare" TO VALUE-1
             END-BEFORE
 
-            AFTER EACH
+            AFTER-EACH
                 MOVE "clean" TO VALUE-2
             END-AFTER
 
@@ -27,7 +27,7 @@
 
 
            TestSuite "Before and after tests 2"
-            BEFORE EACH
+            BEFORE-EACH
                 MOVE "before1" TO VALUE-1
                 MOVE "before2" TO VALUE-2
                 PERFORM 000-START
@@ -91,7 +91,7 @@
                 MOVE "before" TO VALUE-1
             END-BEFORE
 
-            AFTER EACH
+            AFTER-EACH
                 MOVE "after" TO VALUE-1
             END-AFTER
 

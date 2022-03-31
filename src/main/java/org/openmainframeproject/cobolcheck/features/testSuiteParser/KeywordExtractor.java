@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
 
 import java.util.*;
@@ -30,6 +31,7 @@ public class KeywordExtractor implements TokenExtractor {
     private final char SPACE = ' ';
     private List<String> nextExpectedTokens;
     private boolean openQuote = false;
+    private boolean openParenthesis = false;
     private char quoteDelimiter = '"';
     private boolean processingNumericLiteral = false;
 
@@ -68,7 +70,20 @@ public class KeywordExtractor implements TokenExtractor {
                     quoteDelimiter = currentCharacter;
                     buffer.append(currentCharacter);
                 }
-            } else {
+            }
+            else if (currentCharacter == '(' && !openQuote){
+                openParenthesis = true;
+                buffer.append(currentCharacter);
+            }
+            else if (currentCharacter == ')' && !openQuote){
+                openParenthesis = false;
+                buffer.append(currentCharacter);
+                buffer = addTokenAndClearBuffer(buffer, tokens);
+            }
+            else if (openParenthesis && !openQuote)
+                buffer.append(currentCharacter);
+
+            else {
 
                 if (processingNumericLiteral) {
                     if (!isDecimalPoint(buffer, currentCharacter, sourceLine, tokenOffset) 
@@ -76,7 +91,7 @@ public class KeywordExtractor implements TokenExtractor {
                             processingNumericLiteral = false;  // prevent next period from being interpreted as end of sentence
                     }
                 } else {
-                    if (currentCharacter == PERIOD) {          // Cobol end of sentence
+                    if (currentCharacter == PERIOD && !openQuote) {          // Cobol end of sentence
                         break;                                 // skip it
                     }
                     if (startNumericLiteral(buffer, currentCharacter)) {
@@ -130,6 +145,16 @@ public class KeywordExtractor implements TokenExtractor {
             buffer = addTokenAndClearBuffer(buffer, tokens);
         }
         return tokens;
+    }
+
+    public boolean tokenListEndsDuringMultiToken(List<String> tokens){
+        if (tokens == null || tokens.isEmpty())
+            return false;
+
+        if (StringHelper.equalsAny(tokens.get(tokens.size() - 1), multiWordTokens.keySet()))
+            return true;
+
+        return false;
     }
 
 

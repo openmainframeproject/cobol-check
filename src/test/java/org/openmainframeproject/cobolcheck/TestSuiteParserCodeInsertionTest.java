@@ -52,6 +52,8 @@ public class TestSuiteParserCodeInsertionTest {
     @BeforeAll
     public static void initializeExpectedResults() {
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT = appendCommonFirstLines();
+        BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("           SET UT-NORMAL-COMPARE TO TRUE                                        ");
+        BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("           SET UT-COMPARE-88-LEVEL TO TRUE                                      ");
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("           IF WS-88-LEVEL-ITEM                                                  ");
@@ -353,6 +355,8 @@ public class TestSuiteParserCodeInsertionTest {
                                                  BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-MESSAGE TO BE \"Hello\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
+                Arguments.of("           EXPECT WS-MESSAGE TO" + Constants.NEWLINE + "BE \"Hello\"",
+                        "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-MESSAGE TO EQUAL \"Hello\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-MESSAGE = \"Hello\"",
