@@ -18,12 +18,11 @@ package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
 import org.openmainframeproject.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
-import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
-import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;
@@ -42,7 +41,7 @@ import java.util.Locale;
 public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private List<String> testSuiteTokens;
-    private String currentTestSuiteLine;
+    private String currentTestSuiteLine = "";
 
     // Source tokens used in fully-qualified data item names
     private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
@@ -232,6 +231,9 @@ public class TestSuiteParser {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
 
+            if (Constants.IGNORED_TOKENS.contains(testSuiteToken))
+                continue;
+
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
             Log.debug("Generator.parseTestSuite(), " +
                     "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
@@ -263,22 +265,30 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.NOT_EQUAL_SIGN_KEYWORD:
+                    possibleQualifiedName = false;
+                    expectInProgress = false;
                     toBeInProgress = true;
                     // this means the user wrote "NOT !="
                     reverseCompare = !reverseCompare;
                     break;
 
                 case Constants.GREATER_THAN_SIGN_KEYWORD:
+                    possibleQualifiedName = false;
+                    expectInProgress = false;
                     toBeInProgress = true;
                     greaterThanComparison = true;
                     break;
 
                 case Constants.LESS_THAN_SIGN_KEYWORD:
+                    possibleQualifiedName = false;
+                    expectInProgress = false;
                     toBeInProgress = true;
                     lessThanComparison = true;
                     break;
 
                 case Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD:
+                    possibleQualifiedName = false;
+                    expectInProgress = false;
                     toBeInProgress = true;
                     lessThanComparison = true;
                     if (reverseCompare) {
@@ -289,26 +299,37 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD:
+                    possibleQualifiedName = false;
+                    expectInProgress = false;
                     toBeInProgress = true;
                     greaterThanComparison = true;
                     reverseCompare = !reverseCompare;
                     break;
 
+                case Constants.PARENTHESIS_ENCLOSED_KEYWORD:
+                    if (expectInProgress)
+                        fieldNameForExpect += Constants.SPACE + testSuiteToken;
+                    break;
+
                 case Constants.COBOL_TOKEN:
+                    //TODO:remove when implementing EXPECT NUMERIC
+                    if (testSuiteToken.equals("NUMERIC")){
+                        Log.debug("==WARNING== <EXPECT ... TO BE NUMERIC ...> is not implemented and could cause exceptions ==WARNING==");
+                        ignoreCobolStatementKeyAction = true;
+                        break;
+                    }
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
                     }
-                    if (possibleQualifiedName) {
+                    else if (possibleQualifiedName) {
                         if (qualifiedNameKeywords.contains(testSuiteToken)) {
                             fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                             expectQualifiedName = true;
-                            possibleQualifiedName = false;
                         }
                     }
-                    if (expectInProgress) {
+                    else if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
-                        expectInProgress = false;
                         possibleQualifiedName = true;
                     }
                     if (toBeInProgress) {
@@ -360,7 +381,8 @@ public class TestSuiteParser {
                         expectUsing = false;
                         if (!verifyInProgress){
                             ignoreCobolStatementKeyAction = true;
-                            currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, currentLineContainsArgument));
+                            List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, currentLineContainsArgument);
+                            currentMock.addLines(removeToken(mockLines, "END-CALL"));
                             mockRepository.addMock(currentMock);
                         }
                     }
@@ -447,11 +469,13 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.BEFORE_EACH_TOKEN:
+                case Constants.BEFORE_EACH_TOKEN_HYPHEN:
                     List<String> beforeLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_BEFORE_TOKEN, true);
                     beforeAfterRepo.addBeforeEachItem(testSuiteNumber, currentTestSuiteName, beforeLines);
                     break;
 
                 case Constants.AFTER_EACH_TOKEN:
+                case Constants.AFTER_EACH_TOKEN_HYPHEN:
                     List<String> afterLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_AFTER_TOKEN, true);
                     beforeAfterRepo.addAfterEachItem(testSuiteNumber, currentTestSuiteName, afterLines);
                     break;
@@ -474,6 +498,11 @@ public class TestSuiteParser {
 
                 case Constants.MOCK_TYPE:
                     expectMockIdentifier = true;
+                    //TODO: REMOVE PARA
+                    if (testSuiteToken.equals(Constants.PARA_TOKEN)){
+                        testSuiteToken = Constants.PARAGRAPH_TOKEN;
+                    }
+
                     if (!verifyInProgress){
                         currentMock.setType(testSuiteToken);
                     }
@@ -537,6 +566,8 @@ public class TestSuiteParser {
                 case Constants.TO_BE_KEYWORD:
                 case Constants.TO_EQUAL_KEYWORD:
                 case Constants.EQUAL_SIGN_KEYWORD:
+                    possibleQualifiedName = false;
+                    expectInProgress = false;
                     toBeInProgress = true;
                     break;
             }
@@ -593,6 +624,22 @@ public class TestSuiteParser {
         return parsedTestSuiteLines;
     }
 
+    private List<String> removeToken(List<String> lines, String token) {
+        List<String> newLines = new ArrayList<>();
+        for (String line : lines){
+            String upperLine = line.toUpperCase(Locale.ROOT);
+            int startIndex = upperLine.indexOf(token.toUpperCase(Locale.ROOT));
+            int endIndex = startIndex + token.length();
+            if (startIndex != -1){
+                String part1 = line.substring(0, startIndex);
+                String part2 = line.substring(endIndex);
+                line = part1 + part2;
+            }
+            newLines.add(line);
+        }
+        return newLines;
+    }
+
     /**
      * This method hides file I/O from the test suite parsing logic so the parsing logic will be easier to understand.
      * We don't want to load the whole test suite into memory at once, as we don't know how large it may be.
@@ -614,6 +661,11 @@ public class TestSuiteParser {
             if (testSuiteLine.length() > 0 && !testSuiteLine.trim().startsWith("*")) {
 //            if (testSuiteLine.length() > 5 && testSuiteLine.charAt(6) != '*') {
                 testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
+                while (keywordExtractor.tokenListEndsDuringMultiToken(testSuiteTokens)){
+                    currentTestSuiteLine = StringHelper.removeTrailingSpaces(currentTestSuiteLine) + " " +
+                            readNextLineFromTestSuite(testSuiteReader).trim();
+                    testSuiteTokens = keywordExtractor.extractTokensFrom(currentTestSuiteLine);
+                }
             }
         }
         String testSuiteToken = testSuiteTokens.get(0);
@@ -731,10 +783,10 @@ public class TestSuiteParser {
     }
 
     void addTestCodeForAssertion(List<String> parsedTestSuiteLines, NumericFields numericFields) {
+        addSetNormalOrReverseCompare(parsedTestSuiteLines);
         if (boolean88LevelCompare) {
             addTestCodeFor88LevelEqualityCheck(parsedTestSuiteLines);
         } else {
-            addSetNormalOrReverseCompare(parsedTestSuiteLines);
             if (fieldIsANumericDataType(fieldNameForExpect)) {
                 parsedTestSuiteLines.add(String.format(
                         COBOL_SET_COMPARE_NUMERIC, testCodePrefix, Constants.TRUE));
@@ -852,6 +904,10 @@ public class TestSuiteParser {
      * @return true when the field name represents any numeric data type
      */
     boolean fieldIsANumericDataType(String fieldNameForExpect) {
+        // Remove potential qualifiers and indexing, so we only get the single field name.
+        if (fieldNameForExpect != null && !fieldNameForExpect.isEmpty())
+            fieldNameForExpect = fieldNameForExpect.split(" ")[0];
+
         return numericFields.dataTypeOf(fieldNameForExpect) == DataType.PACKED_DECIMAL
                 || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.FLOATING_POINT)
                 || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.DISPLAY_NUMERIC);
@@ -878,28 +934,6 @@ public class TestSuiteParser {
      */
     void addUserWrittenCobolStatement(List<String> parsedTestSuiteLines) {
         parsedTestSuiteLines.add(cobolStatement.toString());
-    }
-
-    private List<String> getArgumentsForCurrentMock(BufferedReader testSuiteReader) {
-        List<String> usingKeywords = Arrays.asList(
-                Constants.BY_REFERENCE_TOKEN,
-                Constants.BY_CONTENT_TOKEN,
-                Constants.BY_VALUE_TOKEN);
-        String usingLine = "";
-        String line;
-        boolean hasEncounteredUsingKeyword = false;
-        while ((line = readNextLineFromTestSuite(testSuiteReader)) != null){
-            if (line.toUpperCase().contains(Constants.USING_TOKEN)){
-                if (hasEncounteredUsingKeyword)
-                    break;
-                hasEncounteredUsingKeyword = true;
-            }
-            if (!usingKeywords.contains(line.toUpperCase().trim()) && !usingLine.endsWith(",")){
-                break;
-            }
-            usingLine += (" " + line);
-        }
-        return Interpreter.getUsingArgs(new CobolLine(usingLine, new StringTokenizerExtractor()));
     }
 
     private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword, boolean skipCurrentLine){

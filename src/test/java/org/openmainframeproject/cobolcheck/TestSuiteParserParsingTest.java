@@ -3,6 +3,7 @@ package org.openmainframeproject.cobolcheck;
 import org.openmainframeproject.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,6 +54,7 @@ public class TestSuiteParserParsingTest {
         testSuiteParserController = new TestSuiteParserController(mockedReader);
         testSuite = new StringBuilder();
         cobolWriter = new CobolWriter(mockTestProgramSource);
+        numericFields = new NumericFields();
     }
 
     @Test
@@ -142,6 +144,29 @@ public class TestSuiteParserParsingTest {
                 numericFields);
         assertEquals(expectedResult, testSuiteParser.getCobolStatement());
     }
+
+    @Test
+    public void it_accepts_parenthesis_in_item_in_EXPECT() {
+        String expectedResult = "            TABLE-FIELD IN WS-FIELDS (2 3)";
+        testSuite.append("           EXPECT TABLE-FIELD IN WS-FIELDS (2 3) TO BE \"some value\"");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+    }
+
+    @Test
+    public void it_finds_correct_data_type_for_table() {
+        String expectedLine = "           SET UT-NUMERIC-COMPARE TO TRUE";
+        testSuite.append("           EXPECT TABLE-FIELD IN WS-FIELDS (2 3) TO BE \"some value\"");
+        numericFields.setDataTypeOf("TABLE-FIELD", DataType.DISPLAY_NUMERIC);
+        List<String> actual = testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        assertEquals(expectedLine, actual.get(2));
+    }
+
+
 
     @Test
     public void it_generates_lines_for_verify_statement_with_exact_comparison() {
@@ -464,7 +489,7 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("                WHEN \"TestSuite3\"");
         expectedResult.add("           PERFORM UT-BEFORE-EACH-BRANCH-3");
         expectedResult.add("            END-EVALUATE");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9,
                 str10, str11, str12, str13, str14, str15, str16, str17, str18, null);
@@ -510,7 +535,7 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("                WHEN \"TestSuite3\"");
         expectedResult.add("           PERFORM UT-AFTER-EACH-BRANCH-3");
         expectedResult.add("            END-EVALUATE");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9,
                 str10, str11, str12, str13, str14, str15, str16, str17, str18, null);
@@ -541,7 +566,7 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("      *\"TestSuite1\"");
         expectedResult.add("      *****************************************************************");
         expectedResult.add("                MOVE \"prepare\" TO VALUE-1");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
         expectedResult.add("");
         expectedResult.add("       UT-AFTER-EACH-BRANCH-1.");
         expectedResult.add("      *****************************************************************");
@@ -549,7 +574,7 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("      *\"TestSuite1\"");
         expectedResult.add("      *****************************************************************");
         expectedResult.add("                MOVE \"cleanup\" TO VALUE-1");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
         expectedResult.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
@@ -589,19 +614,19 @@ public class TestSuiteParserParsingTest {
         List<String> expectedResult = new ArrayList<>();
         expectedResult.add("       UT-BEFORE-EACH-BRANCH-1.");
         expectedResult.add("                MOVE \"test1B\" TO VALUE-1");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
         expectedResult.add("");
         expectedResult.add("       UT-BEFORE-EACH-BRANCH-3.");
         expectedResult.add("                MOVE \"test3B\" TO VALUE-1");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
         expectedResult.add("");
         expectedResult.add("       UT-AFTER-EACH-BRANCH-1.");
         expectedResult.add("                MOVE \"test1A\" TO VALUE-1");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
         expectedResult.add("");
         expectedResult.add("       UT-AFTER-EACH-BRANCH-2.");
         expectedResult.add("                MOVE \"test2A\" TO VALUE-1");
-        expectedResult.add("       .");
+        expectedResult.add("           .");
         expectedResult.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9,

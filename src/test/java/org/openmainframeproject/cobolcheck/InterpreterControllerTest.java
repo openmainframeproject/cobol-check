@@ -57,6 +57,16 @@ public class InterpreterControllerTest {
     }
 
     @Test
+    public void it_sets_correct_flag_for_working_storage_section_lower_case() throws IOException {
+        String line = "       working-storage section.";
+        Mockito.when(mockedReader.readLine()).thenReturn(line);
+
+        interpreterController.interpretNextLine();
+
+        assertTrue(interpreterController.isReading(Constants.WORKING_STORAGE_SECTION));
+    }
+
+    @Test
     public void it_unsets_correct_flags_when_mutual_exclusive_flag_is_set() throws IOException {
         String str1 = "       DATA DIVISION.";
         String str2 = "       FILE SECTION.";
@@ -94,7 +104,6 @@ public class InterpreterControllerTest {
         assertTrue(Config.isDecimalPointComma());
         assertFalse(interpreterController.isReading(Constants.SPECIAL_NAMES_PARAGRAPH));
     }
-
 
     @Test
     public void it_recognizes_paragraph_header_format() throws IOException {

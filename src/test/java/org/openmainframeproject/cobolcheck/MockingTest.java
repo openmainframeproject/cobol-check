@@ -249,6 +249,27 @@ public class MockingTest {
     }
 
     @Test
+    public void call_mock_gets_correct_lines_and_ignores_end_call() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING VALUE-1";
+        String str4 = "          end-call";
+        String str5 = "          MOVE \"something\" TO this";
+        String str6 = "          MOVE \"something else\" TO other";
+        String str7 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("          ");
+        expected.add(str5);
+        expected.add(str6);
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals(expected, mockRepository.getMocks().get(0).getLines());
+    }
+
+    @Test
     public void call_mock_gets_correct_arguments() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
@@ -320,10 +341,60 @@ public class MockingTest {
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockSections(false);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void it_handles_one_line_stub() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK SECTION 000-START  END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("      *****************************************************************");
+        expected.add("      *Paragraphs called when mocking");
+        expected.add("      *****************************************************************");
+        expected.add("       UT-1-1-1-MOCK.");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
+        expected.add("           .");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockSections(false);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void it_handles_one_line_stub_with_arguments() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING BY CONTENT V-1, V-2  END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("      *****************************************************************");
+        expected.add("      *Paragraphs called when mocking");
+        expected.add("      *****************************************************************");
+        expected.add("       UT-1-1-1-MOCK.");
+        expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
+        expected.add("           .");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
 
         testSuiteParserController.parseTestSuites(numericFields);
         testSuiteParserController.getProcedureDivisionTestCode();
@@ -355,7 +426,7 @@ public class MockingTest {
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -390,7 +461,7 @@ public class MockingTest {
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -425,7 +496,7 @@ public class MockingTest {
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -461,7 +532,7 @@ public class MockingTest {
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -506,25 +577,25 @@ public class MockingTest {
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
         expected.add(str4);
         expected.add(str5);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
         expected.add("       UT-1-1-2-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-2-MOCK-COUNT");
         expected.add(str8);
         expected.add(str9);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
         expected.add("       UT-1-2-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-2-1-MOCK-COUNT");
         expected.add(str13);
         expected.add(str14);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
         expected.add("       UT-2-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-2-1-1-MOCK-COUNT");
         expected.add(str19);
         expected.add(str20);
-        expected.add("       .");
+        expected.add("           .");
         expected.add("");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,

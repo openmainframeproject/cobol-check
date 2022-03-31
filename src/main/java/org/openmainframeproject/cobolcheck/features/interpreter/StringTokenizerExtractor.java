@@ -80,7 +80,7 @@ public class StringTokenizerExtractor implements TokenExtractor {
         String saved = Constants.EMPTY_STRING;
         StringTokenizer tokenizer = new StringTokenizer(sourceLine, delimiters);
         while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
+            String token = tokenizer.nextToken().toUpperCase(Locale.ROOT);
             if (token.startsWith(Constants.COMMENT_INDICATOR)) {
                 break;
             }

@@ -102,6 +102,12 @@ public class InterpreterController {
         return Interpreter.lineEndsParagraphOrSection(reader.getCurrentLine(), nextLine, lineFollowingNext, reader.getState());
     }
 
+    public boolean isCurrentLineEndingWorkingStorageSection(){
+        return (reader.getCurrentLine().containsToken(Constants.LOCAL_STORAGE_SECTION)||
+                reader.getCurrentLine().containsToken(Constants.LINKAGE_SECTION)||
+                reader.getCurrentLine().containsToken(Constants.PROCEDURE_DIVISION));
+    }
+
     public boolean canWriteEndEvaluateBeforeCurrentLine(){
         if (Interpreter.containsOnlyPeriod(reader.getCurrentLine()))
             return true;
