@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,8 +30,10 @@ public class TestSuiteConcatenatorIT {
         StringBuilder expectedResult = new StringBuilder();
         String line;
         BufferedReader testSuiteReader;
-        for (String filename : new String[] { "src/test/cobol/GREETING/GreetingByType.cut" }) {
+        String file = "src/test/cobol/GREETING/GreetingByType.cut";
+        for (String filename : new String[] { file }) {
             testSuiteReader = new BufferedReader(new FileReader(filename));
+            expectedResult.append("      *From file: " + new File(file).getAbsolutePath());
             while ((line = testSuiteReader.readLine()) != null) {
                 expectedResult.append(line);
             }

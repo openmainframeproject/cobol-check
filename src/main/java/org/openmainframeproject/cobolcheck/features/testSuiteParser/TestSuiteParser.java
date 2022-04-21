@@ -23,7 +23,6 @@ import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
-import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;
@@ -43,6 +42,11 @@ public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private List<String> testSuiteTokens;
     private String currentTestSuiteLine;
+    private int fileLineNumber = 0;
+    private int fileLineIndexNumber = 0;
+    private String currentTestSuiteRealFile;
+
+    private KeywordSyntax keywordSyntax = new KeywordSyntax();
 
     // Source tokens used in fully-qualified data item names
     private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
@@ -57,7 +61,7 @@ public class TestSuiteParser {
     private boolean expectMockIdentifier;
     boolean expectUsing;
     boolean expectMockArguments;
-    private boolean ignoreCobolStatementKeyAction;
+    private boolean ignoreCobolStatementAndFieldNameKeyAction;
     private VerifyMockCount currentVerify;
     private boolean verifyInProgress;
 
@@ -231,8 +235,9 @@ public class TestSuiteParser {
             if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
-
-            Keyword keyword = Keywords.getKeywordFor(testSuiteToken);
+            boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier || (expectMockArguments && !expectUsing));
+            Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);
+            keywordSyntax.checkSyntax(keyword, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
             Log.debug("Generator.parseTestSuite(), " +
                     "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
 
@@ -295,6 +300,7 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.COBOL_TOKEN:
+                case Constants.FIELDNAME_KEYWORD:
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
@@ -318,7 +324,7 @@ public class TestSuiteParser {
                     }
                     if (expectMockIdentifier){
                         expectMockIdentifier = false;
-                        ignoreCobolStatementKeyAction = true;
+                        ignoreCobolStatementAndFieldNameKeyAction = true;
                         if (!verifyInProgress){
                             if (currentMock.getType().equals(Constants.CALL_TOKEN)){
                                 expectUsing = true;
@@ -326,8 +332,14 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true));
+                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true);
                                 //We know END-MOCK is reached here
+                                keywordSyntax.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                                        currentTestSuiteRealFile, fileLineNumber);
+                                Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+                                keywordSyntax.checkSyntax(endMockKeyword, currentTestSuiteRealFile, fileLineNumber,
+                                        currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+                                currentMock.addLines(mockLines);
                                 mockRepository.addMock(currentMock);
                             }
                         }
@@ -345,7 +357,7 @@ public class TestSuiteParser {
                         boolean currentLineContainsArgument = false;
                         if (!expectUsing){
                             currentLineContainsArgument = true;
-                            ignoreCobolStatementKeyAction = true;
+                            ignoreCobolStatementAndFieldNameKeyAction = true;
                             if (verifyInProgress)
                                 currentVerify.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
                             else
@@ -359,8 +371,14 @@ public class TestSuiteParser {
                         expectMockArguments = false;
                         expectUsing = false;
                         if (!verifyInProgress){
-                            ignoreCobolStatementKeyAction = true;
-                            currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, currentLineContainsArgument));
+                            ignoreCobolStatementAndFieldNameKeyAction = true;
+                            List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, currentLineContainsArgument);
+                            keywordSyntax.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                                    currentTestSuiteRealFile, fileLineNumber);
+                            Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+                            keywordSyntax.checkSyntax(endMockKeyword, currentTestSuiteRealFile, fileLineNumber,
+                                    currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+                            currentMock.addLines(mockLines);
                             mockRepository.addMock(currentMock);
                         }
                     }
@@ -395,8 +413,14 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                currentMock.addLines(getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true));
+                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true);
                                 //We know END-MOCK is reached here
+                                keywordSyntax.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                                        currentTestSuiteRealFile, fileLineNumber);
+                                Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+                                keywordSyntax.checkSyntax(endMockKeyword, currentTestSuiteRealFile, fileLineNumber,
+                                        currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+                                currentMock.addLines(mockLines);
                                 mockRepository.addMock(currentMock);
                             }
                         }
@@ -448,11 +472,22 @@ public class TestSuiteParser {
 
                 case Constants.BEFORE_EACH_TOKEN:
                     List<String> beforeLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_BEFORE_TOKEN, true);
+                    keywordSyntax.checkSyntaxInsideBlock(Constants.BEFORE_EACH_TOKEN, beforeLines, keywordExtractor,
+                            currentTestSuiteRealFile, fileLineNumber);
+                    Keyword endBeforeKeyword = Keywords.getKeywordFor(Constants.END_BEFORE_TOKEN, false);
+                    keywordSyntax.checkSyntax(endBeforeKeyword, currentTestSuiteRealFile, fileLineNumber,
+                            currentTestSuiteLine.indexOf(Constants.END_BEFORE_TOKEN));
                     beforeAfterRepo.addBeforeEachItem(testSuiteNumber, currentTestSuiteName, beforeLines);
+
                     break;
 
                 case Constants.AFTER_EACH_TOKEN:
                     List<String> afterLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_AFTER_TOKEN, true);
+                    keywordSyntax.checkSyntaxInsideBlock(Constants.AFTER_EACH_TOKEN, afterLines, keywordExtractor,
+                            currentTestSuiteRealFile, fileLineNumber);
+                    Keyword endAfterKeyword = Keywords.getKeywordFor(Constants.END_AFTER_TOKEN, false);
+                    keywordSyntax.checkSyntax(endAfterKeyword, currentTestSuiteRealFile, fileLineNumber,
+                            currentTestSuiteLine.indexOf(Constants.END_AFTER_TOKEN));
                     beforeAfterRepo.addAfterEachItem(testSuiteNumber, currentTestSuiteName, afterLines);
                     break;
 
@@ -562,8 +597,8 @@ public class TestSuiteParser {
             // take actions that are triggered by the current token's action
             switch (keyword.keywordAction()) {
                 case COBOL_STATEMENT:
-                    if (ignoreCobolStatementKeyAction){
-                        ignoreCobolStatementKeyAction = false;
+                    if (ignoreCobolStatementAndFieldNameKeyAction){
+                        ignoreCobolStatementAndFieldNameKeyAction = false;
                         break;
                     }
                     if (CobolVerbs.isCobolVerb(testSuiteToken)) {
@@ -576,6 +611,10 @@ public class TestSuiteParser {
                     appendTokenToCobolStatement(testSuiteToken);
                     break;
                 case FIELDNAME:
+                    if (ignoreCobolStatementAndFieldNameKeyAction){
+                        ignoreCobolStatementAndFieldNameKeyAction = false;
+                        break;
+                    }
                     if (cobolStatementInProgress) {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
@@ -618,6 +657,8 @@ public class TestSuiteParser {
         }
         String testSuiteToken = testSuiteTokens.get(0);
         testSuiteTokens.remove(0);
+        fileLineIndexNumber = currentTestSuiteLine.toUpperCase(Locale.ROOT)
+                .indexOf(testSuiteToken.toUpperCase(Locale.ROOT), fileLineIndexNumber) + 1;
         return testSuiteToken;
     }
 
@@ -630,11 +671,18 @@ public class TestSuiteParser {
     private String readNextLineFromTestSuite(BufferedReader testSuiteReader) {
         try {
             currentTestSuiteLine = testSuiteReader.readLine();
+            fileLineNumber++;
+            fileLineIndexNumber = 0;
             if (currentTestSuiteLine == null) {
                 if (emptyTestSuite) {
                     throw new PossibleInternalLogicErrorException(Messages.get("ERR010"));
                 }
                 return null;
+            }
+            else if (currentTestSuiteLine.startsWith("      *From file:")){
+                fileLineNumber = 0;
+                currentTestSuiteRealFile = currentTestSuiteLine.substring(currentTestSuiteLine.indexOf(":"));
+                return readNextLineFromTestSuite(testSuiteReader);
             }
             emptyTestSuite = false;
             return currentTestSuiteLine;

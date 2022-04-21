@@ -45,139 +45,199 @@ public class Keywords {
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME));
         keywordInfo.put(Constants.FIELDNAME_KEYWORD,
-                new Keyword(Constants.EMPTY_STRING,
+                new Keyword(Constants.FIELDNAME_KEYWORD,
                         Arrays.asList(Constants.TO_BE_KEYWORD,
                                 Constants.NOT_KEYWORD,
-                                Constants.COBOL_TOKEN),
+                                Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                Constants.TO_EQUAL_KEYWORD,
+                                Constants.EQUAL_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_SIGN_KEYWORD,
+                                Constants.LESS_THAN_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.HAPPENED_KEYWORD,
+                                Constants.NEVER_HAPPENED_KEYWORD,
+                                Constants.USING_TOKEN,
+                                Constants.COBOL_TOKEN,
+                                Constants.FIELDNAME_KEYWORD,
+                                Constants.BY_REFERENCE_TOKEN,
+                                Constants.BY_CONTENT_TOKEN,
+                                Constants.BY_VALUE_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NOT_KEYWORD,
                 new Keyword(Constants.NOT_KEYWORD,
-                        Arrays.asList(Constants.TO_BE_KEYWORD),
+                        Arrays.asList(Constants.TO_BE_KEYWORD,
+                                Constants.TO_EQUAL_KEYWORD,
+                                Constants.EQUAL_SIGN_KEYWORD,
+                                Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_SIGN_KEYWORD,
+                                Constants.LESS_THAN_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD),
                         KeywordAction.REVERSE_LOGIC));
         keywordInfo.put(Constants.NOT_EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.NOT_EQUAL_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD),
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.REVERSE_LOGIC));
         keywordInfo.put(Constants.TO_BE_KEYWORD,
                 new Keyword(Constants.TO_BE_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.TO_EQUAL_KEYWORD,
                 new Keyword(Constants.TO_EQUAL_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.EQUAL_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
-                        KeywordAction.EXPECTED_VALUE));
-        keywordInfo.put(Constants.NOT_EQUAL_SIGN_KEYWORD,
-                new Keyword(Constants.NOT_EQUAL_SIGN_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.GREATER_THAN_SIGN_KEYWORD,
                 new Keyword(Constants.GREATER_THAN_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                 new Keyword(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.LESS_THAN_SIGN_KEYWORD,
                 new Keyword(Constants.LESS_THAN_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                 new Keyword(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.TRUE,
-                                Constants.FALSE),
+                                Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.EXPECT_KEYWORD,
+                                Constants.COBOL_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.AFTER_EACH_TOKEN,
+                                Constants.HAPPENED_KEYWORD,
+                                Constants.NEVER_HAPPENED_KEYWORD,
+                                Constants.USING_TOKEN),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.NUMERIC_LITERAL_KEYWORD,
-                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN, Constants.TIME_KEYWORD,
+                        Arrays.asList(Constants.EXPECT_KEYWORD,
+                                Constants.COBOL_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD,
+                                Constants.TIME_KEYWORD,
                                 Constants.TIMES_KEYWORD),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.COBOL_TOKEN,
                 new Keyword(Constants.COBOL_TOKEN,
-                        Arrays.asList(Constants.COBOL_TOKEN,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                        Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.NUMERIC_LITERAL_KEYWORD,
+                                Constants.BOOLEAN_VALUE,
                                 Constants.FIELDNAME_KEYWORD,
-                                Constants.EXPECT_KEYWORD),
+                                Constants.EXPECT_KEYWORD,
+                                Constants.COBOL_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.BOOLEAN_VALUE,
                 new Keyword(Constants.BOOLEAN_VALUE,
-                        Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.EXPECT_KEYWORD,
+                                Constants.COBOL_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD),
                         KeywordAction.BOOLEAN_COMPARE));
         keywordInfo.put(Constants.BEFORE_EACH_TOKEN,
                 new Keyword(Constants.BEFORE_EACH_TOKEN,
-                        Collections.emptyList(),
+                        Arrays.asList(Constants.END_BEFORE_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.END_BEFORE_TOKEN,
+                new Keyword(Constants.END_BEFORE_TOKEN,
+                        Arrays.asList(Constants.AFTER_EACH_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.AFTER_EACH_TOKEN,
                 new Keyword(Constants.AFTER_EACH_TOKEN,
-                        Collections.emptyList(),
+                        Arrays.asList(Constants.END_AFTER_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.END_AFTER_TOKEN,
+                new Keyword(Constants.END_AFTER_TOKEN,
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.MOCK_KEYWORD,
                 new Keyword(Constants.MOCK_KEYWORD,
                         Arrays.asList(Constants.MOCK_TYPE),
                         KeywordAction.NONE));
+
         keywordInfo.put(Constants.MOCK_TYPE,
                 new Keyword(Constants.MOCK_TYPE,
-                        Arrays.asList(Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                         KeywordAction.NONE));
+
         keywordInfo.put(Constants.USING_TOKEN,
                 new Keyword(Constants.USING_TOKEN,
-                        Arrays.asList(Constants.COBOL_TOKEN,
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.BY_REFERENCE_TOKEN,
                 new Keyword(Constants.BY_REFERENCE_TOKEN,
-                        Arrays.asList(Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.BY_CONTENT_TOKEN,
                 new Keyword(Constants.BY_CONTENT_TOKEN,
-                        Arrays.asList(Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.BY_VALUE_TOKEN,
                 new Keyword(Constants.BY_VALUE_TOKEN,
-                        Arrays.asList(Constants.COBOL_TOKEN),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.VERIFY_KEYWORD,
                 new Keyword(Constants.VERIFY_KEYWORD,
@@ -185,7 +245,12 @@ public class Keywords {
                         KeywordAction.NONE));
         keywordInfo.put(Constants.NEVER_HAPPENED_KEYWORD,
                 new Keyword(Constants.NEVER_HAPPENED_KEYWORD,
-                        Collections.emptyList(),
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.HAPPENED_KEYWORD,
                 new Keyword(Constants.HAPPENED_KEYWORD,
@@ -194,7 +259,12 @@ public class Keywords {
                         KeywordAction.NONE));
         keywordInfo.put(Constants.ONCE_KEYWORD,
                 new Keyword(Constants.ONCE_KEYWORD,
-                        Collections.emptyList(),
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.AT_LEAST_KEYWORD,
                 new Keyword(Constants.AT_LEAST_KEYWORD,
@@ -206,11 +276,21 @@ public class Keywords {
                         KeywordAction.NONE));
         keywordInfo.put(Constants.TIME_KEYWORD,
                 new Keyword(Constants.TIME_KEYWORD,
-                        Collections.emptyList(),
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.TIMES_KEYWORD,
                 new Keyword(Constants.TIMES_KEYWORD,
-                        Collections.emptyList(),
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD),
                         KeywordAction.NONE));
 
         //TODO: Add other types that can be mocked
@@ -219,7 +299,7 @@ public class Keywords {
 
 
 
-    public static Keyword getKeywordFor(String key) {
+    public static Keyword getKeywordFor(String key, boolean expectFieldName) {
         Keyword result = null;
         if (key != null) {
             if (key.startsWith("\"") || key.startsWith("'")) {
@@ -247,7 +327,11 @@ public class Keywords {
                 }
             }
         }
-        result = keywordInfo.getOrDefault(key, keywordInfo.get(Constants.COBOL_TOKEN));
+        if (expectFieldName)
+            result = keywordInfo.getOrDefault(key, keywordInfo.get(Constants.FIELDNAME_KEYWORD));
+        else
+            result = keywordInfo.getOrDefault(key, keywordInfo.get(Constants.COBOL_TOKEN));
+
         return result;
     }
 }

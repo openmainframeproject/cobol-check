@@ -88,6 +88,10 @@ public final class Constants {
     public static final String NO_MORE_THAN_KEYWORD = "NO MORE THAN";
     public static final String TIME_KEYWORD = "TIME";
     public static final String TIMES_KEYWORD = "TIMES";
+    public static final String BEFORE_EACH_TOKEN = "BEFORE EACH";
+    public static final String END_BEFORE_TOKEN = "END-BEFORE";
+    public static final String AFTER_EACH_TOKEN = "AFTER EACH";
+    public static final String END_AFTER_TOKEN = "END-AFTER";
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
@@ -137,10 +141,6 @@ public final class Constants {
     public static final String END_SECTION_TOKEN = "END-SECTION";
     public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
     public static final String END_CALL_TOKEN = "END-CALL";
-    public static final String BEFORE_EACH_TOKEN = "BEFORE EACH";
-    public static final String END_BEFORE_TOKEN = "END-BEFORE";
-    public static final String AFTER_EACH_TOKEN = "AFTER EACH";
-    public static final String END_AFTER_TOKEN = "END-AFTER";
     public static final String ZERO_TOKEN = "ZERO";
 
 

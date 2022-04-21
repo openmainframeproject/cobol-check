@@ -21,7 +21,7 @@ import java.util.List;
  * This class encapsulates information about a Cobol Check keyword.
  *
  * value = the value of the keyword as a string (note that some keywords have embedded spaces, like "TO BE")
- * validNextKey = list of keys in Keywords for tokens that may follow the current keyword in the test suite.
+ * validNextKeys = list of keys in Keywords for tokens that may follow the current keyword in the test suite.
  * keywordAction = special handling for this keyword, if any.
  *
  * @author Dave Nicolette (neopragma)
@@ -29,14 +29,14 @@ import java.util.List;
  */
 public class Keyword {
     private final String value;
-    private final List<String> validNextKey;
+    private final List<String> validNextKeys;
     private final KeywordAction keywordAction;
 
     public Keyword(String value,
-                   List<String> validNextKey,
+                   List<String> validNextKeys,
                    KeywordAction keywordAction) {
         this.value = value;
-        this.validNextKey = validNextKey;
+        this.validNextKeys = validNextKeys;
         this.keywordAction = keywordAction;
     }
 
@@ -44,8 +44,8 @@ public class Keyword {
         return value;
     }
 
-    public List<String> validNextKey() {
-        return validNextKey;
+    public List<String> getvalidNextKeys() {
+        return validNextKeys;
     }
 
     public KeywordAction keywordAction() {
