@@ -14,31 +14,19 @@ import java.util.List;
 public class PathHelper {
 
     private PathHelper() { }
-
-    /**
-     * Gets the path for the COBOL source directory (the COBOL input).
-     */
-    public static String getCobolSourceDirectory(){
-        StringBuilder cobolSourceInPath = new StringBuilder();
-        cobolSourceInPath.append(System.getProperty("user.dir"));
-        cobolSourceInPath.append(Constants.FILE_SEPARATOR);
-//        cobolSourceInPath.append(Config.getApplicationSourceDirectoryPathString());
-        if (!cobolSourceInPath.toString().endsWith(Constants.FILE_SEPARATOR)) {
-            cobolSourceInPath.append(Constants.FILE_SEPARATOR);
-        }
-        return cobolSourceInPath.toString();
-    }
-
     /**
      * Gets the path for the output file.
      */
     public static String getTestSourceOutPath(){
         StringBuilder testSourceOutPath = new StringBuilder();
-        testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
+        String configPath = Config.getGeneratedTestCodePath();
+        if (configPath.equals("." + Constants.FILE_SEPARATOR))
+            testSourceOutPath.append(new File(Constants.EMPTY_STRING).getAbsolutePath());
+        else
+            testSourceOutPath.append(new File(configPath).getAbsolutePath());
+
         testSourceOutPath.append(Constants.FILE_SEPARATOR);
-        testSourceOutPath.append(
-                Config.getString(Constants.TEST_PROGRAM_NAME_CONFIG_KEY,
-                        Constants.DEFAULT_TEST_PROGRAM_NAME));
+        testSourceOutPath.append(Config.getGeneratedTestFileName());
         return testSourceOutPath.toString();
     }
 

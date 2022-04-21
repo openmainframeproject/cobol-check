@@ -135,6 +135,20 @@ public class writerTest {
     }
 
     @Test
+    void it_formats_a_long_Cobol_line_by_having_the_new_line_in_a_space() throws IOException {
+        String originalText = "            MOVE 'HELLO' TO THIS-FIELD IN WS-THIS IN WS-THAT IN VERY-LONG-LONG-NAME IN " +
+                "THIS-FIELD IN AND-ALSO-THIS-FIELD IN GETTING-TIRED IN OF-ALL-THESE-HYPHENS";
+        String expectedLine1 = "           MOVE 'HELLO' TO THIS-FIELD IN WS-THIS IN WS-THAT IN                  ";
+        expectedLine1 += Constants.NEWLINE;
+        String expectedLine2 = "               VERY-LONG-LONG-NAME IN THIS-FIELD IN AND-ALSO-THIS-FIELD         ";
+        expectedLine2 += Constants.NEWLINE;
+        String expectedLine3 = "               IN GETTING-TIRED IN OF-ALL-THESE-HYPHENS                         ";
+        expectedLine3 += Constants.NEWLINE;
+        writerController.writeLine(originalText);
+        assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
+    }
+
+    @Test
     void it_formats_a_Cobol_line_and_comments_it_out_based_on_a_String_value() throws IOException {
         String originalText = "           OPEN INPUT INPUT-FILE";
         String expectedLine = StringHelper.fixedLength(commentOutLine(originalText));

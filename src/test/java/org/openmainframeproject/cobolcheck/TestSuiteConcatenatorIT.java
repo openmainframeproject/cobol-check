@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteConcatenator;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.services.Config;
@@ -21,11 +22,15 @@ public class TestSuiteConcatenatorIT {
     private TestSuiteConcatenator concat;
     private static final String pathToResults = "testsuites/concatenatedTestsuites";
 
+    @BeforeAll
+    public static void commonsSetup(){
+        Config.load();
+    }
+
     @Test
     public void it_concatenates_two_test_suite_files_specified_with_full_filenames() throws IOException {
         MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
-        mockedConfig.when(() -> Config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
-                Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH))
+        mockedConfig.when(() -> Config.getConcatenatedTestSuitesPath())
                 .thenReturn(pathToResults);
         StringBuilder expectedResult = new StringBuilder();
         String line;

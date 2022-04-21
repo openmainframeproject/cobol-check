@@ -27,7 +27,7 @@ public class PlatformLookupTest {
 
     @Test
     public void it_identifies_zos() {
-        assertEquals(Platform.ZOS, PlatformLookup.get("ZOSandotherstuff"));
+        assertEquals(Platform.ZOS, PlatformLookup.get("z/OSandotherstuff"));
     }
 
     @Test

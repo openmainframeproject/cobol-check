@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.features.argumentHandler;
 
+import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 
 public class ArgumentHandlerController {
@@ -11,6 +12,26 @@ public class ArgumentHandlerController {
     }
     public ArgumentHandlerController(String[] args, String optionsString){
         argumentHandler = new ArgumentHandler(args, optionsString);
+    }
+
+    public void loadSettingsFromArguments() {
+        //Load paths in program values
+        argumentHandler.loadArgProgramPaths();
+
+        //Overwrite settings from config file
+        if (isKeySet("generated-tests"))
+            Config.setGeneratedTestFileName(getKeyValue("generated-tests"));
+
+        if (isKeySet("all-tests")){
+            String newFileName = getKeyValue("all-tests");
+            String originalPath = Config.getConcatenatedTestSuitesPath();
+            int index = originalPath.lastIndexOf(Constants.FILE_SEPARATOR);
+            String newPath = originalPath.substring(0, index + 1) + newFileName;
+            Config.setConcatenatedTestSuitesPath(newPath);
+        }
+        if (isKeySet("error-log")){
+            //To be implemented
+        }
     }
 
     public boolean isKeySet(String key){

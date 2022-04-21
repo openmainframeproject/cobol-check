@@ -84,6 +84,7 @@ public class ArgumentHandlerTest {
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG1";
         ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-p", "PROG1", "-l", "err" },
                 optionSpec);
+        argumentHandler.loadArgProgramPaths();
         assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
@@ -93,6 +94,7 @@ public class ArgumentHandlerTest {
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG1";
         ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--programs", "PROG1", "-l", "err" },
                 optionSpec);
+        argumentHandler.loadArgProgramPaths();
         assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
@@ -105,6 +107,7 @@ public class ArgumentHandlerTest {
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
         ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-p", "PROG1", "PROG2", "-l", "err" },
                 optionSpec);
+        argumentHandler.loadArgProgramPaths();
         assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 
@@ -117,6 +120,7 @@ public class ArgumentHandlerTest {
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
         ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--programs", "PROG1", "PROG2", "-l", "err" },
                 optionSpec);
+        argumentHandler.loadArgProgramPaths();
         assertEquals(expected, argumentHandler.getValueFor("programs"));
     }
 

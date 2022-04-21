@@ -22,6 +22,7 @@ import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuitePar
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -39,6 +40,7 @@ public class Generator {
     private InterpreterController interpreter;
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
+    private boolean workingStorageHasEnded;
 
     List<String> matchingTestDirectories;
 
@@ -80,7 +82,10 @@ public class Generator {
             String testSourceOutPath = PrepareMergeController.getTestSourceOutPath();
             Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
 
+            workingStorageHasEnded = false;
+
             mergeTestSuite();
+            Log.info(Messages.get("INF012", programName));
 
             closeReadersAndWriters(programName);
         }
@@ -122,7 +127,7 @@ public class Generator {
      */
     private void processingBeforeEchoingSourceLineToOutput() throws IOException {
 
-        if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
+        if (!workingStorageHasEnded && interpreter.isCurrentLineEndingWorkingStorageSection()) {
             if (!testSuiteParserController.hasWorkingStorageTestCodeBeenInserted()) {
                 writerController.writeLine(testSuiteParserController.getWorkingStorageHeader());
 
@@ -131,6 +136,7 @@ public class Generator {
             }
             testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());
+            workingStorageHasEnded = true;
         }
     }
 

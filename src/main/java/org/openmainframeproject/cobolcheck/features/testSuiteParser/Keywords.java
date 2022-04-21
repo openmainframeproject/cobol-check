@@ -16,6 +16,7 @@ limitations under the License.
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.util.*;
 
@@ -139,6 +140,19 @@ public class Keywords {
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE));
+        keywordInfo.put(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                new Keyword(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                        Arrays.asList(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                Constants.TO_BE_KEYWORD,
+                                Constants.TO_EQUAL_KEYWORD,
+                                Constants.NOT_KEYWORD,
+                                Constants.EQUAL_SIGN_KEYWORD,
+                                Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_SIGN_KEYWORD,
+                                Constants.LESS_THAN_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD),
+                        KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                         Arrays.asList(Constants.EXPECT_KEYWORD,
@@ -148,7 +162,9 @@ public class Keywords {
                                 Constants.MOCK_KEYWORD,
                                 Constants.VERIFY_KEYWORD,
                                 Constants.BEFORE_EACH_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN_HYPHEN,
                                 Constants.AFTER_EACH_TOKEN,
+                                Constants.AFTER_EACH_TOKEN_HYPHEN,
                                 Constants.HAPPENED_KEYWORD,
                                 Constants.NEVER_HAPPENED_KEYWORD,
                                 Constants.USING_TOKEN),
@@ -193,6 +209,7 @@ public class Keywords {
         keywordInfo.put(Constants.END_BEFORE_TOKEN,
                 new Keyword(Constants.END_BEFORE_TOKEN,
                         Arrays.asList(Constants.AFTER_EACH_TOKEN,
+                                Constants.AFTER_EACH_TOKEN_HYPHEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD),
@@ -205,9 +222,19 @@ public class Keywords {
                 new Keyword(Constants.END_AFTER_TOKEN,
                         Arrays.asList(Constants.COBOL_TOKEN,
                                 Constants.BEFORE_EACH_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN_HYPHEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD),
+                        KeywordAction.NONE));
+        //TODO: Remove hyphen keyword option? Backwards compatibility
+        keywordInfo.put(Constants.BEFORE_EACH_TOKEN_HYPHEN,
+                new Keyword(Constants.BEFORE_EACH_TOKEN_HYPHEN,
+                        Arrays.asList(Constants.END_BEFORE_TOKEN),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.AFTER_EACH_TOKEN_HYPHEN,
+                new Keyword(Constants.AFTER_EACH_TOKEN_HYPHEN,
+                        Arrays.asList(Constants.END_AFTER_TOKEN),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.MOCK_KEYWORD,
                 new Keyword(Constants.MOCK_KEYWORD,
@@ -246,7 +273,6 @@ public class Keywords {
         keywordInfo.put(Constants.NEVER_HAPPENED_KEYWORD,
                 new Keyword(Constants.NEVER_HAPPENED_KEYWORD,
                         Arrays.asList(Constants.COBOL_TOKEN,
-                                Constants.BEFORE_EACH_TOKEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
@@ -260,7 +286,6 @@ public class Keywords {
         keywordInfo.put(Constants.ONCE_KEYWORD,
                 new Keyword(Constants.ONCE_KEYWORD,
                         Arrays.asList(Constants.COBOL_TOKEN,
-                                Constants.BEFORE_EACH_TOKEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
@@ -277,7 +302,6 @@ public class Keywords {
         keywordInfo.put(Constants.TIME_KEYWORD,
                 new Keyword(Constants.TIME_KEYWORD,
                         Arrays.asList(Constants.COBOL_TOKEN,
-                                Constants.BEFORE_EACH_TOKEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
@@ -286,7 +310,6 @@ public class Keywords {
         keywordInfo.put(Constants.TIMES_KEYWORD,
                 new Keyword(Constants.TIMES_KEYWORD,
                         Arrays.asList(Constants.COBOL_TOKEN,
-                                Constants.BEFORE_EACH_TOKEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
@@ -294,16 +317,20 @@ public class Keywords {
                         KeywordAction.NONE));
 
         //TODO: Add other types that can be mocked
-        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.CALL_TOKEN);
+        mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.PARA_TOKEN, Constants.CALL_TOKEN);
     }
 
 
 
     public static Keyword getKeywordFor(String key, boolean expectFieldName) {
         Keyword result = null;
-        if (key != null) {
+        if (key != null && ! key.isEmpty()) {
+            Log.debug("Key: " + key);
             if (key.startsWith("\"") || key.startsWith("'")) {
                 key = Constants.ALPHANUMERIC_LITERAL_KEYWORD;
+            }
+            if (key.startsWith("(")){
+                key = Constants.PARENTHESIS_ENCLOSED_KEYWORD;
             } else {
                 if (Character.isDigit(key.charAt(0))) {
                     boolean isNumeric = true;

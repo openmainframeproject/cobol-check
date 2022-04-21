@@ -22,7 +22,9 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FileNameMatcher;
+import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
@@ -100,21 +102,23 @@ public class TestSuiteConcatenator {
         }
 
         // concatenate matching test suite files into a single test input file for the Generator to consume
-        String concatenatedTestSuiteFileName =
-                Config.getString(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
-                        Constants.DEFAULT_CONCATENATED_TEST_SUITES_PATH);
-        FileWriter concatenatedTestSuitesWriter;
+        String concatenatedTestSuiteFileName = Config.getConcatenatedTestSuitesPath();
+        Writer concatenatedTestSuitesWriter = null;
         try {
-            concatenatedTestSuitesWriter = new FileWriter(concatenatedTestSuiteFileName);
+            File concattenatedTestSuiteFile = new File(concatenatedTestSuiteFileName);
+            if (concattenatedTestSuiteFile.exists())
+                concattenatedTestSuiteFile.delete();
+            concatenatedTestSuitesWriter = EncodingIO.getWriterWithCorrectEncoding(concatenatedTestSuiteFileName);
         } catch (IOException concatenatedTestSuitesException) {
             throw new ConcatenatedTestSuiteIOException(
                     Messages.get("ERR012", concatenatedTestSuiteFileName),
                     concatenatedTestSuitesException);
         }
+        FilePermission.setFilePermissionForAllUsers(concatenatedTestSuiteFileName, Config.getGeneratedFilesPermissionAll());
 
         try {
             for (String matchingFile : matchingFiles) {
-                BufferedReader testFileReader = new BufferedReader(new FileReader(matchingFile));
+                BufferedReader testFileReader = new BufferedReader(EncodingIO.getReaderWithCorrectEncoding(matchingFile));
                 String line = Constants.EMPTY_STRING;
                 concatenatedTestSuitesWriter.write(StringHelper.commentOutLine("From file: " + matchingFile) + Constants.NEWLINE);
                 while((line = testFileReader.readLine()) != null) {
@@ -130,9 +134,9 @@ public class TestSuiteConcatenator {
         }
 
         // return the concatenated test suite file as a Reader
-        FileReader testSuite = null;
+        Reader testSuite = null;
         try {
-            testSuite = new FileReader(concatenatedTestSuiteFileName);
+            testSuite = EncodingIO.getReaderWithCorrectEncoding(concatenatedTestSuiteFileName);
         } catch (IOException exceptionCreatingTestSuiteReader) {
             throw new PossibleInternalLogicErrorException(
                     Messages.get("ERR015"));

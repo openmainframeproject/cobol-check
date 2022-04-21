@@ -17,6 +17,9 @@ package org.openmainframeproject.cobolcheck.services;
 
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 
+import java.util.Arrays;
+import java.util.List;
+
 public final class Constants {
 
     private Constants() {
@@ -36,7 +39,7 @@ public final class Constants {
     public static final String COBOLCHECK_COPYBOOK_DIRECTORY = COBOLCHECK_PACKAGE_PATH + "/copybooks/";
 
     //Command line options
-    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:vh --long config-file:,log-level:,programs:,tests:,version,help";
+    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:g:a:e:vh --long config-file:,log-level:,programs:,tests:,generated-tests:,all-tests:,error-log:,version,help";
 
     // Frequently-used string values
     public static final String EMPTY_STRING = "";
@@ -66,6 +69,7 @@ public final class Constants {
     public static final String TO_EQUAL_KEYWORD = "TO EQUAL";
     public static final String NOT_KEYWORD = "NOT";
     public static final String ALPHANUMERIC_LITERAL_KEYWORD = "alphanumeric-literal";
+    public static final String PARENTHESIS_ENCLOSED_KEYWORD = "parenthesis-enclosed";
     public static final String NUMERIC_LITERAL_KEYWORD = "numeric-literal";
     public static final String COBOL_TOKEN = "cobol-token";
     public static final String BOOLEAN_VALUE = "boolean-value";
@@ -92,6 +96,11 @@ public final class Constants {
     public static final String END_BEFORE_TOKEN = "END-BEFORE";
     public static final String AFTER_EACH_TOKEN = "AFTER EACH";
     public static final String END_AFTER_TOKEN = "END-AFTER";
+    //BACKWARDS COMPATIBILITY TODO: remove values?
+    public static final String BEFORE_EACH_TOKEN_HYPHEN = "BEFORE-EACH";
+    public static final String AFTER_EACH_TOKEN_HYPHEN = "AFTER-EACH";
+    public static final String PARA_TOKEN = "PARA";
+    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL");
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
@@ -142,7 +151,6 @@ public final class Constants {
     public static final String END_PARAGRAPH_TOKEN = "END-PARAGRAPH";
     public static final String END_CALL_TOKEN = "END-CALL";
     public static final String ZERO_TOKEN = "ZERO";
-
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";
