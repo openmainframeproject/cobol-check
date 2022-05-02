@@ -52,7 +52,8 @@ public class KeywordsTest {
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
-                                Constants.BY_VALUE_TOKEN),
+                                Constants.BY_VALUE_TOKEN,
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
                         KeywordAction.FIELDNAME),
                 Arguments.of(Constants.NOT_KEYWORD, Constants.NOT_KEYWORD,
                         Arrays.asList(Constants.TO_BE_KEYWORD,
@@ -162,7 +163,8 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
-                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys());
+                Constants.VERIFY_KEYWORD,
+                Constants.PARENTHESIS_ENCLOSED_KEYWORD), keyword.getvalidNextKeys());
     }
 
     @Test

@@ -18,6 +18,10 @@ public class Mock {
     private int testCaseNumber;
     private int mockNumber;
 
+    private String testSuiteFileName;
+    private int declarationLineNumberInOriginalFile;
+    private int declarationIndexNumberInOriginalFile;
+
     public Mock(String testSuiteName, String testCaseName, int testSuiteNumber, int testCaseNumber, int mockNumber) {
         this.testSuiteName = testSuiteName;
         this.testCaseName = testCaseName;
@@ -128,6 +132,30 @@ public class Mock {
     }
 
     public void addArgument(String argument) {arguments.add(argument);}
+
+    public String getTestSuiteFileName() {
+        return testSuiteFileName;
+    }
+
+    public void setTestSuiteFileName(String testSuiteFileName) {
+        this.testSuiteFileName = testSuiteFileName;
+    }
+
+    public int getDeclarationLineNumberInOriginalFile() {
+        return declarationLineNumberInOriginalFile;
+    }
+
+    public void setDeclarationLineNumberInOriginalFile(int declarationLineNumberInOriginalFile) {
+        this.declarationLineNumberInOriginalFile = declarationLineNumberInOriginalFile;
+    }
+
+    public int getDeclarationIndexNumberInOriginalFile() {
+        return declarationIndexNumberInOriginalFile;
+    }
+
+    public void setDeclarationIndexNumberInOriginalFile(int declarationIndexNumberInOriginalFile) {
+        this.declarationIndexNumberInOriginalFile = declarationIndexNumberInOriginalFile;
+    }
 
     private String getArgumentText(){
         String combinedArgs = "";

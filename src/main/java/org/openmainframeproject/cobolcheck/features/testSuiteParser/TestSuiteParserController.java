@@ -7,7 +7,6 @@ import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
-import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,6 +21,8 @@ public class TestSuiteParserController {
     private BeforeAfterRepo beforeAfterRepo;
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
+
+    private TestSuiteErrorLog testSuiteErrorLog;
 
     //We parse the test suite early, in order to generate mocks.
     //Thus, we save the lines we get from parsing, to use them later.
@@ -49,7 +50,8 @@ public class TestSuiteParserController {
         testSuiteConcatenator = new TestSuiteConcatenator(testFileNames);
         mockRepository = new MockRepository();
         beforeAfterRepo = new BeforeAfterRepo();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
+        testSuiteErrorLog = new TestSuiteErrorLog();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getTestCodePrefix();
     }
@@ -59,7 +61,8 @@ public class TestSuiteParserController {
         testSuiteReader = reader;
         mockRepository = new MockRepository();
         beforeAfterRepo = new BeforeAfterRepo();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
+        testSuiteErrorLog = new TestSuiteErrorLog();
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
     }
@@ -256,11 +259,7 @@ public class TestSuiteParserController {
     }
 
     public void logUnusedMocks(){
-        for (Mock mock : mockRepository.getMocks()){
-            if (!mock.isUsed()){
-                Log.warn(Messages.get("WRN004", mock.getMockDescription()));
-            }
-        }
+        testSuiteErrorLog.logUnusedMocks(mockRepository.getMocks());
     }
 
     /**

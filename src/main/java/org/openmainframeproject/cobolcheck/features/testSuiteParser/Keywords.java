@@ -63,7 +63,8 @@ public class Keywords {
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
-                                Constants.BY_VALUE_TOKEN),
+                                Constants.BY_VALUE_TOKEN,
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NOT_KEYWORD,
                 new Keyword(Constants.NOT_KEYWORD,
@@ -151,7 +152,8 @@ public class Keywords {
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
-                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD),
+                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.COBOL_TOKEN),
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
@@ -191,7 +193,8 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
-                                Constants.VERIFY_KEYWORD),
+                                Constants.VERIFY_KEYWORD,
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.BOOLEAN_VALUE,
                 new Keyword(Constants.BOOLEAN_VALUE,

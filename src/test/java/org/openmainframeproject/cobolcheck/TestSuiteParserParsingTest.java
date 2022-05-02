@@ -49,7 +49,7 @@ public class TestSuiteParserParsingTest {
     void commonSetup() {
         mockRepository = new MockRepository();
         beforeAfterRepo = new BeforeAfterRepo();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, new TestSuiteErrorLog());
         mockedReader = Mockito.mock(BufferedReader.class);
         testSuiteParserController = new TestSuiteParserController(mockedReader);
         testSuite = new StringBuilder();

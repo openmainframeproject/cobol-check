@@ -30,7 +30,7 @@ public class ArgumentHandlerController {
             Config.setConcatenatedTestSuitesPath(newPath);
         }
         if (isKeySet("error-log")){
-            //To be implemented
+            Config.setTestSuiteParserErrorLogFileName(getKeyValue("error-log"));
         }
     }
 
