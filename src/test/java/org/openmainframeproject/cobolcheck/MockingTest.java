@@ -1,6 +1,5 @@
 package org.openmainframeproject.cobolcheck;
 
-import org.openmainframeproject.cobolcheck.exceptions.ComponentMockedTwiceInSameScopeException;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
 import org.openmainframeproject.cobolcheck.services.Config;
@@ -44,7 +43,7 @@ public class MockingTest {
     void commonSetup() {
         mockRepository = new MockRepository();
         beforeAfterRepo = new BeforeAfterRepo();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, new TestSuiteErrorLog());
         mockedReader = Mockito.mock(BufferedReader.class);
         testSuiteParserController = new TestSuiteParserController(mockedReader);
         cobolWriter = new CobolWriter(mockTestProgramSource);
@@ -906,78 +905,6 @@ public class MockingTest {
         List<String> actual = testSuiteParserController.generateMockCountInitializer();
 
         assertEquals(expected, actual);
-    }
-
-
-    @Test
-    public void it_throws_when_identical_mocks_are_in_same_global_scope() throws IOException {
-        String str1 = "       TESTSUITE \"Name of test suite\"";
-        String str2 = "       MOCK SECTION 000-START";
-        String str3 = "          MOVE \"global\" TO this";
-        String str4 = "          MOVE \"mock\" TO other";
-        String str5 = "       END-MOCK";
-        String str6 = "       MOCK SECTION 000-START";
-        String str7 = "          MOVE \"global\" TO this";
-        String str8 = "          MOVE \"mock\" TO other";
-        String str9 = "       END-MOCK";
-
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
-                str7, str8, str9, null);
-
-        String expectedMessage = "Mock for 000-START in testsuite: \"Name of test suite\", testcase: N/A" +
-                " already exists in this Global testsuite scope.";
-
-        Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
-                () -> testSuiteParserController.parseTestSuites(numericFields));
-        assertEquals(expectedMessage, ex.getMessage());
-    }
-
-    @Test
-    public void it_throws_when_identical_mocks_are_in_same_local_scope() throws IOException {
-        String str1 = "       TESTSUITE \"Name of test suite\"";
-        String str2 = "       TESTCASE \"Name of test case\"";
-        String str3 = "       MOCK SECTION 000-START";
-        String str4 = "          MOVE \"global\" TO this";
-        String str5 = "          MOVE \"mock\" TO other";
-        String str6 = "       END-MOCK";
-        String str7 = "       MOCK SECTION 000-START";
-        String str8 = "          MOVE \"global\" TO this";
-        String str9 = "          MOVE \"mock\" TO other";
-        String str10 = "       END-MOCK";
-
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
-                str7, str8, str9, str10, null);
-
-        String expectedMessage = "Mock for 000-START in testsuite: \"Name of test suite\", testcase: " +
-                "\"Name of test case\" already exists in this Local testcase scope.";
-
-        Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
-                () -> testSuiteParserController.parseTestSuites(numericFields));
-        assertEquals(expectedMessage, ex.getMessage());
-    }
-
-    @Test
-    public void it_throws_when_identical_call_mocks_are_in_same_local_scope() throws IOException {
-        String str1 = "       TESTSUITE \"Name of test suite\"";
-        String str2 = "       TESTCASE \"Name of test case\"";
-        String str3 = "       MOCK CALL 'prog1' USING V1, V2";
-        String str4 = "          MOVE \"global\" TO this";
-        String str5 = "          MOVE \"mock\" TO other";
-        String str6 = "       END-MOCK";
-        String str7 = "       MOCK CALL 'prog1' USING V1, V2";
-        String str8 = "          MOVE \"global\" TO this";
-        String str9 = "          MOVE \"mock\" TO other";
-        String str10 = "       END-MOCK";
-
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6,
-                str7, str8, str9, str10, null);
-
-        String expectedMessage = "Mock for 'prog1' in testsuite: \"Name of test suite\", testcase: " +
-                "\"Name of test case\" already exists with the given arguments in this Local testcase scope.";
-
-        Throwable ex = assertThrows(ComponentMockedTwiceInSameScopeException.class,
-                () -> testSuiteParserController.parseTestSuites(numericFields));
-        assertEquals(expectedMessage, ex.getMessage());
     }
 
 

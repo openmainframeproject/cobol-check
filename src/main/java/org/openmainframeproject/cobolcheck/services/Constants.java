@@ -39,7 +39,7 @@ public final class Constants {
     public static final String COBOLCHECK_COPYBOOK_DIRECTORY = COBOLCHECK_PACKAGE_PATH + "/copybooks/";
 
     //Command line options
-    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:g:a:vh --long config-file:,log-level:,programs:,tests:,generated-tests:,all-tests:,version,help";
+    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:g:a:e:vh --long config-file:,log-level:,programs:,tests:,generated-tests:,all-tests:,error-log:,version,help";
 
     // Frequently-used string values
     public static final String EMPTY_STRING = "";

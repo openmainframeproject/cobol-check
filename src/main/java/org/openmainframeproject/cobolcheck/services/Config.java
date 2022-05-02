@@ -42,6 +42,8 @@ public class Config {
     public static final String INJECT_START_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.start";
     public static final String INJECT_END_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.end";
     public static final String GENERATED_CODE_PATH = "cobolcheck.test.program.path";
+    public static final String TESTSUITEPARSER_ERROR_LOG_PATH = "testsuite.parser.error.log.path";
+    public static final String TESTSUITEPARSER_ERROR_LOG_NAME = "testsuite.parser.error.log.name";
     public static final String IO_ENCODING_LINUX_KEY = "cobolcheck.file.encoding.linux";
     public static final String IO_ENCODING_MACOSX_KEY = "cobolcheck.file.encoding.macosx";
     public static final String IO_ENCODING_WINDOWS_KEY = "cobolcheck.file.encoding.windows";
@@ -149,6 +151,23 @@ public class Config {
     public static String getGeneratedTestCodePath() {
         return StringHelper.adjustPathString(settings.getProperty(GENERATED_CODE_PATH,
                 Constants.CURRENT_DIRECTORY));
+    }
+
+    public static String getTestsuiteparserErrorLogPath() {
+        return StringHelper.adjustPathString(settings.getProperty(TESTSUITEPARSER_ERROR_LOG_PATH,
+                Constants.CURRENT_DIRECTORY));
+    }
+
+    private static String testSuiteParserErrorLogFileName = "";
+    public static String getTestsuiteparserErrorLogName() {
+        if (testSuiteParserErrorLogFileName.isEmpty())
+            return settings.getProperty(TESTSUITEPARSER_ERROR_LOG_NAME);
+        else
+            return testSuiteParserErrorLogFileName;
+    }
+
+    public static void setTestSuiteParserErrorLogFileName(String fileName) {
+        testSuiteParserErrorLogFileName = fileName;
     }
 
     public static String getGeneratedFilesPermissionAll() {

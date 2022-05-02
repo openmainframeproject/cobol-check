@@ -69,6 +69,18 @@ public class KeywordExtractorTest {
         assertEquals(2, tokens.size());
     }
 
+    @Test
+    public void it_handles_multiword_keywords() {
+        tokens = extractor.extractTokensFrom("TO BE BEFORE EACH NO MORE THAN TO WS-FIELDNAME BY CONTENT");
+        assertEquals("TO BE", tokens.get(0));
+        assertEquals("BEFORE EACH", tokens.get(1));
+        assertEquals("NO MORE THAN", tokens.get(2));
+        assertEquals("TO", tokens.get(3));
+        assertEquals("WS-FIELDNAME", tokens.get(4));
+        assertEquals("BY CONTENT", tokens.get(5));
+        assertEquals(6, tokens.size());
+    }
+
     @ParameterizedTest
     @MethodSource("numericLiteralProvider")
     public void it_handles_numeric_literals_in_various_positions_in_the_source_line(

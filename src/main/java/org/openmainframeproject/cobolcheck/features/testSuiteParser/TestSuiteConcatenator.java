@@ -21,6 +21,7 @@ import org.openmainframeproject.cobolcheck.exceptions.TestSuiteInputFileNotFound
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FileNameMatcher;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
@@ -119,6 +120,7 @@ public class TestSuiteConcatenator {
             for (String matchingFile : matchingFiles) {
                 BufferedReader testFileReader = new BufferedReader(EncodingIO.getReaderWithCorrectEncoding(matchingFile));
                 String line = Constants.EMPTY_STRING;
+                concatenatedTestSuitesWriter.write(StringHelper.commentOutLine("From file: " + matchingFile) + Constants.NEWLINE);
                 while((line = testFileReader.readLine()) != null) {
                     concatenatedTestSuitesWriter.write(line + Constants.NEWLINE);
                 }

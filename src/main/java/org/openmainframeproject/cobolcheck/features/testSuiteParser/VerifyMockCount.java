@@ -12,6 +12,10 @@ public class VerifyMockCount{
     private String type;
     private List<String> arguments;
 
+    private String testSuiteFileName;
+    private int declarationLineNumberInOriginalFile;
+    private int declarationIndexNumberInOriginalFile;
+
     public VerifyMockCount(){
         arguments = new ArrayList<>();
     }
@@ -53,6 +57,30 @@ public class VerifyMockCount{
     }
 
     public void setExpectedCount(String expectedCount) { this.expectedCount = expectedCount; }
+
+    public String getTestSuiteFileName() {
+        return testSuiteFileName;
+    }
+
+    public void setTestSuiteFileName(String testSuiteFileName) {
+        this.testSuiteFileName = testSuiteFileName;
+    }
+
+    public int getDeclarationLineNumberInOriginalFile() {
+        return declarationLineNumberInOriginalFile;
+    }
+
+    public void setDeclarationLineNumberInOriginalFile(int declarationLineNumberInOriginalFile) {
+        this.declarationLineNumberInOriginalFile = declarationLineNumberInOriginalFile;
+    }
+
+    public int getDeclarationIndexNumberInOriginalFile() {
+        return declarationIndexNumberInOriginalFile;
+    }
+
+    public void setDeclarationIndexNumberInOriginalFile(int declarationIndexNumberInOriginalFile) {
+        this.declarationIndexNumberInOriginalFile = declarationIndexNumberInOriginalFile;
+    }
 
     void expectExact(String expectedCount){
         this.expectedCount = expectedCount;

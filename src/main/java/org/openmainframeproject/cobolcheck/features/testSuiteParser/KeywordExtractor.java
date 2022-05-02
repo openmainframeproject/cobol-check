@@ -15,6 +15,7 @@ limitations under the License.
 */
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
+import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
 
@@ -117,10 +118,9 @@ public class KeywordExtractor implements TokenExtractor {
                                             && (endOfLookahead == sourceLine.length()
                                             || sourceLine.charAt(endOfLookahead) == SPACE)) {
                                         buffer.append(expectedToken);
-                                        tokenOffset += expectedToken.length();
+                                        tokenOffset += expectedToken.length() + 1;
                                         buffer.append(SPACE);
-                                        startOfLookahead = tokenOffset + 2;
-//                                        break;
+                                        startOfLookahead = tokenOffset + 1;
                                     }
                                 }
 

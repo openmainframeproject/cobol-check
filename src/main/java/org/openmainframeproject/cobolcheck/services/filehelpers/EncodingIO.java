@@ -31,7 +31,10 @@ public class EncodingIO {
     }
 
     public static Writer getWriterWithCorrectEncoding(String path) throws IOException {
-        OutputStream outputStream = new FileOutputStream(path);
+        return getWriterWithCorrectEncoding(path, false);
+    }
+    public static Writer getWriterWithCorrectEncoding(String path, boolean append) throws IOException {
+        OutputStream outputStream = new FileOutputStream(path, append);
         BufferedWriter bufferedWriter = null;
         String fileName = new File(path).getName();
         String charset = Config.getCharsetForPlatform(PlatformLookup.get());

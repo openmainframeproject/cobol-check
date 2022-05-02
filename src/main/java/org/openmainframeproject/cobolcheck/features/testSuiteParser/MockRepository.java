@@ -10,7 +10,6 @@ public class MockRepository {
     private List<Mock> mocks = new ArrayList<>();
 
     public void addMock(Mock mock){
-
         if (mockAlreadyExist(mock)){
             throw new ComponentMockedTwiceInSameScopeException("Mock for " + mock.getIdentifier() + " in " +
                     "testsuite: " + mock.getTestSuiteName() + ", testcase: " +

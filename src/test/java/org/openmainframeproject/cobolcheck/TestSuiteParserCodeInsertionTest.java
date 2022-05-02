@@ -1,12 +1,9 @@
 package org.openmainframeproject.cobolcheck;
 
-import org.openmainframeproject.cobolcheck.features.testSuiteParser.BeforeAfterRepo;
-import org.openmainframeproject.cobolcheck.features.testSuiteParser.MockRepository;
+import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
-import org.openmainframeproject.cobolcheck.features.testSuiteParser.KeywordExtractor;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
-import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParser;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
@@ -72,7 +69,7 @@ public class TestSuiteParserCodeInsertionTest {
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("           SET UT-EXPECTED-88-VALUE TO TRUE                                     ");
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("           IF UT-EXPECTED-88-VALUE                                              ");
+        BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("           IF   UT-EXPECTED-88-VALUE                                              ");
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append("               MOVE 'TRUE' TO UT-EXPECTED                                       ");
         BOOLEAN_88_LEVEL_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -244,7 +241,7 @@ public class TestSuiteParserCodeInsertionTest {
         mockedConfig = Mockito.mockStatic(Config.class);
         mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), new MockRepository(), new BeforeAfterRepo());
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), new MockRepository(), new BeforeAfterRepo(), new TestSuiteErrorLog());
     }
 
     @AfterEach

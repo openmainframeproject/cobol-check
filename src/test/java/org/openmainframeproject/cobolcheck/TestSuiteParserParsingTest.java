@@ -49,7 +49,7 @@ public class TestSuiteParserParsingTest {
     void commonSetup() {
         mockRepository = new MockRepository();
         beforeAfterRepo = new BeforeAfterRepo();
-        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo);
+        testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, new TestSuiteErrorLog());
         mockedReader = Mockito.mock(BufferedReader.class);
         testSuiteParserController = new TestSuiteParserController(mockedReader);
         testSuite = new StringBuilder();
@@ -127,32 +127,32 @@ public class TestSuiteParserParsingTest {
 
     @Test
     public void it_captures_a_simple_item_name_from_an_EXPECT() {
-        String expectedResult = "            WS-FIELDNAME";
+        String expectedResult = "MOVE WS-FIELDNAME TO UT-ACTUAL";
         testSuite.append("           EXPECT WS-FIELDNAME TO BE \"some value\"");
-        testSuiteParser.getParsedTestSuiteLines(
+        List<String> lines = testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
-        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+        assertEquals(expectedResult, lines.get(3).trim());
     }
 
     @Test
     public void it_captures_a_qualified_item_name_from_an_EXPECT() {
-        String expectedResult = "            WS-FIELDNAME OF WS-GROUP";
+        String expectedResult = "MOVE WS-FIELDNAME OF WS-GROUP TO UT-ACTUAL";
         testSuite.append("           EXPECT WS-FIELDNAME OF WS-GROUP TO BE \"some value\"");
-        testSuiteParser.getParsedTestSuiteLines(
+        List<String> lines = testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
-        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+        assertEquals(expectedResult, lines.get(3).trim());
     }
 
     @Test
     public void it_accepts_parenthesis_in_item_in_EXPECT() {
-        String expectedResult = "            TABLE-FIELD IN WS-FIELDS (2 3)";
+        String expectedResult = "MOVE TABLE-FIELD IN WS-FIELDS (2 3) TO UT-ACTUAL";
         testSuite.append("           EXPECT TABLE-FIELD IN WS-FIELDS (2 3) TO BE \"some value\"");
-        testSuiteParser.getParsedTestSuiteLines(
+        List<String> lines = testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
-        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+        assertEquals(expectedResult, lines.get(3).trim());
     }
 
     @Test

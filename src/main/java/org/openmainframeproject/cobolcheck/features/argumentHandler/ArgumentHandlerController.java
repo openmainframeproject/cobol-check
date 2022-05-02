@@ -29,6 +29,9 @@ public class ArgumentHandlerController {
             String newPath = originalPath.substring(0, index + 1) + newFileName;
             Config.setConcatenatedTestSuitesPath(newPath);
         }
+        if (isKeySet("error-log")){
+            Config.setTestSuiteParserErrorLogFileName(getKeyValue("error-log"));
+        }
     }
 
     public boolean isKeySet(String key){
