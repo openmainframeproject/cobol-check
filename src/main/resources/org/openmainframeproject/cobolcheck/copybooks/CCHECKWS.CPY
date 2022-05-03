@@ -61,9 +61,9 @@
            05  ==UT==TEST-CASE-NAME         PIC X(80)  VALUE SPACES.
            05  ==UT==TEST-CASE-NUMBER       PIC ZZ9.
            05  ==UT==RETCODE                PIC 9(4)   VALUE ZERO.
-           05  ==UT==TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.
-           05  ==UT==NUMBER-PASSED          PIC 9(4)   VALUE ZERO.
-           05  ==UT==NUMBER-FAILED          PIC 9(4)   VALUE ZERO.
+           05  ==UT==TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO COMP.
+           05  ==UT==NUMBER-PASSED          PIC 9(4)   VALUE ZERO COMP.
+           05  ==UT==NUMBER-FAILED          PIC 9(4)   VALUE ZERO COMP.
            05  ==UT==EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.
            05  ==UT==ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.
        01  ==UT==MOCKS.

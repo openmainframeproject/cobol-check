@@ -64,7 +64,8 @@ public class Keywords {
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                Constants.ENDMOCK_KEYWORD),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NOT_KEYWORD,
                 new Keyword(Constants.NOT_KEYWORD,
@@ -169,7 +170,8 @@ public class Keywords {
                                 Constants.AFTER_EACH_TOKEN_HYPHEN,
                                 Constants.HAPPENED_KEYWORD,
                                 Constants.NEVER_HAPPENED_KEYWORD,
-                                Constants.USING_TOKEN),
+                                Constants.USING_TOKEN,
+                                Constants.ENDMOCK_KEYWORD),
                         KeywordAction.FIELDNAME));
         keywordInfo.put(Constants.NUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.NUMERIC_LITERAL_KEYWORD,
@@ -193,6 +195,7 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
+                                Constants.ENDMOCK_KEYWORD,
                                 Constants.VERIFY_KEYWORD,
                                 Constants.PARENTHESIS_ENCLOSED_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
@@ -242,6 +245,19 @@ public class Keywords {
         keywordInfo.put(Constants.MOCK_KEYWORD,
                 new Keyword(Constants.MOCK_KEYWORD,
                         Arrays.asList(Constants.MOCK_TYPE),
+                        KeywordAction.NONE));
+        keywordInfo.put(Constants.ENDMOCK_KEYWORD,
+                new Keyword(Constants.ENDMOCK_KEYWORD,
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN,
+                                Constants.BEFORE_EACH_TOKEN_HYPHEN,
+                                Constants.AFTER_EACH_TOKEN,
+                                Constants.AFTER_EACH_TOKEN_HYPHEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.NONE));
 
         keywordInfo.put(Constants.MOCK_TYPE,

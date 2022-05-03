@@ -71,7 +71,7 @@ public class TestSuiteErrorLogTest {
     }
 
     @Test
-    public void it_catches_unexpected_keyword_inside_block() {
+    public void it_catches_unexpected_keyword_inside_mock_block() {
         testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
         testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
         testSuite.append("       MOCK SECTION 000-START"+ Constants.NEWLINE);
@@ -82,6 +82,28 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 4, index  8:" + Constants.NEWLINE;
         expectedResult += "Cannot have Cobol Check keyword <END-BEFORE> inside a MOCK block" + Constants.NEWLINE + Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_inside_before_each_block() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       BEFORE-EACH"+ Constants.NEWLINE);
+        testSuite.append("       VERIFY SECTION 000-START HAPPENED ONCE"+ Constants.NEWLINE);
+        testSuite.append("       END-BEFORE"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 4, index  8:" + Constants.NEWLINE;
+        expectedResult += "Cannot have Cobol Check keyword <VERIFY> inside a BEFORE EACH block" + Constants.NEWLINE + Constants.NEWLINE;
 
         assertThrows(TestSuiteSyntaxException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
@@ -156,6 +178,39 @@ public class TestSuiteErrorLogTest {
                     testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
                             numericFields);
                 });
+
+        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_detects_no_errros_with_mock_block_followed_by_before_each() {
+        testSuite.append("           TESTSUITE 'TEST'"+ Constants.NEWLINE);
+        testSuite.append("           MOCK SECTION INC-KALD-KISM567"+ Constants.NEWLINE);
+        testSuite.append("           DISPLAY 'INC-KALD-KISM567 MOCK'"+ Constants.NEWLINE);
+        testSuite.append("           SET STATU-OK IN RETURKODE-AREAL IN KISM567-PARM TO TRUE"+ Constants.NEWLINE);
+        testSuite.append("           END-MOCK"+ Constants.NEWLINE);
+        testSuite.append(""+ Constants.NEWLINE);
+        testSuite.append("           BEFORE-EACH"+ Constants.NEWLINE);
+        testSuite.append("           MOVE 0 TO BANKNR IN AARM503-PARM"+ Constants.NEWLINE);
+        testSuite.append("           END-BEFORE"+ Constants.NEWLINE);
+
+        String expectedResult = null;
+
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
+
+        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_detects_no_errros_on_a_stub() {
+        testSuite.append("           TESTSUITE 'TEST'"+ Constants.NEWLINE);
+        testSuite.append("           MOCK SECTION 000-START END-MOCK"+ Constants.NEWLINE);
+
+        String expectedResult = null;
+
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
         String actualResult = testSuiteErrorLog.getLastErrorMessage();
         assertEquals(expectedResult, actualResult);

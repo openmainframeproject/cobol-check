@@ -246,8 +246,8 @@ public class MockIT {
     private String expected1 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
                     "       01  UT-MOCKS-GENERATED.                                                  " + Constants.NEWLINE +
-                    "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-                    "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+                    "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+                    "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
                     "           05  UT-1-0-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
                     "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
                     "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
@@ -304,24 +304,24 @@ public class MockIT {
     private String expected2 =
             "       WORKING-STORAGE SECTION.                                                 " +      Constants.NEWLINE  +
             "       01  UT-MOCKS-GENERATED.                                                  " + Constants.NEWLINE +
-            "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-0-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
-            "           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-1-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
-            "           05  UT-1-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-2-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
-            "           05  UT-1-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-2-2-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 100-WELCOME\".                                 " + Constants.NEWLINE +
-            "           05  UT-1-2-3-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-2-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-2-3-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
             "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
@@ -520,28 +520,28 @@ public class MockIT {
     private String expected4 =
             "       WORKING-STORAGE SECTION.                                                 " +     Constants.NEWLINE +
             "       01  UT-MOCKS-GENERATED.                                                  " + Constants.NEWLINE +
-            "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-0-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 100-WELCOME\".                                 " + Constants.NEWLINE +
-            "           05  UT-1-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-0-2-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"CALL 'prog2'\".                                        " + Constants.NEWLINE +
-            "           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-1-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
-            "           05  UT-1-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-2-1-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 000-START\".                                   " + Constants.NEWLINE +
-            "           05  UT-1-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-2-2-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"CALL 'prog1'\".                                        " + Constants.NEWLINE +
-            "           05  UT-1-2-3-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
-            "           05  UT-1-2-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
+            "           05  UT-1-2-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             " + Constants.NEWLINE +
             "           05  UT-1-2-3-MOCK-NAME        PIC X(40)                              " + Constants.NEWLINE +
             "                   VALUE \"SECTION 200-GOODBYE\".                                 " + Constants.NEWLINE +
             "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +

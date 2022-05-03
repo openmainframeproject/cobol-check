@@ -70,9 +70,9 @@
            05  UT-TEST-CASE-NAME         PIC X(80)  VALUE SPACES.               
            05  UT-TEST-CASE-NUMBER       PIC ZZ9.                               
            05  UT-RETCODE                PIC 9(4)   VALUE ZERO.                 
-           05  UT-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO.                 
-           05  UT-NUMBER-PASSED          PIC 9(4)   VALUE ZERO.                 
-           05  UT-NUMBER-FAILED          PIC 9(4)   VALUE ZERO.                 
+           05  UT-TEST-CASE-COUNT        PIC 9(4)   VALUE ZERO COMP.            
+           05  UT-NUMBER-PASSED          PIC 9(4)   VALUE ZERO COMP.            
+           05  UT-NUMBER-FAILED          PIC 9(4)   VALUE ZERO COMP.            
            05  UT-EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.           
            05  UT-ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.           
        01  UT-MOCKS.                                                            
@@ -140,96 +140,96 @@
            05  TEMP              PIC X(80).                                     
                                                                                 
        01  UT-MOCKS-GENERATED.                                                  
-           05  UT-2-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-0-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-0-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-2-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-2-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-2-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-2-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-3-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-3-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-3-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-3-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-3-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-3-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-2-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-4-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-4-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-2-4-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-2-4-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-4-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-2-4-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-5-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-0-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG1'".                                        
-           05  UT-5-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-1-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG1'".                                        
-           05  UT-5-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-3-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL VALUE-2".                                        
-           05  UT-5-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-4-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG3'".                                        
-           05  UT-5-5-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-5-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-5-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-5-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-5-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG3'".                                        
-           05  UT-5-5-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-5-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-5-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-5-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-5-2-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 800-MAKE-CALL".                             
-           05  UT-5-6-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-5-6-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-5-6-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-6-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-5-6-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG1'".                                        
-           05  UT-6-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-0-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-6-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-0-2-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 300-CHANGE-1".                              
-           05  UT-6-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-2-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-6-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-3-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-6-3-2-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-3-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-3-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-3-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-3-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-6-3-3-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-3-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-3-3-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-3-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-3-3-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 500-SWITCH".                                
-           05  UT-6-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-4-1-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 500-SWITCH".                                
-           05  UT-6-5-1-MOCK-COUNT       PIC 9(02) VALUE ZERO.                  
-           05  UT-6-5-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO.                  
+           05  UT-6-5-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-5-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
            05  UT-6-5-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
        PROCEDURE DIVISION.                                                      
