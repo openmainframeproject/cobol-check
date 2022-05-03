@@ -53,7 +53,8 @@ public class KeywordsTest {
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                Constants.ENDMOCK_KEYWORD),
                         KeywordAction.FIELDNAME),
                 Arguments.of(Constants.NOT_KEYWORD, Constants.NOT_KEYWORD,
                         Arrays.asList(Constants.TO_BE_KEYWORD,
@@ -136,7 +137,8 @@ public class KeywordsTest {
                 Constants.AFTER_EACH_TOKEN_HYPHEN,
                 Constants.HAPPENED_KEYWORD,
                 Constants.NEVER_HAPPENED_KEYWORD,
-                Constants.USING_TOKEN), keyword.getvalidNextKeys());
+                Constants.USING_TOKEN,
+                Constants.ENDMOCK_KEYWORD), keyword.getvalidNextKeys());
     }
 
     @Test
@@ -163,6 +165,7 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
+                Constants.ENDMOCK_KEYWORD,
                 Constants.VERIFY_KEYWORD,
                 Constants.PARENTHESIS_ENCLOSED_KEYWORD), keyword.getvalidNextKeys());
     }

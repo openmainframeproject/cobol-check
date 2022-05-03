@@ -48,6 +48,8 @@ public class TestSuiteErrorLog {
 
     public String getLastErrorMessage(){ return lastErrorLogMessage; }
 
+    public String getLastKeywordValue() { return lastKeyword.value(); }
+
     public void checkExpectedTokenSyntax(Keyword currentKeyword, String currentFile, int lineNumber, int lineIndex){
         if (lastKeyword != null){
             String error = "";

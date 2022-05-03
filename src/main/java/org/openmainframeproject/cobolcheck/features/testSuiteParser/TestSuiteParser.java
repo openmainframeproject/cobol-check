@@ -238,8 +238,10 @@ public class TestSuiteParser {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
 
-            if (Constants.IGNORED_TOKENS.contains(testSuiteToken))
+            if (Constants.IGNORED_TOKENS.contains(testSuiteToken)){
+                testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
+            }
 
             boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier || (expectMockArguments && !expectUsing));
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);

@@ -3,6 +3,7 @@ package org.openmainframeproject.cobolcheck;
 import org.openmainframeproject.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
+import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
 import org.openmainframeproject.cobolcheck.services.Config;
@@ -382,14 +383,14 @@ public class TestSuiteParserParsingTest {
 
     @Test
     public void verify_can_attach_to_call_mock_with_no_arguments() {
-        testSuite.append("       TESTSUITE \"Name of test suite\"");
-        testSuite.append("       TESTCASE \"Name of test case\"");
-        testSuite.append("       MOCK CALL 'PROG1'");
-        testSuite.append("          MOVE \"something\" TO this");
-        testSuite.append("          MOVE \"something else\" TO other");
-        testSuite.append("       END-MOCK");
-        testSuite.append("       PERFORM 000-START");
-        testSuite.append("       VERIFY CALL 'PROG1' HAPPENED ONCE");
+        testSuite.append("       TESTSUITE \"Name of test suite\"" + Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'PROG1'"+ Constants.NEWLINE);
+        testSuite.append("          MOVE \"something\" TO this"+ Constants.NEWLINE);
+        testSuite.append("          MOVE \"something else\" TO other"+ Constants.NEWLINE);
+        testSuite.append("       END-MOCK"+ Constants.NEWLINE);
+        testSuite.append("       PERFORM 000-START"+ Constants.NEWLINE);
+        testSuite.append("       VERIFY CALL 'PROG1' HAPPENED ONCE"+ Constants.NEWLINE);
 
         List<String> expectedResult = new ArrayList<>();
         expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
