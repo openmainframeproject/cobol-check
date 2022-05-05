@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.Messages;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WriterController {
@@ -16,6 +17,12 @@ public class WriterController {
     public WriterController(CobolWriter cobolWriter){
         this.cobolWriter = cobolWriter;
     }
+
+    public void startStoringLines(){ cobolWriter.startStoringLines(); }
+
+    public void stopStoringLines() { cobolWriter.stopStoringLines(); }
+
+    public void releaseStoredLines() throws IOException { cobolWriter.releaseStoredLines(); }
 
     /**
      * Writes a line of cobol code to the test output file. If the given line is too

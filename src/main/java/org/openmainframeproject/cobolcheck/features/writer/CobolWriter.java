@@ -5,6 +5,7 @@ import org.openmainframeproject.cobolcheck.services.StringHelper;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CobolWriter {
@@ -12,6 +13,9 @@ public class CobolWriter {
     Writer writer;
     private boolean currentLineIsComment;
     private final int maxLineLength = 72;
+
+    private boolean storeLines = false;
+    private final List<String> storedLines = new ArrayList<>();
 
     public CobolWriter(Writer writer){
         this.writer = writer;
@@ -28,7 +32,10 @@ public class CobolWriter {
         line = StringHelper.removeTrailingSpaces(line);
         if (line.length() <= maxLineLength){
             line = StringHelper.fixedLength(line);
-            writer.write(line);
+            if (storeLines)
+                storedLines.add(line);
+            else
+                writer.write(line);
         }
         else {
             //We need to check if this line is to be commented out or if it is already a comment
@@ -36,6 +43,27 @@ public class CobolWriter {
             writeMultiLine(line, currentLineIsComment, false);
         }
         currentLineIsComment = false;
+    }
+
+    /**
+     * Puts the writer in a state, where lines will be stored for later user, rather than written,
+     * to the file.
+     */
+    public void startStoringLines(){
+        storeLines = true;
+    }
+
+    /**
+     * Puts the writer in a state, where lines will be stored for later user, rather than written,
+     * to the file.
+     */
+    public void stopStoringLines() {
+        storeLines = false;
+    }
+
+    public void releaseStoredLines() throws IOException {
+        writeLines(storedLines);
+        storedLines.clear();
     }
 
     /**

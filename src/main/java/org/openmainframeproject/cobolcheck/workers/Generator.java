@@ -119,9 +119,14 @@ public class Generator {
                 writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
                         interpreter.getFileSectionStatements()));
             }
+            writerController.startStoringLines();
+            workingStorageHasEnded = true;
+        }
+        if (interpreter.didLineJustEnter(Constants.PROCEDURE_DIVISION) && interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)){
+            writerController.stopStoringLines();
             testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());
-            workingStorageHasEnded = true;
+            writerController.releaseStoredLines();
         }
     }
 
@@ -148,7 +153,6 @@ public class Generator {
      */
     private void writeToSource(String sourceLine) throws IOException {
         if (interpreter.shouldCurrentLineBeParsed()) {
-
             if (interpreter.hasStatementBeenRead()){
                 if (interpreter.shouldCurrentStatementBeCommentedOut()){
                     writerController.writeCommentedLines(interpreter.getCurrentStatement());
