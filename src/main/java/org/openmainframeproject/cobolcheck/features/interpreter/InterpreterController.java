@@ -79,7 +79,10 @@ public class InterpreterController {
     }
 
     public boolean shouldCurrentLineBeParsed(){
-        return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
+        if (hasStatementBeenRead() && !getCurrentStatement().isEmpty())
+            return Interpreter.shouldLineBeParsed(reader.getCurrentStatement().get(0), reader.getState());
+        else
+            return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
     }
 
     public boolean shouldCurrentLineBeCommentedOut(){
@@ -188,6 +191,13 @@ public class InterpreterController {
         reader.updateState();
         updateLineRepository(line);
 
+        if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())){
+            reader.readTillEndOfStatement();
+//            if (!Interpreter.endsInPeriod(lines.get(lines.size() - 1))){
+//                reader.appendNextMeaningfulLineToCurrentLine();
+//            }
+        }
+
         if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)){
             updateDecimalPointIsComma(line);
         }
@@ -203,6 +213,15 @@ public class InterpreterController {
     }
 
     private void updateDecimalPointIsComma(CobolLine line) {
+        List<String> orderedDecimalIsCommaKeywords = Arrays.asList(Constants.DECIMAL_POINT_KEYWORD,
+                Constants.IS_TOKEN, Constants.COMMA_KEYWORD);
+
+        if (line.containsAllTokensInConsecutiveOrder(orderedDecimalIsCommaKeywords)){
+            Config.setDecimalPointIsComma(true);
+        }
+    }
+
+    private void updateReplaceStatement(CobolLine line) {
         List<String> orderedDecimalIsCommaKeywords = Arrays.asList(Constants.DECIMAL_POINT_KEYWORD,
                 Constants.IS_TOKEN, Constants.COMMA_KEYWORD);
 

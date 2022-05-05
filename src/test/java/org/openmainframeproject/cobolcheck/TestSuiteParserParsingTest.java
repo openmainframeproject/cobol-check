@@ -23,8 +23,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestSuiteParserParsingTest {
@@ -167,6 +166,20 @@ public class TestSuiteParserParsingTest {
         assertEquals(expectedLine, actual.get(2));
     }
 
+    @Test
+    public void it_generates_lines_correctly_for_empty_testcase_followed_by_testcase() {
+        testSuite.append("       TESTSUITE \"Name of test suite\"");
+        testSuite.append("       TESTCASE \"Name of test case\"");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       TESTCASE \"Name of test case1\"");
+        testSuite.append( "       PERFORM 000-START");
+        testSuite.append( "       EXPECT value-1 TO BE 'hi'");
+
+        List<String> actualResult = testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        assertTrue(!actualResult.contains("            \"Name of test case1\""));
+    }
 
 
     @Test

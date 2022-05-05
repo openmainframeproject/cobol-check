@@ -19,6 +19,7 @@
            Expect VALUE-1 to be "Hi"
            Expect VALUE-2 to be "Hello"
            VERIFY SECTION 000-START HAPPENED ONCE
+           VERIFY PARAGRAPH 300-CHANGE-1 HAPPENED ZERO TIMES
 
            TestCase "Local mock overwrites global mock"
            MOCK SECTION 000-START

@@ -309,6 +309,48 @@ public class InterpreterControllerTest {
     }
 
     @Test
+    public void it_lets_replace_statements_in_file_section_be_parsed() throws IOException {
+
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       FILE SECTION.";
+        String str3 = "               REPLACE ==TEST== BY ==test==";
+        String str4 = "                       ==TEST== BY ==test==";
+        String str5 = "               .";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        boolean foundReplace = false;
+        String line = "";
+        while ((line = interpreterController.interpretNextLine()) != null){
+            if (line != null && interpreterController.hasStatementBeenRead()){
+                foundReplace = true;
+                assertTrue(interpreterController.shouldCurrentLineBeParsed());
+                assertEquals(interpreterController.getCurrentStatement().get(0), str3);
+                assertEquals(interpreterController.getCurrentStatement().get(1), str4);
+                assertEquals(interpreterController.getCurrentStatement().get(2), str5);
+            }
+
+        }
+        assertTrue(foundReplace);
+    }
+
+    @Test
+    public void it_lets_replace_statements_in_file_section_be_parsed_with_period_inside_replace() throws IOException {
+
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       FILE SECTION.";
+        String str3 = "               REPLACE ==A.B== BY ==B.A==.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(interpreterController.shouldCurrentLineBeParsed());
+    }
+
+    @Test
     public void it_throws_when_token_list_has_fewer_than_2_entries() throws IOException {
         String str1 = "       FILE SECTION.";
         String str2 = "       FD  OUTPUT-FILE";
