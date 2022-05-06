@@ -90,4 +90,67 @@ public class StringHelperTest{
         String original = "src/main/cobol/";
         assertEquals(expected, StringHelper.adjustPathString(original));
     }
+
+    @Test
+    public void it_stubs_a_line_that_starts_with_spaces() {
+        String expected = "      *STUBCALL 'PROG1'.";
+        String original = "           CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "STUB"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_starts_with_spaces_short_stub_tag() {
+        String expected = "      *ST  CALL 'PROG1'.";
+        String original = "           CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "ST"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_starts_with_spaces_long_stub_tag() {
+        String expected = "      *STUBBEDVALUECALL 'PROG1'.";
+        String original = "           CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "STUBBEDVALUE"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_is_already_a_comment() {
+        String expected = "      *STUBCALL 'PROG1'.";
+        String original = "      *    CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "STUB"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_is_already_a_comment_short_stub_tag() {
+        String expected = "      *ST  CALL 'PROG1'.";
+        String original = "      *    CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "ST"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_is_already_a_comment_long_stub_tag() {
+        String expected = "      *STUBBEDVALUECALL 'PROG1'.";
+        String original = "      *    CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "STUBBEDVALUE"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_starts_without_spaces() {
+        String expected = "      *STUBCALL 'PROG1'.";
+        String original = "CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "STUB"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_starts_without_spaces_short_stub_tag() {
+        String expected = "      *STCALL 'PROG1'.";
+        String original = "CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "ST"));
+    }
+
+    @Test
+    public void it_stubs_a_line_that_starts_without_spaces_long_stub_tag() {
+        String expected = "      *STUBBEDVALUECALL 'PROG1'.";
+        String original = "CALL 'PROG1'.";
+        assertEquals(expected, StringHelper.stubLine(original, "STUBBEDVALUE"));
+    }
 }

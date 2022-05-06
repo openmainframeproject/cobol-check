@@ -19,6 +19,7 @@ public class CobolReader {
     private CobolLine currentLine;
     private List<CobolLine> nextLines;
     private List<CobolLine> currentStatement;
+    private int lineNumber;
 
     private String lineJustEneterd = null;
 
@@ -37,6 +38,7 @@ public class CobolReader {
 
     public String getLineJustEntered() { return lineJustEneterd; }
     boolean hasStatementBeenRead(){ return currentStatement != null; }
+    int getLineNumber() { return lineNumber; }
 
     /**
      * Reads the next line of the cobol file.
@@ -47,6 +49,7 @@ public class CobolReader {
      */
     CobolLine readLine() throws IOException {
         currentStatement = null;
+        lineNumber++;
         if (!nextLines.isEmpty()){
             prevoiusLine = currentLine;
             currentLine = nextLines.get(0);
@@ -109,8 +112,45 @@ public class CobolReader {
     }
 
     /**
+     * Appends the given String to the current line
+     *
+     * @param appendString - The string to append
+     * @return The line, with the given String appended
+     */
+    CobolLine appendToCurrentLine(String appendString){
+        currentLine = new CobolLine(currentLine.getOriginalString() + appendString, tokenExtractor);
+        return currentLine;
+    }
+
+    /**
+     * Turns the current read line into a read statement (if not already a statement).
+     * Adds the given line as the first statement line.
+     * @param line - The line to add
+     */
+    void addLineBeforeCurrentRead(String line){
+        if (currentStatement == null){
+            currentStatement = new ArrayList<>();
+            currentStatement.add(currentLine);
+        }
+        currentStatement.add(0, new CobolLine(line, tokenExtractor));
+    }
+
+    /**
+     * Turns the current read line into a read statement (if not already a statement).
+     * Adds the given line as the last statement line.
+     * @param line - The line to add
+     */
+    void addLineAfterCurrentRead(String line){
+        if (currentStatement == null){
+            currentStatement = new ArrayList<>();
+            currentStatement.add(currentLine);
+        }
+        currentStatement.add(new CobolLine(line, tokenExtractor));
+    }
+
+    /**
      * Peeks the next line of the cobol file that is meaningful - that is; a line that is
-     * not empty or a comment.
+     * not empty nor a comment.
      * Peeking does not alter the reader in any way, thus next time ReadLine() is called,
      * the returned line will not be any different from the one you would have gotten,
      * if you had not peeked.

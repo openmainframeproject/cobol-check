@@ -137,6 +137,7 @@ public final class Constants {
     public static final String END_CALL_TOKEN = "END-CALL";
     public static final String ZERO_TOKEN = "ZERO";
     public static final String REPLACE_TOKEN = "REPLACE";
+    public static final String CBL_TOKEN = "CBL";
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";

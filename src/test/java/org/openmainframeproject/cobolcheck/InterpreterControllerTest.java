@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck;
 
+import org.mockito.MockedStatic;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.services.Config;
@@ -103,6 +104,135 @@ public class InterpreterControllerTest {
 
         assertTrue(Config.isDecimalPointComma());
         assertFalse(interpreterController.isReading(Constants.SPECIAL_NAMES_PARAGRAPH));
+    }
+
+    @Test
+    public void it_sets_CBL_rules_on_first_line() throws IOException {
+        String str1 = "       IDENTIFICATION DIVISION.";
+
+        MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() -> Config.getAppendRulesAndOptions())
+                .thenReturn("OPT(0), RULES(LAXPERF)");
+
+        List<String> expected = new ArrayList<>();
+        expected.add("       CBL OPT(0), RULES(LAXPERF)");
+        expected.add("       IDENTIFICATION DIVISION.");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+
+        String line = "";
+        boolean assertHappened = false;
+        while ((line =interpreterController.interpretNextLine()) != null){
+            if (line != null){
+                assertHappened = true;
+                assertEquals(expected, interpreterController.getCurrentStatement());
+            }
+        }
+        mockedConfig.close();
+        assertTrue(assertHappened);
+    }
+
+    @Test
+    public void it_sets_CBL_rules_on_first_line_when_empty() throws IOException {
+        String str1 = "";
+        String str2 = "       IDENTIFICATION DIVISION.";
+
+        MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() -> Config.getAppendRulesAndOptions())
+                .thenReturn("OPT(0), RULES(LAXPERF)");
+
+        List<String> expected = new ArrayList<>();
+        expected.add("       CBL OPT(0), RULES(LAXPERF)");
+        expected.add("");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        String line = "";
+        boolean assertHappened = false;
+        while ((line =interpreterController.interpretNextLine()) != null){
+            if (line != null && line.isEmpty()){
+                assertHappened = true;
+                assertEquals(expected, interpreterController.getCurrentStatement());
+            }
+        }
+        mockedConfig.close();
+        assertTrue(assertHappened);
+    }
+
+    @Test
+    public void it_sets_CBL_rules_on_first_line_when_it_is_a_comment() throws IOException {
+        String str1 = "      * This is a comment";
+        String str2 = "       IDENTIFICATION DIVISION.";
+
+        MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() -> Config.getAppendRulesAndOptions())
+                .thenReturn("OPT(0), RULES(LAXPERF)");
+
+        List<String> expected = new ArrayList<>();
+        expected.add("       CBL OPT(0), RULES(LAXPERF)");
+        expected.add("      * This is a comment");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        String line = "";
+        boolean assertHappened = false;
+        while ((line =interpreterController.interpretNextLine()) != null){
+            if (line != null && line.equals(str1)){
+                assertHappened = true;
+                assertEquals(expected, interpreterController.getCurrentStatement());
+            }
+        }
+        mockedConfig.close();
+        assertTrue(assertHappened);
+    }
+
+    @Test
+    public void it_appends_CBL_rules_on_first_line_if_it_is_already_there() throws IOException {
+        String str1 = "       CBL OPT(1)";
+
+        MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() -> Config.getAppendRulesAndOptions())
+                .thenReturn("OPT(0), RULES(LAXPERF)");
+
+        String expected = "       CBL OPT(1), OPT(0), RULES(LAXPERF)";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+
+        String line = "";
+        boolean assertHappened = false;
+        while ((line =interpreterController.interpretNextLine()) != null){
+            if (line != null){
+                assertHappened = true;
+                assertEquals(expected, line);
+            }
+        }
+        mockedConfig.close();
+        assertTrue(assertHappened);
+    }
+
+    @Test
+    public void it_does_not_add_CBL_rules_on_first_line_if_null_is_given() throws IOException {
+        String str1 = "       IDENTIFICATION DIVISION.";
+
+        MockedStatic<Config> mockedConfig = Mockito.mockStatic(Config.class);
+        mockedConfig.when(() -> Config.getAppendRulesAndOptions())
+                .thenReturn(null);
+
+        String expected = "       IDENTIFICATION DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+
+        String line = "";
+        boolean assertHappened = false;
+        while ((line =interpreterController.interpretNextLine()) != null){
+            if (line != null){
+                assertHappened = true;
+                assertTrue(!interpreterController.hasStatementBeenRead());
+                assertEquals(expected, line);
+            }
+        }
+        mockedConfig.close();
+        assertTrue(assertHappened);
     }
 
     @Test

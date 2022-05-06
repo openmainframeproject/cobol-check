@@ -255,7 +255,7 @@ public class Interpreter {
      * @param state
      * @return true if the source line should be commented out
      */
-    public static boolean shouldLineBeCommentedOut(CobolLine line, State state){
+    public static boolean shouldLineBeStubbed(CobolLine line, State state){
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)){
             if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN))
             {

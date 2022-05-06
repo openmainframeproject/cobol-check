@@ -85,13 +85,13 @@ public class InterpreterController {
             return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
     }
 
-    public boolean shouldCurrentLineBeCommentedOut(){
-        return Interpreter.shouldLineBeCommentedOut(reader.getCurrentLine(), reader.getState());
+    public boolean shouldCurrentLineBeStubbed(){
+        return Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState());
     }
 
-    public boolean shouldCurrentStatementBeCommentedOut(){
+    public boolean shouldCurrentStatementBeStubbed(){
         for (CobolLine line : reader.getCurrentStatement()){
-            if (Interpreter.shouldLineBeCommentedOut(line, reader.getState())){
+            if (Interpreter.shouldLineBeStubbed(line, reader.getState())){
                 return true;
             }
         }
@@ -156,6 +156,10 @@ public class InterpreterController {
                 return null;
             }
 
+            if (reader.getLineNumber() == 1){
+                updateCBLOptions(line);
+            }
+
             if (Interpreter.isMeaningful(line)){
                 updateDependencies(line);
                 hasReadLine = true;
@@ -193,9 +197,6 @@ public class InterpreterController {
 
         if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())){
             reader.readTillEndOfStatement();
-//            if (!Interpreter.endsInPeriod(lines.get(lines.size() - 1))){
-//                reader.appendNextMeaningfulLineToCurrentLine();
-//            }
         }
 
         if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)){
@@ -416,6 +417,19 @@ public class InterpreterController {
                 lineRepository.addAccumulatedTokensFromCopyStatementToCopyTokens(line.getOriginalString());
             }
 
+        }
+    }
+
+    private void updateCBLOptions(CobolLine line){
+        String appendOptions = Config.getAppendRulesAndOptions();
+        if (appendOptions != null){
+            if (line.containsToken(Constants.CBL_TOKEN)){
+                line = reader.appendToCurrentLine(", " + appendOptions);
+            }
+            else {
+
+                reader.addLineBeforeCurrentRead("       " + Constants.CBL_TOKEN + " " + appendOptions);
+            }
         }
     }
 
