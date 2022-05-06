@@ -24,8 +24,10 @@ import java.util.Properties;
 public class Config {
 
     public static final String DECIMAL_POINT_IS_COMMA_CONFIG_KEY = "cobolcheck.decimalPointIsComma";
+    public static final String APPEND_RULES_AND_OPTIONS = "cobolcheck.append.rules";
     public static final String INJECT_START_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.start";
     public static final String INJECT_END_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.end";
+    public static final String STUB_COMMENT_TAG = "cobolcheck.stub.comment.tag";
     public static final String GENERATED_CODE_PATH = "cobolcheck.test.program.path";
     public static final String TESTSUITEPARSER_ERROR_LOG_PATH = "testsuite.parser.error.log.path";
     public static final String TESTSUITEPARSER_ERROR_LOG_NAME = "testsuite.parser.error.log.name";
@@ -128,6 +130,14 @@ public class Config {
         decimalPointIsComma = value;
     }
 
+    public static  String getAppendRulesAndOptions() {
+        String value = settings.getProperty(APPEND_RULES_AND_OPTIONS, "NULL");
+        if (value.trim().toUpperCase(Locale.ROOT).equals("NULL")){
+            return null;
+        }
+        return value;
+    }
+
     public static String getTestSuiteDirectoryPathString() {
         return StringHelper.adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,
                 Constants.CURRENT_DIRECTORY));
@@ -171,6 +181,14 @@ public class Config {
     public static String getInjectEndTag(){
         return StringHelper.adjustPathString(settings.getProperty(INJECT_END_TAG_CONFIG_KEY,
                 Constants.CURRENT_DIRECTORY));
+    }
+
+    public static String getStubTag() {
+        String value = settings.getProperty(STUB_COMMENT_TAG, "NULL");
+        if (value.trim().toUpperCase(Locale.ROOT).equals("NULL")){
+            return "";
+        }
+        return value;
     }
 
     public static String getTestResultFilePathString() {

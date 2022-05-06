@@ -349,7 +349,9 @@ public class Keywords {
                     if (isNumeric) {
                         key = Constants.NUMERIC_LITERAL_KEYWORD;
                     }
-                } else {
+                } else if (key.equals(Constants.ZERO_TOKEN)){
+                    key = Constants.NUMERIC_LITERAL_KEYWORD;
+                }else {
                     if (key.equals("TRUE") || key.equals("FALSE")) {
                         key = Constants.BOOLEAN_VALUE;
                     }

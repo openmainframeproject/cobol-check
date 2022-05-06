@@ -234,10 +234,16 @@ public class Interpreter {
         if (isTooShortToBeMeaningful(line) && line.tokensSize() > 0){
             return false;
         }
-        if (state.isFlagSetFor(Constants.FILE_SECTION)){
+        if (state.isFlagSetFor(Constants.FILE_SECTION) && ! (line.containsToken(Constants.FILE_SECTION))){
+            if (line.containsToken(Constants.REPLACE_TOKEN))
+                return true;
+
             return false;
         }
-        if (state.isFlagSetFor(Constants.FILE_CONTROL)){
+        if (state.isFlagSetFor(Constants.FILE_CONTROL)&& ! (line.containsToken(Constants.FILE_CONTROL))){
+            if (line.containsToken(Constants.REPLACE_TOKEN))
+                return true;
+
             return false;
         }
 
@@ -249,12 +255,25 @@ public class Interpreter {
      * @param state
      * @return true if the source line should be commented out
      */
-    public static boolean shouldLineBeCommentedOut(CobolLine line, State state){
+    public static boolean shouldLineBeStubbed(CobolLine line, State state){
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)){
             if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN))
             {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * @param line
+     * @param state
+     * @return true if the source line should be commented out
+     */
+    public static boolean shouldLineBeReadAsStatement(CobolLine line, State state){
+        if (state.isFlagSetFor(Constants.FILE_SECTION) || state.isFlagSetFor(Constants.FILE_CONTROL)){
+            if (line.containsToken(Constants.REPLACE_TOKEN))
+                return true;
         }
         return false;
     }

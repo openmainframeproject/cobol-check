@@ -152,6 +152,41 @@ public class StringHelper {
 
     }
 
+    public static String stubLine(String line, String stubTag){
+        if (stubTag == null || stubTag.isEmpty())
+            return commentOutLine(line);
+
+        int stubTagLength = stubTag.length();
+        if (line.startsWith("       ")){
+            int leadingSpaceIndex = getNumberOfLeadingSpaces(line.substring(Constants.COMMENT_SPACE_OFFSET));
+            if (stubTagLength <= leadingSpaceIndex)
+                return "      *" + stubTag + line.substring(Constants.COMMENT_SPACE_OFFSET + stubTagLength);
+            else
+                return "      *" + stubTag + line.substring(Constants.COMMENT_SPACE_OFFSET + leadingSpaceIndex);
+        }
+        if (line.startsWith("      *")){
+            int starIndex = line.indexOf('*');
+            int leadingSpaceIndex = getNumberOfLeadingSpaces(line.substring(starIndex + 1));
+            if (stubTagLength <= leadingSpaceIndex)
+                return line.substring(0, starIndex + 1) + stubTag + line.substring(starIndex + 1 + stubTagLength);
+            else
+                return line.substring(0, starIndex + 1) + stubTag + line.substring(starIndex + 1 + leadingSpaceIndex);
+        }
+        else {
+            return "      *" + stubTag + line;
+        }
+    }
+
+    public static int getNumberOfLeadingSpaces(String line){
+        char[] characters = line.toCharArray();
+        int index = 0;
+
+        while (characters[index] == ' '){
+            index++;
+        }
+        return index;
+    }
+
     /**
      * Enclose a value in quotation marks.
      *

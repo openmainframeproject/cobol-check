@@ -1,5 +1,8 @@
            TestSuite "General tests"
 
+           TestCase "No Expect or Verify"
+           PERFORM 100-WELCOME
+
            TestCase "Welcome section performs as intended"
            PERFORM 100-WELCOME
            Expect VALUE-1 to be "Hello"

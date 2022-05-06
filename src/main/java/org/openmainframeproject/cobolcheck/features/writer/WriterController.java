@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.Messages;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WriterController {
@@ -16,6 +17,22 @@ public class WriterController {
     public WriterController(CobolWriter cobolWriter){
         this.cobolWriter = cobolWriter;
     }
+
+    /**
+     * Puts the writer in a state, where lines will be stored for later use, rather than written,
+     * to the file.
+     */
+    public void startStoringLines(){ cobolWriter.startStoringLines(); }
+
+    /**
+     * Makes the writer write lines, instead of storing them.
+     */
+    public void stopStoringLines() { cobolWriter.stopStoringLines(); }
+
+    /**
+     * Writes all stored lines, and clears the stored lines.
+     */
+    public void releaseStoredLines() throws IOException { cobolWriter.releaseStoredLines(); }
 
     /**
      * Writes a line of cobol code to the test output file. If the given line is too
@@ -34,6 +51,15 @@ public class WriterController {
      * @throws IOException - pass any IOExceptions to the caller.
      */
     public void writeCommentedLine(String line) throws IOException { cobolWriter.writeCommentedLine(line); }
+
+    /**
+     * Writes an out-commented line with a stub-tag to the test output file. If the given line is too
+     * long for cobol to handle, it will be correctly split into multiple lines.
+     *
+     * @param line - line to be commented out and then written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    public void writeStubbedLine(String line) throws IOException { cobolWriter.writeStubbedLine(line); }
 
     /**
      * Writes all the given lines of cobol code to the test output file. If the any of the lines
@@ -55,6 +81,16 @@ public class WriterController {
     public void writeCommentedLines(List<String> lines) throws IOException {
         cobolWriter.writeCommentedLines(lines);
     }
+
+    /**
+     * Comments out and adds a stub-tag and writes all the given lines of cobol code to the test output file.
+     * If the any of the lines are too long for cobol to handle, it will be correctly
+     * split into multiple lines.
+     *
+     * @param lines - lines to be commented out, then written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    public void writeStubbedLines(List<String> lines) throws IOException { cobolWriter.writeStubbedLines(lines); }
 
     public void closeWriter(String programName) {
         try {

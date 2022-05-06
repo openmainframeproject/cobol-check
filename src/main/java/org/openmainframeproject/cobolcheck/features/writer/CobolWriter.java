@@ -1,10 +1,12 @@
 package org.openmainframeproject.cobolcheck.features.writer;
 
+import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CobolWriter {
@@ -13,8 +15,13 @@ public class CobolWriter {
     private boolean currentLineIsComment;
     private final int maxLineLength = 72;
 
+    private boolean storeLines = false;
+    private final List<String> storedLines = new ArrayList<>();
+    private final String stubTag;
+
     public CobolWriter(Writer writer){
         this.writer = writer;
+        stubTag = Config.getStubTag();
     }
 
     /**
@@ -28,7 +35,10 @@ public class CobolWriter {
         line = StringHelper.removeTrailingSpaces(line);
         if (line.length() <= maxLineLength){
             line = StringHelper.fixedLength(line);
-            writer.write(line);
+            if (storeLines)
+                storedLines.add(line);
+            else
+                writer.write(line);
         }
         else {
             //We need to check if this line is to be commented out or if it is already a comment
@@ -36,6 +46,29 @@ public class CobolWriter {
             writeMultiLine(line, currentLineIsComment, false);
         }
         currentLineIsComment = false;
+    }
+
+    /**
+     * Puts the writer in a state, where lines will be stored for later use, rather than written,
+     * to the file.
+     */
+    public void startStoringLines(){
+        storeLines = true;
+    }
+
+    /**
+     * Makes the writer write lines, instead of storing them.
+     */
+    public void stopStoringLines() {
+        storeLines = false;
+    }
+
+    /**
+     * Writes all stored lines, and clears the stored lines.
+     */
+    public void releaseStoredLines() throws IOException {
+        writeLines(storedLines);
+        storedLines.clear();
     }
 
     /**
@@ -48,6 +81,18 @@ public class CobolWriter {
     void writeCommentedLine(String line) throws IOException {
         currentLineIsComment = true;
         writeLine(StringHelper.commentOutLine(line));
+    }
+
+    /**
+     * Writes an out-commented line with a stub-tag to the test output file. If the given line is too
+     * long for cobol to handle, it will be correctly split into multiple lines.
+     *
+     * @param line - line to be commented out and then written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    void writeStubbedLine(String line) throws IOException {
+        currentLineIsComment = true;
+        writeLine(StringHelper.stubLine(line, stubTag));
     }
 
     void writeFormattedLine(String format, Object... args) throws IOException {
@@ -78,6 +123,20 @@ public class CobolWriter {
     void writeCommentedLines(List<String> lines) throws IOException {
         for (String line : lines){
             writeCommentedLine(line);
+        }
+    }
+
+    /**
+     * Comments out and adds a stub-tag and writes all the given lines of cobol code to the test output file.
+     * If the any of the lines are too long for cobol to handle, it will be correctly
+     * split into multiple lines.
+     *
+     * @param lines - lines to be commented out, then written
+     * @throws IOException - pass any IOExceptions to the caller.
+     */
+    void writeStubbedLines(List<String> lines) throws IOException {
+        for (String line : lines){
+            writeStubbedLine(line);
         }
     }
 

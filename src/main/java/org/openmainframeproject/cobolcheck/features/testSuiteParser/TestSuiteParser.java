@@ -624,12 +624,14 @@ public class TestSuiteParser {
                     testCaseNumber = 0;
                     mockNumber = 0;
                     nextAction = KeywordAction.NONE;
+                    cobolStatementInProgress = false;
                     break;
                 case NEW_TESTCASE:
                     currentTestCaseName = testSuiteToken;
                     testCaseNumber += 1;
                     mockNumber = 0;
                     nextAction = KeywordAction.NONE;
+                    cobolStatementInProgress = false;
                     break;
             }
 
