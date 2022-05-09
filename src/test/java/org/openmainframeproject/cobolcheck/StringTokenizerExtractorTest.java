@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +49,112 @@ public class StringTokenizerExtractorTest {
     @Test
     public void when_the_line_contains_only_a_period_it_returns_an_empty_collection() {
         assertEquals(0, extractor.extractTokensFrom(Constants.PERIOD).size());
+    }
+
+    @Test
+    public void it_gets_a_simple_string_as_token() {
+        String line = "MOVE 'hello there' TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("'hello there'");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void it_gets_a_long_string_as_token() {
+        String line = "MOVE \"This is some kind of long string\" TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"This is some kind of long string\"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void end_of_token_can_start_string_start_of_token_can_end_string() {
+        String line = "MOVE\" This is some kind of long string \"TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\" This is some kind of long string \"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void only_the_starting_string_char_can_end_the_string_1() {
+        String line = "MOVE \"STRING' STRING\" TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"STRING' STRING\"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void only_the_starting_string_char_can_end_the_string_2() {
+        String line = "MOVE \"STRING ' STRING\" TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"STRING ' STRING\"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void only_the_starting_string_char_can_end_the_string_3() {
+        String line = "MOVE \"STRING 'STRING\" TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"STRING 'STRING\"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void only_the_starting_string_char_can_end_the_string_4() {
+        String line = "MOVE \"THIS WON'T AND CAN'T END THE STRING\" TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"THIS WON'T AND CAN'T END THE STRING\"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void strings_without_spaces_is_still_its_own_token() {
+        String line = "MOVE\"HI THERE\"TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"HI THERE\"");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
+    }
+
+    @Test
+    public void many_string_chars_with_varying_spaces() {
+        String line = "MOVE\"HI '''THERE'\"+'HEY\"YOU\"' +\"''''\"\"''''\"+' HI' TO VALUE-1";
+        List<String> expected = new ArrayList<>();
+        expected.add("MOVE");
+        expected.add("\"HI '''THERE'\"");
+        expected.add("+");
+        expected.add("'HEY\"YOU\"'");
+        expected.add("+");
+        expected.add("\"''''\"");
+        expected.add("\"''''\"");
+        expected.add("+");
+        expected.add("' HI'");
+        expected.add("TO");
+        expected.add("VALUE-1");
+        assertEquals(expected, extractor.extractTokensFrom(line));
     }
 
     @Test
