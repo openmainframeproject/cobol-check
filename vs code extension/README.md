@@ -2,14 +2,18 @@
 
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java.
 
-This package delivers the functionality of Cobol Check(not yet implemented) along with the Cobol unit test language(CUT). This is the language used to write unit tests for Cobol Check.
+This package delivers the functionality of Cobol Check along with the Cobol unit test language(CUT). This is the language used to write unit tests for Cobol Check.
 
-Currently the extension has the following features pertaining the the CUT langauge:
-1. Syntax highlighting
-2. Auto completion using snippets
-3. Error reporting of mismatched delimiters
+Currently the extension has the following features:
+1. Running tests based on current open file - Press button or run command [CobolCheck: Run]
+2. Configuring Cobol Check - Command [CobolCheck: Configure property] (Configuration info: https://github.com/openmainframeproject/cobol-check/wiki/Configuration-Settings)
+3. Resetting configuration to default values - Command [CobolCheck: Reset configurations to default]
+4. Syntax highlighting
+5. Auto completion using snippets
+6. Error reporting of mismatched delimiters
 
 ## Requirements
+Cobol Check requires a global installation of GnuCOBOL.
 
 The cobol-unit-test-syntax package references the COBOL grammar, defined in IBM Z Open Editor, for inline COBOL.
 Additionally, tab behavior is handled by referencing the custom tab function defined in aforementioned extension.

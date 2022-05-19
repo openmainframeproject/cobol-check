@@ -8,7 +8,7 @@
         "Snippets"
     ],
     "description": "Extension for running unit tests in Cobol",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "icon": "images/cobol-check-logo-small.png",
     "engines": {
         "vscode": "^1.46.0"
@@ -142,7 +142,7 @@
         "commands": [
             {
                 "command": "cobolcheck.run",
-                "title": "Run Cobol Check",
+                "title": "CobolCheck: Run",
                 "icon": {
                     "light": "images/run-light.svg",
                     "dark": "images/run-dark.svg"
@@ -150,11 +150,11 @@
             },
             {
                 "command": "cobolcheck.configure",
-                "title": "Configure Cobol Check"
+                "title": "CobolCheck: Configure property"
             },
             {
                 "command": "cobolcheck.reset.configuration",
-                "title": "Reset Cobol Check Configurations"
+                "title": "CobolCheck: Reset configurations to default"
             },
             {
                 "command": "zopeneditor.tab",
