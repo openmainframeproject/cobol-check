@@ -87,7 +87,7 @@ public class ArgumentHandlerTest {
     public void it_handles_option_p_followed_by_two_full_program_names() {
         String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG1"
-                + Constants.COLON
+                + "|"
                 + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
         ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "-p", "PROG1", "PROG2", "-l", "err" },
@@ -100,7 +100,7 @@ public class ArgumentHandlerTest {
     public void it_handles_option_programs_followed_by_two_full_program_names() {
         String expected = "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG1"
-                + Constants.COLON
+                + "|"
                 + "src" + Constants.FILE_SEPARATOR + "main" + Constants.FILE_SEPARATOR
                 + "cobol" + Constants.FILE_SEPARATOR + "PROG2";
         ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { "--programs", "PROG1", "PROG2", "-l", "err" },

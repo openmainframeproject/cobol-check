@@ -44,7 +44,7 @@ public class Initializer {
 
         argumentController.loadSettingsFromArguments();
         String programNames = argumentController.getKeyValue(Constants.PROGRAMS_OPTION);
-        statusController.setSourceProgramNames(programNames.split(Constants.COLON));
+        statusController.setSourceProgramNames(programNames.split("\\|"));
         statusController.setTestFileNames(argumentController.getKeyValue(Constants.TESTS_OPTION));
     }
 

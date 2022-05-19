@@ -71,7 +71,7 @@ public class IO_FileGetter {
      */
     static List<String> getMatchingTestDirectoriesForProgram(String programName){
         // all test suites are located under this directory
-        String testSuiteDirectory = Config.getTestSuiteDirectoryPathString();
+        String testSuiteDirectory = Config.getTestSourceDirectoryPathString();
         testSuiteDirectory = endWithFileSeparator(testSuiteDirectory);
 
         // Find test subdirectories that match program names

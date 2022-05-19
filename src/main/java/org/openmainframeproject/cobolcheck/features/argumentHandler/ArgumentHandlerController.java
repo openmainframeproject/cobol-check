@@ -15,9 +15,6 @@ public class ArgumentHandlerController {
     }
 
     public void loadSettingsFromArguments() {
-        //Load paths in program values
-        argumentHandler.loadArgProgramPaths();
-
         //Overwrite settings from config file
         if (isKeySet("generated-tests"))
             Config.setGeneratedTestFileName(getKeyValue("generated-tests"));
@@ -32,6 +29,12 @@ public class ArgumentHandlerController {
         if (isKeySet("error-log")){
             Config.setTestSuiteParserErrorLogFileName(getKeyValue("error-log"));
         }
+        if (isKeySet("source-context")){
+            Config.setSourceFolderContext(getKeyValue("source-context"));
+        }
+
+        //Load paths in program values
+        argumentHandler.loadArgProgramPaths();
     }
 
     public boolean isKeySet(String key){

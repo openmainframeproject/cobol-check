@@ -1,67 +1,78 @@
-import * as path from 'path';
+// The module 'vscode' contains the VS Code extensibility API
+// Import the module and reference it with the alias vscode in your code below
+
+//Include files ved byg/udgivelse?
+//Dele cut og Cobol Check extension op?
+//Klasser i typescript virker ikke?
+
+
+import * as vscode from 'vscode';
 import { workspace, ExtensionContext, window} from 'vscode';
+import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, setConfiguration } from './services/CobolCheckConfiguration';
+import { getCobolProgramPathForGivenContext, getFileName, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
 
-import {
-	LanguageClient,
-	LanguageClientOptions,
-	ServerOptions,
-	TransportKind,
-} from 'vscode-languageclient/node';
+import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
+import { ResultWebView } from './services/ResultWebView';
 
-import * as LOGGER from './utils/Logger'
+let configPath = 'Cobol-check/config.properties';
+let defaultConfigPath = 'Cobol-check/default.properties';
 
-let client: LanguageClient;
+let lastCurrentFile = null;
+let cutLanguageRunning = false;
 
 export function activate(context: ExtensionContext) {
-	// The server is implemented in node
-	let serverModule = context.asAbsolutePath(
-		path.join('server', 'out', 'server.js')
-	);
-	// The debug options for the server
-	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-	let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+	startCutLanguageClientServer(context);
 
-	// If the extension is launched in debug mode then the debug server options are used
-	// Otherwise the run options are used
-	let serverOptions: ServerOptions = {
-		run: { module: serverModule, transport: TransportKind.ipc },
-		debug: {
-			module: serverModule,
-			transport: TransportKind.ipc,
-			options: debugOptions
-		}
-	};
+	const provider = new ResultWebView(context.extensionUri);
 
-	// Options to control the language client
-	let clientOptions: LanguageClientOptions = {
-		// Register the server for cut documents
-		documentSelector: [{ scheme: 'file', language: 'cut' }],
-		synchronize: {
-			// Notify the server about file changes to '.clientrc files contained in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
-		},
-		outputChannel: window.createOutputChannel('Cut Language Extension'),
-	};
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(ResultWebView.viewType, provider));
 
-	// Create the language client and start the client.
-	client = new LanguageClient(
-		'cut',
-		'CUT',
-		serverOptions,
-		clientOptions
-	);
+	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', () => {
+		//Setting loader
+		vscode.window.withProgress({location: vscode.ProgressLocation.Window, cancellable: false, title: 'Running tests'}, 
+		async (progress) => {
+			progress.report({  increment: 0 });
 
-	//Log information to a dedicated outputchannel
-	LOGGER.createLogger(clientOptions.outputChannel)
-	LOGGER.log('Starting Client', LOGGER.INFO)
-	
-	// Start the client. This will also launch the server
-	client.start();
+			//Getting program name based on current context
+			let programPath : string = getCobolProgramPathForGivenContext();
+			if (programPath === null) return;
+			let programName : string = getFileName(programPath, false);
+			//Getting the name of the source folder, to get the source path
+			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
+			let srcFolderContext : string = getSourceFolderContextPath(programPath, getRootFolder(applicationSourceDir));
+			if (srcFolderContext === null) return;
+			let argument : string = '-p ' + programName + ' -c ' + configPath + ' -s "' + srcFolderContext + '"'
+			//Running Cobol Check
+			let output = await runCobolCheck(argument)
+			provider.showTestResult(output);
+			progress.report({ increment: 100 });
+		});
+	});
+
+	let setConfiguration_Cmd = vscode.commands.registerCommand('cobolcheck.configure', () => {
+		getConfigurationMap(configPath, async (configMap) => {
+			const configKey = await vscode.window.showQuickPick(Array.from(configMap.keys()), {placeHolder: 'Pick a configuration'});
+			if (configKey === undefined) return;
+
+			const newValue = await vscode.window.showInputBox({placeHolder: 'New configuration value'})
+			if (newValue === undefined) return;
+
+			setConfiguration(configPath, configKey, newValue);
+		});
+	});
+
+	let resetConfigurations_Cmd = vscode.commands.registerCommand('cobolcheck.reset.configuration', () => {
+		resetConfigurations(configPath, defaultConfigPath);
+	});
+
+	context.subscriptions.push(runCobolCheck_Cmd);
+	context.subscriptions.push(setConfiguration_Cmd);
+	context.subscriptions.push(resetConfigurations_Cmd);
 }
 
-export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
-		return undefined;
-	}
-	return client.stop();
+export function deactivate() {
+	stopCutLanguageClientServer();
 }
+
+

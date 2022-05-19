@@ -6,6 +6,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +38,10 @@ public class ArgumentHandler {
      */
     public ArgumentHandler(String[] args, String optionsString) {
         options = new HashMap<>();
-        if (StringHelper.isEmptyArray(args)) return;
+        Log.debug("Running with arguments: " + Arrays.toString(args));
+        if (StringHelper.isEmptyArray(args))
+            return;
+
         storeOptionSettings(optionsString);
         processCommandLineArgumentArray(args);
     }
@@ -145,7 +149,7 @@ public class ArgumentHandler {
                 for (String program : programArgs.split(Constants.COLON)){
                     newValue += StringHelper.adjustPathString(applicationSourceDirectory +
                             Constants.FILE_SEPARATOR + program);
-                    newValue += Constants.COLON;
+                    newValue += "|";
                 }
                 options.get(optionKey).argumentValue = newValue.substring(0, newValue.length()-1);
             }

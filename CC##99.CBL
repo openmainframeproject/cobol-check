@@ -5,6 +5,7 @@
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
        INPUT-OUTPUT SECTION.                                                    
+       FILE-CONTROL.                                                            
        DATA DIVISION.                                                           
        WORKING-STORAGE SECTION.                                                 
       * CCHECKWS.CPY                                                            
@@ -509,6 +510,16 @@
            DISPLAY "General tests"                                              
            MOVE "General tests"                                                 
                TO UT-TEST-SUITE-NAME                                            
+      *-------- "No Expect or Verify"                                           
+           MOVE SPACES                                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE-EACH                                               
+           MOVE "No Expect or Verify"                                           
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-INITIALIZE-MOCK-COUNT                                     
+           MOVE SPACES                                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-AFTER-EACH                                                
       *-------- "Welcome section performs as intended"                          
            MOVE SPACES                                                          
                TO UT-TEST-CASE-NAME                                             
@@ -957,6 +968,13 @@
            MOVE UT-6-0-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES                       
            MOVE UT-6-0-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES                  
            MOVE UT-6-0-1-MOCK-NAME TO UT-MOCK-OPERATION                         
+           SET UT-VERIFY-EXACT TO TRUE                                          
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           PERFORM UT-ASSERT-ACCESSES                                           
+           MOVE ZERO TO UT-6-0-2-MOCK-EXPECTED                                  
+           MOVE UT-6-0-2-MOCK-COUNT TO UT-ACTUAL-ACCESSES                       
+           MOVE UT-6-0-2-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES                  
+           MOVE UT-6-0-2-MOCK-NAME TO UT-MOCK-OPERATION                         
            SET UT-VERIFY-EXACT TO TRUE                                          
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            PERFORM UT-ASSERT-ACCESSES                                           

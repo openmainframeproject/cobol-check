@@ -5,6 +5,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringTuple;
+import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -122,14 +123,7 @@ public class CopybookExpander {
     }
 
     private String getPathToCopybooks() {
-        StringBuilder directoryName = new StringBuilder();
-        directoryName.append(new File("./").getAbsolutePath());
-        directoryName.append(Constants.FILE_SEPARATOR);
-        directoryName.append(Config.getString("application.copybook.directory", "src/main/cobol/copy"));
-        if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
-            directoryName.append(Constants.FILE_SEPARATOR);
-        }
-        return directoryName.toString();
+        return PathHelper.endWithFileSeparator(Config.getCopyBookSourceDirectoryPathString());
     }
 
 }
