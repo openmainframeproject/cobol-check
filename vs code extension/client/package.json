@@ -3,7 +3,7 @@
 	"description": "Cobol-check extension to run cobol unit tests",
 	"author": "Open Mainframe Project",
 	"license": "MIT",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"publisher": "openmainframeproject",
 	"engines": {
 		"vscode": "^1.52.0"

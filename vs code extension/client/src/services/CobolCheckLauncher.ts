@@ -64,7 +64,7 @@ export function getCobolProgramPathForGivenContext() : string{
 		const programName = path.basename(path.dirname(currentFile))
 		for (let extension of cobolFileExtensions){
 			let programPath = findFile(programName + extension, workingDirectory);
-			if (programPath != null){
+			if (programPath !== null){
 				lastProgramPath = programPath;
 				return programPath;
 			}
@@ -84,9 +84,21 @@ export function getCobolProgramPathForGivenContext() : string{
 }
 
 export function getFileName(path : string, includeExtension : boolean) : string{
-	let programName : string = path.substring(path.lastIndexOf(getFileSeperatorForOS(currentPlatform))+1);
+	let programName : string = "";
+	let lastFileSeperatorIndex = path.lastIndexOf(getFileSeperatorForOS(currentPlatform));
+	if (lastFileSeperatorIndex !== -1){
+		programName = path.substring(lastFileSeperatorIndex + 1);
+	}else{
+		programName = path;
+	}
 	if (includeExtension) return programName;
-	return programName.substring(0, programName.indexOf('.'));
+
+	let fileExtensionIndex = programName.indexOf('.');
+	if (fileExtensionIndex !== -1){
+		return programName.substring(0, fileExtensionIndex);
+	} else{
+		return programName;
+	}
 }
 
 export function getSourceFolderContextPath(path : string, sourceFolderName : string) : string{
@@ -163,7 +175,7 @@ function findFile(name : String, path : string){
 		}
 		if (fs.lstatSync(file).isDirectory()){
 			let returned = findFile(name, file);
-			if (returned != null){
+			if (returned !== null){
 				return returned;
 			}
 		}

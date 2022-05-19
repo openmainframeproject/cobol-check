@@ -5,7 +5,11 @@ export function getConfigurationMap(configurationPath : string, callBack: (confi
 	const fs = require('fs');
 
 	fs.readFile(configurationPath, 'utf8', function(err, data) {
-		if(err) throw err;
+		if(err) {
+			vscode.window.showErrorMessage("Got an error while trying to read from Config file:\n " + err);
+			callBack(null);
+			return;
+		}
 
 		const arr = data.toString().replace(/\r\n/g,'\n').split('\n');
 		var configurations = new Map<string,string>();
@@ -29,7 +33,10 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 	const fs = require('fs');
 
 	fs.readFile(configurationPath, 'utf8', function(err, data) {
-		if(err) throw err;
+		if(err) {
+			vscode.window.showErrorMessage("Got an error while trying to read from Config file:\n " + err);
+			return;
+		}
 
 		const arr = data.toString().replace(/\r\n/g,'\n').split('\n');
 		var newConfigurationText = "";
@@ -55,7 +62,10 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 			vscode.window.showErrorMessage('Could not find key: ' + key + ' in config file: ' + configurationPath)
 		}
 		fs.writeFile(configurationPath, newConfigurationText, 'utf8', function (err) {
-			if (err) return console.log(err);
+			if(err) {
+				vscode.window.showErrorMessage("Got an error while trying to write to Config file:\n " + err);
+				return;
+			}
 		 });
 	});
 }
@@ -64,12 +74,18 @@ export function resetConfigurations(configurationPath : string, defaultConfigura
 	const fs = require('fs');
 
 	fs.readFile(defaultConfigurationPath, 'utf8', function(err, data) {
-		if(err) throw err;
+		if(err) {
+			vscode.window.showErrorMessage("Got an error while trying to read from Config file:\n " + err);
+			return;
+		}
 
 		const newConfigurationText = data.toString();
 
 		fs.writeFile(configurationPath, newConfigurationText, 'utf8', function (err) {
-			if (err) return console.log(err);
+			if(err) {
+				vscode.window.showErrorMessage("Got an error while trying to write to Config file:\n " + err);
+				return;
+			}
 		 });
 	});
 }
@@ -80,7 +96,10 @@ export function getConfigurationValueFor(configurationPath : string, key : strin
 	return new Promise(async resolve => {
 
 		fs.readFile(configurationPath, 'utf8', function(err, data) {
-			if(err) throw err;
+			if(err){
+				vscode.window.showErrorMessage("Got an error while trying to read from Config file:\n " + err);
+				resolve(null);
+			}
 	
 			const arr = data.toString().replace(/\r\n/g,'\n').split('\n');
 	
@@ -93,8 +112,6 @@ export function getConfigurationValueFor(configurationPath : string, key : strin
 						let _value = keyValue[1].trim();
 						if (_key === key){
 							resolve(_value);
-							// callBack(_value);
-							// return;
 						}
 					}
 				}

@@ -12,10 +12,14 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 - Added icon
 - Cleaned up some unnecessary files
 
-## [0.2.0] 04.03.2022
+## [0.2.0] 19.05.2022
 
 - Integrated Cobol Check into extension
 - Added Cobol Check view
 - Added command for running Cobol Check
 - Added command for configuring Cobol Check
 - Added command for resetting the configurations
+
+## [0.2.1] 19.05.2022
+
+- Added error handling and messages

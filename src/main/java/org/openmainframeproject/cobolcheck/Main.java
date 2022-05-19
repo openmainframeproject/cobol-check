@@ -3,7 +3,7 @@ package org.openmainframeproject.cobolcheck;
 import org.openmainframeproject.cobolcheck.workers.CobolTestRunner;
 import org.openmainframeproject.cobolcheck.workers.Generator;
 import org.openmainframeproject.cobolcheck.workers.Initializer;
-
+//The main class
 class Main {
 
 
