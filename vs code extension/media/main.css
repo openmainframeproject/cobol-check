@@ -1,0 +1,14 @@
+body {
+	background-color: transparent;
+}
+
+.normal-button {
+	display: block;
+	border: none;
+	margin: 50 auto;
+}
+
+.line-break-text {
+	white-space: pre;
+	margin: 10 auto;
+}

@@ -53,7 +53,7 @@ public class WindowsProcessLauncher implements ProcessLauncher {
             scriptDirectory += Constants.FILE_SEPARATOR;
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(scriptDirectory + scriptName, programName);
+        processBuilder.command(scriptDirectory + scriptName, "\"" + programName + "\"");
 
         Process process = null;
         StringBuilder processArguments = new StringBuilder();

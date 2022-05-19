@@ -2,6 +2,7 @@ package org.openmainframeproject.cobolcheck.services;
 
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
+import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
@@ -48,12 +49,15 @@ public class Config {
     public static final String APPLICATION_COPYBOOK_FILENAME_SUFFIX = "application.copybook.filename.suffix";
     public static final String NONE = "none";
     public static final String DEFAULT_CONFIG_FILE_PATH = "config.properties";
-    public static final String TEST_SUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
     public static final String TEST_RESULTS_FILE_CONFIG_KEY = "test.results.file";
     public static final String TEST_RESULTS_FORMAT_CONFIG_KEY = "test.results.format";
     public static final String TEST_RESULTS_FORMAT_STYLE_CONFIG_KEY = "test.results.format.style";
     public static final String APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY = "application.source.directory";
     public static final String DEFAULT_APPLICATION_SOURCE_DIRECTORY = "src/main/cobol";
+    public static final String COPY_SOURCE_DIRECTORY_CONFIG_KEY = "application.copybook.directory";
+    public static final String DEFAULT_COPY_SOURCE_DIRECTORY = "src/main/cobol/copy";
+    public static final String TESTSUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
+    public static final String DEFAULT_TESTSUITE_DIRECTORY = "src/test/cobol";
 
     private static Properties settings = null;
 
@@ -136,11 +140,6 @@ public class Config {
             return null;
         }
         return value;
-    }
-
-    public static String getTestSuiteDirectoryPathString() {
-        return StringHelper.adjustPathString(settings.getProperty(TEST_SUITE_DIRECTORY_CONFIG_KEY,
-                Constants.CURRENT_DIRECTORY));
     }
 
     public static String getGeneratedTestCodePath() {
@@ -270,10 +269,39 @@ public class Config {
                 Constants.CURRENT_DIRECTORY));
         return Boolean.parseBoolean(value.trim());
     }
+    private static String sourceFolderContext = null;
+    public static void setSourceFolderContext(String keyValue) {
+        sourceFolderContext = keyValue;
+    }
 
     public static String getApplicationSourceDirectoryPathString() {
-        return StringHelper.adjustPathString(settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
-                DEFAULT_APPLICATION_SOURCE_DIRECTORY));
+        String pathString = settings.getProperty(APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY,
+                DEFAULT_APPLICATION_SOURCE_DIRECTORY);
+        if (sourceFolderContext != null){
+            pathString = PathHelper.endWithFileSeparator(sourceFolderContext) + pathString;
+            return StringHelper.adjustPathString(pathString);
+        }
+        return StringHelper.adjustPathString(pathString);
+    }
+
+    public static String getCopyBookSourceDirectoryPathString() {
+        String pathString = settings.getProperty(COPY_SOURCE_DIRECTORY_CONFIG_KEY,
+                DEFAULT_COPY_SOURCE_DIRECTORY);
+        if (sourceFolderContext != null){
+            pathString = PathHelper.endWithFileSeparator(sourceFolderContext) + pathString;
+            return StringHelper.adjustPathString(pathString);
+        }
+        return StringHelper.adjustPathString(pathString);
+    }
+
+    public static String getTestSourceDirectoryPathString() {
+        String pathString = settings.getProperty(TESTSUITE_DIRECTORY_CONFIG_KEY,
+                DEFAULT_TESTSUITE_DIRECTORY);
+        if (sourceFolderContext != null){
+            pathString = PathHelper.endWithFileSeparator(sourceFolderContext) + pathString;
+            return StringHelper.adjustPathString(pathString);
+        }
+        return StringHelper.adjustPathString(pathString);
     }
 
     public static List<String> getApplicationFilenameSuffixes() {

@@ -13,6 +13,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.StringTuple;
+import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class CopybookExpanderIT {
     @BeforeAll
     public static void oneTimeSetup() {
         Config.load("testconfig.properties");
-        pathToTestCobolCopybooks = getPathFor("application.copybook.directory", "src/main/cobol/copy");
+        pathToTestCobolCopybooks = PathHelper.endWithFileSeparator(Config.getCopyBookSourceDirectoryPathString());
     }
 
     @BeforeEach
@@ -130,17 +131,6 @@ public class CopybookExpanderIT {
         String s = new String(readAllBytes(f.toPath()));
         String[] lines = s.split("\n");
         return removeTrailingSpacesFromLines(Arrays.asList(lines));
-    }
-
-    private static String getPathFor(String configPropertyName, String defaultValue) {
-        StringBuilder directoryName = new StringBuilder();
-        directoryName.append(new File("./").getAbsolutePath());
-        directoryName.append(Constants.FILE_SEPARATOR);
-        directoryName.append(Config.getString(configPropertyName, "src/main/cobol/copy"));
-        if (!directoryName.toString().endsWith(Constants.FILE_SEPARATOR)) {
-            directoryName.append(Constants.FILE_SEPARATOR);
-        }
-        return directoryName.toString();
     }
 
     //Needed as 'expected' and 'actual' have different trailing spaces, even

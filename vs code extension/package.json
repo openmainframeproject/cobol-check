@@ -14,10 +14,28 @@
         "vscode": "^1.46.0"
     },
     "activationEvents": [
-        "onLanguage:cut"
+        "onStartupFinished"
     ],
     "main": "./client/out/extension",
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "cobol-check",
+                    "title": "Cobol Check",
+                    "icon": "images/cobol-check-logo-white-small.png"
+                }
+            ]
+        },
+        "views": {
+            "cobol-check": [
+                {
+                    "type": "webview",
+                    "id": "cobolcheck-result",
+                    "name": "Results"
+                }
+            ]
+        },
         "languages": [
             {
                 "id": "cut",
@@ -123,6 +141,22 @@
         },
         "commands": [
             {
+                "command": "cobolcheck.run",
+                "title": "Run Cobol Check",
+                "icon": {
+                    "light": "images/run-light.svg",
+                    "dark": "images/run-dark.svg"
+                }
+            },
+            {
+                "command": "cobolcheck.configure",
+                "title": "Configure Cobol Check"
+            },
+            {
+                "command": "cobolcheck.reset.configuration",
+                "title": "Reset Cobol Check Configurations"
+            },
+            {
                 "command": "zopeneditor.tab",
                 "title": "%zopeneditor.tab%",
                 "comment": "TODO: Remove Open Editor tab dependency. Also in keybindings"
@@ -161,5 +195,8 @@
         "eslint": "^6.4.0",
         "mocha": "^8.1.1",
         "typescript": "^4.2.2"
+    },
+    "dependencies": {
+        "@types/vscode-webview": "^1.57.0"
     }
 }

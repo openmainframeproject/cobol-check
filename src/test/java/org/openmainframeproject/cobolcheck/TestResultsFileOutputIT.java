@@ -24,7 +24,7 @@ public class TestResultsFileOutputIT {
 
         launcherController = new LauncherController();
 
-        String testSuiteDirectoryPath = Config.getTestSuiteDirectoryPathString();
+        String testSuiteDirectoryPath = Config.getTestSourceDirectoryPathString();
     }
 
     @Test
