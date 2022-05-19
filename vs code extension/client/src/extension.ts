@@ -45,13 +45,17 @@ export function activate(context: ExtensionContext) {
 			let argument : string = '-p ' + programName + ' -c ' + configPath + ' -s "' + srcFolderContext + '"'
 			//Running Cobol Check
 			let output = await runCobolCheck(argument)
-			provider.showTestResult(output);
+			if (output !== null)
+				provider.showTestResult(output);
+			else
+				provider.showTestResult("Could not get any test results")
 			progress.report({ increment: 100 });
 		});
 	});
 
 	let setConfiguration_Cmd = vscode.commands.registerCommand('cobolcheck.configure', () => {
 		getConfigurationMap(configPath, async (configMap) => {
+			if (configMap === null) return;
 			const configKey = await vscode.window.showQuickPick(Array.from(configMap.keys()), {placeHolder: 'Pick a configuration'});
 			if (configKey === undefined) return;
 
