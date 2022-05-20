@@ -31,3 +31,7 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 ## [0.2.3] 20.05.2022
 
 - Removed ignore statement that prevented Cobol Check jar from being included in release
+
+## [0.2.4] 20.05.2022
+
+- Retrying to do what is specified for 0.2.3
