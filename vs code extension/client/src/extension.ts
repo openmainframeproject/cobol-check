@@ -9,13 +9,15 @@
 import * as vscode from 'vscode';
 import { workspace, ExtensionContext, window} from 'vscode';
 import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, setConfiguration } from './services/CobolCheckConfiguration';
-import { getCobolProgramPathForGivenContext, getFileName, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
+import { appendPath, getCobolProgramPathForGivenContext, getFileName, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
 
 import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
 import { ResultWebView } from './services/ResultWebView';
 
-let configPath = 'Cobol-check/config.properties';
-let defaultConfigPath = 'Cobol-check/default.properties';
+let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
+let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
+let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
+let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.1.0.jar');
 
 let lastCurrentFile = null;
 let cutLanguageRunning = false;
@@ -42,9 +44,10 @@ export function activate(context: ExtensionContext) {
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
 			let srcFolderContext : string = getSourceFolderContextPath(programPath, getRootFolder(applicationSourceDir));
 			if (srcFolderContext === null) return;
-			let argument : string = '-p ' + programName + ' -c ' + configPath + ' -s "' + srcFolderContext + '"'
+			let argument : string = '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
+				'-r "' + externalVsCodeInstallationDir + '"';
 			//Running Cobol Check
-			let output = await runCobolCheck(argument)
+			let output = await runCobolCheck(cobolCheckJarPath, argument)
 			if (output !== null)
 				provider.showTestResult(output);
 			else

@@ -58,6 +58,8 @@ public class Config {
     public static final String DEFAULT_COPY_SOURCE_DIRECTORY = "src/main/cobol/copy";
     public static final String TESTSUITE_DIRECTORY_CONFIG_KEY = "test.suite.directory";
     public static final String DEFAULT_TESTSUITE_DIRECTORY = "src/test/cobol";
+    public static final String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
+    public static final String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
 
     private static Properties settings = null;
 
@@ -104,6 +106,11 @@ public class Config {
 
     public static Locale getDefaultLocale() { return (Locale) settings.get(DEFAULT_LOCALE_CONFIG_KEY); }
 
+    static String runDirectory = null;
+    public static void setRunDirectory(String value) {
+        runDirectory = value;
+    }
+
     private static String testCodePrefix = "";
     public static String getTestCodePrefix() {
         if (testCodePrefix.isEmpty()){
@@ -143,13 +150,11 @@ public class Config {
     }
 
     public static String getGeneratedTestCodePath() {
-        return StringHelper.adjustPathString(settings.getProperty(GENERATED_CODE_PATH,
-                Constants.CURRENT_DIRECTORY));
+        return getCorrectRunContext(settings.getProperty(GENERATED_CODE_PATH, Constants.CURRENT_DIRECTORY));
     }
 
     public static String getTestsuiteparserErrorLogPath() {
-        return StringHelper.adjustPathString(settings.getProperty(TESTSUITEPARSER_ERROR_LOG_PATH,
-                Constants.CURRENT_DIRECTORY));
+        return getCorrectRunContext(settings.getProperty(TESTSUITEPARSER_ERROR_LOG_PATH, Constants.CURRENT_DIRECTORY));
     }
 
     private static String testSuiteParserErrorLogFileName = "";
@@ -192,7 +197,7 @@ public class Config {
 
     public static String getTestResultFilePathString() {
         String pathFromConfig = settings.getProperty(TEST_RESULTS_FILE_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
-        return StringHelper.adjustPathString(StringHelper.changeFileExtension(pathFromConfig, getTestResultFormat().name()));
+        return getCorrectRunContext(StringHelper.changeFileExtension(pathFromConfig, getTestResultFormat().name()));
     }
 
     static String generatedTestFileName = "";
@@ -210,10 +215,10 @@ public class Config {
     static String concatenatedTestSuitePath = "";
     public static String getConcatenatedTestSuitesPath(){
         if (concatenatedTestSuitePath.isEmpty()){
-            concatenatedTestSuitePath = StringHelper.adjustPathString(settings.getProperty(
-                    Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
+            concatenatedTestSuitePath = settings.getProperty(Constants.CONCATENATED_TEST_SUITES_CONFIG_KEY,
+                    Constants.CURRENT_DIRECTORY);
         }
-        return concatenatedTestSuitePath;
+        return getCorrectRunContext(concatenatedTestSuitePath);
     }
 
     public static void setConcatenatedTestSuitesPath(String keyValue)
@@ -265,8 +270,7 @@ public class Config {
     }
 
     public static boolean getRunGeneratedTest() {
-        String value = StringHelper.adjustPathString(settings.getProperty(RUN_GENERATED_TESTS,
-                Constants.CURRENT_DIRECTORY));
+        String value = settings.getProperty(RUN_GENERATED_TESTS, Constants.CURRENT_DIRECTORY);
         return Boolean.parseBoolean(value.trim());
     }
     private static String sourceFolderContext = null;
@@ -316,6 +320,11 @@ public class Config {
         return (List<String>) settings.get(RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
     }
 
+    public static String getScriptDirectory() {
+        return getCorrectRunContext(settings.getProperty(COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
+                DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY));
+    }
+
     private static void setCopybookFilenameSuffix() {
         resolveFilenameSuffixes(APPLICATION_COPYBOOK_FILENAME_SUFFIX, RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
     }
@@ -350,5 +359,15 @@ public class Config {
                     settings.getProperty(LOCALE_VARIANT_CONFIG_KEY));
         }
         settings.put(DEFAULT_LOCALE_CONFIG_KEY, locale);
+    }
+
+    private static String getCorrectRunContext(String path){
+        if (runDirectory != null){
+            if (path.startsWith(".") && path.length() > 0){
+                path = path.substring(1);
+            }
+            return StringHelper.adjustPathString(PathHelper.endWithFileSeparator(runDirectory) + path);
+        }
+        return StringHelper.adjustPathString(path);
     }
 }

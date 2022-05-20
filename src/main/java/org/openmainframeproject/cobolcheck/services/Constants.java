@@ -24,8 +24,8 @@ public final class Constants {
     public static final String COBOLCHECK_COPYBOOK_DIRECTORY = COBOLCHECK_PACKAGE_PATH + "/copybooks/";
 
     //Command line options
-    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:g:a:e:s:vh " +
-            "--long config-file:,log-level:,programs:,tests:,generated-tests:,all-tests:,error-log:,source-context:,version,help";
+    public static final String COMMAND_lINE_OPTIONS = "c:l:p:t:g:a:e:s:r:vh " +
+            "--long config-file:,log-level:,programs:,tests:,generated-tests:,all-tests:,error-log:,source-context:,run-directory:,version,help";
 
     // Frequently-used string values
     public static final String EMPTY_STRING = "";
@@ -93,8 +93,6 @@ public final class Constants {
     public static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
     public static final String TEST_PROGRAM_NAME_CONFIG_KEY = "cobolcheck.test.program.name";
     public static final String DEFAULT_TEST_PROGRAM_NAME = "CC$$99.CBL";
-    public static final String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
-    public static final String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
     public static final String PROCESS_CONFIG_KEY = ".process";
     public static final String COBOLCHECK_PREFIX_CONFIG_KEY = "cobolcheck.prefix";
     public static final String DEFAULT_COBOLCHECK_PREFIX = "UT-";
