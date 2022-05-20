@@ -23,3 +23,8 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 ## [0.2.1] 19.05.2022
 
 - Added error handling and messages
+
+## [0.2.2] 20.05.2022
+
+- Fixed bug where the path to Cobol Check would be incorrect
+

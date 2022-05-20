@@ -42,11 +42,10 @@ public class WindowsProcessLauncher implements ProcessLauncher {
             Log.error(Messages.get("ERR021", processConfigKey));
             throw new PossibleInternalLogicErrorException(Messages.get("ERR021", processConfigKey));
         }
-        String scriptDirectory = Config.getString(Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
-                Constants.DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY);
+        String scriptDirectory = Config.getScriptDirectory();
         if (StringHelper.isBlank(scriptDirectory)) {
-            Log.error(Messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
-            throw new PossibleInternalLogicErrorException(Messages.get("ERR022", Constants.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+            Log.error(Messages.get("ERR022", Config.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR022", Config.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
         }
 
         if (!scriptDirectory.endsWith(Constants.FILE_SEPARATOR)) {

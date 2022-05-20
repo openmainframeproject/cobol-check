@@ -4,6 +4,7 @@ import { integer } from 'vscode-languageclient';
 let cobolCheckJar_Windows = '@java -jar Cobol-check\\bin\\cobol-check-0.1.0.jar';
 let cobolCheckJar_Linux_Mac = 'java -jar Cobol-check/bin/cobol-check-0.1.0.jar $@';
 
+
 const windowsPlatform = 'Windows';
 const macPlatform = 'MacOS';
 const linuxPlatform = 'Linux';
@@ -12,14 +13,14 @@ let currentPlatform = getOS();
 
 let lastProgramPath : string = null;
 
-export async function runCobolCheck(commandLineArgs : string) : Promise<string> {
+export async function runCobolCheck(path : string, commandLineArgs : string) : Promise<string> {
 	return new Promise(async resolve => {
 		// Getting the right command based on platform
 		let executeJarCommand = '';
 		if (currentPlatform === windowsPlatform){
-			executeJarCommand = cobolCheckJar_Windows;
+			executeJarCommand = '@java -jar "' + path + '"';
 		}else if (currentPlatform === macPlatform || currentPlatform === linuxPlatform){
-			executeJarCommand = cobolCheckJar_Linux_Mac;
+			executeJarCommand = 'java -jar "' + path + '" $@';
 		} else{
 			vscode.window.showErrorMessage('Only Windows, Mac OS and Linux are supported for running Cobol Check. ' + 
 				'Your platform: ' + currentPlatform + ' is not supported');
@@ -130,6 +131,10 @@ export function getRootFolder(path : string){
 	else{
 		return path;
 	}
+}
+
+export function appendPath(path1 : string, path2 : string){
+	return adjustPath(path1) + getFileSeperatorForOS(currentPlatform) + adjustPath(path2);
 }
 
 function getOS() {

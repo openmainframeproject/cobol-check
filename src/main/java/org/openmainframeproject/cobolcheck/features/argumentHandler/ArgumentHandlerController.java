@@ -32,6 +32,9 @@ public class ArgumentHandlerController {
         if (isKeySet("source-context")){
             Config.setSourceFolderContext(getKeyValue("source-context"));
         }
+        if (isKeySet("run-directory")){
+            Config.setRunDirectory(getKeyValue("run-directory"));
+        }
 
         //Load paths in program values
         argumentHandler.loadArgProgramPaths();
