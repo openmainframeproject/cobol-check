@@ -65,7 +65,8 @@ buildNumber.properties
 ##############################
 ## Gradle
 ##############################
-bin/
+bin/*
+!bin/cobol-check-0.1.0.jar
 build/
 .gradle
 .gradletasknamecache
