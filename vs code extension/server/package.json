@@ -1,7 +1,7 @@
 {
 	"name": "cobol-check-extension-server",
 	"description": "Implementation of a cobol unit test language server in node.",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"author": "Bankdata",
 	"license": "MIT",
 	"engines": {

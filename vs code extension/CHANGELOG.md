@@ -28,3 +28,6 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 
 - Fixed bug where the path to Cobol Check would be incorrect
 
+## [0.2.3] 20.05.2022
+
+- Removed ignore statement that prevented Cobol Check jar from being included in release
