@@ -233,6 +233,8 @@ public class Config {
 
             case "XML":
                 return TestOutputFormat.xml;
+            case "HTML":
+                return TestOutputFormat.html;
             case "TXT":
             default:
                 return TestOutputFormat.txt;
@@ -260,9 +262,12 @@ public class Config {
         String style = StringHelper.adjustPathString(settings.getProperty(TEST_RESULTS_FORMAT_STYLE_CONFIG_KEY, Constants.CURRENT_DIRECTORY));
 
         switch (style.toUpperCase(Locale.ROOT)){
-
             case "JUNIT":
                 return DataTransferObjectStyle.JUnit;
+            case "TABLEDOCUMENT":
+                return DataTransferObjectStyle.tableDocument;
+            case "TABLEEMBED":
+                return DataTransferObjectStyle.tableEmbed;
             case "DIRECTOUTPUT":
             default:
                 return DataTransferObjectStyle.directOutput;
