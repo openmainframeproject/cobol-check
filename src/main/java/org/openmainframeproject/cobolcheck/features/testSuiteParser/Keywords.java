@@ -280,7 +280,8 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
-                                Constants.VERIFY_KEYWORD),
+                                Constants.VERIFY_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.HAPPENED_KEYWORD,
                 new Keyword(Constants.HAPPENED_KEYWORD,
@@ -293,7 +294,8 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
-                                Constants.VERIFY_KEYWORD),
+                                Constants.VERIFY_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.AT_LEAST_KEYWORD,
                 new Keyword(Constants.AT_LEAST_KEYWORD,
@@ -309,7 +311,8 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
-                                Constants.VERIFY_KEYWORD),
+                                Constants.VERIFY_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.NONE));
         keywordInfo.put(Constants.TIMES_KEYWORD,
                 new Keyword(Constants.TIMES_KEYWORD,
@@ -317,7 +320,8 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
-                                Constants.VERIFY_KEYWORD),
+                                Constants.VERIFY_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.NONE));
 
         //TODO: Add other types that can be mocked

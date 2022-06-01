@@ -47,11 +47,11 @@
            END-MOCK
            PERFORM 000-START
            PERFORM 000-START
-           Expect VALUE-1 to be "I'll leave VALUE-2 alone"
-           Expect VALUE-2 to be "a mock"
            VERIFY SECTION 000-START HAPPENED 5 TIMES
+           Expect VALUE-1 to be "I'll leave VALUE-2 alone"
            VERIFY SECTION 100-WELCOME HAPPENED NO MORE THAN 10 TIMES
            VERIFY PARAGRAPH 500-SWITCH NEVER HAPPENED
+           Expect VALUE-2 to be "a mock"
 
            TestCase "Empty local mock makes section do nothing"
            MOCK PARAGRAPH 500-SWITCH
