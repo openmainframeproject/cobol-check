@@ -46,7 +46,23 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 
 
      });
+}
 
+export function getResultOutput(path : string) : Promise<string>{
+	const fs = require('fs');
+
+	return new Promise(async resolve => {
+
+		fs.readFile(path, 'utf8', function(err, data) {
+			if(err){
+				vscode.window.showErrorMessage("Got an error while trying to read from test results file:\n " + err);
+				resolve(null);
+			}
+
+			resolve(data.toString());
+		});
+
+	 });
 }
 
 export function getCobolProgramPathForGivenContext() : string{

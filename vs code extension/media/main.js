@@ -15,7 +15,7 @@
         switch (message.type) {
             case 'test-result':
                 {
-					document.getElementById('test-result-paragraph').textContent = message.value;
+					// document.getElementById('test-result-paragraph').textContent = message.value;
                     break;
                 }
         }

@@ -80,7 +80,6 @@ export class ResultWebView implements vscode.WebviewViewProvider {
 				<ul class="color-list">
 				</ul>
 				<button class="normal-button" id="cobolcheck-run-button">Run tests</button>
-				<p class = "line-break-text" id = "test-result-paragraph"> No test results to show yet </p>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;

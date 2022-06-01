@@ -35,3 +35,8 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 ## [0.2.4] 20.05.2022
 
 - Retrying to do what is specified for 0.2.3
+
+## [0.2.5] 01.06.2022
+
+- Moved test results to its own WebViewPanel
+- Added html formatted test results

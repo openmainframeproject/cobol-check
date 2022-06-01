@@ -15,6 +15,10 @@ Currently the extension has the following features:
 ## Requirements
 Cobol Check requires a global installation of GnuCOBOL.
 
+In order to locate unit tests, Cobol Check looks for a folder with an identical name to that of the COBOL source program.
+Ex.: A program called 'COBTEST.cbl' exists in the workspace. For a test to reference that program it needs to be inside a folder called 'COBTEST'.
+Inside the folder COBTEST can be multiple .cut files. As these files are inside the folder, they all reference COBTEST.cbl.
+
 The cobol-unit-test-syntax package references the COBOL grammar, defined in IBM Z Open Editor, for inline COBOL.
 Additionally, tab behavior is handled by referencing the custom tab function defined in aforementioned extension.
 
