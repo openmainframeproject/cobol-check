@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.features.launcher;
 
+import org.openmainframeproject.cobolcheck.services.RunInfo;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.platform.Platform;
 
@@ -19,6 +20,7 @@ public class Launcher {
     int launchProgram(ProcessLauncher launcher, String programPath,
                       Consumer<Process> postLaunchAction) throws InterruptedException {
         if (launcher == null) return -1;
+        RunInfo.setGeneratedCobolSourcePath(programPath);
         Process process = launcher.run(programPath);
 
         postLaunchAction.accept(process);

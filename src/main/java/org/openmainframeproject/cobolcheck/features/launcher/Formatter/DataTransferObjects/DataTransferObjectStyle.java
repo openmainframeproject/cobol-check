@@ -2,5 +2,7 @@ package org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTran
 
 public enum DataTransferObjectStyle {
     directOutput,
+    tableDocument,
+    tableEmbed,
     JUnit
 }

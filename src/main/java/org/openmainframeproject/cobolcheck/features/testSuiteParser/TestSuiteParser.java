@@ -1,11 +1,8 @@
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.exceptions.*;
-import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.*;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
-import org.openmainframeproject.cobolcheck.services.Config;
-import org.openmainframeproject.cobolcheck.services.Constants;
-import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;
@@ -416,6 +413,7 @@ public class TestSuiteParser {
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
+                        RunInfo.addTestSuiteNameToPathMapKeyValuePair(currentTestSuiteName, currentTestSuiteRealFile);
                         addTestSuiteNamelines(currentTestSuiteName, parsedTestSuiteLines);
                         initializeCobolStatement();
                     }

@@ -6,5 +6,6 @@ package org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats;
  */
 public enum TestOutputFormat {
     txt,
-    xml
+    xml,
+    html
 }

@@ -1,8 +1,6 @@
 package org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats;
 
-import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObject;
-import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
-import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.JUnitDto;
+import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.*;
 import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
@@ -37,7 +35,7 @@ public abstract class Formatter {
      * Writes text in a specific format to a file. The format is written in the style of the Formatter's
      * DataTransferObject. This method is expected to be called after text has been parsed to the
      * DataTransferObject.
-     * @param path The name of the source program.
+     * @param path The path for the test results to be written.
      */
     public abstract String writeInFormat(String path) throws Exception;
 
@@ -135,6 +133,10 @@ public abstract class Formatter {
         switch (style){
             case JUnit:
                 return new JUnitDto();
+            case tableDocument:
+                return new TableDocumentDto();
+            case tableEmbed:
+                return new TableEmbedDto();
             default:
                 return new JUnitDto();
         }

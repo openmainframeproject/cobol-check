@@ -2,6 +2,7 @@ package org.openmainframeproject.cobolcheck.features.launcher;
 
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.Formatter;
+import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.HTMLFormat;
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.XMLFormat;
 import org.openmainframeproject.cobolcheck.services.Config;
@@ -20,6 +21,7 @@ public class ProcessOutputWriter {
     String processInput;
     String processError;
     XMLFormat xmlFormat;
+    HTMLFormat htmlFormat;
 
     public ProcessOutputWriter() {
         testResultsFilePath = Config.getTestResultFilePathString();
@@ -47,6 +49,11 @@ public class ProcessOutputWriter {
                 if (xmlFormat == null)
                     xmlFormat = new XMLFormat(style);
                 writeProcessOutputWithFormat(xmlFormat, programName, isLastRun);
+                break;
+            case html:
+                if (htmlFormat == null)
+                    htmlFormat = new HTMLFormat(style);
+                writeProcessOutputWithFormat(htmlFormat, programName, isLastRun);
                 break;
         }
         FilePermission.setFilePermissionForAllUsers(testResultsFilePath, Config.getGeneratedFilesPermissionAll());
@@ -116,6 +123,7 @@ public class ProcessOutputWriter {
                 formatter.writeInFormat(testResultsFilePath);
                 writeWasSuccesful = true;
             } catch (Exception e) {
+                Log.error(e.getMessage());
                 writeWasSuccesful = false;
             }
         }

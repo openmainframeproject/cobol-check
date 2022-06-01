@@ -36,14 +36,15 @@ public class JUnitDto extends DataTransferObject{
 
     @Override
     public void moveToNextTestSuite() {
-        super.moveToNextTestSuite();
+        testSuiteIndex++;
+        testCaseIndex = -1;
         getTestsuites().addTestSuite(new Testsuite());
         getTestsuites().getTestsuites().get(testSuiteIndex).setID(Integer.toString(testSuiteIndex));
     }
 
     @Override
     public void moveToNextTestCase() {
-        super.moveToNextTestCase();
+        testCaseIndex++;
         getTestsuites().getTestsuites().get(testSuiteIndex).addTestCase(new Testcase());
     }
 
