@@ -9,7 +9,7 @@
 import * as vscode from 'vscode';
 import { workspace, ExtensionContext, window} from 'vscode';
 import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, setConfiguration } from './services/CobolCheckConfiguration';
-import { appendPath, getCobolProgramPathForGivenContext, getFileName, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
+import { appendPath, getCobolProgramPathForGivenContext, getFileName, getResultOutput, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
 
 import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
 import { ResultWebView } from './services/ResultWebView';
@@ -26,6 +26,7 @@ export function activate(context: ExtensionContext) {
 	startCutLanguageClientServer(context);
 
 	const provider = new ResultWebView(context.extensionUri);
+	let panel : vscode.WebviewPanel = null;
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ResultWebView.viewType, provider));
@@ -48,10 +49,25 @@ export function activate(context: ExtensionContext) {
 				'-r "' + externalVsCodeInstallationDir + '"';
 			//Running Cobol Check
 			let output = await runCobolCheck(cobolCheckJarPath, argument)
-			if (output !== null)
-				provider.showTestResult(output);
-			else
-				provider.showTestResult("Could not get any test results")
+
+			let testResultFile = appendPath(externalVsCodeInstallationDir, await getConfigurationValueFor(configPath, 'test.results.file'));
+			let htmlResult = await getResultOutput(testResultFile + '.html');
+			if (htmlResult !== null){
+				if (panel === null){
+					panel = vscode.window.createWebviewPanel(
+						'testResult', // Identifies the type of the webview. Used internally
+						'Test Results - ' + programName, // Title of the panel displayed to the user
+						vscode.ViewColumn.Two, // Editor column to show the new webview panel in.
+						{} // Webview options. More on these later.
+					);
+					panel.onDidDispose(() => {
+						panel = null;
+					})
+				}
+				panel.reveal(vscode.ViewColumn.Two);
+				panel.title = 'Test Results - ' + programName;
+				panel.webview.html = htmlResult;
+			}
 			progress.report({ increment: 100 });
 		});
 	});
