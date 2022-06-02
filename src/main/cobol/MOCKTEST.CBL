@@ -53,15 +53,21 @@
               EXIT PARAGRAPH
            END-EVALUATE.
 
-       400-CHANGE-2
+       400-CHANGE-2 SECTION
           .
            EVALUATE VALUE-2
            WHEN "Hi"
               MOVE "See you" TO VALUE-2
+              EXIT SECTION
            WHEN OTHER
               MOVE "Hi" TO VALUE-2
+              EXIT SECTION
            END-EVALUATE
           .
+
+       410-PLACEHOLDER SECTION.
+           CONTINUE
+           .
 
        500-SWITCH.
            MOVE VALUE-2 TO TEMP

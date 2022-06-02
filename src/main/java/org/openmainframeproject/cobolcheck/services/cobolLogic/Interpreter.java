@@ -20,10 +20,6 @@ public class Interpreter {
             "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
     );
 
-    private static final List<String> paragraphAndSectionEndingTokens = Arrays.asList(
-            Constants.EXIT_TOKEN, Constants.END_SECTION_TOKEN, Constants.END_PARAGRAPH_TOKEN
-    );
-
     // Used for handling source lines from copybooks that may not have the standard 80-byte length
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
@@ -174,19 +170,8 @@ public class Interpreter {
         if (currentLine == null || nextLine == null || lineFollowingNext == null)
             return true;
 
-        if (containsParagraphOrSectionEndingToken(currentLine))
-            return true;
-
         if (endsInPeriod(currentLine) || containsOnlyPeriod(currentLine)){
             return (isSectionHeader(nextLine, state) || isParagraphHeader(nextLine, lineFollowingNext, state));
-        }
-        return false;
-    }
-
-    public static boolean containsParagraphOrSectionEndingToken(CobolLine currentLine){
-        for (String keyword : paragraphAndSectionEndingTokens){
-            if (currentLine.containsToken(keyword))
-                return true;
         }
         return false;
     }

@@ -81,3 +81,10 @@
            PERFORM 300-CHANGE-1
            Expect VALUE-1 to be "MOCKED"
            Expect VALUE-2 to be "Hi"
+
+           TestCase "Mock with EXIT SECTION in source works"
+           MOCK SECTION 400-CHANGE-2
+                MOVE "Exit section is handled correctly" TO VALUE-1
+           END-MOCK
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "Exit section is handled correctly"
