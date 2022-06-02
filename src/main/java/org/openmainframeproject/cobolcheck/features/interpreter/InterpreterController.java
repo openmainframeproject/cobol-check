@@ -115,8 +115,6 @@ public class InterpreterController {
         if (Interpreter.containsOnlyPeriod(reader.getCurrentLine()))
             return true;
         else {
-            if (Interpreter.containsParagraphOrSectionEndingToken(reader.getCurrentLine()))
-                return true;
             if (Interpreter.endsInPeriod(reader.getCurrentLine())){
                     reader.putNextLine("           .");
                     return false;

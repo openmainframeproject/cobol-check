@@ -297,8 +297,8 @@ public class MockIT {
                     "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
                     "           WHEN OTHER                                                           " + Constants.NEWLINE +
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
-                    "            END-EVALUATE                                                        " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
+                    "            END-EVALUATE                                                        " + Constants.NEWLINE +
                     "           .                                                                   "  + Constants.NEWLINE;
 
     private String expected2 =
@@ -443,8 +443,9 @@ public class MockIT {
             "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
+            "           EXIT SECTION                                                         " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
@@ -670,8 +671,9 @@ public class MockIT {
             "                    PERFORM UT-1-2-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
+            "           EXIT SECTION                                                        " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
