@@ -70,7 +70,7 @@ public class TableEmbedDto extends DataTransferObject {
 
     private String formatGeneratedArtifacts(TestSuite testSuite){
         return "        <ul>\n" +
-                "            <li>COBOL source: <a href=\"" + testSuite.getProgramPath() + "\">" + testSuite.getProgramPath() + "\"</a></li>\n" +
+                "            <li>COBOL source: <a href=\"" + testSuite.getProgramPath() + "\">" + testSuite.getProgramPath() + "</a></li>\n" +
                 "            <li>Unittest source: <a href=\"" + testSuite.getPath() + "\">" + testSuite.getPath() + "</a></li>\n" +
                 "            <li>Config file: <a href=\"" + RunInfo.getConfigFilePath() + "\">" + RunInfo.getConfigFilePath() + "</a></li>\n" +
                 "            <li>Generated COBOL source: <a href=\"" + RunInfo.getGeneratedCobolSourcePath() + "\">" + RunInfo.getGeneratedCobolSourcePath() + "</a></li>\n" +

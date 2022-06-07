@@ -31,6 +31,9 @@ public class RunInfo {
     }
 
     public static void addTestSuiteNameToPathMapKeyValuePair(String testSuiteName, String path) {
+        //Remove ': ' at the beginning of string
+        if (path != null && path.length() > 2)
+            path = path.substring(2);
         testSuiteNameToPathMap.put(testSuiteName, path);
     }
 
@@ -49,7 +52,7 @@ public class RunInfo {
     public static void setGeneratedCobolSourcePath(String generatedCobolSourcePath) {
         RunInfo.generatedCobolSourcePath = generatedCobolSourcePath;
         if (generatedCobolSourcePath.contains(".")){
-            RunInfo.compiledProgramPath =  generatedCobolSourcePath.substring(0, generatedCobolSourcePath.indexOf("."));
+            RunInfo.compiledProgramPath =  generatedCobolSourcePath.substring(0, generatedCobolSourcePath.lastIndexOf("."));
         }
 
     }
