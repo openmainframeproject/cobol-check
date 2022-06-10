@@ -51,10 +51,12 @@
                88 ==UT==EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.
            05  FILLER                    PIC X     VALUE 'F'.
                88 ==UT==ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.
-           05  ==UT==EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.
-           05  ==UT==ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.
-           05  ==UT==EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.
-           05  ==UT==ACTUAL-ACCESSES-FMT    PIC Z,ZZ9.
+           05  ==UT==EXPECTED-ACCESSES      PIC 9(18) VALUE ZERO.
+           05  ==UT==ACTUAL-ACCESSES        PIC 9(18) VALUE ZERO.
+           05  ==UT==EXPECTED-ACCESSES-FMT  PIC ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9.
+           05  ==UT==ACTUAL-ACCESSES-FMT    PIC ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9.
+           05  ==UT==EXPECTED-ACCESSES-DISP PIC X(18).
+           05  ==UT==ACTUAL-ACCESSES-DISP   PIC X(18).
            05  ==UT==FAILED                 PIC X(11)  VALUE "**** FAIL: ".
            05  ==UT==PASSED                 PIC X(11)  VALUE "     PASS: ".
            05  ==UT==TEST-SUITE-NAME        PIC X(80)  VALUE SPACES.

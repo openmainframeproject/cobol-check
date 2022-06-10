@@ -34,7 +34,7 @@ public class TestSuiteParserController {
     private static final String procedureDivisionResultCopybookFilename = "CCHECKRESULTPD.CPY";
     private static final String procedureDivisionParagraphCopybookFilename = "CCHECKPARAGRAPHSPD.CPY";
 
-    private static final String[] copyBookTokensWithPeriodAsDecimalPoint = new String[]{"Z,ZZ9"};
+    private static final String[] copyBookTokensWithPeriodAsDecimalPoint = new String[]{"ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9"};
 
     private final String workingStorageHeader = ("       WORKING-STORAGE SECTION.");
 
@@ -254,6 +254,13 @@ public class TestSuiteParserController {
     public List<String> getEndEvaluateLine(){
         List<String> lines = new ArrayList<>();
         lines.add(mockGenerator.getEndEvaluateLine());
+        CobolGenerator.addStartAndEndTags(lines);
+        return lines;
+    }
+
+    public List<String> getContinueLine(){
+        List<String> lines = new ArrayList<>();
+        lines.add(mockGenerator.getContinueLine());
         CobolGenerator.addStartAndEndTags(lines);
         return lines;
     }

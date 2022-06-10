@@ -91,4 +91,16 @@ public class CobolLine {
         }
         return -1;
     }
+
+    /**
+     * Checks if this line ends with the specified string - not case-sensitive. The string
+     * has to be a single token.
+     *
+     * @param tokenValue - The string token, to look for.
+     *
+     * @return (boolean) true if this line ends with the token
+     */
+    public boolean endsWithToken(String tokenValue) {
+        return tokens.size() > 0 && tokens.get(tokensSize() - 1) == tokenValue.toUpperCase(Locale.ROOT);
+    }
 }

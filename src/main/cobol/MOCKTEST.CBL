@@ -24,7 +24,7 @@
            PERFORM 300-CHANGE-1
            PERFORM 400-CHANGE-2
            PERFORM 500-SWITCH
-           PERFORM 999-END
+           PERFORM 998-END
            EXIT SECTION.
 
        100-WELCOME SECTION
@@ -100,6 +100,31 @@
               VALUE-3
           CALL 'PROG3' USING VALUE-1.
 
-       999-END.
+       850-ONLY-CALL SECTION.
+           CALL 'PROG222' USING VALUE-1
+           .
+
+       851-PLACEHOLDER SECTION.
+           EXEC SQL
+               OPEN CRS-AFVPRIS
+
+               MOVE SOMETHING SQL STATEMENT YEAH!
+               EXIT SECTION
+               .
+               .
+      *comment
+           END-EXEC
+           .
+
+       998-END.
            GOBACK
            .
+
+       999-TEST SECTION.
+           CALL 'PROG111' USING VALUE-1
+           .
+      *    Fejlmelde sektionerne findes i:
+      *    COPY BDSDA2FK.
+      *
+      *<<< SLUT INCLUDE BDSDA29K
+      *

@@ -96,6 +96,7 @@ public class Generator {
 
                 processingAfterEchoingSourceLineToOutput();
             }
+            handleEndOfFile();
             testSuiteParserController.logUnusedMocks();
             testSuiteParserController.prepareNextParse();
         } catch (IOException ioEx) {
@@ -201,6 +202,14 @@ public class Generator {
                 if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
                     interpreter.setInsideSectionOrParagraphMockBody(true);
             }
+        }
+    }
+
+    private void handleEndOfFile() throws IOException {
+        if (interpreter.isInsideSectionOrParagraphMockBody()) {
+            interpreter.setInsideSectionOrParagraphMockBody(false);
+            writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
+            writerController.writeLine("           .");
         }
     }
 

@@ -242,12 +242,28 @@ public class Interpreter {
      */
     public static boolean shouldLineBeStubbed(CobolLine line, State state){
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)){
-            if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN))
+            if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN) ||
+                    line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN))
             {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * @param line
+     * @param state
+     * @return true if the source line should be commented out
+     */
+    public static String getStubEndToken(CobolLine line, State state){
+        if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)){
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN))
+            {
+                return Constants.END_EXEC_TOKEN;
+            }
+        }
+        return null;
     }
 
     /**
@@ -415,5 +431,17 @@ public class Interpreter {
      */
     public static boolean endsInPeriod(CobolLine line) {
         return line.getTrimmedString().endsWith(Constants.PERIOD);
+    }
+
+    /**
+     * Checks if the last of these lines is ending the current component (SECTION, CALL, etc.)
+     * This should be called from inside the component, as it only checks, if
+     * the trimmed line ends with a period
+     *
+     * @param lines - the lines to check
+     * @return true if the last line (trimmed) ends with a period
+     */
+    public static boolean endsInPeriod(List<CobolLine> lines) {
+        return lines.size() > 0 && lines.get(lines.size() - 1).getTrimmedString().endsWith(Constants.PERIOD);
     }
 }

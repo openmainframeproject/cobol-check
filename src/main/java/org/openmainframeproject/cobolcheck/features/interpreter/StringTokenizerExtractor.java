@@ -38,6 +38,7 @@ public class StringTokenizerExtractor implements TokenExtractor {
         expectedTokens.put("WORKING-STORAGE", Arrays.asList("SECTION"));
         expectedTokens.put("LOCAL-STORAGE", Arrays.asList("SECTION"));
         expectedTokens.put("BY", Arrays.asList("REFERENCE", "CONTENT", "VALUE"));
+        expectedTokens.put("EXEC", Arrays.asList("SQL", "CICS"));
     }
 
     /**

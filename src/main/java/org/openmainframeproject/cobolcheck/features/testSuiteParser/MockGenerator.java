@@ -13,6 +13,7 @@ public class MockGenerator {
     private final String testCaseIdentifier = "%sTEST-CASE-NAME";
     private final String performFormat = "                    PERFORM %s";
     private final String endEvaluateLine = "            END-EVALUATE";
+    private final String continueLine = "            CONTINUE";
 
     private final String countMockInitialWSHeader = "       01  %sMOCKS-GENERATED.";
     private final String initializeMockCountParagraphHeader = "       %sINITIALIZE-MOCK-COUNT.";
@@ -126,11 +127,15 @@ public class MockGenerator {
         return endEvaluateLine;
     }
 
+    String getContinueLine() {
+        return continueLine;
+    }
+
     private List<String> generateMockCountValues(List<Mock> mocks) {
         List<String> lines = new ArrayList<>();
         for (Mock mock : mocks){
-            lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(02) VALUE ZERO COMP.");
-            lines.add("           05  " + mock.getGeneratedMockCountExpectedIdentifier() + "    PIC 9(02) VALUE ZERO COMP.");
+            lines.add("           05  " + mock.getGeneratedMockCountIdentifier() + "       PIC 9(18) VALUE ZERO COMP.");
+            lines.add("           05  " + mock.getGeneratedMockCountExpectedIdentifier() + "    PIC 9(18) VALUE ZERO COMP.");
             lines.add("           05  " + mock.getGeneratedMockStringIdentifierName() + "        PIC X(40)");
             lines.add("                   VALUE \"" + mock.getMockDisplayString() + "\".");
         }
