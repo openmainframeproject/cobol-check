@@ -139,7 +139,12 @@ public class Keywords {
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
-                                Constants.COBOL_TOKEN),
+                                Constants.COBOL_TOKEN,
+                                Constants.TESTSUITE_KEYWORD,
+                                Constants.TESTCASE_KEYWORD,
+                                Constants.MOCK_KEYWORD,
+                                Constants.VERIFY_KEYWORD,
+                                Constants.EXPECT_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,

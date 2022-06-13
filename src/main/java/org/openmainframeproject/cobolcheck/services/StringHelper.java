@@ -178,6 +178,9 @@ public class StringHelper {
     }
 
     public static int getNumberOfLeadingSpaces(String line){
+        if (line.length() == 0)
+            return 0;
+
         char[] characters = line.toCharArray();
         int index = 0;
 

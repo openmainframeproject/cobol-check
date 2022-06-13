@@ -16,6 +16,7 @@ public class CobolReader {
     private TokenExtractor tokenExtractor;
 
     private CobolLine prevoiusLine;
+    private CobolLine prevoiusMeaningfulLine;
     private CobolLine currentLine;
     private List<CobolLine> nextLines;
     private List<CobolLine> currentStatement;
@@ -34,6 +35,7 @@ public class CobolReader {
     State getState() {return state; }
     CobolLine getCurrentLine() { return currentLine; }
     CobolLine getPrevoiusLine() { return prevoiusLine; }
+    CobolLine getPrevoiusMeaningfulLine() { return prevoiusMeaningfulLine; }
     List<CobolLine> getCurrentStatement(){ return currentStatement; }
 
     public String getLineJustEntered() { return lineJustEneterd; }
@@ -52,6 +54,7 @@ public class CobolReader {
         lineNumber++;
         if (!nextLines.isEmpty()){
             prevoiusLine = currentLine;
+            setPreviousMeaningfulLine();
             currentLine = nextLines.get(0);
             nextLines.remove(0);
             return  currentLine;
@@ -61,6 +64,7 @@ public class CobolReader {
             return null;
         }
         prevoiusLine = currentLine;
+        setPreviousMeaningfulLine();
         currentLine = new CobolLine(line, tokenExtractor);
         return currentLine;
     }
@@ -71,6 +75,11 @@ public class CobolReader {
             appendNextMeaningfulLineToCurrentLine();
         }
         return currentLine;
+    }
+
+    private void setPreviousMeaningfulLine(){
+        if (Interpreter.isMeaningful(currentLine))
+            prevoiusMeaningfulLine = currentLine;
     }
 
     /**
@@ -123,6 +132,21 @@ public class CobolReader {
     }
 
     /**
+     * Removes the last period from the current line
+     *
+     * @return The line, with the last period removed
+     */
+    CobolLine removePeriodFromCurrentLine(){
+        int indexOfLastPeriod = currentLine.getOriginalString().lastIndexOf('.');
+        if (indexOfLastPeriod < 0)
+            return currentLine;
+
+        currentLine = new CobolLine(currentLine.getOriginalString().substring(0, indexOfLastPeriod), tokenExtractor);
+        return currentLine;
+    }
+
+
+    /**
      * Turns the current read line into a read statement (if not already a statement).
      * Adds the given line as the first statement line.
      * @param line - The line to add
@@ -162,7 +186,11 @@ public class CobolReader {
      */
     CobolLine peekNextMeaningfulLine() throws IOException {
         if (!nextLines.isEmpty()){
-            return nextLines.get(nextLines.size() - 1);
+            for (int i = 1; i <= nextLines.size(); i++){
+                CobolLine currentLine = nextLines.get(nextLines.size() - i);
+                if (Interpreter.isMeaningful(currentLine))
+                    return currentLine;
+            }
         }
         while (true){
             String line = reader.readLine();
@@ -205,6 +233,38 @@ public class CobolReader {
             readLine();
             if (currentLine == null){
                 throw new PossibleInternalLogicErrorException("File ends mid-statement");
+            }
+            statementLines.add(currentLine);
+            peekNextMeaningfulLine();
+        }
+        currentStatement = statementLines;
+        return statementLines;
+    }
+
+    /**
+     * Reads lines from the current line, until a specific token is hit. This will forward the reader till the line
+     * where the token is found.
+     *
+     * @return Each line until a token is found as a list
+     *
+     * @throws IOException pass any IOExceptions up to the caller
+     */
+    List<CobolLine> readTillHitToken(String token, boolean ignoreTokenOnCurrentLine) throws IOException {
+        List<CobolLine> statementLines = new ArrayList<>();
+
+        statementLines.add(currentLine);
+        if (!ignoreTokenOnCurrentLine && currentLine.containsToken(token)){
+            currentStatement = statementLines;
+            return statementLines;
+        }
+
+        peekNextMeaningfulLine();
+
+        while (nextLines.size() > 0 && !currentLine.containsToken(token)){
+            readLine();
+            if (currentLine == null){
+                currentStatement = statementLines;
+                return statementLines;
             }
             statementLines.add(currentLine);
             peekNextMeaningfulLine();

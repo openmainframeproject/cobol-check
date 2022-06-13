@@ -1,3 +1,8 @@
+      * Test for mocking call statements
+      * Writing a comment to test stuff
+      *
+      *Yeah
+      *
            TestSuite "Mock Call statements test"
 
            MOCK CALL 'PROG1'
@@ -29,6 +34,11 @@
            VERIFY CALL VALUE-2 USING VALUE-1
                 HAPPENED ONCE
 
+      * Test for mocking call statements
+      * Writing a comment to test stuff
+      *
+      *Yeah
+      *
            TestCase "Call mock with content reference for arguments work"
            MOCK CALL 'PROG3' USING
              BY CONTENT VALUE-1,

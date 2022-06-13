@@ -807,8 +807,8 @@ public class MockingTest {
 
         List<String> expected = new ArrayList<>();
         expected.add("       01  UT-MOCKS-GENERATED.");
-        expected.add("           05  UT-1-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.");
-        expected.add("           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.");
+        expected.add("           05  UT-1-1-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.");
+        expected.add("           05  UT-1-1-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.");
         expected.add("           05  UT-1-1-1-MOCK-NAME        PIC X(40)");
         expected.add("                   VALUE \"SECTION 000-START\".");
 

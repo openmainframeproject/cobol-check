@@ -137,6 +137,10 @@ public final class Constants {
     public static final String ZERO_TOKEN = "ZERO";
     public static final String REPLACE_TOKEN = "REPLACE";
     public static final String CBL_TOKEN = "CBL";
+    public static final String EXEC_SQL_TOKEN = "EXEC SQL";
+    public static final String EXEC_CICS_TOKEN = "EXEC CICS";
+    public static final String END_EXEC_TOKEN = "END-EXEC";
+    public static final String CONTINUE_TOKEN = "CONTINUE";
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";

@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID.  ALPHA.
+       PROGRAM-ID.  MOCKTEST.
       *****************************************************************
-      * Program to exercise EXPECT statements.
+      * Program to exercise different mock statements and edge cases.
       *****************************************************************
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
@@ -90,13 +90,13 @@
            MOVE "arg1" to VALUE-1
            MOVE "arg2" to VALUE-2
            MOVE "arg3" to VALUE-3
-           CALL 'PROG3' USING 
+           CALL 'PROG3' USING
               BY CONTENT VALUE-1,
-              BY VALUE VALUE-2,  
+              BY VALUE VALUE-2,
               VALUE-3.
-           CALL 'PROG3' USING 
+           CALL 'PROG3' USING
               BY CONTENT VALUE-1,
-              BY VALUE VALUE-2,  
+              BY VALUE VALUE-2,
               VALUE-3
           CALL 'PROG3' USING VALUE-1.
 

@@ -85,13 +85,22 @@ public class InterpreterController {
             return Interpreter.shouldLineBeParsed(reader.getCurrentLine(), reader.getState());
     }
 
-    public boolean shouldCurrentLineBeStubbed(){
-        return Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState());
+    public boolean shouldCurrentLineBeStubbed() throws IOException {
+        if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())){
+            if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
+                reader.putNextLine("           .");
+            reader.putNextLine("            CONTINUE");
+            return true;
+        }
+        return false;
     }
 
     public boolean shouldCurrentStatementBeStubbed(){
         for (CobolLine line : reader.getCurrentStatement()){
             if (Interpreter.shouldLineBeStubbed(line, reader.getState())){
+                if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
+                    reader.putNextLine("           .");
+                reader.putNextLine("            CONTINUE");
                 return true;
             }
         }
@@ -114,12 +123,10 @@ public class InterpreterController {
     public boolean canWriteEndEvaluateBeforeCurrentLine(){
         if (Interpreter.containsOnlyPeriod(reader.getCurrentLine()))
             return true;
-        else {
-            if (Interpreter.endsInPeriod(reader.getCurrentLine())){
+        else if (Interpreter.endsInPeriod(reader.getCurrentLine())){
                     reader.putNextLine("           .");
                     return false;
             }
-        }
         return false;
 
     }
@@ -207,6 +214,7 @@ public class InterpreterController {
 
         if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)){
             updatePossibleMock(line);
+            updatePossibleStub(line);
             tryReadBatchFileIOStatement();
         }
     }
@@ -253,8 +261,6 @@ public class InterpreterController {
             possibleMockIdentifier = statement.getToken(statement.getTokenIndexOf(Constants.CALL_TOKEN)+1);
             possibleMockType = Constants.CALL_TOKEN;
             possibleMockArgs = Interpreter.getUsingArgs(statement);
-            if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(statement))
-                reader.putNextLine("           .");
         }
 
         if (possibleMockIdentifier != null && periodShouldBeOnThisLine
@@ -263,6 +269,14 @@ public class InterpreterController {
             //We might generate code after the current line, thus if the period is on the next line,
             //we append it to this line. This prevents us generating code in the wrong place.
             reader.appendNextMeaningfulLineToCurrentLine();
+        }
+    }
+
+    private void updatePossibleStub(CobolLine line) throws IOException {
+        if (Interpreter.shouldLineBeStubbed(line, reader.getState())) {
+            String stubEndToken = Interpreter.getStubEndToken(line, reader.getState());
+            if (stubEndToken != null)
+                reader.readTillHitToken(stubEndToken, false);
         }
     }
 

@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -741,11 +742,105 @@ public class InterpreterControllerTest {
                 interpreterController.getNumericFieldDataTypeFor("WS-COUNT").name());
     }
 
+    @Test
+    public void it_registers_EXEC_SQL_as_stub() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       851-PLACEHOLDER SECTION.";
+        String str3 = "           EXEC SQL";
+        String str4 = "               OPEN SQL-RELATED-STUFF";
+        String str5 = "               CREATE TABLE 'Hi'";
+        String str6 = "               EXIT SECTION";
+        String str7 = "";
+        String str8 = "      *Basically anything can be inside EXEC body, Cobol Check does not care";
+        String str9 = "           END-EXEC";
+        String str10 = "           .";
 
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, null);
 
+        List<String> expectedStubbedStatement = Arrays.asList(str3, str4, str5, str6, str7, str8, str9);
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("END-EXEC")){
+                assertTrue(interpreterController.shouldCurrentStatementBeStubbed());
+                assertEquals(interpreterController.getCurrentStatement(), expectedStubbedStatement);
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
 
+    @Test
+    public void it_handles_empty_sql_exec() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       851-PLACEHOLDER SECTION.";
+        String str3 = "           EXEC SQL";
+        String str4 = "           END-EXEC";
+        String str5 = "           .";
 
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
 
+        List<String> expectedStubbedStatement = Arrays.asList(str3, str4);
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("END-EXEC")){
+                assertTrue(interpreterController.shouldCurrentStatementBeStubbed());
+                assertEquals(interpreterController.getCurrentStatement(), expectedStubbedStatement);
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
+
+    @Test
+    public void it_handles_empty_sql_exec_one_liner() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       851-PLACEHOLDER SECTION.";
+        String str3 = "           EXEC SQL  END-EXEC";
+        String str4 = "           .";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        List<String> expectedStubbedStatement = Arrays.asList(str3);
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("END-EXEC")){
+                assertTrue(interpreterController.shouldCurrentStatementBeStubbed());
+                assertEquals(interpreterController.getCurrentStatement(), expectedStubbedStatement);
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
+
+    @Test
+    public void it_registers_EXEC_CICS_as_stub() throws IOException {
+        String str1 = "       PROCEDURE DIVISION.";
+        String str2 = "       851-PLACEHOLDER SECTION.";
+        String str3 = "           EXEC CICS";
+        String str4 = "               OPEN CICS-RELATED-STUFF";
+        String str5 = "           END-EXEC.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        List<String> expectedStubbedStatement = Arrays.asList(str3, str4, str5);
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("END-EXEC")){
+                assertTrue(interpreterController.shouldCurrentStatementBeStubbed());
+                assertEquals(interpreterController.getCurrentStatement(), expectedStubbedStatement);
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
 
 
 }

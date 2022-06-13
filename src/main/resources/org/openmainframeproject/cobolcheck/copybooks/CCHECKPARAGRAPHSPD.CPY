@@ -175,14 +175,27 @@
                     END-IF
            END-EVALUATE
 
+           MOVE FUNCTION TRIM(==UT==EXPECTED-ACCESSES-FMT) 
+              TO ==UT==EXPECTED-ACCESSES-DISP
+           MOVE FUNCTION TRIM(==UT==ACTUAL-ACCESSES-FMT) 
+              TO ==UT==ACTUAL-ACCESSES-DISP
+              
+
+
            IF ==UT==VERIFY-PASSED
                ADD 1 TO ==UT==NUMBER-PASSED
-               DISPLAY ==UT==PASSED
-                       ==UT==TEST-CASE-NUMBER '. '
-                      'VERIFY ' ==UT==LABEL-VERIFY-COMPARE
-                      ==UT==EXPECTED-ACCESSES-FMT SPACE
-                      ==UT==LABEL-EXPECTED-ACCESS ' '
-                      'TO ' ==UT==MOCK-OPERATION
+               STRING
+                    ==UT==PASSED   DELIMITED BY SIZE
+                    ==UT==TEST-CASE-NUMBER '. ' DELIMITED BY SIZE
+                    'VERIFY ' ==UT==LABEL-VERIFY-COMPARE DELIMITED BY '  '
+                    ' ' DELIMITED BY SIZE
+                    ==UT==EXPECTED-ACCESSES-DISP DELIMITED BY SPACE
+                    ' ' DELIMITED BY SIZE
+                    ==UT==LABEL-EXPECTED-ACCESS ' ' DELIMITED BY SIZE
+                    'TO ' ==UT==MOCK-OPERATION DELIMITED BY SIZE
+                   INTO ==UT==DISPLAY-MESSAGE
+               END-STRING
+               DISPLAY ==UT==DISPLAY-MESSAGE
 
            ELSE
                ADD 1 TO ==UT==NUMBER-FAILED
@@ -198,12 +211,13 @@
                MOVE SPACES TO ==UT==DISPLAY-MESSAGE
                STRING
                    '   EXPECTED '                 DELIMITED BY SIZE
-                   ==UT==LABEL-VERIFY-COMPARE ' ' DELIMITED BY SIZE
-                   ==UT==EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE
-                   SPACE                          DELIMITED BY SIZE
+                   ==UT==LABEL-VERIFY-COMPARE DELIMITED BY '  '
+                   ' ' DELIMITED BY SIZE
+                   ==UT==EXPECTED-ACCESSES-DISP       DELIMITED BY SPACE
+                   ' '                          DELIMITED BY SIZE
                    ==UT==LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE
                    ', WAS '                       DELIMITED BY SIZE
-                   ==UT==ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE
+                   ==UT==ACTUAL-ACCESSES-DISP         DELIMITED BY SIZE
                    INTO ==UT==DISPLAY-MESSAGE
                END-STRING
                DISPLAY ==UT==DISPLAY-MESSAGE
