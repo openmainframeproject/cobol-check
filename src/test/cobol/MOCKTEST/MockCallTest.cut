@@ -9,14 +9,6 @@
                 MOVE "Global PROG1" TO VALUE-1
            END-MOCK
 
-           MOCK SECTION 850-ONLY-CALL
-                MOVE "SUCCESS" TO VALUE-1
-           END-MOCK
-
-           MOCK SECTION 999-TEST
-                CONTINUE
-           END-MOCK
-
            TestCase "Simple call mock works"
            MOCK CALL 'PROG1'
                 MOVE "From mocked PROG1" TO VALUE-1
@@ -97,12 +89,3 @@
            END-MOCK
            PERFORM 600-MAKE-CALL
            EXPECT VALUE-1 TO BE "Global PROG1"
-
-           TESTCASE "Section with only a call can be mocked"
-           PERFORM 850-ONLY-CALL
-           EXPECT VALUE-1 TO BE "SUCCESS"
-
-           TESTSUITE "Just testing"
-           TESTCASE "Section with only a call can be mocked 2 (Should fail)"
-           PERFORM 850-ONLY-CALL
-           EXPECT VALUE-1 TO BE "SUCCESS"
