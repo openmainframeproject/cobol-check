@@ -136,6 +136,31 @@ public class TestSuiteParserParsingTest {
     }
 
     @Test
+    public void it_ends_cobol_statement_at_correct_cobol_verbs() {
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("            PERFORM VARYING TALLY FROM 1 BY 1 UNTIL TALLY > 50");
+        expectedResult.add("            IF VALUE1 IN TABLE1 (TALLY)");
+        expectedResult.add("            SET VALUE2 IN TABLE1 (TALLY) TO TRUE");
+        expectedResult.add("            END-IF");
+        expectedResult.add("            END-PERFORM");
+        expectedResult.add("            PERFORM 100-HELLO");
+
+        testSuite.append("            PERFORM VARYING TALLY FROM 1 BY 1"+ Constants.NEWLINE);
+        testSuite.append("               UNTIL TALLY > 50"+ Constants.NEWLINE);
+        testSuite.append("                  IF VALUE1 IN TABLE1 (TALLY)" + Constants.NEWLINE);
+        testSuite.append("                      SET VALUE2 IN TABLE1 (TALLY)"+ Constants.NEWLINE);
+        testSuite.append("                          TO TRUE"+ Constants.NEWLINE);
+        testSuite.append("                  END-IF"+ Constants.NEWLINE);
+        testSuite.append("            END-PERFORM"+ Constants.NEWLINE);
+        testSuite.append(" "+ Constants.NEWLINE);
+        testSuite.append("            PERFORM 100-HELLO"+ Constants.NEWLINE);
+        List<String> lines =  testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        assertEquals(expectedResult, lines);
+    }
+
+    @Test
     public void it_captures_a_simple_item_name_from_an_EXPECT() {
         String expectedResult = "MOVE WS-FIELDNAME TO UT-ACTUAL";
         testSuite.append("           EXPECT WS-FIELDNAME TO BE \"some value\"");

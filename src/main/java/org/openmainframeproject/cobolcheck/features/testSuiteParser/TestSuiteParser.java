@@ -329,9 +329,6 @@ public class TestSuiteParser {
                 case Constants.PARENTHESIS_ENCLOSED_KEYWORD:
                     if (expectInProgress)
                         fieldNameForExpect += Constants.SPACE + testSuiteToken;
-                    else if (cobolStatementInProgress) {
-                        appendTokenToCobolStatement(testSuiteToken);
-                    }
                     break;
 
                 case Constants.COBOL_TOKEN:
@@ -670,7 +667,7 @@ public class TestSuiteParser {
                         ignoreCobolStatementAndFieldNameKeyAction = false;
                         break;
                     }
-                    if (CobolVerbs.isCobolVerb(testSuiteToken)) {
+                    if (CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
                         if (cobolStatementInProgress) {
                             addUserWrittenCobolStatement(parsedTestSuiteLines);
                             initializeCobolStatement();
