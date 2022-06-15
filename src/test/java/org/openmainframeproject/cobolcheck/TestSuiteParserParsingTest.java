@@ -126,6 +126,16 @@ public class TestSuiteParserParsingTest {
     }
 
     @Test
+    public void it_accepts_greater_than_in_cobol_statement() {
+        String expectedResult = "            PERFORM VARYING TALLY FROM 1 BY 1 UNTIL TALLY > 50";
+        testSuite.append(expectedResult);
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        assertEquals(expectedResult, testSuiteParser.getCobolStatement());
+    }
+
+    @Test
     public void it_captures_a_simple_item_name_from_an_EXPECT() {
         String expectedResult = "MOVE WS-FIELDNAME TO UT-ACTUAL";
         testSuite.append("           EXPECT WS-FIELDNAME TO BE \"some value\"");

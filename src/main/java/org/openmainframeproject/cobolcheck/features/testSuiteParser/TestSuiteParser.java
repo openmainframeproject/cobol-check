@@ -254,54 +254,84 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.NOT_KEYWORD:
-                    reverseCompare = true;
+                    if (expectInProgress){
+                        reverseCompare = true;
+                    }
+                    else if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
+                    }
                     break;
 
                 case Constants.NOT_EQUAL_SIGN_KEYWORD:
-                    possibleQualifiedName = false;
-                    expectInProgress = false;
-                    toBeInProgress = true;
-                    // this means the user wrote "NOT !="
-                    reverseCompare = !reverseCompare;
+                    if (expectInProgress) {
+                        possibleQualifiedName = false;
+                        expectInProgress = false;
+                        toBeInProgress = true;
+                        // this means the user wrote "NOT !="
+                        reverseCompare = !reverseCompare;
+                    }
                     break;
 
                 case Constants.GREATER_THAN_SIGN_KEYWORD:
-                    possibleQualifiedName = false;
-                    expectInProgress = false;
-                    toBeInProgress = true;
-                    greaterThanComparison = true;
+                    if (expectInProgress) {
+                        possibleQualifiedName = false;
+                        expectInProgress = false;
+                        toBeInProgress = true;
+                        greaterThanComparison = true;
+                    }
+                    else if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
+                    }
                     break;
 
                 case Constants.LESS_THAN_SIGN_KEYWORD:
-                    possibleQualifiedName = false;
-                    expectInProgress = false;
-                    toBeInProgress = true;
-                    lessThanComparison = true;
+                    if (expectInProgress) {
+                        possibleQualifiedName = false;
+                        expectInProgress = false;
+                        toBeInProgress = true;
+                        lessThanComparison = true;
+                    }
+                    else if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
+                    }
                     break;
 
                 case Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD:
-                    possibleQualifiedName = false;
-                    expectInProgress = false;
-                    toBeInProgress = true;
-                    lessThanComparison = true;
-                    if (reverseCompare) {
-                        reverseCompare = false;
-                    } else {
-                        reverseCompare = true;
+                    if (expectInProgress) {
+                        possibleQualifiedName = false;
+                        expectInProgress = false;
+                        toBeInProgress = true;
+                        lessThanComparison = true;
+                        if (reverseCompare) {
+                            reverseCompare = false;
+                        } else {
+                            reverseCompare = true;
+                        }
+                    }
+                    else if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
 
                 case Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD:
-                    possibleQualifiedName = false;
-                    expectInProgress = false;
-                    toBeInProgress = true;
-                    greaterThanComparison = true;
-                    reverseCompare = !reverseCompare;
+                    if (expectInProgress) {
+                        possibleQualifiedName = false;
+                        expectInProgress = false;
+                        toBeInProgress = true;
+                        greaterThanComparison = true;
+                        reverseCompare = !reverseCompare;
+                    }
+                    else if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
+                    }
                     break;
 
                 case Constants.PARENTHESIS_ENCLOSED_KEYWORD:
                     if (expectInProgress)
                         fieldNameForExpect += Constants.SPACE + testSuiteToken;
+                    else if (cobolStatementInProgress) {
+                        appendTokenToCobolStatement(testSuiteToken);
+                    }
                     break;
 
                 case Constants.COBOL_TOKEN:

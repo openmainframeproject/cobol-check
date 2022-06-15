@@ -167,7 +167,15 @@ public class KeywordsTest {
                 Constants.MOCK_KEYWORD,
                 Constants.ENDMOCK_KEYWORD,
                 Constants.VERIFY_KEYWORD,
-                Constants.PARENTHESIS_ENCLOSED_KEYWORD), keyword.getvalidNextKeys());
+                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                Constants.GREATER_THAN_SIGN_KEYWORD,
+                Constants.LESS_THAN_SIGN_KEYWORD,
+                Constants.NOT_KEYWORD,
+                Constants.EQUAL_SIGN_KEYWORD,
+                Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                Constants.TIME_KEYWORD,
+                Constants.TIMES_KEYWORD), keyword.getvalidNextKeys());
     }
 
     @Test
