@@ -44,3 +44,9 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 ## [0.2.6] 07.06.2022
 
 - Fixed bugs in Cobol Check and updated jar
+
+## [0.2.7] 16.06.2022
+
+- Fixed bugs in Cobol Check and updated jar
+- Added support for running tests from outside your current workspace
+- Drastically sped up file look-up, when standing in .cut-file and looking for cobol source 

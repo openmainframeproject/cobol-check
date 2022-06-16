@@ -8,7 +8,7 @@
         "Snippets"
     ],
     "description": "Extension for running unit tests in Cobol",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "icon": "images/cobol-check-logo-small.png",
     "engines": {
         "vscode": "^1.46.0"

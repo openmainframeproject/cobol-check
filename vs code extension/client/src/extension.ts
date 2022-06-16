@@ -9,7 +9,7 @@
 import * as vscode from 'vscode';
 import { workspace, ExtensionContext, window} from 'vscode';
 import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, setConfiguration } from './services/CobolCheckConfiguration';
-import { appendPath, getCobolProgramPathForGivenContext, getFileName, getResultOutput, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
+import { appendPath, getCobolCheckRunArgumentsBasedOnCurrentFile, getCobolProgramPathForGivenContext, getCurrentProgramName, getFileName, getResultOutput, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
 
 import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
 import { ResultWebView } from './services/ResultWebView';
@@ -33,22 +33,17 @@ export function activate(context: ExtensionContext) {
 
 	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', () => {
 		//Setting loader
-		vscode.window.withProgress({location: vscode.ProgressLocation.Window, cancellable: false, title: 'Running tests'}, 
+		vscode.window.withProgress({location: vscode.ProgressLocation.Window, cancellable: true, title: 'Running tests'}, 
 		async (progress) => {
 			progress.report({  increment: 0 });
-
-			//Getting program name based on current context
-			let programPath : string = getCobolProgramPathForGivenContext();
-			if (programPath === null) return;
-			let programName : string = getFileName(programPath, false);
-			//Getting the name of the source folder, to get the source path
+			//Getting arguments to run
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
-			let srcFolderContext : string = getSourceFolderContextPath(programPath, getRootFolder(applicationSourceDir));
-			if (srcFolderContext === null) return;
-			let argument : string = '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
-				'-r "' + externalVsCodeInstallationDir + '"';
+			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir);
+			if (argument === null) return;
+
 			//Running Cobol Check
 			let output = await runCobolCheck(cobolCheckJarPath, argument)
+			console.log(output);
 
 			let testResultFile = appendPath(externalVsCodeInstallationDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 			let htmlResult = await getResultOutput(testResultFile + '.html');
@@ -56,7 +51,7 @@ export function activate(context: ExtensionContext) {
 				if (panel === null){
 					panel = vscode.window.createWebviewPanel(
 						'testResult', // Identifies the type of the webview. Used internally
-						'Test Results - ' + programName, // Title of the panel displayed to the user
+						'Test Results - ' + getCurrentProgramName, // Title of the panel displayed to the user
 						vscode.ViewColumn.Two, // Editor column to show the new webview panel in.
 						{} // Webview options. More on these later.
 					);
@@ -65,7 +60,7 @@ export function activate(context: ExtensionContext) {
 					})
 				}
 				panel.reveal(vscode.ViewColumn.Two);
-				panel.title = 'Test Results - ' + programName;
+				panel.title = 'Test Results - ' + getCurrentProgramName;
 				panel.webview.html = htmlResult;
 			}
 			progress.report({ increment: 100 });

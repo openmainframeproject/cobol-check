@@ -11,7 +11,26 @@ const linuxPlatform = 'Linux';
 
 let currentPlatform = getOS();
 
-let lastProgramPath : string = null;
+let currentProgramName : string = null;
+
+export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : string, configPath : string, sourceDir : string) : string {
+	let currentFile = vscode.window.activeTextEditor.document.uri.fsPath;
+	
+	//Getting the source path
+	const srcFolderName = getRootFolder(sourceDir);
+	const srcFolderContext : string = getSourceFolderContextPath(currentFile, srcFolderName);
+	if (srcFolderContext === null) return null;
+	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
+
+	//Getting program name based on current context
+	let programPath : string = getCobolProgramPathForGivenContext(currentFile, cobolSourcePath);
+	if (programPath === null) return null;
+	let programName : string = getFileName(programPath, false);
+	currentProgramName = programName;
+
+	return '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
+	'-r "' + vsCodeInstallPath + '"';
+}
 
 export async function runCobolCheck(path : string, commandLineArgs : string) : Promise<string> {
 	return new Promise(async resolve => {
@@ -35,7 +54,8 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 					console.log("Error -> "+error);
 					vscode.window.showErrorMessage('Cobol Check ran with ' + error);
 				}
-				resolve(error ? stderr : stdout)
+				// resolve(error ? stderr : stdout)
+				resolve(stderr + '\n\r' + stdout)
 			});
 
 		} catch (error){
@@ -43,9 +63,11 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 			vscode.window.showErrorMessage('Could no launch Cobol Check: ' + error);
 			resolve(null);
 		}
-
-
      });
+}
+
+export function getCurrentProgramName() : string{
+	return currentProgramName;
 }
 
 export function getResultOutput(path : string) : Promise<string>{
@@ -65,37 +87,27 @@ export function getResultOutput(path : string) : Promise<string>{
 	 });
 }
 
-export function getCobolProgramPathForGivenContext() : string{
-	let currentFile = vscode.window.activeTextEditor.document.uri.fsPath;
-	let workingDirectory = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri).uri.fsPath;
+export function getCobolProgramPathForGivenContext(currentFile : string, cobolSourcePath : string) : string{
 
 	//Cobol file is open
 	if (currentFile.toLocaleUpperCase().endsWith('CBL') || currentFile.toLocaleUpperCase().endsWith('COB')){
-		lastProgramPath = currentFile;
 		return currentFile;
 	}
 	//.cut file is open
 	else if (currentFile.toLocaleUpperCase().endsWith('CUT')){
 		var path = require('path');
-		const cobolFileExtensions = ['.CBL', '.cbl', '.COB', '.cob'];
+		const cobolFileExtensions : string[] = ['.CBL', '.cbl', '.COB', '.cob'];
 		const programName = path.basename(path.dirname(currentFile))
-		for (let extension of cobolFileExtensions){
-			let programPath = findFile(programName + extension, workingDirectory);
-			if (programPath !== null){
-				lastProgramPath = programPath;
-				return programPath;
-			}
+
+		let programPath = findFile(programName, cobolFileExtensions, cobolSourcePath);
+		if (programPath !== null){
+			return programPath;
 		}
-		vscode.window.showErrorMessage('Found no cobol program with the name: ' + programName);
+		vscode.window.showErrorMessage('Found no cobol program with the name: ' + programName + ' in ' + cobolSourcePath);
 	}
 	//Other file is open
 	else{
-		if (lastProgramPath != null){
-			return lastProgramPath;
-		}
-		else{
-			vscode.window.showErrorMessage('No context available for which cobol program to run tests for');
-		}
+		vscode.window.showErrorMessage('No context available for which cobol program to run tests for');
 	}
 	return null;
 }
@@ -115,6 +127,16 @@ export function getFileName(path : string, includeExtension : boolean) : string{
 		return programName.substring(0, fileExtensionIndex);
 	} else{
 		return programName;
+	}
+}
+
+export function getFileExtension(path : string) : string{
+	let programName : string = getFileName(path, true);
+	let fileExtensionIndex = programName.indexOf('.');
+	if (fileExtensionIndex !== -1){
+		return programName.substring(fileExtensionIndex);
+	} else{
+		return "";
 	}
 }
 
@@ -181,7 +203,7 @@ function adjustPath(path : string){
 		return path.split('/').join('\\');
 }
 
-function findFile(name : String, path : string){
+function findFile(name : String, extensions : string[], path : string){
 
 	const fs = require('fs')
 
@@ -195,15 +217,19 @@ function findFile(name : String, path : string){
 			file = path + getFileSeperatorForOS(currentPlatform) + file;
 		}
 		if (fs.lstatSync(file).isDirectory()){
-			let returned = findFile(name, file);
+			let returned = findFile(name, extensions, file);
 			if (returned !== null){
 				return returned;
 			}
 		}
 		else{
-			let fileName : string = getFileName(adjustPath(file), true);
+			let fileName : string = getFileName(adjustPath(file), false);
 			if (fileName === name){
-				return(file);
+				let fileExtension = getFileExtension(adjustPath(file));
+				for (let extension of extensions){
+					if (fileExtension === extension)
+						return(file);
+				}
 			}
 		}
 	}
