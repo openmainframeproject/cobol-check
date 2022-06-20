@@ -174,6 +174,7 @@ public class Keywords {
                                 Constants.TIME_KEYWORD,
                                 Constants.TIMES_KEYWORD),
                         KeywordAction.FIELDNAME));
+        //TODO HERE
         keywordInfo.put(Constants.COBOL_TOKEN,
                 new Keyword(Constants.COBOL_TOKEN,
                         Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
@@ -187,7 +188,15 @@ public class Keywords {
                                 Constants.MOCK_KEYWORD,
                                 Constants.ENDMOCK_KEYWORD,
                                 Constants.VERIFY_KEYWORD,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                Constants.GREATER_THAN_SIGN_KEYWORD,
+                                Constants.LESS_THAN_SIGN_KEYWORD,
+                                Constants.NOT_KEYWORD,
+                                Constants.EQUAL_SIGN_KEYWORD,
+                                Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                Constants.TIME_KEYWORD,
+                                Constants.TIMES_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.BOOLEAN_VALUE,
                 new Keyword(Constants.BOOLEAN_VALUE,
