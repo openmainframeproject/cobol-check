@@ -50,3 +50,8 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 - Fixed bugs in Cobol Check and updated jar
 - Added support for running tests from outside your current workspace
 - Drastically sped up file look-up, when standing in .cut-file and looking for cobol source 
+
+## [0.2.8] 22.06.2022
+
+- Cobol Check can now take source code with sequence numbers
+- Fixed bug, where the html-formatter could not handle DISPLAY lines from the source code
