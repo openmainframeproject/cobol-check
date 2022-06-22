@@ -7,19 +7,19 @@ import java.util.Locale;
 public class CobolLine {
 
     private String originalString;
-
+    private String unNumberedString;
     private String trimmedString;
     private List<String> tokens;
 
     public CobolLine(String line, TokenExtractor tokenExtractor){
         originalString = line;
-        trimmedString = line.trim();
-        tokens = tokenExtractor.extractTokensFrom(line);
+        unNumberedString = removeSequenceNumberArea(line);
+        trimmedString = unNumberedString.trim();
+        tokens = tokenExtractor.extractTokensFrom(unNumberedString);
     }
 
-    public String getOriginalString() {
-        return originalString;
-    }
+    public String getOriginalString() { return originalString; }
+    public String getUnNumberedString() { return unNumberedString; }
     public String getTrimmedString() { return trimmedString; }
     public List<String> getTokens() {
         return tokens;
@@ -102,5 +102,13 @@ public class CobolLine {
      */
     public boolean endsWithToken(String tokenValue) {
         return tokens.size() > 0 && tokens.get(tokensSize() - 1) == tokenValue.toUpperCase(Locale.ROOT);
+    }
+
+    private String removeSequenceNumberArea(String originalLine){
+        int index = Interpreter.getSequenceNumberAreaIndex();
+        if (originalLine.length() < index)
+            return originalLine;
+        else
+            return "      " + originalLine.substring(index);
     }
 }

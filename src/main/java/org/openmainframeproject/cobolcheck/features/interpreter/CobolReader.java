@@ -99,11 +99,11 @@ public class CobolReader {
         List<CobolLine> statementLines = new ArrayList<>();
         CobolLine nextMeaningfulLine = peekNextMeaningfulLine();
         if (Interpreter.containsOnlyPeriod(nextMeaningfulLine)){
-            currentLine = new CobolLine(currentLine.getOriginalString() +
+            currentLine = new CobolLine(currentLine.getUnNumberedString() +
                     nextMeaningfulLine.getTrimmedString(), tokenExtractor);
         }
         else {
-            currentLine = new CobolLine(currentLine.getOriginalString() + " " +
+            currentLine = new CobolLine(currentLine.getUnNumberedString() + " " +
                     nextMeaningfulLine.getTrimmedString(), tokenExtractor);
         }
 
@@ -127,7 +127,7 @@ public class CobolReader {
      * @return The line, with the given String appended
      */
     CobolLine appendToCurrentLine(String appendString){
-        currentLine = new CobolLine(currentLine.getOriginalString() + appendString, tokenExtractor);
+        currentLine = new CobolLine(currentLine.getUnNumberedString() + appendString, tokenExtractor);
         return currentLine;
     }
 
@@ -137,11 +137,11 @@ public class CobolReader {
      * @return The line, with the last period removed
      */
     CobolLine removePeriodFromCurrentLine(){
-        int indexOfLastPeriod = currentLine.getOriginalString().lastIndexOf('.');
+        int indexOfLastPeriod = currentLine.getUnNumberedString().lastIndexOf('.');
         if (indexOfLastPeriod < 0)
             return currentLine;
 
-        currentLine = new CobolLine(currentLine.getOriginalString().substring(0, indexOfLastPeriod), tokenExtractor);
+        currentLine = new CobolLine(currentLine.getUnNumberedString().substring(0, indexOfLastPeriod), tokenExtractor);
         return currentLine;
     }
 
