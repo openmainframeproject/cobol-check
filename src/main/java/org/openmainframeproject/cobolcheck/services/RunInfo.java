@@ -23,9 +23,12 @@ public class RunInfo {
     }
 
     public static String getTestSuitePath(String testSuiteName) {
-        testSuiteName = "\"" + testSuiteName + "\"";
-        if (testSuiteNameToPathMap.containsKey(testSuiteName))
-            return testSuiteNameToPathMap.get(testSuiteName);
+        String tempName = "\"" + testSuiteName + "\"";
+        if (testSuiteNameToPathMap.containsKey(tempName))
+            return testSuiteNameToPathMap.get(tempName);
+        tempName = "\'" + testSuiteName + "\'";
+        if (testSuiteNameToPathMap.containsKey(tempName))
+            return testSuiteNameToPathMap.get(tempName);
         else
             return "";
     }

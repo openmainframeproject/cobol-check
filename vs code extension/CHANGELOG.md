@@ -55,3 +55,8 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 
 - Cobol Check can now take source code with sequence numbers
 - Fixed bug, where the html-formatter could not handle DISPLAY lines from the source code
+
+## [0.2.9] 22.06.2022
+
+- Fixed bug, where mocks would not recognize sections in source code, if it contained sequence numbers
+- Fixed bug, where the unit test path would not show, if the testsuite was named with single quatations

@@ -307,14 +307,6 @@ public class Interpreter {
 
     public static String getSectionOrParagraphName(CobolLine line){
         if (line.tokensSize() > 0){
-            if (getBeginningArea(line, false) == Area.SEQUENCE_NUMBER){
-                if (line.tokensSize() >= 1){
-                    return line.getToken(1);
-                }
-                else {
-                    return null;
-                }
-            }
             return line.getToken(0);
         }
         else {
