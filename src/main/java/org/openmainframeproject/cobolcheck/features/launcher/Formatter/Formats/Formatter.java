@@ -1,10 +1,13 @@
 package org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats;
 
+import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.*;
 import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -93,25 +96,40 @@ public abstract class Formatter {
                 dataTransferObject.setNumberOffAllFailures(tokens[0]);
             }
 
-            else
-                setTestCaseValues(line);
+            else{
+                try{
+                    setTestCaseValues(line);
+                } catch (PossibleInternalLogicErrorException e){
+                    Log.debug(e.getMessage());
+                }
+
+            }
+
         }
     }
 
     private void setTestCaseValues(String line){
+        line = line.trim();
         String[] partedLine = line.split("\\.");
+        if (partedLine.length < 2)
+            throw new PossibleInternalLogicErrorException("Following line is expected to be output from source and will not be formatted: " + line);
+
         String[] tokens = partedLine[0].split(" ");
         if (tokens.length > 0){
             dataTransferObject.moveToNextTestCase();
             dataTransferObject.setCurrentTestCaseName(partedLine[1].trim());
             if (tokens[0].equalsIgnoreCase(passKeyword)){
                 //Test passed
+                return;
             }
-            if (tokens[0].equalsIgnoreCase(failPrefixKeyword) && tokens[1].equalsIgnoreCase(failKeyword)){
+            else if (tokens[0].equalsIgnoreCase(failPrefixKeyword) && tokens.length > 1 &&
+                    tokens[1].equalsIgnoreCase(failKeyword)){
                 //Test failed
                 expectFailMessage = true;
+                return;
             }
         }
+        throw new PossibleInternalLogicErrorException("Following line is expected to be output from source and will not be formatted: " + line);
     }
 
     private String getFailureType(String line){

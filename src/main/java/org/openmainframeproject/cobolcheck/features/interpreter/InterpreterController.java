@@ -174,7 +174,7 @@ public class InterpreterController {
         }
 
         //Current line might change from when it was originally read
-        return reader.getCurrentLine().getOriginalString();
+        return reader.getCurrentLine().getUnNumberedString();
     }
 
     public void closeReader(){
@@ -335,7 +335,7 @@ public class InterpreterController {
      */
     private void updateLineRepository(CobolLine line) throws IOException {
         if (reader.isFlagSet(Constants.FILE_CONTROL)){
-            lineRepository.addFileControlStatement(line.getOriginalString());
+            lineRepository.addFileControlStatement(line.getUnNumberedString());
 
             updateLineRepoBySelectToken(line);
             updateLineRepoByFileStatusToken(line);
@@ -346,7 +346,7 @@ public class InterpreterController {
                 lineRepository.addExpandedCopyStatementsToFileSectionStatements();
             }
             else if(reader.isFlagSet(Constants.LEVEL_01_TOKEN)){
-                lineRepository.addFileSectionStatement(line.getOriginalString());
+                lineRepository.addFileSectionStatement(line.getUnNumberedString());
             }
         }
     }
@@ -426,7 +426,7 @@ public class InterpreterController {
         }
         for(CobolLine line : copystatementLines){
             if(!Interpreter.isComment(line) && !Interpreter.isEmpty(line) && !Interpreter.isTooShortToBeMeaningful(line)){
-                lineRepository.addAccumulatedTokensFromCopyStatementToCopyTokens(line.getOriginalString());
+                lineRepository.addAccumulatedTokensFromCopyStatementToCopyTokens(line.getUnNumberedString());
             }
 
         }
@@ -465,7 +465,7 @@ public class InterpreterController {
     private List<String> convertToStrings(List<CobolLine> lines){
         List<String> stringLines = new ArrayList<>();
         for (CobolLine l : lines){
-            stringLines.add(l.getOriginalString());
+            stringLines.add(l.getUnNumberedString());
         }
         return stringLines;
     }

@@ -31,6 +31,10 @@ public class Interpreter {
     private static final int A_AreaEnd = 11;
     private static final int B_AreaEnd = 71;
 
+    public static int getSequenceNumberAreaIndex(){
+        return sequenceNumberAreaEnd;
+    }
+
     //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
     /**
      * Sets flags based on a line, to be able to know which kinds of source
@@ -183,7 +187,7 @@ public class Interpreter {
      * @return true if the source line is too short to be a meaningful line of code in Cobol.
      */
     public static boolean isTooShortToBeMeaningful(CobolLine line) {
-        return line.getOriginalString() == null || line.getOriginalString().length() < minimumMeaningfulSourceLineLength;
+        return line.getUnNumberedString() == null || line.getUnNumberedString().length() < minimumMeaningfulSourceLineLength;
     }
 
     /**
@@ -191,7 +195,7 @@ public class Interpreter {
      * @return true if the source line "looks like" a Cobol comment line.
      */
     public static boolean isComment(CobolLine line) {
-        return line.getOriginalString().charAt(commentIndicatorOffset) == commentIndicator;
+        return line.getUnNumberedString().charAt(commentIndicatorOffset) == commentIndicator;
     }
 
     public static boolean isComment(String line) {
@@ -395,13 +399,18 @@ public class Interpreter {
      */
     public static Area getBeginningArea(CobolLine line, boolean ignoreSequenceArea){
         if (isTooShortToBeMeaningful(line) ||
-                (ignoreSequenceArea && line.getOriginalString().length() <= sequenceNumberAreaEnd + 1)){
+                (ignoreSequenceArea && line.getUnNumberedString().length() <= sequenceNumberAreaEnd + 1)){
             return Area.NONE;
         }
-
-        char[] characters = line.getOriginalString().toCharArray();
+        char[] characters;
         int index = 0;
-        if (ignoreSequenceArea) index = sequenceNumberAreaEnd;
+        if (ignoreSequenceArea){
+            characters = line.getUnNumberedString().toCharArray();
+            index = sequenceNumberAreaEnd;
+        }
+        else{
+            characters = line.getOriginalString().toCharArray();
+        }
 
         while (characters[index] == ' '){
             index++;
