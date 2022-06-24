@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { integer } from 'vscode-languageclient';
+import * as LOGGER from '../utils/Logger'
 
 let cobolCheckJar_Windows = '@java -jar Cobol-check\\bin\\cobol-check-0.1.0.jar';
 let cobolCheckJar_Linux_Mac = 'java -jar Cobol-check/bin/cobol-check-0.1.0.jar $@';
@@ -21,12 +22,14 @@ export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : 
 	const srcFolderContext : string = getSourceFolderContextPath(currentFile, srcFolderName);
 	if (srcFolderContext === null) return null;
 	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
+	LOGGER.log("Found source folder path: " + cobolSourcePath, LOGGER.INFO)
 
 	//Getting program name based on current context
 	let programPath : string = getCobolProgramPathForGivenContext(currentFile, cobolSourcePath);
 	if (programPath === null) return null;
 	let programName : string = getFileName(programPath, false);
 	currentProgramName = programName;
+	LOGGER.log("Found source program name: " + programName, LOGGER.INFO)
 
 	return '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
 	'-r "' + vsCodeInstallPath + '"';
@@ -46,21 +49,26 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 			resolve(null);
 		}
 
+		LOGGER.log("Running Cobol Check with arguments: " + commandLineArgs, LOGGER.INFO)
 		try{
 			var exec = require('child_process').exec;
 			//Run Cobol Check jar with arguments
 			var child = exec(executeJarCommand + ' ' + commandLineArgs, (error, stdout, stderr) => {
 				if(error !== null){
 					console.log("Error -> "+error);
-					vscode.window.showErrorMessage('Cobol Check ran with ' + error);
+					vscode.window.showErrorMessage('Cobol Check ran into an exception. Please see the log for further details');
+					LOGGER.log("*** COBOL CHECK ERROR: " + error, LOGGER.ERROR);
 				}
 				// resolve(error ? stderr : stdout)
 				resolve(stderr + '\n\r' + stdout)
+				LOGGER.log("Cobol Check out:\n" + stdout, LOGGER.INFO)
+				LOGGER.log("Cobol Check log:\n" + stderr, LOGGER.INFO)
 			});
 
 		} catch (error){
 			console.error(error);
-			vscode.window.showErrorMessage('Could no launch Cobol Check: ' + error);
+			vscode.window.showErrorMessage('Could not launch Cobol Check: ' + error);
+			LOGGER.log("*** COBOL CHECK LAUNCHING ERROR: " + error, LOGGER.ERROR);
 			resolve(null);
 		}
      });

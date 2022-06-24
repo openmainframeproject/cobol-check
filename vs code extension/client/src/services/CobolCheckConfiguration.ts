@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as LOGGER from '../utils/Logger'
 
 
 export function getConfigurationMap(configurationPath : string, callBack: (configurationMap : Map<string, string>) => any){
@@ -53,6 +54,7 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 			if (keyValue.length > 1 && keyValue[0].trim() === key){
 				newConfigurationText += key + ' = ' + newValue;
 				keyHasBeenFound = true;
+				LOGGER.log("Updated configuration key: " + key + " with value: " + newValue, LOGGER.INFO);
 			} else{
 				newConfigurationText += line + '\n';
 			}
@@ -85,6 +87,8 @@ export function resetConfigurations(configurationPath : string, defaultConfigura
 			if(err) {
 				vscode.window.showErrorMessage("Got an error while trying to write to Config file:\n " + err);
 				return;
+			}else{
+				LOGGER.log("Successfully reset configuration file", LOGGER.INFO)
 			}
 		 });
 	});

@@ -41,7 +41,7 @@ public class PathHelper {
             Log.debug("Initializer looking for source file <" + filePath + suffix + ">");
             if (Files.isRegularFile(Paths.get(filePath + suffix))) {
                 filePath += suffix;
-                Log.debug("Initializer recognized this file as a regular file: <" + filePath.toString() + ">");
+                Log.debug("Initializer recognized this file as a regular file: <" + filePath + ">");
                 break;
             }
         }
@@ -79,4 +79,24 @@ public class PathHelper {
         return path;
     }
 
+    public static String findFilePath(String path, String fileName, List<String> possibleExtensions) throws IOException {
+        File file = new File(path);
+        if (!file.exists())
+            throw new IOException("File not found: " + path);
+        if (file.isDirectory()){
+            for (File fileEntry : file.listFiles()){
+                String possibleFile = findFilePath(fileEntry.getAbsolutePath(), fileName, possibleExtensions);
+                if (possibleFile != null)
+                    return possibleFile;
+            }
+        }
+        else {
+            for (String extension : possibleExtensions){
+                String possibleFile = fileName + extension;
+                if (possibleFile.equals(file.getName()))
+                    return file.getAbsolutePath();
+            }
+        }
+        return null;
+    }
 }

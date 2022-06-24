@@ -49,16 +49,11 @@ public class CopybookExpander {
         return expand(expandedLines, copybookFilename, new StringTuple(null, null));
     }
 
-    public List<String> expand(List<String> expandedLines,
-                         String copybookFilename,
+    public List<String> expand(List<String> expandedLines, String copybookFilename,
                          StringTuple... textReplacement) throws IOException {
-        String fullPath = pathToCopybooks + copybookFilename;
-        for (String suffix : copybookFilenameSuffixes) {
-            if (Files.isRegularFile(Paths.get(fullPath + suffix))) {
-                fullPath += suffix;
-                break;
-            }
-        }
+        String fullPath = PathHelper.findFilePath(pathToCopybooks, copybookFilename, copybookFilenameSuffixes);
+        if (fullPath == null)
+            throw new IOException("could not find copybook " + copybookFilename + " in " + pathToCopybooks);
         try (BufferedReader copybookReader = new BufferedReader(new FileReader(new File(fullPath)))) {
             String sourceLine;
             while ((sourceLine = copybookReader.readLine()) != null) {
