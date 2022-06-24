@@ -40,7 +40,7 @@ export function startCutLanguageClientServer(context: ExtensionContext) {
 			// Notify the server about file changes to '.clientrc files contained in the workspace
 			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
 		},
-		outputChannel: window.createOutputChannel('Cut Language Extension'),
+		outputChannel: window.createOutputChannel('Cobol Check Extension'),
 	};
 
 	// Create the language client and start the client.

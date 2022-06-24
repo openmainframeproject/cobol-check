@@ -31,6 +31,12 @@ public class IO_FileGetter {
 
         Reader sourceReader;
         try {
+            File file = new File(cobolSourceInPath);
+            if (!file.exists()){
+                String name = file.getName();
+                String path = file.getParentFile().getAbsolutePath();
+                cobolSourceInPath = PathHelper.findFilePath(path, name, Config.getApplicationFilenameSuffixes());
+            }
             sourceReader = EncodingIO.getReaderWithCorrectEncoding(cobolSourceInPath);
         } catch (IOException cobolSourceInException) {
             throw new PossibleInternalLogicErrorException(

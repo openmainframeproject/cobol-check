@@ -43,7 +43,6 @@ export function activate(context: ExtensionContext) {
 
 			//Running Cobol Check
 			let output = await runCobolCheck(cobolCheckJarPath, argument)
-			console.log(output);
 
 			let testResultFile = appendPath(externalVsCodeInstallationDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 			let htmlResult = await getResultOutput(testResultFile + '.html');
