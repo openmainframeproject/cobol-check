@@ -148,7 +148,8 @@ public class Keywords {
                         KeywordAction.COBOL_STATEMENT));
         keywordInfo.put(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                 new Keyword(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                        Arrays.asList(Constants.EXPECT_KEYWORD,
+                        Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                Constants.EXPECT_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,

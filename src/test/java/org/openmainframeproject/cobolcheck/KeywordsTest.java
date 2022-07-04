@@ -125,7 +125,8 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor("\"alphanumeric literal value\"", false);
         assertEquals(Constants.ALPHANUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
-        assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD,
+        assertEquals(Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                Constants.EXPECT_KEYWORD,
                 Constants.COBOL_TOKEN,
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
