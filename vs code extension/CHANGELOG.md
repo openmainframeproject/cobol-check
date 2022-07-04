@@ -2,6 +2,10 @@
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
 
+## [0.3.1] 04.07.2022
+
+- Fixed bug where syntax check would not allow a string followed by a string
+
 ## [0.3.0] 22.06.2022
 
 - Added support for subfolders inside source cobol folder and copybook folder
