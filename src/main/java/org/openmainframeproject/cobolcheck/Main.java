@@ -11,13 +11,12 @@ class Main {
         Initializer initializer = new Initializer(args);
         initializer.run();
 
-        Generator generator = new Generator();
-        CobolTestRunner testRunner = new CobolTestRunner();
-
-
         if (initializer.isExitStatusHalt()) {
             initializer.exitProgram();
         }
+
+        Generator generator = new Generator();
+        CobolTestRunner testRunner = new CobolTestRunner();
 
         for (String programName : initializer.getSourceProgramNames()){
 

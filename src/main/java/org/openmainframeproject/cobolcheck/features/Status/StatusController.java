@@ -57,6 +57,8 @@ public class StatusController {
      * Terminates the program with the current exitStatus
      */
     public void exitProgram(){
-        Log.info(Messages.get("INF004"));
+        Log.info(Messages.get("INF004") + ": " + status.exitStatus);
+        System.exit(status.exitStatus);
+
     }
 }
