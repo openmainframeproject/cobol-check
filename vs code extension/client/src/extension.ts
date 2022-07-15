@@ -17,7 +17,7 @@ import { ResultWebView } from './services/ResultWebView';
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
 let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
 let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
-let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.1.0.jar');
+let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.0.jar');
 
 let lastCurrentFile = null;
 let cutLanguageRunning = false;
@@ -33,16 +33,22 @@ export function activate(context: ExtensionContext) {
 
 	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', () => {
 		//Setting loader
-		vscode.window.withProgress({location: vscode.ProgressLocation.Window, cancellable: true, title: 'Running tests'}, 
+		vscode.window.withProgress({location: vscode.ProgressLocation.Notification, cancellable: true, title: 'Cobol Check running:'}, 
 		async (progress) => {
-			progress.report({  increment: 0 });
+			
+			progress.report({ message: 'Setting up run arguments' })
+
 			//Getting arguments to run
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
 			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir);
 			if (argument === null) return;
 
+			progress.report({ message: 'Running tests' })
+
 			//Running Cobol Check
 			let output = await runCobolCheck(cobolCheckJarPath, argument)
+
+			progress.report({ message: 'Loading test report' })
 
 			let testResultFile = appendPath(externalVsCodeInstallationDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 			let htmlResult = await getResultOutput(testResultFile + '.html');
@@ -50,7 +56,7 @@ export function activate(context: ExtensionContext) {
 				if (panel === null){
 					panel = vscode.window.createWebviewPanel(
 						'testResult', // Identifies the type of the webview. Used internally
-						'Test Results - ' + getCurrentProgramName, // Title of the panel displayed to the user
+						'Test Results - ' + getCurrentProgramName(), // Title of the panel displayed to the user
 						vscode.ViewColumn.Two, // Editor column to show the new webview panel in.
 						{} // Webview options. More on these later.
 					);
@@ -59,10 +65,9 @@ export function activate(context: ExtensionContext) {
 					})
 				}
 				panel.reveal(vscode.ViewColumn.Two);
-				panel.title = 'Test Results - ' + getCurrentProgramName;
+				panel.title = 'Test Results - ' + getCurrentProgramName();
 				panel.webview.html = htmlResult;
 			}
-			progress.report({ increment: 100 });
 		});
 	});
 

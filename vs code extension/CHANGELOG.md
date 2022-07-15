@@ -2,6 +2,12 @@
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
 
+## [0.3.2] 15.07.2022
+
+- Now using Cobol Check version 0.2.0
+- Made Cobol Check loading window, show up as a notification
+- Fixed test report panel, not showing the correct name
+
 ## [0.3.1] 04.07.2022
 
 - Fixed bug where syntax check would not allow a string followed by a string
