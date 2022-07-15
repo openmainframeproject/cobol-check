@@ -4,9 +4,18 @@
 
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
 
+## Feature overview
+- Fine-grained assertions
+- Stubs and mocks
+- Mock perform verification
+- Test result report in JUnit format and HTML
+- And much more
+
 ## Thanks! 
 
 A big thank you to [Vicom Infinity](https://www.vicominfinity.com/) for kindly providing a test z/OS environment for the project!
+
+Another thank you, goes towards BankData, for major contributions to the project.
 
 ## Immediate needs 
 
@@ -17,13 +26,16 @@ As of March 2022 we could use help with:
 
 ## Downloads 
 
-Version 0.1.0 pre-release is available! 
+Version 0.2.0 pre-release is available! 
 
-- Find the download on the project home page on the [Neo Pragma site](https://neopragma.com/projects/cobol-check/).
+[//]: # (- Find the download on the project home page on the [Neo Pragma site]&#40;https://neopragma.com/projects/cobol-check/&#41;.)
+- Download the cobol-check-0.2.0.zip here: (link is on the way)
 - Find general release information in the [changelog](https://github.com/openmainframeproject/cobol-check/blob/main/CHANGELOG.md).
 - Find more information about supported functionality on [the wiki](https://github.com/openmainframeproject/cobol-check/wiki/Common-Test-Case-Patterns).
 
-If you want source code, you can clone the repository or download a compressed archive [from here](https://github.com/openmainframeproject/cobol-check/releases/tag/0.1.0).
+If you want source code, you can clone the repository or download a compressed archive(currently outdated) [from here](https://github.com/openmainframeproject/cobol-check/releases/tag/0.1.0).
+
+Cobol Check is also a Visual Studio Code extension. Download it in the Extensions tab in VS Code or take a look [here](https://marketplace.visualstudio.com/items?itemName=openmainframeproject.cobol-check-extension).
 
 ## Why?
 

@@ -1,7 +1,7 @@
        IDENTIFICATION DIVISION.                                                 
-       PROGRAM-ID.  ALPHA.                                                      
+       PROGRAM-ID.  MOCKTEST.                                                   
       *****************************************************************         
-      * Program to exercise EXPECT statements.                                  
+      * Program to exercise different mock statements and edge cases.           
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
        INPUT-OUTPUT SECTION.                                                    
@@ -61,10 +61,12 @@
                88 UT-EXPECTED-88-VALUE             VALUE 'T', FALSE 'F'.        
            05  FILLER                    PIC X     VALUE 'F'.                   
                88 UT-ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.        
-           05  UT-EXPECTED-ACCESSES      PIC 9(04) VALUE ZERO.                  
-           05  UT-ACTUAL-ACCESSES        PIC 9(04) VALUE ZERO.                  
-           05  UT-EXPECTED-ACCESSES-FMT  PIC Z,ZZ9.                             
-           05  UT-ACTUAL-ACCESSES-FMT    PIC Z,ZZ9.                             
+           05  UT-EXPECTED-ACCESSES      PIC 9(18) VALUE ZERO.                  
+           05  UT-ACTUAL-ACCESSES        PIC 9(18) VALUE ZERO.                  
+           05  UT-EXPECTED-ACCESSES-FMT  PIC ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9.           
+           05  UT-ACTUAL-ACCESSES-FMT    PIC ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9.           
+           05  UT-EXPECTED-ACCESSES-DISP PIC X(18).                             
+           05  UT-ACTUAL-ACCESSES-DISP   PIC X(18).                             
            05  UT-FAILED                 PIC X(11)  VALUE "**** FAIL: ".        
            05  UT-PASSED                 PIC X(11)  VALUE "     PASS: ".        
            05  UT-TEST-SUITE-NAME        PIC X(80)  VALUE SPACES.               
@@ -141,98 +143,102 @@
            05  TEMP              PIC X(80).                                     
                                                                                 
        01  UT-MOCKS-GENERATED.                                                  
-           05  UT-2-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-0-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-0-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-0-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-0-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-0-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-0-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-2-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-2-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-2-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-2-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-2-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-2-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-2-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-2-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-2-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-2-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-3-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-3-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-3-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-3-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-3-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-3-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-3-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-3-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-2-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-4-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-4-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-4-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-2-4-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-2-4-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-2-4-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-2-4-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-2-4-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-5-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-0-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-0-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-0-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG1'".                                        
-           05  UT-5-1-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-1-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-1-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-1-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-1-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG1'".                                        
-           05  UT-5-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-3-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-3-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-3-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL VALUE-2".                                        
-           05  UT-5-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-4-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-4-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-4-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG3'".                                        
-           05  UT-5-5-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-5-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-5-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-5-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-5-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG3'".                                        
-           05  UT-5-5-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-5-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-5-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-5-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-5-2-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 800-MAKE-CALL".                             
-           05  UT-5-6-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-5-6-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-5-6-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-5-6-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-5-6-1-MOCK-NAME        PIC X(40)                              
                    VALUE "CALL 'PROG1'".                                        
-           05  UT-6-0-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-0-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-0-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-0-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-0-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-6-0-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-0-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-0-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-0-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-0-2-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 300-CHANGE-1".                              
-           05  UT-6-2-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-2-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-2-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-2-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-2-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-6-3-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-3-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-3-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-3-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-3-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 000-START".                                   
-           05  UT-6-3-2-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-3-2-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-3-2-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-3-2-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-3-2-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
-           05  UT-6-3-3-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-3-3-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-3-3-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-3-3-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-3-3-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 500-SWITCH".                                
-           05  UT-6-4-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-4-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-4-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-4-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-4-1-MOCK-NAME        PIC X(40)                              
                    VALUE "PARAGRAPH 500-SWITCH".                                
-           05  UT-6-5-1-MOCK-COUNT       PIC 9(02) VALUE ZERO COMP.             
-           05  UT-6-5-1-MOCK-EXPECTED    PIC 9(02) VALUE ZERO COMP.             
+           05  UT-6-5-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-5-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
            05  UT-6-5-1-MOCK-NAME        PIC X(40)                              
                    VALUE "SECTION 100-WELCOME".                                 
+           05  UT-6-8-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-8-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
+           05  UT-6-8-1-MOCK-NAME        PIC X(40)                              
+                   VALUE "SECTION 400-CHANGE-2".                                
        PROCEDURE DIVISION.                                                      
            PERFORM UT-INITIALIZE                                                
       *============= "Before and after tests 1" =============*                  
@@ -1027,6 +1033,13 @@
            PERFORM UT-INITIALIZE-MOCK-COUNT                                     
             PERFORM 000-START                                                   
             PERFORM 000-START                                                   
+           MOVE 5 TO UT-6-3-1-MOCK-EXPECTED                                     
+           MOVE UT-6-3-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES                       
+           MOVE UT-6-3-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES                  
+           MOVE UT-6-3-1-MOCK-NAME TO UT-MOCK-OPERATION                         
+           SET UT-VERIFY-EXACT TO TRUE                                          
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           PERFORM UT-ASSERT-ACCESSES                                           
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
            SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
@@ -1035,21 +1048,6 @@
                TO UT-EXPECTED                                                   
            SET UT-RELATION-EQ TO TRUE                                           
            PERFORM UT-CHECK-EXPECTATION                                         
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
-           MOVE VALUE-2 TO UT-ACTUAL                                            
-           MOVE "a mock"                                                        
-               TO UT-EXPECTED                                                   
-           SET UT-RELATION-EQ TO TRUE                                           
-           PERFORM UT-CHECK-EXPECTATION                                         
-           MOVE 5 TO UT-6-3-1-MOCK-EXPECTED                                     
-           MOVE UT-6-3-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES                       
-           MOVE UT-6-3-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES                  
-           MOVE UT-6-3-1-MOCK-NAME TO UT-MOCK-OPERATION                         
-           SET UT-VERIFY-EXACT TO TRUE                                          
-           ADD 1 TO UT-TEST-CASE-COUNT                                          
-           PERFORM UT-ASSERT-ACCESSES                                           
            MOVE 10 TO UT-6-3-2-MOCK-EXPECTED                                    
            MOVE UT-6-3-2-MOCK-COUNT TO UT-ACTUAL-ACCESSES                       
            MOVE UT-6-3-2-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES                  
@@ -1064,6 +1062,14 @@
            SET UT-VERIFY-EXACT TO TRUE                                          
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            PERFORM UT-ASSERT-ACCESSES                                           
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE VALUE-2 TO UT-ACTUAL                                            
+           MOVE "a mock"                                                        
+               TO UT-EXPECTED                                                   
+           SET UT-RELATION-EQ TO TRUE                                           
+           PERFORM UT-CHECK-EXPECTATION                                         
            MOVE SPACES                                                          
                TO UT-TEST-CASE-NAME                                             
            PERFORM UT-AFTER-EACH                                                
@@ -1178,6 +1184,25 @@
            SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
            MOVE VALUE-2 TO UT-ACTUAL                                            
            MOVE "Hi"                                                            
+               TO UT-EXPECTED                                                   
+           SET UT-RELATION-EQ TO TRUE                                           
+           PERFORM UT-CHECK-EXPECTATION                                         
+           MOVE SPACES                                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-AFTER-EACH                                                
+      *-------- "Mock with EXIT SECTION in source works"                        
+           MOVE SPACES                                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE-EACH                                               
+           MOVE "Mock with EXIT SECTION in source works"                        
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-INITIALIZE-MOCK-COUNT                                     
+            PERFORM 400-CHANGE-2                                                
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           SET UT-NORMAL-COMPARE TO TRUE                                        
+           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
+           MOVE VALUE-1 TO UT-ACTUAL                                            
+           MOVE "Exit section is handled correctly"                             
                TO UT-EXPECTED                                                   
            SET UT-RELATION-EQ TO TRUE                                           
            PERFORM UT-CHECK-EXPECTATION                                         
@@ -1542,6 +1567,16 @@
                 MOVE "Mock" TO VALUE-2                                          
            .                                                                    
                                                                                 
+       UT-6-8-1-MOCK.                                                           
+      *****************************************************************         
+      *Local mock of: SECTION: 400-CHANGE-2                                     
+      *In testsuite: "Mock Sections And Paragraphs"                             
+      *In testcase: "Mock with EXIT SECTION in source works"                    
+      *****************************************************************         
+           ADD 1 TO UT-6-8-1-MOCK-COUNT                                         
+                MOVE "Exit section is handled correctly" TO VALUE-1             
+           .                                                                    
+                                                                                
       * CCHECKPARAGRAPHSPD.CPY                                                  
        UT-CHECK-EXPECTATION.                                                    
       *****************************************************************         
@@ -1719,14 +1754,27 @@
                     END-IF                                                      
            END-EVALUATE                                                         
                                                                                 
+           MOVE FUNCTION TRIM(UT-EXPECTED-ACCESSES-FMT)                         
+              TO UT-EXPECTED-ACCESSES-DISP                                      
+           MOVE FUNCTION TRIM(UT-ACTUAL-ACCESSES-FMT)                           
+              TO UT-ACTUAL-ACCESSES-DISP                                        
+                                                                                
+                                                                                
+                                                                                
            IF UT-VERIFY-PASSED                                                  
                ADD 1 TO UT-NUMBER-PASSED                                        
-               DISPLAY UT-PASSED                                                
-                       UT-TEST-CASE-NUMBER '. '                                 
-                      'VERIFY ' UT-LABEL-VERIFY-COMPARE                         
-                      UT-EXPECTED-ACCESSES-FMT SPACE                            
-                      UT-LABEL-EXPECTED-ACCESS ' '                              
-                      'TO ' UT-MOCK-OPERATION                                   
+               STRING                                                           
+                    UT-PASSED   DELIMITED BY SIZE                               
+                    UT-TEST-CASE-NUMBER '. ' DELIMITED BY SIZE                  
+                    'VERIFY ' UT-LABEL-VERIFY-COMPARE DELIMITED BY '  '         
+                    ' ' DELIMITED BY SIZE                                       
+                    UT-EXPECTED-ACCESSES-DISP DELIMITED BY SPACE                
+                    ' ' DELIMITED BY SIZE                                       
+                    UT-LABEL-EXPECTED-ACCESS ' ' DELIMITED BY SIZE              
+                    'TO ' UT-MOCK-OPERATION DELIMITED BY SIZE                   
+                   INTO UT-DISPLAY-MESSAGE                                      
+               END-STRING                                                       
+               DISPLAY UT-DISPLAY-MESSAGE                                       
                                                                                 
            ELSE                                                                 
                ADD 1 TO UT-NUMBER-FAILED                                        
@@ -1742,12 +1790,13 @@
                MOVE SPACES TO UT-DISPLAY-MESSAGE                                
                STRING                                                           
                    '   EXPECTED '                 DELIMITED BY SIZE             
-                   UT-LABEL-VERIFY-COMPARE ' ' DELIMITED BY SIZE                
-                   UT-EXPECTED-ACCESSES-FMT       DELIMITED BY SIZE             
-                   SPACE                          DELIMITED BY SIZE             
+                   UT-LABEL-VERIFY-COMPARE DELIMITED BY '  '                    
+                   ' ' DELIMITED BY SIZE                                        
+                   UT-EXPECTED-ACCESSES-DISP       DELIMITED BY SPACE           
+                   ' '                          DELIMITED BY SIZE               
                    UT-LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE            
                    ', WAS '                       DELIMITED BY SIZE             
-                   UT-ACTUAL-ACCESSES-FMT         DELIMITED BY SIZE             
+                   UT-ACTUAL-ACCESSES-DISP         DELIMITED BY SIZE            
                    INTO UT-DISPLAY-MESSAGE                                      
                END-STRING                                                       
                DISPLAY UT-DISPLAY-MESSAGE                                       
@@ -1766,10 +1815,6 @@
              CONTINUE                                                           
            END-PERFORM                                                          
            SET UT-FILE-IX DOWN BY 1                                             
-           .                                                                    
-       UT-BEFORE.                                                               
-           .                                                                    
-       UT-AFTER.                                                                
            .                                                                    
        UT-INITIALIZE.                                                           
            MOVE SPACES TO UT-FILE-INFORMATION                                   
@@ -1816,8 +1861,9 @@
            PERFORM 400-CHANGE-2                                                 
            PERFORM 500-SWITCH                                                   
            PERFORM 999-END                                                      
+           EXIT SECTION                                                         
             END-EVALUATE                                                        
-           EXIT SECTION.                                                        
+           .                                                                    
                                                                                 
        100-WELCOME SECTION.                                                     
             EVALUATE UT-TEST-SUITE-NAME                                         
@@ -1847,8 +1893,8 @@
            WHEN OTHER                                                           
            MOVE "Hello" to VALUE-1                                              
            MOVE "Hi" to VALUE-2                                                 
-            END-EVALUATE                                                        
               EXIT SECTION                                                      
+            END-EVALUATE                                                        
               .                                                                 
                                                                                 
        200-GOODBYE SECTION.                                                     
@@ -1872,18 +1918,32 @@
            WHEN "Bye"                                                           
               MOVE "Hello" TO VALUE-1                                           
            WHEN OTHER                                                           
-            END-EVALUATE                                                        
               EXIT PARAGRAPH                                                    
-           END-EVALUATE.                                                        
+           END-EVALUATE                                                         
+            END-EVALUATE                                                        
+           .                                                                    
                                                                                 
-       400-CHANGE-2.                                                            
+       400-CHANGE-2 SECTION.                                                    
+            EVALUATE UT-TEST-SUITE-NAME                                         
+                   ALSO UT-TEST-CASE-NAME                                       
+                WHEN "Mock Sections And Paragraphs"                             
+                   ALSO "Mock with EXIT SECTION in source works"                
+                    PERFORM UT-6-8-1-MOCK                                       
+           WHEN OTHER                                                           
            EVALUATE VALUE-2                                                     
            WHEN "Hi"                                                            
               MOVE "See you" TO VALUE-2                                         
+              EXIT SECTION                                                      
            WHEN OTHER                                                           
               MOVE "Hi" TO VALUE-2                                              
+              EXIT SECTION                                                      
            END-EVALUATE                                                         
+            END-EVALUATE                                                        
           .                                                                     
+                                                                                
+       410-PLACEHOLDER SECTION.                                                 
+           CONTINUE                                                             
+           .                                                                    
                                                                                 
        500-SWITCH.                                                              
             EVALUATE UT-TEST-SUITE-NAME                                         
@@ -1919,6 +1979,7 @@
                    ALSO ANY                                                     
                     PERFORM UT-5-0-1-MOCK                                       
             END-EVALUATE                                                        
+            CONTINUE                                                            
            .                                                                    
                                                                                 
        700-MAKE-CALL.                                                           
@@ -1931,6 +1992,7 @@
                    ALSO "Call mock with argument works"                         
                     PERFORM UT-5-3-1-MOCK                                       
             END-EVALUATE                                                        
+            CONTINUE                                                            
            .                                                                    
                                                                                 
        800-MAKE-CALL.                                                           
@@ -1944,8 +2006,8 @@
            MOVE "arg1" to VALUE-1                                               
            MOVE "arg2" to VALUE-2                                               
            MOVE "arg3" to VALUE-3                                               
-      *    CALL 'PROG3' USING  BY CONTENT VALUE-1, BY VALUE VALUE-2, VAL        
-      * UE-3.                                                                   
+      *    CALL 'PROG3' USING BY CONTENT VALUE-1, BY VALUE VALUE-2, VALU        
+      * E-3.                                                                    
             EVALUATE UT-TEST-SUITE-NAME                                         
                    ALSO UT-TEST-CASE-NAME                                       
                 WHEN "Mock Call statements test"                                
@@ -1957,8 +2019,9 @@
       -    "ed"                                                                 
                     PERFORM UT-5-5-1-MOCK                                       
             END-EVALUATE                                                        
-      *    CALL 'PROG3' USING  BY CONTENT VALUE-1, BY VALUE VALUE-2, VAL        
-      * UE-3                                                                    
+            CONTINUE                                                            
+      *    CALL 'PROG3' USING BY CONTENT VALUE-1, BY VALUE VALUE-2, VALU        
+      * E-3                                                                     
             EVALUATE UT-TEST-SUITE-NAME                                         
                    ALSO UT-TEST-CASE-NAME                                       
                 WHEN "Mock Call statements test"                                
@@ -1970,7 +2033,9 @@
       -    "ed"                                                                 
                     PERFORM UT-5-5-1-MOCK                                       
             END-EVALUATE                                                        
+            CONTINUE                                                            
       *   CALL 'PROG3' USING VALUE-1                                            
+            CONTINUE                                                            
             END-EVALUATE                                                        
            .                                                                    
                                                                                 

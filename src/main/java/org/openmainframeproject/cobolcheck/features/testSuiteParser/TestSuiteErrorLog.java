@@ -181,7 +181,7 @@ public class TestSuiteErrorLog {
             filecreator.close();
             testSourceWriter = EncodingIO.getWriterWithCorrectEncoding(testSuiteParserErrorLogPath);
             FilePermission.setFilePermissionForAllUsers(testSuiteParserErrorLogPath, Config.getGeneratedFilesPermissionAll());
-            Log.info(Messages.get("INF013", testSuiteParserErrorLogPath));
+            Log.info(Messages.get("INF014", testSuiteParserErrorLogPath));
             testSourceWriter.close();
         } catch (IOException testSourceOutException) {
             System.out.println(testSourceOutException.getMessage());

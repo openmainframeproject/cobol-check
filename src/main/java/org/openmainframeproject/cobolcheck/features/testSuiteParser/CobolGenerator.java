@@ -62,6 +62,10 @@ public class CobolGenerator {
             return StringHelper.commentOutLine(tag);
     }
 
+    static String getContinueStatement(){
+        return "           CONTINUE";
+    }
+
     static void addStartAndEndTags(List<String> lines){
         if (!getInjectStartTagComment().isEmpty())
             lines.add(0, getInjectStartTagComment());

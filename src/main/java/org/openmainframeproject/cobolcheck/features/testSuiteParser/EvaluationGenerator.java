@@ -20,6 +20,10 @@ public class EvaluationGenerator {
         evaluationItems = new ArrayList<>();
     }
 
+    public boolean containsItems(){
+        return evaluationItems.size() > 0;
+    }
+
     public void addEvaluationItem(String line, String... arguments){
         if (argumentIdentifiers.length != arguments.length)
             throw new IndexOutOfBoundsException("argument identifiers and argument values does not match up for EvaluationItem");

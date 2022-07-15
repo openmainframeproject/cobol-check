@@ -264,12 +264,14 @@ public class MockIT {
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
@@ -367,12 +369,14 @@ public class MockIT {
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
+            "           CONTINUE                                                             " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
+            "           CONTINUE                                                             " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
@@ -502,18 +506,21 @@ public class MockIT {
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       000-START SECTION.                                                       " + Constants.NEWLINE +
@@ -588,12 +595,14 @@ public class MockIT {
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
+            "           CONTINUE                                                             " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
+            "           CONTINUE                                                             " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
