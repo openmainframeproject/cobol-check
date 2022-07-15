@@ -45,17 +45,27 @@ public class BeforeAfterRepo {
     }
 
     List<String> getBeforeEachParagraphLines(){
-        List<String> lines = new ArrayList<>();
+        List<String> bodyLines = new ArrayList<>();
         List<String> comments = CobolGenerator.generateCommentBlock("This is performed before each Test Case");
-        List<String> bodyLines = beforeEachEvaluationGenerator.getEvaluationLines(false, null, true);
+
+        if (beforeEachEvaluationGenerator.containsItems())
+            bodyLines = beforeEachEvaluationGenerator.getEvaluationLines(false, null, true);
+        else
+            bodyLines.add(CobolGenerator.getContinueStatement());
+
         return CobolGenerator.generateParagraphLines(String.format(BEFORE_EACH_PARAGRAPH_NAME,
                 testCodePrefix), comments, bodyLines);
     }
 
     List<String> getAfterEachParagraphLines(){
-        List<String> lines = new ArrayList<>();
+        List<String> bodyLines = new ArrayList<>();
         List<String> comments = CobolGenerator.generateCommentBlock("This is performed after each Test Case");
-        List<String> bodyLines = afterEachEvaluationGenerator.getEvaluationLines(false, null, true);
+
+        if (afterEachEvaluationGenerator.containsItems())
+            bodyLines = afterEachEvaluationGenerator.getEvaluationLines(false, null, true);
+        else
+            bodyLines.add(CobolGenerator.getContinueStatement());
+
         return CobolGenerator.generateParagraphLines(String.format(AFTER_EACH_PARAGRAPH_NAME,
                 testCodePrefix), comments, bodyLines);
     }

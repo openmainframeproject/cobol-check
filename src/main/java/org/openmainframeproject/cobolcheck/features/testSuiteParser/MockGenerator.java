@@ -51,6 +51,7 @@ public class MockGenerator {
         lines.addAll(CobolGenerator.generateCommentBlock("Sets all global mock counters and expected count to 0"));
 
         if (mocks.isEmpty()){
+            lines.add(CobolGenerator.getContinueStatement());
             lines.add("           .");
             return lines;
         }

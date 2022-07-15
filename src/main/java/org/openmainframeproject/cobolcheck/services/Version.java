@@ -8,7 +8,7 @@ package org.openmainframeproject.cobolcheck.services;
  */
 public class Version {
     private static final Integer MAJOR = 0;
-    private static final Integer MINOR = 1;
+    private static final Integer MINOR = 2;
     private static final String PATCH = "0";
 
     public static String current() {

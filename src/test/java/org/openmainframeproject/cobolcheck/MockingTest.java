@@ -896,6 +896,7 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("      *Sets all global mock counters and expected count to 0");
         expected.add("      *****************************************************************");
+        expected.add("           CONTINUE");
         expected.add("           .");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);

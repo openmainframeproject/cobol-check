@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Before/After Each, Before/After All
+- Before/After All
 - Parameterized tests
 
 ## \[0.3.0\]
@@ -18,14 +18,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Mock CICS resources
 - Mock SQL tables
-
-## \[0.2.0\] 
-
-### Planned
-
-- Mock paragraph
-- Mock Call statement
 - Mock batch file I/O
+
+## \[0.2.0\] 2022-07-15
+### Implemented
+- Mock paragraph
+- Mock section
+- Mock Call statement
+- Mocks can be global or local
+- Verification of the amount of times a mock was accessed
+- Before/After Each
+- Start- and end tags for injected code
+- Support for DECIMAL-POINT IS COMMA
+- Test output in XML JUnit format
+- Test output as HTML
+- Simple syntax and runtime error log for the cobol unit test language (cut)
+- Configuration for file encoding
+- Configuration for file access
+- Configuration for running or simply generating the test program
+- Configuration for including rules as the first part of the generated program
+
+### Known issues
+
+
 
 ## \[0.1.0\] 2021-03-15
 

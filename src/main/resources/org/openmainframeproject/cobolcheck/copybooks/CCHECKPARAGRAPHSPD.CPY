@@ -237,10 +237,6 @@
            END-PERFORM
            SET ==UT==FILE-IX DOWN BY 1
            .
-       ==UT==BEFORE.
-           .
-       ==UT==AFTER.
-           .
        ==UT==INITIALIZE.
            MOVE SPACES TO ==UT==FILE-INFORMATION
 
