@@ -66,9 +66,9 @@ buildNumber.properties
 ## Gradle
 ##############################
 bin/*
-!vs code extension/Cobol-check/bin
+!vs code extension/Cobol-check/bin/*.jar
 build/*
-!build/distributions
+!build/distributions/*.jar
 .gradle
 .gradletasknamecache
 gradle-app.setting
