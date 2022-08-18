@@ -2,6 +2,11 @@
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
 
+## [0.3.3] 18.08.2022
+- Now using Cobol Check version 0.2.1
+- Fixed links in test results HTML
+- Made it possible to have sequence numbers in unit tests
+
 ## [0.3.2] 15.07.2022
 
 - Now using Cobol Check version 0.2.0

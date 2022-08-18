@@ -57,9 +57,9 @@ public class TestSuiteErrorLogTest {
         String expectedResult = "";
         expectedResult += "SYNTAX ERROR in file: null" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 1, index 18:" + Constants.NEWLINE;
-        expectedResult += "Following <TESTSUITE>" + Constants.NEWLINE;
-        expectedResult += "Expected [alphanumeric-literal]" + Constants.NEWLINE;
-        expectedResult += "Got <VERIFY>" + Constants.NEWLINE + Constants.NEWLINE;
+        expectedResult += "Following <TESTSUITE> classified as <TESTSUITE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification: [alphanumeric-literal]" + Constants.NEWLINE;
+        expectedResult += "Got <VERIFY> classified as <VERIFY>" + Constants.NEWLINE + Constants.NEWLINE;
 
         assertThrows(TestSuiteSyntaxException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),

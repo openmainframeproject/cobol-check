@@ -1,7 +1,11 @@
 package org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects;
 
+import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.RunInfo;
+import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -69,13 +73,26 @@ public class TableEmbedDto extends DataTransferObject {
     }
 
     private String formatGeneratedArtifacts(TestSuite testSuite){
+        String cobolSource = "";
+        String htmlUrlFormattedGeneratedCobolSource = RunInfo.getGeneratedCobolSourcePath().replace("#", "%23");
+        String htmlUrlFormattedCompiledProgram = RunInfo.getCompiledProgramPath().replace("#", "%23");
+        try {
+            File file = new File(testSuite.getProgramPath());
+            if (!file.exists()) {
+                String name = file.getName();
+                String path = file.getParentFile().getAbsolutePath();
+                cobolSource = PathHelper.findFilePath(path, name, Config.getApplicationFilenameSuffixes());
+            }
+        } catch (IOException e){
+
+        }
+
         return "        <ul>\n" +
-                "            <li>COBOL source: <a href=\"" + testSuite.getProgramPath() + "\">" + testSuite.getProgramPath() + "</a></li>\n" +
-                "            <li>Unittest source: <a href=\"" + testSuite.getPath() + "\">" + testSuite.getPath() + "</a></li>\n" +
-                "            <li>Config file: <a href=\"" + RunInfo.getConfigFilePath() + "\">" + RunInfo.getConfigFilePath() + "</a></li>\n" +
-                "            <li>Generated COBOL source: <a href=\"" + RunInfo.getGeneratedCobolSourcePath() + "\">" + RunInfo.getGeneratedCobolSourcePath() + "</a></li>\n" +
-                "            <li>Compiled program: <a href=\"" + RunInfo.getCompiledProgramPath() + "\">" + RunInfo.getCompiledProgramPath() + "</a></li>\n" +
-                "        </ul>;";
+                "            <li>Generated COBOL source: <a href=\" vscode://file/" + htmlUrlFormattedGeneratedCobolSource + "\">" + RunInfo.getGeneratedCobolSourcePath() + "</a></li>\n" +
+                "            <li>COBOL source: <a href=\" vscode://file/" + cobolSource + "\">" + cobolSource + "</a></li>\n" +
+                "            <li>Unittest source: <a href=\" vscode://file/" + testSuite.getPath() + "\">" + testSuite.getPath() + "</a></li>\n" +
+                "            <li>Config file: <a href=\" vscode://file/" + RunInfo.getConfigFilePath() + "\">" + RunInfo.getConfigFilePath() + "</a></li>\n" +
+                "        </ul>";
     }
 
     private String generateHtmlForTestCase(TestCase testCase) {

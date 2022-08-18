@@ -17,7 +17,7 @@ import { ResultWebView } from './services/ResultWebView';
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
 let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
 let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
-let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.0.jar');
+let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.1.jar');
 
 let lastCurrentFile = null;
 let cutLanguageRunning = false;
