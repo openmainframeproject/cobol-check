@@ -19,11 +19,13 @@ public class TestSuiteErrorLog {
 
     public enum ErrorTypes {SYNTAX_ERROR, RUNTIME_ERROR, WARNING}
     private Keyword lastKeyword;
+    private String lastToken;
+
     private String fileMessage = "%1s in file: %2s";
     private String lineIndexMessage = "Unexpected token on line %1s, index %2s:";
 
-    private String followingExpectedGotMessage = "Following <%1s>" + Constants.NEWLINE +
-            "Expected %2s" + Constants.NEWLINE + "Got <%3s>";
+    private String followingExpectedGotMessage = "Following <%1s> classified as <%2s>" + Constants.NEWLINE +
+            "Expected classification: %3s" + Constants.NEWLINE + "Got <%4s> classified as <%5s>";
     private String keywordInBlock = "Cannot have Cobol Check keyword <%1s> inside a %2s block";
 
     private boolean errorOccured = false;
@@ -50,20 +52,22 @@ public class TestSuiteErrorLog {
 
     public String getLastKeywordValue() { return lastKeyword.value(); }
 
-    public void checkExpectedTokenSyntax(Keyword currentKeyword, String currentFile, int lineNumber, int lineIndex){
+    public void checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
         if (lastKeyword != null){
             String error = "";
             if (!lastKeyword.getvalidNextKeys().contains(currentKeyword.value())){
                 errorOccured = true;
+                String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys().toArray());
                 error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
-                error += String.format(followingExpectedGotMessage, lastKeyword.value(),
-                        Arrays.toString(lastKeyword.getvalidNextKeys().toArray()), currentKeyword.value()) +
+                error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value(), expectedKeywords,
+                        currentToken, currentKeyword.value()) +
                         Constants.NEWLINE + Constants.NEWLINE;
                 outputError(error);
             }
         }
         lastKeyword = currentKeyword;
+        lastToken = currentToken;
     }
 
     public void checkSyntaxInsideBlock(String blockKeyword, List<String> cobolLines, TokenExtractor tokenExtractor, String currentFile, int lineNumber) {

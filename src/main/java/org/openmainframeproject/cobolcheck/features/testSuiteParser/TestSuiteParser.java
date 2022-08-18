@@ -20,11 +20,13 @@ import java.util.Locale;
  */
 public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
+    private TestSuiteWritingStyle testSuiteWritingStyle;
     private List<String> testSuiteTokens;
     private String currentTestSuiteLine = "";
     private int fileLineNumber = 0;
     private int fileLineIndexNumber = 0;
     private String currentTestSuiteRealFile;
+    private String oldTestSuiteRealFile;
 
     private String currentFieldName = "";
 
@@ -227,7 +229,8 @@ public class TestSuiteParser {
 
             boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier || (expectMockArguments && !expectUsing));
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);
-            testSuiteErrorLog.checkExpectedTokenSyntax(keyword, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
+
+            testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
             Log.debug("Generator.parseTestSuite(), " +
                     "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
 
@@ -373,7 +376,7 @@ public class TestSuiteParser {
                                 testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                         currentTestSuiteRealFile, fileLineNumber);
                                 Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, currentTestSuiteRealFile, fileLineNumber,
+                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
                                         currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
                                 currentMock.addLines(mockLines);
                                 try{
@@ -417,7 +420,7 @@ public class TestSuiteParser {
                             testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                     currentTestSuiteRealFile, fileLineNumber);
                             Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, currentTestSuiteRealFile, fileLineNumber,
+                            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
                                     currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
                             currentMock.addLines(removeToken(mockLines, "END-CALL"));
                             try{
@@ -464,7 +467,7 @@ public class TestSuiteParser {
                                 testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                         currentTestSuiteRealFile, fileLineNumber);
                                 Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, currentTestSuiteRealFile, fileLineNumber,
+                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
                                         currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
                                 currentMock.addLines(mockLines);
                                 try{
@@ -526,7 +529,7 @@ public class TestSuiteParser {
                     testSuiteErrorLog.checkSyntaxInsideBlock(Constants.BEFORE_EACH_TOKEN, beforeLines, keywordExtractor,
                             currentTestSuiteRealFile, fileLineNumber);
                     Keyword endBeforeKeyword = Keywords.getKeywordFor(Constants.END_BEFORE_TOKEN, false);
-                    testSuiteErrorLog.checkExpectedTokenSyntax(endBeforeKeyword, currentTestSuiteRealFile, fileLineNumber,
+                    testSuiteErrorLog.checkExpectedTokenSyntax(endBeforeKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
                             currentTestSuiteLine.indexOf(Constants.END_BEFORE_TOKEN));
                     beforeAfterRepo.addBeforeEachItem(testSuiteNumber, currentTestSuiteName, beforeLines);
                     break;
@@ -537,7 +540,7 @@ public class TestSuiteParser {
                     testSuiteErrorLog.checkSyntaxInsideBlock(Constants.AFTER_EACH_TOKEN, afterLines, keywordExtractor,
                             currentTestSuiteRealFile, fileLineNumber);
                     Keyword endAfterKeyword = Keywords.getKeywordFor(Constants.END_AFTER_TOKEN, false);
-                    testSuiteErrorLog.checkExpectedTokenSyntax(endAfterKeyword, currentTestSuiteRealFile, fileLineNumber,
+                    testSuiteErrorLog.checkExpectedTokenSyntax(endAfterKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
                             currentTestSuiteLine.indexOf(Constants.END_AFTER_TOKEN));
                     beforeAfterRepo.addAfterEachItem(testSuiteNumber, currentTestSuiteName, afterLines);
                     break;
@@ -687,6 +690,7 @@ public class TestSuiteParser {
                     }
                     break;
             }
+            oldTestSuiteRealFile = currentTestSuiteRealFile;
             nextAction = keyword.keywordAction();
             testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         }
@@ -736,6 +740,16 @@ public class TestSuiteParser {
             if (testSuiteLine == null) {
                 return null;
             }
+            //Finding writing style based on first token in file
+            if (currentTestSuiteRealFile != null && !currentTestSuiteRealFile.equals(oldTestSuiteRealFile)){
+                testSuiteWritingStyle = getWritingStyleOfLine(testSuiteLine);
+                Log.debug("Writing style set to " + testSuiteWritingStyle.name() +
+                        " for test suite: " + currentTestSuiteRealFile);
+            }
+
+            if (testSuiteWritingStyle == TestSuiteWritingStyle.Strict && testSuiteLine.length() > 5)
+                testSuiteLine = testSuiteLine.substring(6);
+
             if (testSuiteLine.length() > 0 && !testSuiteLine.trim().startsWith("*")) {
 //            if (testSuiteLine.length() > 5 && testSuiteLine.charAt(6) != '*') {
                 testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
@@ -772,6 +786,7 @@ public class TestSuiteParser {
             }
             else if (currentTestSuiteLine.startsWith("      *From file:")){
                 fileLineNumber = 0;
+                oldTestSuiteRealFile = currentTestSuiteRealFile;
                 currentTestSuiteRealFile = currentTestSuiteLine.substring(currentTestSuiteLine.indexOf(":"));
                 return readNextLineFromTestSuite(testSuiteReader);
             }
@@ -782,6 +797,16 @@ public class TestSuiteParser {
         } catch (Exception ex) {
             throw new PossibleInternalLogicErrorException(ex);
         }
+    }
+
+    private TestSuiteWritingStyle getWritingStyleOfLine(String line){
+        if (line.length() > 5){
+            String potentialSequenceAreaNumber = line.substring(0, 6);
+            Keyword keyword = Keywords.getKeywordFor(potentialSequenceAreaNumber, false);
+            if (keyword.value().equals(Constants.NUMERIC_LITERAL_KEYWORD))
+                return TestSuiteWritingStyle.Strict;
+        }
+        return TestSuiteWritingStyle.Freeform;
     }
 
     /**

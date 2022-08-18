@@ -689,6 +689,37 @@ public class TestSuiteParserParsingTest {
     }
 
     @Test
+    public void it_parses_testsuite_with_sequnece_area() {
+        testSuite.append("      *From file: C:doesNotExist.cut\n");
+        testSuite.append("000100 TESTSUITE \"Name of test suite\"\n");
+        testSuite.append("000200 TESTCASE \"Name of test case\"\n");
+        testSuite.append("000300 MOCK CALL 'PROG1' USING this, BY CONTENT other\n");
+        testSuite.append("000400    MOVE \"something\" TO this\n");
+        testSuite.append("000500    MOVE \"something else\" TO other\n");
+        testSuite.append("000600 END-MOCK\n");
+        testSuite.append("000700*Just a comment\n");
+        testSuite.append("000800 PERFORM 000-START\n");
+        testSuite.append("000900 VERIFY CALL 'PROG1' USING\n");
+        testSuite.append("001000       this, BY CONTENT other\n");
+        testSuite.append("001100       HAPPENED ONCE\n");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        List<String> actualResult = new ArrayList<>();
+        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
     public void it_inserts_start_and_end_tag_as_comments() throws IOException {
         String str1 = "       TESTSUITE \"TestSuite1\"";
         String str2 = "       TESTCASE \"TestCase1\"";

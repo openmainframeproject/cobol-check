@@ -2,10 +2,6 @@ import * as vscode from 'vscode';
 import { integer } from 'vscode-languageclient';
 import * as LOGGER from '../utils/Logger'
 
-let cobolCheckJar_Windows = '@java -jar Cobol-check\\bin\\cobol-check-0.1.0.jar';
-let cobolCheckJar_Linux_Mac = 'java -jar Cobol-check/bin/cobol-check-0.1.0.jar $@';
-
-
 const windowsPlatform = 'Windows';
 const macPlatform = 'MacOS';
 const linuxPlatform = 'Linux';
