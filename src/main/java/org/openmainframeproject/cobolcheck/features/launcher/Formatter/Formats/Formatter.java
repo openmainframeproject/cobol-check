@@ -27,8 +27,10 @@ public abstract class Formatter {
 
     private TokenExtractor tokenExtractor = new StringTokenizerExtractor();
     private boolean expectTestSuiteName;
-    private String currentTestSuite;
-    private boolean expectFailMessage;
+    private String failData;
+    private boolean expectFailData;
+    private boolean expectExpectedMessage;
+    private boolean expectWasMessage;
 
     protected DataTransferObject dataTransferObject;
     private boolean expectNumberPassed;
@@ -72,8 +74,17 @@ public abstract class Formatter {
                 expectTestSuiteName = false;
             }
 
-            else if (expectFailMessage){
-                dataTransferObject.setCurrentTestCaseFailure(line.trim(), getFailureType(line));
+            else if (expectFailData & expectExpectedMessage){
+                failData = line.trim();
+                expectExpectedMessage = false;
+                expectFailMessage = true;
+            }
+
+            else if (expectFailData & expectFailMessage){
+                failData.concat(',');
+                failData.concat(line.trim());
+                dataTransferObject.setCurrentTestCaseFailure(failData, getFailureType(failData));
+                expectFailData = false;
                 expectFailMessage = false;
             }
 
@@ -125,7 +136,8 @@ public abstract class Formatter {
             else if (tokens[0].equalsIgnoreCase(failPrefixKeyword) && tokens.length > 1 &&
                     tokens[1].equalsIgnoreCase(failKeyword)){
                 //Test failed
-                expectFailMessage = true;
+                expectFailData = true;
+                expectExpectedMessage = true;
                 return;
             }
         }
