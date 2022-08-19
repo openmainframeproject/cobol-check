@@ -26,10 +26,10 @@ As of March 2022 we could use help with:
 
 ## Downloads 
 
-Version 0.2.0 pre-release is available! 
+Version 0.2.1 pre-release is available! 
 
 [//]: # (- Find the download on the project home page on the [Neo Pragma site]&#40;https://neopragma.com/projects/cobol-check/&#41;.)
-- Download link to [cobol-check-0.2.0.zip](https://github.com/openmainframeproject/cobol-check/blob/main/build/distributions/cobol-check-0.2.0.zip).
+- Download link to [current cobol-check zip](https://github.com/openmainframeproject/cobol-check/blob/main/build/distributions/cobol-check-0.2.1.zip).
 - Find general release information in the [changelog](https://github.com/openmainframeproject/cobol-check/blob/main/CHANGELOG.md).
 - Find more information about supported functionality on [the wiki](https://github.com/openmainframeproject/cobol-check/wiki/Common-Test-Case-Patterns).
 
