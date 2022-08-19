@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.*;
 import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
@@ -75,15 +76,21 @@ public abstract class Formatter {
                 expectTestSuiteName = false;
             }
 
-            else if (expectFailMessage & expectExpectedMessage){
+            else if (expectFailMessage && expectExpectedMessage){
                 failData = line.trim();
                 expectExpectedMessage = false;
-                expectWasMessage = true;
+                String lineTextValuesExcluded = StringHelper.ExcludeBetweenTags(line, '<', '>');
+                if (lineTextValuesExcluded.trim().toUpperCase(Locale.ROOT).contains("WAS")){
+                    dataTransferObject.setCurrentTestCaseFailure(failData, getFailureType(failData));
+                    expectFailMessage = false;
+                    expectWasMessage = false;
+                }
+                else
+                    expectWasMessage = true;
             }
 
-            else if (expectFailMessage & expectWasMessage){
-                failData.concat(",");
-                failData.concat(line.trim());
+            else if (expectFailMessage && expectWasMessage){
+                failData += ", " + line.trim();
                 dataTransferObject.setCurrentTestCaseFailure(failData, getFailureType(failData));
                 expectFailMessage = false;
                 expectWasMessage = false;
