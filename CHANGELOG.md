@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.1\] 2022-08-18
+### Implemented
+- Fixed links in test results HTML
+- Made it possible to have sequence numbers in unit tests
+- Made error messages in the error log better
+
+
 ## \[0.2.0\] 2022-07-15
 ### Implemented
 - Mock paragraph

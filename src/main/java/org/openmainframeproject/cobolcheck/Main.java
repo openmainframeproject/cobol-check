@@ -5,8 +5,6 @@ import org.openmainframeproject.cobolcheck.workers.Generator;
 import org.openmainframeproject.cobolcheck.workers.Initializer;
 class Main {
 
-    //TODO: DELETE THIS COMMENT
-
     public static void main(String[] args) throws InterruptedException {
         Initializer initializer = new Initializer(args);
         initializer.run();
