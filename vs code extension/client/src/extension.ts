@@ -9,10 +9,12 @@
 import * as vscode from 'vscode';
 import { workspace, ExtensionContext, window} from 'vscode';
 import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, setConfiguration } from './services/CobolCheckConfiguration';
-import { appendPath, getCobolCheckRunArgumentsBasedOnCurrentFile, getCobolProgramPathForGivenContext, getCurrentProgramName, getFileName, getResultOutput, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
+import { appendPath, getCobolCheckRunArgumentsBasedOnCurrentFile, getCobolProgramPathForGivenContext, getCurrentProgramName, getFileName, getTextFromFile, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
 
 import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
 import { ResultWebView } from './services/ResultWebView';
+import { handleCobolCheckOut } from './Helpers/ExtensionHelper';
+import path = require('path');
 
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
 let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
@@ -22,12 +24,12 @@ let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/b
 let lastCurrentFile = null;
 let cutLanguageRunning = false;
 
+
 export function activate(context: ExtensionContext) {
 	startCutLanguageClientServer(context);
 
 	const provider = new ResultWebView(context.extensionUri);
-	let panel : vscode.WebviewPanel = null;
-
+	
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ResultWebView.viewType, provider));
 
@@ -47,27 +49,11 @@ export function activate(context: ExtensionContext) {
 
 			//Running Cobol Check
 			let output = await runCobolCheck(cobolCheckJarPath, argument)
-
-			progress.report({ message: 'Loading test report' })
-
-			let testResultFile = appendPath(externalVsCodeInstallationDir, await getConfigurationValueFor(configPath, 'test.results.file'));
-			let htmlResult = await getResultOutput(testResultFile + '.html');
-			if (htmlResult !== null){
-				if (panel === null){
-					panel = vscode.window.createWebviewPanel(
-						'testResult', // Identifies the type of the webview. Used internally
-						'Test Results - ' + getCurrentProgramName(), // Title of the panel displayed to the user
-						vscode.ViewColumn.Two, // Editor column to show the new webview panel in.
-						{} // Webview options. More on these later.
-					);
-					panel.onDidDispose(() => {
-						panel = null;
-					})
-				}
-				panel.reveal(vscode.ViewColumn.Two);
-				panel.title = 'Test Results - ' + getCurrentProgramName();
-				panel.webview.html = htmlResult;
-			}
+			progress.report({ message: 'Handling output' })
+			if (output !== null)
+				await handleCobolCheckOut(output, externalVsCodeInstallationDir, configPath);
+			else
+				vscode.window.showErrorMessage("Uncaught error occured. Please see the log for more info");
 		});
 	});
 

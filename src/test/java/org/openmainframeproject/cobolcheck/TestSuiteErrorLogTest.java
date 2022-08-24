@@ -55,7 +55,7 @@ public class TestSuiteErrorLogTest {
         testSuite.append("       TESTSUITE VERIFY");
 
         String expectedResult = "";
-        expectedResult += "SYNTAX ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:1:18:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 1, index 18:" + Constants.NEWLINE;
         expectedResult += "Following <TESTSUITE> classified as <TESTSUITE>" + Constants.NEWLINE;
         expectedResult += "Expected classification: [alphanumeric-literal]" + Constants.NEWLINE;
@@ -79,7 +79,7 @@ public class TestSuiteErrorLogTest {
         testSuite.append("       END-MOCK"+ Constants.NEWLINE);
 
         String expectedResult = "";
-        expectedResult += "SYNTAX ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:4:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 4, index  8:" + Constants.NEWLINE;
         expectedResult += "Cannot have Cobol Check keyword <END-BEFORE> inside a MOCK block" + Constants.NEWLINE + Constants.NEWLINE;
 
@@ -101,7 +101,7 @@ public class TestSuiteErrorLogTest {
         testSuite.append("       END-BEFORE"+ Constants.NEWLINE);
 
         String expectedResult = "";
-        expectedResult += "SYNTAX ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:4:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 4, index  8:" + Constants.NEWLINE;
         expectedResult += "Cannot have Cobol Check keyword <VERIFY> inside a BEFORE EACH block" + Constants.NEWLINE + Constants.NEWLINE;
 
@@ -126,7 +126,7 @@ public class TestSuiteErrorLogTest {
         testSuite.append("       END-MOCK"+ Constants.NEWLINE);
 
         String expectedResult = "";
-        expectedResult += "RUNTIME ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "RUNTIME ERROR in file: null:6:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 6, index  8:" + Constants.NEWLINE;
         expectedResult += "Mock <000-START> already exists in this Local testcase scope" + Constants.NEWLINE + Constants.NEWLINE;
 
@@ -150,7 +150,7 @@ public class TestSuiteErrorLogTest {
         testSuite.append("       END-MOCK"+ Constants.NEWLINE);
 
         String expectedResult = "";
-        expectedResult += "RUNTIME ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "RUNTIME ERROR in file: null:5:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 5, index  8:" + Constants.NEWLINE;
         expectedResult += "Mock <000-START> already exists in this Global testsuite scope" + Constants.NEWLINE + Constants.NEWLINE;
 
@@ -170,7 +170,7 @@ public class TestSuiteErrorLogTest {
         testSuite.append("       VERIFY SECTION 000-START HAPPENED ONCE"+ Constants.NEWLINE);
 
         String expectedResult = "";
-        expectedResult += "RUNTIME ERROR in file: null" + Constants.NEWLINE;
+        expectedResult += "RUNTIME ERROR in file: null:3:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index  8:" + Constants.NEWLINE;
         expectedResult += "Verify references non existent mock. Mock does not exist for:  SECTION 000-START with no arguments" + Constants.NEWLINE + Constants.NEWLINE;
 
