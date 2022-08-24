@@ -58,7 +58,7 @@ public class TestSuiteErrorLog {
             if (!lastKeyword.getvalidNextKeys().contains(currentKeyword.value())){
                 errorOccured = true;
                 String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys().toArray());
-                error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + Constants.NEWLINE;
+                error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
                 error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value(), expectedKeywords,
                         currentToken, currentKeyword.value()) +
@@ -78,9 +78,10 @@ public class TestSuiteErrorLog {
                 if (cobolCheckStartingAndEndingKeywords.contains(keyword.toUpperCase(Locale.ROOT))){
                     errorOccured = true;
                     String error = "";
+                    lineNumber = lineNumber - revertedCount;
                     int index = line.indexOf(keyword) + 1;
-                    error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + Constants.NEWLINE;
-                    error += String.format(lineIndexMessage, lineNumber - revertedCount, index) + Constants.NEWLINE;
+                    error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + ":" + lineNumber + ":" + index + ":" + Constants.NEWLINE;
+                    error += String.format(lineIndexMessage, lineNumber, index) + Constants.NEWLINE;
                     error += String.format(keywordInBlock, keyword, blockKeyword) + Constants.NEWLINE + Constants.NEWLINE;
                     outputError(error);
                 }
@@ -92,9 +93,10 @@ public class TestSuiteErrorLog {
     public void logIdenticalMocks(Mock mock){
         String error = "";
         errorOccured = true;
-        error += String.format(fileMessage, displayErrorType(ErrorTypes.RUNTIME_ERROR), mock.getTestSuiteFileName()) + Constants.NEWLINE;
-        error += String.format(lineIndexMessage, mock.getDeclarationLineNumberInOriginalFile(),
-                mock.getDeclarationIndexNumberInOriginalFile()) + Constants.NEWLINE;
+        int lineNumber = mock.getDeclarationLineNumberInOriginalFile();
+        int lineIndex = mock.getDeclarationIndexNumberInOriginalFile();
+        error += String.format(fileMessage, displayErrorType(ErrorTypes.RUNTIME_ERROR), mock.getTestSuiteFileName()) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
+        error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
         String message = "Mock <" + mock.getIdentifier() + "> already exists " +
                 (mock.getArguments().isEmpty() ? "" : "with the given arguments ") + "in this " +
                 mock.getScope().name() + ((mock.getScope() == MockScope.Local) ? " testcase " : " testsuite ") +
@@ -106,9 +108,10 @@ public class TestSuiteErrorLog {
     public void logVerifyReferencesNonExistentMock(VerifyMockCount verify) {
         String error = "";
         errorOccured = true;
-        error += String.format(fileMessage, displayErrorType(ErrorTypes.RUNTIME_ERROR), verify.getTestSuiteFileName()) + Constants.NEWLINE;
-        error += String.format(lineIndexMessage, verify.getDeclarationLineNumberInOriginalFile(),
-                verify.getDeclarationIndexNumberInOriginalFile()) + Constants.NEWLINE;
+        int lineNumber = verify.getDeclarationLineNumberInOriginalFile();
+        int lineIndex = verify.getDeclarationIndexNumberInOriginalFile();
+        error += String.format(fileMessage, displayErrorType(ErrorTypes.RUNTIME_ERROR), verify.getTestSuiteFileName()) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
+        error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
         String message = "Verify references non existent mock. Mock does not exist for:  " + verify.getType() + " " + verify.getIdentifier() +
                 ((verify.getArguments().isEmpty()) ? " with no arguments" : " with the given arguments");
         error += message + Constants.NEWLINE + Constants.NEWLINE;
@@ -119,9 +122,10 @@ public class TestSuiteErrorLog {
         for (Mock mock : mocks){
             if (!mock.isUsed()){
                 String error = "";
-                error += String.format(fileMessage, displayErrorType(ErrorTypes.WARNING), mock.getTestSuiteFileName()) + Constants.NEWLINE;
-                error += String.format(lineIndexMessage, mock.getDeclarationLineNumberInOriginalFile(),
-                        mock.getDeclarationIndexNumberInOriginalFile()) + Constants.NEWLINE;
+                int lineNumber = mock.getDeclarationLineNumberInOriginalFile();
+                int lineIndex = mock.getDeclarationIndexNumberInOriginalFile();
+                error += String.format(fileMessage, displayErrorType(ErrorTypes.WARNING), mock.getTestSuiteFileName()) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
+                error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
                 error += "Mock <" +  mock.getType() + "> <" + mock.getIdentifier() + "> does not reference " +
                         "any construct in the source code" + Constants.NEWLINE + Constants.NEWLINE;
                 outputError(error);

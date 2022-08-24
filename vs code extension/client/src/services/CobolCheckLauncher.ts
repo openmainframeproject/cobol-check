@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { integer } from 'vscode-languageclient';
 import * as LOGGER from '../utils/Logger'
+import * as CobParser from './CobolCheckOutputParser'
 
 const windowsPlatform = 'Windows';
 const macPlatform = 'MacOS';
@@ -31,7 +32,7 @@ export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : 
 	'-r "' + vsCodeInstallPath + '"';
 }
 
-export async function runCobolCheck(path : string, commandLineArgs : string) : Promise<string> {
+export async function runCobolCheck(path : string, commandLineArgs : string) : Promise<CobParser.CobolCheckOutputParser> {
 	return new Promise(async resolve => {
 		// Getting the right command based on platform
 		let executeJarCommand = '';
@@ -49,16 +50,13 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 		try{
 			var exec = require('child_process').exec;
 			//Run Cobol Check jar with arguments
-			var child = exec(executeJarCommand + ' ' + commandLineArgs, (error, stdout, stderr) => {
+			var child = exec(executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
 				if(error !== null){
-					console.log("Error -> "+error);
-					vscode.window.showErrorMessage('Cobol Check ran into an exception. Please see the log for further details');
 					LOGGER.log("*** COBOL CHECK ERROR: " + error, LOGGER.ERROR);
 				}
-				// resolve(error ? stderr : stdout)
-				resolve(stderr + '\n\r' + stdout)
 				LOGGER.log("Cobol Check out:\n" + stdout, LOGGER.INFO)
 				LOGGER.log("Cobol Check log:\n" + stderr, LOGGER.INFO)
+				resolve(new CobParser.CobolCheckOutputParser(stdout, stderr, error))
 			});
 
 		} catch (error){
@@ -74,14 +72,14 @@ export function getCurrentProgramName() : string{
 	return currentProgramName;
 }
 
-export function getResultOutput(path : string) : Promise<string>{
+export function getTextFromFile(path : string) : Promise<string>{
 	const fs = require('fs');
 
 	return new Promise(async resolve => {
 
 		fs.readFile(path, 'utf8', function(err, data) {
 			if(err){
-				vscode.window.showErrorMessage("Got an error while trying to read from test results file:\n " + err);
+				vscode.window.showErrorMessage("Got an error while trying to read from file: " + path + "\n " + err);
 				resolve(null);
 			}
 
