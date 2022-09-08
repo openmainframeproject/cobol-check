@@ -1,3 +1,5 @@
+import { startsWithPath } from '../Helpers/PathHelper';
+
 export enum OutputState {
 	NotSet,
 	NoIssues,
@@ -14,6 +16,8 @@ export class CobolCheckOutputParser{
 	private stderr : string;
 	private error : string;
 
+	private compilerInfoTag:string = "INF009:"
+	private compilerReturnCode1:string = "ended with exit code 1."
 	private syntaxErrorToken:string = "SYNTAX ERROR in file:";
 	private runTimeErrorToken:string = "RUNTIME ERROR in file:";
 	private warningToken:string = "WARNING in file:";
@@ -29,20 +33,27 @@ export class CobolCheckOutputParser{
 		this.stderr = stderr;
 		this.error = error;
 
+		//Figure out if COBOL compiler failed
+		if (stderr !== null && stderr !== ''){
+			const arr = stderr.toString().replace(/\r\n/g,'\n').split('\n');
+			for(let line of arr) {
+				line = line.trim();
+				if (line.includes(this.compilerInfoTag) && line.endsWith(this.compilerReturnCode1)){
+					this.state = OutputState.CobolCompilerError;
+				}
+			}
+		}
+
 		//Parse syntax errors/warnings
 		if (stdout !== null && stdout !== ''){
 			const arr = stdout.toString().replace(/\r\n/g,'\n').split('\n');
 			let reachedTestResults:boolean = false;
 			for(let line of arr) {
 				line = line.trim();
-				if (this.state === OutputState.CobolCompilerError){
-					this.outputText += line + "\n";
-					continue;
-				}
 				if (line.startsWith(this.syntaxErrorToken) || line.startsWith(this.runTimeErrorToken)){
 					this.state = OutputState.SyntaxError;
 				}
-				else if (line.startsWith(this.warningToken) && this.state !== OutputState.SyntaxError){
+				else if (line.startsWith(this.warningToken) && this.state === OutputState.NotSet){
 					this.state = OutputState.SyntaxWarnings;
 				}
 				if (line.startsWith(this.testSuiteToken)){
@@ -58,8 +69,8 @@ export class CobolCheckOutputParser{
 					this.state = OutputState.CmdError;
 					break;
 				}
-				if (this.state === OutputState.NotSet){
-					this.state = OutputState.CobolCompilerError;
+				if (this.state === OutputState.CobolCompilerError && startsWithPath(line)){
+					
 					this.outputText += line + "\n";
 				}
 			}

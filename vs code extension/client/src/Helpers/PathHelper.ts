@@ -12,3 +12,11 @@ export function endsPath(path:string) : boolean{
 			path.endsWith(".cbl") || (path.endsWith(":") && path.includes(".cbl")) || 
 			path.endsWith(".CBL:") || (path.endsWith(":") && path.includes(".CBL:")));
 }
+
+export function startsWithPath(value:string) : boolean{
+	let words = value.split(' ');
+	if (words.length > 0)
+		return couldBePath(words[0])
+	else
+		return false;
+}
