@@ -115,7 +115,6 @@ public class TableEmbedDto extends DataTransferObject {
         htmlCharacterEntityMap.put("<", "&#60;");
         htmlCharacterEntityMap.put(">", "&#62;");
         htmlCharacterEntityMap.put("&", "&#38;");
-        htmlCharacterEntityMap.put("\"", "&#34;");
         htmlCharacterEntityMap.put("'", "&#39;");
     }
 
