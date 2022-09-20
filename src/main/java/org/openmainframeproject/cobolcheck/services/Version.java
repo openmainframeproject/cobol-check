@@ -7,11 +7,11 @@ package org.openmainframeproject.cobolcheck.services;
  * @since 1.8
  */
 public class Version {
-    private static final Integer MAJOR = 0;
-    private static final Integer MINOR = 2;
-    private static final String PATCH = "1";
-
     public static String current() {
-        return String.format("Version: %s.%s.%s", MAJOR.toString(), MINOR.toString(), PATCH);
+        String version = Version.class.getPackage().getImplementationVersion();
+        if (version != null)
+            return version;
+        else
+            return "1.0.DEV";
     }
 }

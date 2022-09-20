@@ -127,35 +127,65 @@ task fatJar(type: Jar) {
     description 'Create executable jar'
     dependsOn integrationTest
     manifest {
-        attributes 'Main-Class': "${mainClassName}"
+        attributes 'Main-Class': "${mainClassName}",
+                   'Implementation-Title': 'Gradle Quickstart',
+                   'Implementation-Version': productVersion
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
-task copyJar(type: Copy) {
+task clearJar(type: Delete) {
+    delete(files("${project.buildDir}/vs code extension/Cobol-check/bin/"))
+}
+
+task copyJarToBin(type: Copy) {
     description 'Copy executable jar to bin directory prior to distribution'
     dependsOn fatJar
     from('build/libs/')
-      include '**/*.jar'
+    include '**/*.jar'
     into 'bin/'
+}
+
+task copyJarToExtension(type: Copy) {
+    description 'Copy executable jar to bin and VS Code extension bin directories prior to distribution'
+    dependsOn clearJar, fatJar
+    from('build/libs/')
+    include '**/*.jar'
+    into 'vs code extension/Cobol-check/bin/'
+}
+
+
+task copyRunScripts(type: Copy) {
+    description 'Makes copies of run scripts'
+    from "${projectDir}/cobolcheck.cmd"
+    into "${projectDir}/GradleTemp"
+    filter { line -> line.replaceAll('@VERSION@', productVersion) }
+    from "${projectDir}/cobolcheck"
+    into "${projectDir}/GradleTemp"
+    filter { line -> line.replaceAll('@VERSION@', productVersion) }
 }
 
 task prepareDistribution(type: Zip) {
     archiveName "${productName}-${productVersion}.zip"
     description 'Prepare distribution archive'
-    dependsOn copyJar
-    from "${projectDir}"
-    include([ "config.properties",
-              "scripts/*",
-              "bin/${productName}-${productVersion}.jar",
-              "src/main/cobol/ALPHA.CBL",
-              "src/main/cobol/NUMBERS.CBL",
-              "src/test/cobol/ALPHA/*",
-              "src/test/cobol/NUMBERS/*",
-              "cobolcheck",
-              "cobolcheck.cmd" ])
-    rename("build/libs/(.*)", "\$1")
+    dependsOn copyJarToBin, copyJarToExtension, copyRunScripts
+    from ("${projectDir}"){
+        include([ "config.properties",
+                  "scripts/*",
+                  "bin/${productName}-${productVersion}.jar",
+                  "src/main/cobol/ALPHA.CBL",
+                  "src/main/cobol/NUMBERS.CBL",
+                  "src/test/cobol/ALPHA/*",
+                  "src/test/cobol/NUMBERS/*" ])
+        rename("build/libs/(.*)", "\$1")
+    }
+
+    from ("${projectDir}/GradleTemp")
+
+    doLast {
+        delete "GradleTemp"
+    }
 }
 
 def approvalTest = tasks.register("approvalTest", Test) {
