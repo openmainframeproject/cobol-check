@@ -47,7 +47,7 @@ public class Emitter {
      * Emmits a message to the console showing the current version
      */
     void emitVersion(){
-        System.out.println(Version.current());
+        System.out.println("Version: " + Version.current());
     }
 
     /**
