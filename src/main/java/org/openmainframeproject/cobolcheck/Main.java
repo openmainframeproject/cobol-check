@@ -4,7 +4,6 @@ import org.openmainframeproject.cobolcheck.workers.CobolTestRunner;
 import org.openmainframeproject.cobolcheck.workers.Generator;
 import org.openmainframeproject.cobolcheck.workers.Initializer;
 class Main {
-    //delete this
 
     public static void main(String[] args) throws InterruptedException {
         Initializer initializer = new Initializer(args);

@@ -28,8 +28,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class TestSuiteParserCodeInsertionTest {
 
-    Writer testSourceOut;
-    CobolWriter cobolWriter;
     TestSuiteParser testSuiteParser;
     @Mock
     NumericFields numericFields;
@@ -236,8 +234,6 @@ public class TestSuiteParserCodeInsertionTest {
 
     @BeforeEach
     public void commonSetup() {
-        testSourceOut = new StringWriter();
-        cobolWriter = new CobolWriter(testSourceOut);
         mockedConfig = Mockito.mockStatic(Config.class);
         mockedConfig.when(() ->Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX))
                 .thenReturn("UT-");
