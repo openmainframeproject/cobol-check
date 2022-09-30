@@ -190,6 +190,27 @@ public class StringHelper {
         return index;
     }
 
+    public static String ExcludeBetweenTags(String value, char startTag, char endTag){
+        boolean insideTags = false;
+        String output = "";
+        char[] characters = value.toCharArray();
+        for (char c : characters){
+            if (insideTags){
+                if (c == endTag){
+                    insideTags = false;
+                    output += c;
+                }
+            }
+            else {
+                if (c == startTag)
+                    insideTags = true;
+
+                output += c;
+            }
+        }
+        return output;
+    }
+
     /**
      * Enclose a value in quotation marks.
      *

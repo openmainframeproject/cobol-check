@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.*;
 import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
@@ -27,8 +28,11 @@ public abstract class Formatter {
 
     private TokenExtractor tokenExtractor = new StringTokenizerExtractor();
     private boolean expectTestSuiteName;
-    private String currentTestSuite;
+    private String failData;
     private boolean expectFailMessage;
+    private boolean expectWasMessage;
+    private boolean expectExpectedMessage;
+
 
     protected DataTransferObject dataTransferObject;
     private boolean expectNumberPassed;
@@ -72,9 +76,24 @@ public abstract class Formatter {
                 expectTestSuiteName = false;
             }
 
-            else if (expectFailMessage){
-                dataTransferObject.setCurrentTestCaseFailure(line.trim(), getFailureType(line));
+            else if (expectFailMessage && expectExpectedMessage){
+                failData = line.trim();
+                expectExpectedMessage = false;
+                String lineTextValuesExcluded = StringHelper.ExcludeBetweenTags(line, '<', '>');
+                if (lineTextValuesExcluded.trim().toUpperCase(Locale.ROOT).contains("WAS")){
+                    dataTransferObject.setCurrentTestCaseFailure(failData, getFailureType(failData));
+                    expectFailMessage = false;
+                    expectWasMessage = false;
+                }
+                else
+                    expectWasMessage = true;
+            }
+
+            else if (expectFailMessage && expectWasMessage){
+                failData += ", " + line.trim();
+                dataTransferObject.setCurrentTestCaseFailure(failData, getFailureType(failData));
                 expectFailMessage = false;
+                expectWasMessage = false;
             }
 
             else if (line.toUpperCase(Locale.ROOT).contains(testCasesExecutedText)){
@@ -126,6 +145,7 @@ public abstract class Formatter {
                     tokens[1].equalsIgnoreCase(failKeyword)){
                 //Test failed
                 expectFailMessage = true;
+                expectExpectedMessage = true;
                 return;
             }
         }

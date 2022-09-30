@@ -75,7 +75,6 @@ public class TableEmbedDto extends DataTransferObject {
     private String formatGeneratedArtifacts(TestSuite testSuite){
         String cobolSource = "";
         String htmlUrlFormattedGeneratedCobolSource = RunInfo.getGeneratedCobolSourcePath().replace("#", "%23");
-        String htmlUrlFormattedCompiledProgram = RunInfo.getCompiledProgramPath().replace("#", "%23");
         try {
             File file = new File(testSuite.getProgramPath());
             if (!file.exists()) {
@@ -116,7 +115,6 @@ public class TableEmbedDto extends DataTransferObject {
         htmlCharacterEntityMap.put("<", "&#60;");
         htmlCharacterEntityMap.put(">", "&#62;");
         htmlCharacterEntityMap.put("&", "&#38;");
-        htmlCharacterEntityMap.put("\"", "&#34;");
         htmlCharacterEntityMap.put("'", "&#39;");
     }
 

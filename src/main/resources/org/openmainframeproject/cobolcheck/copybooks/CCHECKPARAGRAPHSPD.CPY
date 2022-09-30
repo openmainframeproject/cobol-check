@@ -112,7 +112,7 @@
                    ==UT==TEST-CASE-NAME
            IF ==UT==NUMERIC-COMPARE
                DISPLAY '    EXPECTED ' ==UT==EXPECTED-NUMERIC
-                       ', WAS ' ==UT==ACTUAL-NUMERIC
+               DISPLAY '         WAS ' ==UT==ACTUAL-NUMERIC
            ELSE
                MOVE ZERO TO ==UT==EXPECTED-TRIM
                INSPECT FUNCTION REVERSE(==UT==EXPECTED)
