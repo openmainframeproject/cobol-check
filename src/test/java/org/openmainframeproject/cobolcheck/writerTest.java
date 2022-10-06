@@ -92,6 +92,21 @@ public class writerTest {
         assertEquals(expectedLine1 + expectedLine2 + expectedLine3 + expectedLine4, writer.toString());
     }
 
+
+    @Test
+    void it_formats_a_Cobol_continuation_line_based_on_a_string_continuation_followed_by_split_at_cobol_token() throws IOException {
+        String originalText = "            MOVE FUNCTION DISPLAY-OF( FUNCTION NATIONAL-OF('{\"MESSAGEDATA\": {\"EVENTID\":\"823\",\"EXDATE\":\"2022-06-21\"}}'" +
+                "      , 819), 1208) to WS-MESSAGE";
+        String expectedLine1 = "            MOVE FUNCTION DISPLAY-OF( FUNCTION NATIONAL-OF('{\"MESSAGEDAT        ";
+        expectedLine1 += Constants.NEWLINE;
+        String expectedLine2 = "      -    'A\": {\"EVENTID\":\"823\",\"EXDATE\":\"2022-06-21\"}}'      , 819),          ";
+        expectedLine2 += Constants.NEWLINE;
+        String expectedLine3 = "               1208) to WS-MESSAGE                                              ";
+        expectedLine3 += Constants.NEWLINE;
+        writerController.writeLine(originalText);
+        assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
+    }
+
     @Test
     void it_formats_a_long_Cobol_comment_into_3_lines() throws IOException {
         String originalText = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo" +
