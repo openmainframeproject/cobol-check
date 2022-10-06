@@ -1,6 +1,7 @@
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class encapsulates information about a Cobol Check keyword.
@@ -15,13 +16,21 @@ import java.util.List;
 public class Keyword {
     private final String value;
     private final List<String> validNextKeys;
+    private final Map<String, List<String>> validNextKeysInContext;
     private final KeywordAction keywordAction;
 
-    public Keyword(String value,
-                   List<String> validNextKeys,
+    public Keyword(String value, List<String> validNextKeys, KeywordAction keywordAction) {
+        this.value = value;
+        this.validNextKeys = validNextKeys;
+        this.validNextKeysInContext = null;
+        this.keywordAction = keywordAction;
+    }
+
+    public Keyword(String value, List<String> validNextKeys, Map<String, List<String>> validNextKeysInContext,
                    KeywordAction keywordAction) {
         this.value = value;
         this.validNextKeys = validNextKeys;
+        this.validNextKeysInContext = validNextKeysInContext;
         this.keywordAction = keywordAction;
     }
 
@@ -29,8 +38,16 @@ public class Keyword {
         return value;
     }
 
-    public List<String> getvalidNextKeys() {
-        return validNextKeys;
+    public List<String> getvalidNextKeys(String context) {
+        if (validNextKeysInContext == null || context == null || context.isEmpty()){
+            return validNextKeys;
+        }
+        else {
+            if (validNextKeysInContext.containsKey(context))
+                return validNextKeysInContext.get(context);
+            else
+                return validNextKeys;
+        }
     }
 
     public KeywordAction keywordAction() {

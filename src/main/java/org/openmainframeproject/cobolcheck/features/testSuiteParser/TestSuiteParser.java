@@ -376,7 +376,7 @@ public class TestSuiteParser {
                                 testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                         currentTestSuiteRealFile, fileLineNumber);
                                 Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
+                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
                                         currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
                                 currentMock.addLines(mockLines);
                                 try{
