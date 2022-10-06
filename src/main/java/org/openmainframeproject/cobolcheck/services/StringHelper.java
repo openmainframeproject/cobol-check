@@ -211,6 +211,10 @@ public class StringHelper {
         return output;
     }
 
+    public static boolean isStringContinuationLine(String line) {
+        return line.startsWith("      -    '") || line.startsWith("      -    \"");
+    }
+
     /**
      * Enclose a value in quotation marks.
      *

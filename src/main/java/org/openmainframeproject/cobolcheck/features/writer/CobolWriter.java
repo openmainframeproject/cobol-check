@@ -173,8 +173,16 @@ public class CobolWriter {
             }
             else {
                 //Continue line at applicable space (line is split neither during string nor comment)
-                String[] words = line.trim().split(" ");
-                if (isRecursiveCall)
+                String[] words = null;
+                if (StringHelper.isStringContinuationLine(line)){
+                    words = line.substring(11).trim().split(" ");
+                }
+                else{
+                    words = line.trim().split(" ");
+                }
+                if (StringHelper.isStringContinuationLine(line))
+                    line1 = "      -    ";
+                else if (isRecursiveCall)
                     line1 = "               ";
                 else
                     line1 = "           ";
