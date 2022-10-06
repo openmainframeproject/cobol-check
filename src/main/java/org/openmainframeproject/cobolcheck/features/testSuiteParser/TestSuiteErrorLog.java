@@ -53,14 +53,16 @@ public class TestSuiteErrorLog {
     public String getLastKeywordValue() { return lastKeyword.value(); }
 
     public void checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
+        ContextHandler.tryEnterContext(currentToken);
         if (lastKeyword != null){
             String error = "";
-            if (!lastKeyword.getvalidNextKeys().contains(currentKeyword.value())){
+            if (!lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
                 errorOccured = true;
-                String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys().toArray());
+                String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).toArray());
+                String inContext = ContextHandler.insideOfContext() ? " in the context of " + ContextHandler.getCurrentContext() : "";
                 error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
-                error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value(), expectedKeywords,
+                error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value() + inContext, expectedKeywords,
                         currentToken, currentKeyword.value()) +
                         Constants.NEWLINE + Constants.NEWLINE;
                 outputError(error);
