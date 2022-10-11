@@ -71,6 +71,24 @@ public class TestSuiteErrorLogTest {
     }
 
     @Test
+    public void it_ends__mock_context_after_call_mock_with_no_arguments() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("           MOCK CALL 'PROG1'"+ Constants.NEWLINE);
+        testSuite.append("                MOVE \"From mocked PROG1\" TO VALUE-1"+ Constants.NEWLINE);
+        testSuite.append("           END-MOCK"+ Constants.NEWLINE);
+        testSuite.append("           PERFORM 600-MAKE-CALL"+ Constants.NEWLINE);
+        testSuite.append("           EXPECT VALUE-1 TO BE \"From mocked PROG1\""+ Constants.NEWLINE);
+
+        String expectedResult = null;
+
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
+
+        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
     public void it_catches_unexpected_keyword_inside_mock_block() {
         testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
         testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);

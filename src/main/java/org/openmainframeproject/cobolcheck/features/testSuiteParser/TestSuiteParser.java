@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Parses the concatenated test suite and writes Cobol test code to the output stream for the generated test program.
@@ -230,7 +231,20 @@ public class TestSuiteParser {
             boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier || (expectMockArguments && !expectUsing));
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);
 
-            testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
+            if (!verifyInProgress && expectUsing && expectMockArguments && !keyword.value().equals(Constants.USING_TOKEN)){
+                //In this case we expected mock arguments, but got none. We end the mock and go to next token
+                expectMockArguments = false;
+                expectUsing = false;
+                handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
+                testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+                continue;
+            }
+
+            if (!testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber)){
+                testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+                continue;
+            }
+
             Log.debug("Generator.parseTestSuite(), " +
                     "testSuiteToken <" + testSuiteToken + ">, \tkeyword.value() <" + keyword.value() + ">");
 
@@ -371,7 +385,7 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true);
+                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, true);
                                 //We know END-MOCK is reached here
                                 testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                         currentTestSuiteRealFile, fileLineNumber);
@@ -416,11 +430,11 @@ public class TestSuiteParser {
                         expectUsing = false;
                         if (!verifyInProgress){
                             ignoreCobolStatementAndFieldNameKeyAction = true;
-                            List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, currentLineContainsArgument);
+                            List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, currentLineContainsArgument);
                             testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                     currentTestSuiteRealFile, fileLineNumber);
                             Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
+                            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
                                     currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
                             currentMock.addLines(removeToken(mockLines, "END-CALL"));
                             try{
@@ -462,12 +476,12 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, true);
+                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, true);
                                 //We know END-MOCK is reached here
                                 testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                                         currentTestSuiteRealFile, fileLineNumber);
                                 Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber,
+                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
                                         currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
                                 currentMock.addLines(mockLines);
                                 try{
@@ -525,7 +539,7 @@ public class TestSuiteParser {
 
                 case Constants.BEFORE_EACH_TOKEN:
                 case Constants.BEFORE_EACH_TOKEN_HYPHEN:
-                    List<String> beforeLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_BEFORE_TOKEN, true);
+                    List<String> beforeLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_BEFORE_TOKEN, testSuiteToken, true);
                     testSuiteErrorLog.checkSyntaxInsideBlock(Constants.BEFORE_EACH_TOKEN, beforeLines, keywordExtractor,
                             currentTestSuiteRealFile, fileLineNumber);
                     Keyword endBeforeKeyword = Keywords.getKeywordFor(Constants.END_BEFORE_TOKEN, false);
@@ -536,7 +550,7 @@ public class TestSuiteParser {
 
                 case Constants.AFTER_EACH_TOKEN:
                 case Constants.AFTER_EACH_TOKEN_HYPHEN:
-                    List<String> afterLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_AFTER_TOKEN, true);
+                    List<String> afterLines = getLinesUntilKeywordHit(testSuiteReader, Constants.END_AFTER_TOKEN, testSuiteToken, true);
                     testSuiteErrorLog.checkSyntaxInsideBlock(Constants.AFTER_EACH_TOKEN, afterLines, keywordExtractor,
                             currentTestSuiteRealFile, fileLineNumber);
                     Keyword endAfterKeyword = Keywords.getKeywordFor(Constants.END_AFTER_TOKEN, false);
@@ -809,6 +823,23 @@ public class TestSuiteParser {
         return TestSuiteWritingStyle.Freeform;
     }
 
+    //TODO: Replace occurences of mock endings with this method!
+    private void handleEndOfMockStatement(BufferedReader testSuiteReader, String testSuiteToken, boolean skipCurrentToken) {
+        List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, skipCurrentToken);
+        testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                currentTestSuiteRealFile, fileLineNumber);
+        Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+        testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
+                currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+        if (currentMock.getType() == Constants.CALL_TOKEN)
+            currentMock.addLines(removeToken(mockLines, "END-CALL"));
+        try{
+            mockRepository.addMock(currentMock);
+        } catch (ComponentMockedTwiceInSameScopeException e){
+            testSuiteErrorLog.logIdenticalMocks(currentMock);
+        }
+    }
+
     /**
      * Finds the mock, that the current verify statement is referencing and attaches it.
      * Generates lines for verify statement and adds them to the given list.
@@ -1049,12 +1080,37 @@ public class TestSuiteParser {
         parsedTestSuiteLines.add(cobolStatement.toString());
     }
 
-    private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword, boolean skipCurrentLine){
+    private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword, String currentKey, boolean skipCurrentToken){
         List<String> lines = new ArrayList<>();
-        if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT)))
-            return lines;
-        if (!skipCurrentLine)
+        //Find the remaining tokens on the current line
+        if (skipCurrentToken){
+            int index = fileLineIndexNumber + currentKey.length() - 1;
+            if (index < currentTestSuiteLine.length())
+            {
+                currentTestSuiteLine = "           " + currentTestSuiteLine.substring(index);
+            }
+            else
+                currentTestSuiteLine = "";
+        }
+        else{
+            int index = fileLineIndexNumber - 1;
+            if (index < currentTestSuiteLine.length())
+            {
+                currentTestSuiteLine = "           " + currentTestSuiteLine.substring(index);
+            }
+            else
+                currentTestSuiteLine = "";
+        }
+        if (!currentTestSuiteLine.trim().isEmpty())
+        {
             lines.add(currentTestSuiteLine);
+        }
+        if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){
+            lines.set(0, lines.get(0).replaceAll("(?i)"+ Pattern.quote("foo"), ""));
+            if (lines.get(0).trim().isEmpty())
+                lines.remove(0);
+            return lines;
+        }
         String line;
         while ((line = readNextLineFromTestSuite(testSuiteReader)) != null &&
                 !line.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){

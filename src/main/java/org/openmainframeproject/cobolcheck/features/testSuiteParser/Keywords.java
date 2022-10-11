@@ -54,7 +54,12 @@ public class Keywords {
                                 Constants.NEVER_HAPPENED_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.FIELDNAME_KEYWORD,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                Constants.FIELDNAME_KEYWORD,
+                                Constants.BY_REFERENCE_TOKEN,
+                                Constants.BY_CONTENT_TOKEN,
+                                Constants.BY_VALUE_TOKEN,
+                                Constants.USING_TOKEN),
                                 Map.ofEntries(
                                         entry(Constants.MOCK_KEYWORD, Arrays.asList(
                                                 Constants.ENDMOCK_KEYWORD,
@@ -197,8 +202,21 @@ public class Keywords {
                                 Constants.AFTER_EACH_TOKEN_HYPHEN,
                                 Constants.HAPPENED_KEYWORD,
                                 Constants.NEVER_HAPPENED_KEYWORD,
-                                Constants.USING_TOKEN,
-                                Constants.ENDMOCK_KEYWORD),
+                                Constants.FIELDNAME_KEYWORD,
+                                Constants.BY_REFERENCE_TOKEN,
+                                Constants.BY_CONTENT_TOKEN,
+                                Constants.BY_VALUE_TOKEN,
+                                Constants.USING_TOKEN),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.ENDMOCK_KEYWORD,
+                                        Constants.FIELDNAME_KEYWORD,
+                                        Constants.BY_REFERENCE_TOKEN,
+                                        Constants.BY_CONTENT_TOKEN,
+                                        Constants.BY_VALUE_TOKEN,
+                                        Constants.USING_TOKEN
+                                ))
+                        ),
                         KeywordAction.FIELDNAME));
 
         //--------------------------------NUMERIC LITERAL
@@ -299,7 +317,12 @@ public class Keywords {
         //--------------------------------MOCK
         keywordInfo.put(Constants.MOCK_KEYWORD,
                 new Keyword(Constants.MOCK_KEYWORD,
-                        Arrays.asList(Constants.MOCK_TYPE),
+                        new ArrayList<>(),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.MOCK_TYPE
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------END MOCK
@@ -322,6 +345,12 @@ public class Keywords {
                 new Keyword(Constants.MOCK_TYPE,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD,
+                                        Constants.ALPHANUMERIC_LITERAL_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------USING
@@ -331,24 +360,47 @@ public class Keywords {
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD,
+                                        Constants.BY_REFERENCE_TOKEN,
+                                        Constants.BY_CONTENT_TOKEN,
+                                        Constants.BY_VALUE_TOKEN
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------BY REFERENCE
         keywordInfo.put(Constants.BY_REFERENCE_TOKEN,
                 new Keyword(Constants.BY_REFERENCE_TOKEN,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------BY CONTENT
         keywordInfo.put(Constants.BY_CONTENT_TOKEN,
                 new Keyword(Constants.BY_CONTENT_TOKEN,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------BY VALUE
         keywordInfo.put(Constants.BY_VALUE_TOKEN,
                 new Keyword(Constants.BY_VALUE_TOKEN,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------VERIFY
