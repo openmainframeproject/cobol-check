@@ -34,6 +34,16 @@
            VERIFY CALL VALUE-2 USING VALUE-1
                 HAPPENED ONCE
 
+           TestCase "Call mock with field and no arguments work"
+           MOCK CALL VALUE-2
+                MOVE "From mocked PROG2" TO VALUE-1
+           END-MOCK
+           PERFORM 700-MAKE-CALL
+           EXPECT VALUE-1 TO BE "From mocked PROG2"
+           EXPECT VALUE-2 TO BE "arg2"
+           VERIFY CALL VALUE-2
+                HAPPENED ONCE
+
       * Test for mocking call statements
       * Writing a comment to test stuff
       *

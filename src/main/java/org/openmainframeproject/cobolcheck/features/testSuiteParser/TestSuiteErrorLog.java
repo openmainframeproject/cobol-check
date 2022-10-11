@@ -30,10 +30,11 @@ public class TestSuiteErrorLog {
 
     private boolean errorOccured = false;
 
+    //TODO: Add all words here
     private final List<String> cobolCheckStartingAndEndingKeywords = Arrays.asList(Constants.TESTSUITE_KEYWORD,
             Constants.TESTCASE_KEYWORD, Constants.EXPECT_KEYWORD, Constants.MOCK_KEYWORD, Constants.ENDMOCK_KEYWORD,
             Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN, Constants.AFTER_EACH_TOKEN,
-            Constants.END_AFTER_TOKEN);
+            Constants.END_AFTER_TOKEN, Constants.HAPPENED_KEYWORD);
 
     private String errorLogPath;
 
@@ -52,10 +53,9 @@ public class TestSuiteErrorLog {
 
     public String getLastKeywordValue() { return lastKeyword.value(); }
 
-    public void checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
-        ContextHandler.tryEnterContext(currentToken);
+    public boolean checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
+        String error = "";
         if (lastKeyword != null){
-            String error = "";
             if (!lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
                 errorOccured = true;
                 String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).toArray());
@@ -68,8 +68,11 @@ public class TestSuiteErrorLog {
                 outputError(error);
             }
         }
+        ContextHandler.tryEnterContext(currentToken);
+        ContextHandler.tryExitingContext(currentToken);
         lastKeyword = currentKeyword;
         lastToken = currentToken;
+        return error.isEmpty();
     }
 
     public void checkSyntaxInsideBlock(String blockKeyword, List<String> cobolLines, TokenExtractor tokenExtractor, String currentFile, int lineNumber) {

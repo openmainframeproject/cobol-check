@@ -18,10 +18,15 @@ public class ContextHandler {
         if (!insideOfContext() && startAndEndOfContexts.containsKey(keyword)){
             currentContext = keyword;
         }
-        else if (insideOfContext() && keyword == getContextEndKey()){
+    }
+
+    public static void tryExitingContext(String keyword){
+        if (insideOfContext() && keyword == getContextEndKey()){
             currentContext = null;
         }
     }
+
+
 
     public static boolean insideOfContext(){
         return currentContext != null;

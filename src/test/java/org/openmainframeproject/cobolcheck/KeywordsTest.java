@@ -27,7 +27,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor(key, false);
         assertEquals(expectedKeywordValue, keyword.value());
         assertEquals(expectedKeywordAction, keyword.keywordAction());
-        assertEquals(expectedValidNextKey, keyword.getvalidNextKeys());
+        assertEquals(expectedValidNextKey, keyword.getvalidNextKeys(null));
     }
 
     private static Stream<Arguments> KeywordProvider() {
@@ -139,7 +139,7 @@ public class KeywordsTest {
                 Constants.HAPPENED_KEYWORD,
                 Constants.NEVER_HAPPENED_KEYWORD,
                 Constants.USING_TOKEN,
-                Constants.ENDMOCK_KEYWORD), keyword.getvalidNextKeys());
+                Constants.ENDMOCK_KEYWORD), keyword.getvalidNextKeys(null));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class KeywordsTest {
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
         assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN, Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD, Constants.MOCK_KEYWORD, Constants.VERIFY_KEYWORD, Constants.TIME_KEYWORD,
-                        Constants.TIMES_KEYWORD), keyword.getvalidNextKeys());
+                        Constants.TIMES_KEYWORD), keyword.getvalidNextKeys(null));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class KeywordsTest {
                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                 Constants.TIME_KEYWORD,
-                Constants.TIMES_KEYWORD), keyword.getvalidNextKeys());
+                Constants.TIMES_KEYWORD), keyword.getvalidNextKeys(null));
     }
 
     @Test
@@ -189,7 +189,7 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
-                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys());
+                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys(null));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
-                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys());
+                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys(null));
     }
 
 }
