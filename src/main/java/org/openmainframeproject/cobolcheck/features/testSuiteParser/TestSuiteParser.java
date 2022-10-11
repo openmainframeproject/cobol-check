@@ -833,6 +833,8 @@ public class TestSuiteParser {
                 currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
         if (currentMock.getType() == Constants.CALL_TOKEN)
             currentMock.addLines(removeToken(mockLines, "END-CALL"));
+        else
+            currentMock.addLines(mockLines);
         try{
             mockRepository.addMock(currentMock);
         } catch (ComponentMockedTwiceInSameScopeException e){
