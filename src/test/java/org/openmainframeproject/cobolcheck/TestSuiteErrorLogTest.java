@@ -124,7 +124,12 @@ public class TestSuiteErrorLogTest {
         expectedResult += "Cannot have Cobol Check keyword <VERIFY> inside a BEFORE EACH block" + Constants.NEWLINE + Constants.NEWLINE;
         expectedResult += "SYNTAX ERROR in file: null:3:33:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 33:" + Constants.NEWLINE;
-        expectedResult += "Cannot have Cobol Check keyword <HAPPENED> inside a BEFORE EACH block" + Constants.NEWLINE + Constants.NEWLINE;
+        expectedResult += "Cannot have Cobol Check keyword <HAPPENED> inside a BEFORE EACH block" + Constants.NEWLINE
+                + Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:2:42:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 2, index 42:" + Constants.NEWLINE;
+        expectedResult += "Cannot have Cobol Check keyword <ONCE> inside a BEFORE EACH block" + Constants.NEWLINE
+                + Constants.NEWLINE;
 
         assertThrows(TestSuiteSyntaxException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
