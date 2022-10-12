@@ -16,8 +16,8 @@ import java.util.Locale;
 public class TestSuiteErrorLog {
 
 
-
     public enum ErrorTypes {SYNTAX_ERROR, RUNTIME_ERROR, WARNING}
+
     private Keyword lastKeyword;
     private String lastToken;
 
@@ -34,13 +34,15 @@ public class TestSuiteErrorLog {
     private final List<String> cobolCheckStartingAndEndingKeywords = Arrays.asList(Constants.TESTSUITE_KEYWORD,
             Constants.TESTCASE_KEYWORD, Constants.EXPECT_KEYWORD, Constants.MOCK_KEYWORD, Constants.ENDMOCK_KEYWORD,
             Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN, Constants.AFTER_EACH_TOKEN,
-            Constants.END_AFTER_TOKEN, Constants.HAPPENED_KEYWORD);
+            Constants.END_AFTER_TOKEN, Constants.HAPPENED_KEYWORD, Constants.TO_BE_KEYWORD, Constants.TO_EQUAL_KEYWORD,
+            Constants.BEFORE_EACH_TOKEN_HYPHEN, Constants.AFTER_EACH_TOKEN_HYPHEN, Constants.NEVER_HAPPENED_KEYWORD,
+            Constants.ONCE_KEYWORD, Constants.AT_LEAST_KEYWORD, Constants.NO_MORE_THAN_KEYWORD);
 
     private String errorLogPath;
 
     private String lastErrorLogMessage;
 
-    public TestSuiteErrorLog(){
+    public TestSuiteErrorLog() {
         errorLogPath = getTestSuiteParserErrorLogPath();
         initializeTestSuiteErrorLogWriter(errorLogPath);
     }
@@ -49,14 +51,18 @@ public class TestSuiteErrorLog {
         return errorOccured;
     }
 
-    public String getLastErrorMessage(){ return lastErrorLogMessage; }
+    public String getLastErrorMessage() {
+        return lastErrorLogMessage;
+    }
 
-    public String getLastKeywordValue() { return lastKeyword.value(); }
+    public String getLastKeywordValue() {
+        return lastKeyword.value();
+    }
 
-    public boolean checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
+    public boolean checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex) {
         String error = "";
-        if (lastKeyword != null){
-            if (!lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
+        if (lastKeyword != null) {
+            if (!lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())) {
                 errorOccured = true;
                 String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).toArray());
                 String inContext = ContextHandler.insideOfContext() ? " in the context of " + ContextHandler.getCurrentContext() : "";
@@ -77,10 +83,10 @@ public class TestSuiteErrorLog {
 
     public void checkSyntaxInsideBlock(String blockKeyword, List<String> cobolLines, TokenExtractor tokenExtractor, String currentFile, int lineNumber) {
         int revertedCount = cobolLines.size();
-        for (String line : cobolLines){
+        for (String line : cobolLines) {
             List<String> keywords = tokenExtractor.extractTokensFrom(line);
-            for(String keyword : keywords){
-                if (cobolCheckStartingAndEndingKeywords.contains(keyword.toUpperCase(Locale.ROOT))){
+            for (String keyword : keywords) {
+                if (cobolCheckStartingAndEndingKeywords.contains(keyword.toUpperCase(Locale.ROOT))) {
                     errorOccured = true;
                     String error = "";
                     lineNumber = lineNumber - revertedCount;
@@ -91,11 +97,11 @@ public class TestSuiteErrorLog {
                     outputError(error);
                 }
             }
-            revertedCount -=1;
+            revertedCount -= 1;
         }
     }
 
-    public void logIdenticalMocks(Mock mock){
+    public void logIdenticalMocks(Mock mock) {
         String error = "";
         errorOccured = true;
         int lineNumber = mock.getDeclarationLineNumberInOriginalFile();
@@ -123,15 +129,15 @@ public class TestSuiteErrorLog {
         outputError(error);
     }
 
-    public void logUnusedMocks(List<Mock> mocks){
-        for (Mock mock : mocks){
-            if (!mock.isUsed()){
+    public void logUnusedMocks(List<Mock> mocks) {
+        for (Mock mock : mocks) {
+            if (!mock.isUsed()) {
                 String error = "";
                 int lineNumber = mock.getDeclarationLineNumberInOriginalFile();
                 int lineIndex = mock.getDeclarationIndexNumberInOriginalFile();
                 error += String.format(fileMessage, displayErrorType(ErrorTypes.WARNING), mock.getTestSuiteFileName()) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
-                error += "Mock <" +  mock.getType() + "> <" + mock.getIdentifier() + "> does not reference " +
+                error += "Mock <" + mock.getType() + "> <" + mock.getIdentifier() + "> does not reference " +
                         "any construct in the source code" + Constants.NEWLINE + Constants.NEWLINE;
                 outputError(error);
             }
@@ -157,14 +163,14 @@ public class TestSuiteErrorLog {
         }
     }
 
-    private String displayErrorType(ErrorTypes errorType){
+    private String displayErrorType(ErrorTypes errorType) {
         return errorType.name().replace("_", " ");
     }
 
     /**
      * Gets the path for the TestSuite Parser error log
      */
-    private String getTestSuiteParserErrorLogPath(){
+    private String getTestSuiteParserErrorLogPath() {
         StringBuilder testSuiteParserErrorLogPath = new StringBuilder();
         String configPath = Config.getTestsuiteparserErrorLogPath();
         if (configPath == null)
@@ -182,7 +188,7 @@ public class TestSuiteErrorLog {
     /**
      * Returns a Writer for the TestSuite Parser error log.
      */
-    private void initializeTestSuiteErrorLogWriter(String path){
+    private void initializeTestSuiteErrorLogWriter(String path) {
         String testSuiteParserErrorLogPath = path;
         Writer testSourceWriter = null;
         try {
