@@ -1108,9 +1108,16 @@ public class TestSuiteParser {
             lines.add(currentTestSuiteLine);
         }
         if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){
-            lines.set(0, lines.get(0).replaceAll("(?i)"+ Pattern.quote("foo"), ""));
+            String line = lines.get(0);
+            int startIndex = line.toUpperCase(Locale.ROOT).indexOf(endingKeyword);
+            int endIndex = startIndex + endingKeyword.length();
+            lines.set(0, line.substring(0, startIndex));
             if (lines.get(0).trim().isEmpty())
                 lines.remove(0);
+            if (endIndex < line.length())
+                testSuiteTokens = keywordExtractor.extractTokensFrom(line.substring(endIndex));
+            else
+                testSuiteTokens.clear();
             return lines;
         }
         String line;
@@ -1118,7 +1125,15 @@ public class TestSuiteParser {
                 !line.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){
             lines.add(line);
         }
-        testSuiteTokens.clear();
+        int startIndex = line.toUpperCase(Locale.ROOT).indexOf(endingKeyword);
+        int endIndex = startIndex + endingKeyword.length();
+        String lineToAdd =  line.substring(0, startIndex);
+        if (!lineToAdd.trim().isEmpty())
+            lines.add(lineToAdd);
+        if (endIndex < line.length())
+            testSuiteTokens = keywordExtractor.extractTokensFrom(line.substring(endIndex));
+        else
+            testSuiteTokens.clear();
         return lines;
     }
 

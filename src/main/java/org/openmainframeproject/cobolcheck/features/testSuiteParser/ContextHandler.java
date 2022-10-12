@@ -2,16 +2,18 @@ package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.services.Constants;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ContextHandler {
     private static String currentContext;
-    private static Map<String, String> startAndEndOfContexts;
+    private static Map<String, List<String>> startAndEndOfContexts;
 
     static {
         startAndEndOfContexts = new HashMap<>();
-        startAndEndOfContexts.put(Constants.MOCK_KEYWORD, Constants.ENDMOCK_KEYWORD);
+        startAndEndOfContexts.put(Constants.MOCK_KEYWORD,  Arrays.asList(Constants.ENDMOCK_KEYWORD));
     }
 
     public static void tryEnterContext(String keyword){
@@ -21,7 +23,7 @@ public class ContextHandler {
     }
 
     public static void tryExitingContext(String keyword){
-        if (insideOfContext() && keyword == getContextEndKey()){
+        if (insideOfContext() && doesKeyEndContext(keyword)){
             currentContext = null;
         }
     }
@@ -33,11 +35,17 @@ public class ContextHandler {
     }
 
     public static String getCurrentContext() { return currentContext; }
-    public static String getContextEndKey() {
-        if (insideOfContext())
-            return startAndEndOfContexts.get(currentContext);
+    public static boolean doesKeyEndContext(String key) {
+        if (insideOfContext()){
+            for (String endKey : startAndEndOfContexts.get(currentContext)){
+                if (key.equals(endKey))
+                    return true;
+            }
+            return false;
+        }
+
         else
-            return null;
+            return false;
 
 
     }
