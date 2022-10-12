@@ -32,13 +32,11 @@ public class TestSuiteErrorLog {
 
     private boolean errorOccured = false;
 
+    //TODO: Add all words here
     private final List<String> cobolCheckStartingAndEndingKeywords = Arrays.asList(Constants.TESTSUITE_KEYWORD,
             Constants.TESTCASE_KEYWORD, Constants.EXPECT_KEYWORD, Constants.MOCK_KEYWORD, Constants.ENDMOCK_KEYWORD,
-            Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN,
-            Constants.AFTER_EACH_TOKEN,
-            Constants.END_AFTER_TOKEN, Constants.HAPPENED_KEYWORD, Constants.TO_BE_KEYWORD, Constants.TO_EQUAL_KEYWORD,
-            Constants.BEFORE_EACH_TOKEN_HYPHEN, Constants.AFTER_EACH_TOKEN_HYPHEN, Constants.NEVER_HAPPENED_KEYWORD,
-            Constants.ONCE_KEYWORD, Constants.AT_LEAST_KEYWORD, Constants.NO_MORE_THAN_KEYWORD);
+            Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN, Constants.AFTER_EACH_TOKEN,
+            Constants.END_AFTER_TOKEN, Constants.HAPPENED_KEYWORD);
 
     private String errorLogPath;
 

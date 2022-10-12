@@ -385,10 +385,24 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true);
+                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, true);
+                                //We know END-MOCK is reached here
+                                testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                                        currentTestSuiteRealFile, fileLineNumber);
+                                Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
+                                        currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+                                currentMock.addLines(mockLines);
+                                try{
+                                    mockRepository.addMock(currentMock);
+                                } catch (ComponentMockedTwiceInSameScopeException e){
+                                    testSuiteErrorLog.logIdenticalMocks(currentMock);
+                                }
+
                             }
-                        } else {
-                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)) {
+                        }
+                        else {
+                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)){
                                 expectUsing = true;
                                 expectMockArguments = true;
                             }
@@ -416,12 +430,23 @@ public class TestSuiteParser {
                         expectUsing = false;
                         if (!verifyInProgress){
                             ignoreCobolStatementAndFieldNameKeyAction = true;
-                            handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument);
+                            List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, currentLineContainsArgument);
+                            testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                                    currentTestSuiteRealFile, fileLineNumber);
+                            Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+                            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
+                                    currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+                            currentMock.addLines(removeToken(mockLines, "END-CALL"));
+                            try{
+                                mockRepository.addMock(currentMock);
+                            } catch (ComponentMockedTwiceInSameScopeException e){
+                                testSuiteErrorLog.logIdenticalMocks(currentMock);
+                            }
                         }
                     }
 
-                    if (verifyInProgress) {
-                        if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)) {
+                    if (verifyInProgress){
+                        if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)){
                             currentVerify.setExpectedCount("0");
                         }
                     }
@@ -451,10 +476,23 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true);
+                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, true);
+                                //We know END-MOCK is reached here
+                                testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
+                                        currentTestSuiteRealFile, fileLineNumber);
+                                Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
+                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
+                                        currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+                                currentMock.addLines(mockLines);
+                                try{
+                                    mockRepository.addMock(currentMock);
+                                } catch (ComponentMockedTwiceInSameScopeException e){
+                                    testSuiteErrorLog.logIdenticalMocks(currentMock);
+                                }
                             }
-                        } else {
-                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)) {
+                        }
+                        else {
+                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)){
                                 expectUsing = true;
                                 expectMockArguments = true;
                             }
@@ -793,7 +831,7 @@ public class TestSuiteParser {
         Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
         testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
                 currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
-        if (currentMock.getType().equals(Constants.CALL_TOKEN))
+        if (currentMock.getType() == Constants.CALL_TOKEN)
             currentMock.addLines(removeToken(mockLines, "END-CALL"));
         else
             currentMock.addLines(mockLines);

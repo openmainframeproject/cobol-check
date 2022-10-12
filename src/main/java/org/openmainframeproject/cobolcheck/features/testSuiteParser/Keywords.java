@@ -5,6 +5,8 @@ import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.util.*;
 
+import static java.util.Map.entry;
+
 /**
  * This is a container for Keyword records. It is used when parsing test suites to identify cobol-check
  * keywords and handle them appropriately.
@@ -22,19 +24,19 @@ public class Keywords {
         keywordInfo.put(Constants.TESTSUITE_KEYWORD,
                 new Keyword(Constants.TESTSUITE_KEYWORD,
                         Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
-                        KeywordAction.TESTSUITE_NAME));
+                    KeywordAction.TESTSUITE_NAME));
 
         //--------------------------------TESTCASE
         keywordInfo.put(Constants.TESTCASE_KEYWORD,
                 new Keyword(Constants.TESTCASE_KEYWORD,
                         Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
-                        KeywordAction.NEW_TESTCASE));
+                    KeywordAction.NEW_TESTCASE));
 
         //--------------------------------EXPECT
         keywordInfo.put(Constants.EXPECT_KEYWORD,
                 new Keyword(Constants.EXPECT_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
-                        KeywordAction.ACTUAL_FIELDNAME));
+                    KeywordAction.ACTUAL_FIELDNAME));
 
         //--------------------------------FIELD NAME
         keywordInfo.put(Constants.FIELDNAME_KEYWORD,
@@ -58,16 +60,16 @@ public class Keywords {
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
                                 Constants.USING_TOKEN),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.ENDMOCK_KEYWORD,
-                                    Constants.FIELDNAME_KEYWORD,
-                                    Constants.BY_REFERENCE_TOKEN,
-                                    Constants.BY_CONTENT_TOKEN,
-                                    Constants.BY_VALUE_TOKEN,
-                                    Constants.USING_TOKEN)
-                            );
-                        }},
+                                Map.ofEntries(
+                                        entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                                Constants.ENDMOCK_KEYWORD,
+                                                Constants.FIELDNAME_KEYWORD,
+                                                Constants.BY_REFERENCE_TOKEN,
+                                                Constants.BY_CONTENT_TOKEN,
+                                                Constants.BY_VALUE_TOKEN,
+                                                Constants.USING_TOKEN
+                                                ))
+                                        ),
                         KeywordAction.FIELDNAME));
 
         //--------------------------------NOT
@@ -205,16 +207,16 @@ public class Keywords {
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
                                 Constants.USING_TOKEN),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.ENDMOCK_KEYWORD,
-                                    Constants.FIELDNAME_KEYWORD,
-                                    Constants.BY_REFERENCE_TOKEN,
-                                    Constants.BY_CONTENT_TOKEN,
-                                    Constants.BY_VALUE_TOKEN,
-                                    Constants.USING_TOKEN)
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.ENDMOCK_KEYWORD,
+                                        Constants.FIELDNAME_KEYWORD,
+                                        Constants.BY_REFERENCE_TOKEN,
+                                        Constants.BY_CONTENT_TOKEN,
+                                        Constants.BY_VALUE_TOKEN,
+                                        Constants.USING_TOKEN
+                                ))
+                        ),
                         KeywordAction.FIELDNAME));
 
         //--------------------------------NUMERIC LITERAL
@@ -316,12 +318,11 @@ public class Keywords {
         keywordInfo.put(Constants.MOCK_KEYWORD,
                 new Keyword(Constants.MOCK_KEYWORD,
                         new ArrayList<>(),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                            Constants.MOCK_TYPE
-                                    )
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.MOCK_TYPE
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------END MOCK
@@ -344,12 +345,12 @@ public class Keywords {
                 new Keyword(Constants.MOCK_TYPE,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.FIELDNAME_KEYWORD,
-                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD)
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD,
+                                        Constants.ALPHANUMERIC_LITERAL_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------USING
@@ -359,47 +360,47 @@ public class Keywords {
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.FIELDNAME_KEYWORD,
-                                    Constants.BY_REFERENCE_TOKEN,
-                                    Constants.BY_CONTENT_TOKEN,
-                                    Constants.BY_VALUE_TOKEN)
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD,
+                                        Constants.BY_REFERENCE_TOKEN,
+                                        Constants.BY_CONTENT_TOKEN,
+                                        Constants.BY_VALUE_TOKEN
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------BY REFERENCE
         keywordInfo.put(Constants.BY_REFERENCE_TOKEN,
                 new Keyword(Constants.BY_REFERENCE_TOKEN,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.FIELDNAME_KEYWORD)
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------BY CONTENT
         keywordInfo.put(Constants.BY_CONTENT_TOKEN,
                 new Keyword(Constants.BY_CONTENT_TOKEN,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.FIELDNAME_KEYWORD)
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------BY VALUE
         keywordInfo.put(Constants.BY_VALUE_TOKEN,
                 new Keyword(Constants.BY_VALUE_TOKEN,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.MOCK_KEYWORD, Arrays.asList(
-                                    Constants.FIELDNAME_KEYWORD)
-                            );
-                        }},
+                        Map.ofEntries(
+                                entry(Constants.MOCK_KEYWORD, Arrays.asList(
+                                        Constants.FIELDNAME_KEYWORD
+                                ))
+                        ),
                         KeywordAction.NONE));
 
         //--------------------------------VERIFY
@@ -475,14 +476,15 @@ public class Keywords {
     }
 
 
+
     public static Keyword getKeywordFor(String key, boolean expectFieldName) {
         Keyword result = null;
-        if (key != null && !key.isEmpty()) {
+        if (key != null && ! key.isEmpty()) {
             Log.debug("Key: " + key);
             if (key.startsWith("\"") || key.startsWith("'")) {
                 key = Constants.ALPHANUMERIC_LITERAL_KEYWORD;
             }
-            if (key.startsWith("(")) {
+            if (key.startsWith("(")){
                 key = Constants.PARENTHESIS_ENCLOSED_KEYWORD;
             } else {
                 if (Character.isDigit(key.charAt(0))) {
@@ -498,14 +500,13 @@ public class Keywords {
                     if (isNumeric) {
                         key = Constants.NUMERIC_LITERAL_KEYWORD;
                     }
-                } else if (key.equals(Constants.ZERO_TOKEN)) {
+                } else if (key.equals(Constants.ZERO_TOKEN)){
                     key = Constants.NUMERIC_LITERAL_KEYWORD;
-                } else {
+                }else {
                     if (key.equals("TRUE") || key.equals("FALSE")) {
                         key = Constants.BOOLEAN_VALUE;
                     }
-                }
-                if (mockTypes.contains(key)) {
+                } if (mockTypes.contains(key)){
                     key = Constants.MOCK_TYPE;
                 }
             }
