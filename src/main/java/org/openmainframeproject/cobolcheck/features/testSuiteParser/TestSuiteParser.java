@@ -210,8 +210,8 @@ public class TestSuiteParser {
     /**
      * Process the test suite as a series of tokens. When we have processed all the input, getNextTokenFromTestSuite()
      * returns a null reference.
-     *  @param testSuiteReader - reader attached to the concatenated test suite files.
      *
+     * @param testSuiteReader - reader attached to the concatenated test suite files.
      */
     public List<String> getParsedTestSuiteLines(BufferedReader testSuiteReader,
                                                 NumericFields numericFieldsList) {
@@ -223,7 +223,7 @@ public class TestSuiteParser {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
 
-            if (Constants.IGNORED_TOKENS.contains(testSuiteToken)){
+            if (Constants.IGNORED_TOKENS.contains(testSuiteToken)) {
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
             }
@@ -231,7 +231,7 @@ public class TestSuiteParser {
             boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier || (expectMockArguments && !expectUsing));
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);
 
-            if (!verifyInProgress && expectUsing && expectMockArguments && !keyword.value().equals(Constants.USING_TOKEN)){
+            if (!verifyInProgress && expectUsing && expectMockArguments && !keyword.value().equals(Constants.USING_TOKEN)) {
                 //In this case we expected mock arguments, but got none. We end the mock and go to next token
                 expectMockArguments = false;
                 expectUsing = false;
@@ -240,7 +240,7 @@ public class TestSuiteParser {
                 continue;
             }
 
-            if (!testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber)){
+            if (!testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber)) {
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
             }
@@ -271,10 +271,9 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.NOT_KEYWORD:
-                    if (expectInProgress){
+                    if (expectInProgress) {
                         reverseCompare = true;
-                    }
-                    else if (cobolStatementInProgress) {
+                    } else if (cobolStatementInProgress) {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
@@ -295,8 +294,7 @@ public class TestSuiteParser {
                         expectInProgress = false;
                         toBeInProgress = true;
                         greaterThanComparison = true;
-                    }
-                    else if (cobolStatementInProgress) {
+                    } else if (cobolStatementInProgress) {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
@@ -307,8 +305,7 @@ public class TestSuiteParser {
                         expectInProgress = false;
                         toBeInProgress = true;
                         lessThanComparison = true;
-                    }
-                    else if (cobolStatementInProgress) {
+                    } else if (cobolStatementInProgress) {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
@@ -324,8 +321,7 @@ public class TestSuiteParser {
                         } else {
                             reverseCompare = true;
                         }
-                    }
-                    else if (cobolStatementInProgress) {
+                    } else if (cobolStatementInProgress) {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
@@ -337,8 +333,7 @@ public class TestSuiteParser {
                         toBeInProgress = true;
                         greaterThanComparison = true;
                         reverseCompare = !reverseCompare;
-                    }
-                    else if (cobolStatementInProgress) {
+                    } else if (cobolStatementInProgress) {
                         appendTokenToCobolStatement(testSuiteToken);
                     }
                     break;
@@ -351,7 +346,7 @@ public class TestSuiteParser {
                 case Constants.COBOL_TOKEN:
                 case Constants.FIELDNAME_KEYWORD:
                     //TODO:remove when implementing EXPECT NUMERIC
-                    if (testSuiteToken.equals("NUMERIC")){
+                    if (testSuiteToken.equals("NUMERIC")) {
                         Log.debug("==WARNING== <EXPECT ... TO BE NUMERIC ...> is not implemented and could cause unintended behaviour ==WARNING==");
                         ignoreCobolStatementAndFieldNameKeyAction = true;
                         break;
@@ -359,14 +354,12 @@ public class TestSuiteParser {
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
-                    }
-                    else if (possibleQualifiedName) {
+                    } else if (possibleQualifiedName) {
                         if (qualifiedNameKeywords.contains(testSuiteToken)) {
                             fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                             expectQualifiedName = true;
                         }
-                    }
-                    else if (expectInProgress) {
+                    } else if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
                         possibleQualifiedName = true;
                     }
@@ -375,34 +368,20 @@ public class TestSuiteParser {
                         addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         toBeInProgress = false;
                     }
-                    if (expectMockIdentifier){
+                    if (expectMockIdentifier) {
                         expectMockIdentifier = false;
                         ignoreCobolStatementAndFieldNameKeyAction = true;
-                        if (!verifyInProgress){
-                            if (currentMock.getType().equals(Constants.CALL_TOKEN)){
+                        if (!verifyInProgress) {
+                            if (currentMock.getType().equals(Constants.CALL_TOKEN)) {
                                 expectUsing = true;
                                 expectMockArguments = true;
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, true);
-                                //We know END-MOCK is reached here
-                                testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
-                                        currentTestSuiteRealFile, fileLineNumber);
-                                Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
-                                        currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
-                                currentMock.addLines(mockLines);
-                                try{
-                                    mockRepository.addMock(currentMock);
-                                } catch (ComponentMockedTwiceInSameScopeException e){
-                                    testSuiteErrorLog.logIdenticalMocks(currentMock);
-                                }
-
+                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true);
                             }
-                        }
-                        else {
-                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)){
+                        } else {
+                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)) {
                                 expectUsing = true;
                                 expectMockArguments = true;
                             }
@@ -411,9 +390,9 @@ public class TestSuiteParser {
                         break;
                     }
 
-                    if (expectMockArguments){
+                    if (expectMockArguments) {
                         boolean currentLineContainsArgument = false;
-                        if (!expectUsing){
+                        if (!expectUsing) {
                             currentLineContainsArgument = true;
                             ignoreCobolStatementAndFieldNameKeyAction = true;
                             if (verifyInProgress)
@@ -428,25 +407,14 @@ public class TestSuiteParser {
                         //Contains no arguments or all arguments has been added
                         expectMockArguments = false;
                         expectUsing = false;
-                        if (!verifyInProgress){
+                        if (!verifyInProgress) {
                             ignoreCobolStatementAndFieldNameKeyAction = true;
-                            List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, currentLineContainsArgument);
-                            testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
-                                    currentTestSuiteRealFile, fileLineNumber);
-                            Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
-                                    currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
-                            currentMock.addLines(removeToken(mockLines, "END-CALL"));
-                            try{
-                                mockRepository.addMock(currentMock);
-                            } catch (ComponentMockedTwiceInSameScopeException e){
-                                testSuiteErrorLog.logIdenticalMocks(currentMock);
-                            }
+                            handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument);
                         }
                     }
 
-                    if (verifyInProgress){
-                        if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)){
+                    if (verifyInProgress) {
+                        if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)) {
                             currentVerify.setExpectedCount("0");
                         }
                     }
@@ -467,32 +435,19 @@ public class TestSuiteParser {
                         addTestCaseNameLines(currentTestCaseName, parsedTestSuiteLines);
                         initializeCobolStatement();
                     }
-                    if (expectMockIdentifier){
+                    if (expectMockIdentifier) {
                         expectMockIdentifier = false;
-                        if (!verifyInProgress){
-                            if (currentMock.getType().equals(Constants.CALL_TOKEN)){
+                        if (!verifyInProgress) {
+                            if (currentMock.getType().equals(Constants.CALL_TOKEN)) {
                                 expectUsing = true;
                                 expectMockArguments = true;
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, true);
-                                //We know END-MOCK is reached here
-                                testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
-                                        currentTestSuiteRealFile, fileLineNumber);
-                                Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-                                testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
-                                        currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
-                                currentMock.addLines(mockLines);
-                                try{
-                                    mockRepository.addMock(currentMock);
-                                } catch (ComponentMockedTwiceInSameScopeException e){
-                                    testSuiteErrorLog.logIdenticalMocks(currentMock);
-                                }
+                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true);
                             }
-                        }
-                        else {
-                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)){
+                        } else {
+                            if (currentVerify.getType().equals(Constants.CALL_TOKEN)) {
                                 expectUsing = true;
                                 expectMockArguments = true;
                             }
@@ -515,7 +470,7 @@ public class TestSuiteParser {
                         addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         toBeInProgress = false;
                     }
-                    if (verifyInProgress){
+                    if (verifyInProgress) {
                         currentVerify.setExpectedCount(testSuiteToken);
                     }
                     break;
@@ -567,10 +522,9 @@ public class TestSuiteParser {
                     mockNumber += 1;
                     currentMock = new Mock(currentTestSuiteName, currentTestCaseName,
                             testSuiteNumber, testCaseNumber, mockNumber);
-                    if (testCaseNumber == 0){
+                    if (testCaseNumber == 0) {
                         currentMock.setScope(MockScope.Global);
-                    }
-                    else {
+                    } else {
                         currentMock.setScope(MockScope.Local);
                     }
                     currentMock.setTestSuiteFileName(currentTestSuiteRealFile);
@@ -581,14 +535,13 @@ public class TestSuiteParser {
                 case Constants.MOCK_TYPE:
                     expectMockIdentifier = true;
                     //TODO: REMOVE PARA
-                    if (testSuiteToken.equals(Constants.PARA_TOKEN)){
+                    if (testSuiteToken.equals(Constants.PARA_TOKEN)) {
                         testSuiteToken = Constants.PARAGRAPH_TOKEN;
                     }
 
-                    if (!verifyInProgress){
+                    if (!verifyInProgress) {
                         currentMock.setType(testSuiteToken);
-                    }
-                    else {
+                    } else {
                         currentVerify.setType(testSuiteToken);
                     }
 
@@ -644,7 +597,8 @@ public class TestSuiteParser {
                     currentVerify.expectNoMoreThan("N/A");
                     break;
 
-                case Constants.TIME_KEYWORD: case Constants.TIMES_KEYWORD:
+                case Constants.TIME_KEYWORD:
+                case Constants.TIMES_KEYWORD:
                     handleEndOfVerifyStatement(parsedTestSuiteLines);
                     break;
 
@@ -680,7 +634,7 @@ public class TestSuiteParser {
             // take actions that are triggered by the current token's action
             switch (keyword.keywordAction()) {
                 case COBOL_STATEMENT:
-                    if (ignoreCobolStatementAndFieldNameKeyAction){
+                    if (ignoreCobolStatementAndFieldNameKeyAction) {
                         ignoreCobolStatementAndFieldNameKeyAction = false;
                         break;
                     }
@@ -694,7 +648,7 @@ public class TestSuiteParser {
                     appendTokenToCobolStatement(testSuiteToken);
                     break;
                 case FIELDNAME:
-                    if (ignoreCobolStatementAndFieldNameKeyAction){
+                    if (ignoreCobolStatementAndFieldNameKeyAction) {
                         ignoreCobolStatementAndFieldNameKeyAction = false;
                         break;
                     }
@@ -708,13 +662,13 @@ public class TestSuiteParser {
             nextAction = keyword.keywordAction();
             testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         }
-        if (testSuiteErrorLog.hasErrorOccured()){
+        if (testSuiteErrorLog.hasErrorOccured()) {
             throw new TestSuiteSyntaxException("The test suite(s) contained one or more errors. See the error log for more details");
         }
         if (cobolStatementInProgress) {
             addUserWrittenCobolStatement(parsedTestSuiteLines);
         }
-        if (testCaseNumber != 0){
+        if (testCaseNumber != 0) {
             addPerformAfterEachLine(parsedTestSuiteLines);
         }
         return parsedTestSuiteLines;
@@ -722,11 +676,11 @@ public class TestSuiteParser {
 
     private List<String> removeToken(List<String> lines, String token) {
         List<String> newLines = new ArrayList<>();
-        for (String line : lines){
+        for (String line : lines) {
             String upperLine = line.toUpperCase(Locale.ROOT);
             int startIndex = upperLine.indexOf(token.toUpperCase(Locale.ROOT));
             int endIndex = startIndex + token.length();
-            if (startIndex != -1){
+            if (startIndex != -1) {
                 String part1 = line.substring(0, startIndex);
                 String part2 = line.substring(endIndex);
                 line = part1 + part2;
@@ -755,7 +709,7 @@ public class TestSuiteParser {
                 return null;
             }
             //Finding writing style based on first token in file
-            if (currentTestSuiteRealFile != null && !currentTestSuiteRealFile.equals(oldTestSuiteRealFile)){
+            if (currentTestSuiteRealFile != null && !currentTestSuiteRealFile.equals(oldTestSuiteRealFile)) {
                 testSuiteWritingStyle = getWritingStyleOfLine(testSuiteLine);
                 Log.debug("Writing style set to " + testSuiteWritingStyle.name() +
                         " for test suite: " + currentTestSuiteRealFile);
@@ -767,7 +721,7 @@ public class TestSuiteParser {
             if (testSuiteLine.length() > 0 && !testSuiteLine.trim().startsWith("*")) {
 //            if (testSuiteLine.length() > 5 && testSuiteLine.charAt(6) != '*') {
                 testSuiteTokens = keywordExtractor.extractTokensFrom(testSuiteLine);
-                while (keywordExtractor.tokenListEndsDuringMultiToken(testSuiteTokens)){
+                while (keywordExtractor.tokenListEndsDuringMultiToken(testSuiteTokens)) {
                     currentTestSuiteLine = StringHelper.removeTrailingSpaces(currentTestSuiteLine) + " " +
                             readNextLineFromTestSuite(testSuiteReader).trim();
                     testSuiteTokens = keywordExtractor.extractTokensFrom(currentTestSuiteLine);
@@ -797,8 +751,7 @@ public class TestSuiteParser {
                     throw new PossibleInternalLogicErrorException(Messages.get("ERR010"));
                 }
                 return null;
-            }
-            else if (currentTestSuiteLine.startsWith("      *From file:")){
+            } else if (currentTestSuiteLine.startsWith("      *From file:")) {
                 fileLineNumber = 0;
                 oldTestSuiteRealFile = currentTestSuiteRealFile;
                 currentTestSuiteRealFile = currentTestSuiteLine.substring(currentTestSuiteLine.indexOf(":"));
@@ -813,8 +766,8 @@ public class TestSuiteParser {
         }
     }
 
-    private TestSuiteWritingStyle getWritingStyleOfLine(String line){
-        if (line.length() > 5){
+    private TestSuiteWritingStyle getWritingStyleOfLine(String line) {
+        if (line.length() > 5) {
             String potentialSequenceAreaNumber = line.substring(0, 6);
             Keyword keyword = Keywords.getKeywordFor(potentialSequenceAreaNumber, false);
             if (keyword.value().equals(Constants.NUMERIC_LITERAL_KEYWORD))
@@ -823,7 +776,6 @@ public class TestSuiteParser {
         return TestSuiteWritingStyle.Freeform;
     }
 
-    //TODO: Replace occurences of mock endings with this method!
     private void handleEndOfMockStatement(BufferedReader testSuiteReader, String testSuiteToken, boolean skipCurrentToken) {
         List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken, skipCurrentToken);
         testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
@@ -831,13 +783,13 @@ public class TestSuiteParser {
         Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
         testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile, fileLineNumber,
                 currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
-        if (currentMock.getType() == Constants.CALL_TOKEN)
+        if (currentMock.getType().equals(Constants.CALL_TOKEN))
             currentMock.addLines(removeToken(mockLines, "END-CALL"));
         else
             currentMock.addLines(mockLines);
-        try{
+        try {
             mockRepository.addMock(currentMock);
-        } catch (ComponentMockedTwiceInSameScopeException e){
+        } catch (ComponentMockedTwiceInSameScopeException e) {
             testSuiteErrorLog.logIdenticalMocks(currentMock);
         }
     }
@@ -845,16 +797,17 @@ public class TestSuiteParser {
     /**
      * Finds the mock, that the current verify statement is referencing and attaches it.
      * Generates lines for verify statement and adds them to the given list.
+     *
      * @param parsedTestSuiteLines The parsed lines, that the generated lines are appended to
-     * @throws VerifyReferencesNonexistentMockException if referenced mock, does not exist
      * @return - the next token from the testSuiteReader.
+     * @throws VerifyReferencesNonexistentMockException if referenced mock, does not exist
      */
-    public void handleEndOfVerifyStatement (List<String> parsedTestSuiteLines){
+    public void handleEndOfVerifyStatement(List<String> parsedTestSuiteLines) {
         verifyInProgress = false;
         currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(), currentVerify.getType(),
                 currentTestSuiteName, currentTestCaseName, currentVerify.getArguments()));
 
-        if (currentVerify.getAttachedMock() == null){
+        if (currentVerify.getAttachedMock() == null) {
             testSuiteErrorLog.logVerifyReferencesNonExistentMock(currentVerify);
             throw new VerifyReferencesNonexistentMockException("Cannot verify nonexistent mock for: " +
                     currentVerify.getType() + " " + currentVerify.getIdentifier() + " in the scope of testsuite: " +
@@ -867,8 +820,9 @@ public class TestSuiteParser {
      * Gets an argument for a call based on the given reference type and token. If the
      * reference type is empty, the default ref-type (REFERENCE) will be assigned. All commas
      * is removed in the returned argument.
+     *
      * @param referenceType The ref-type of the argument. Can be REFERENCE, CONTENT or VALUE
-     * @param value The value/variable given as argument
+     * @param value         The value/variable given as argument
      * @return - The argument in the format '[ref-type] [value]'
      */
     private String getCallArgument(String referenceType, String value) {
@@ -976,8 +930,7 @@ public class TestSuiteParser {
         parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE, testCodePrefix, expectedValueToCompare));
         if (reverseCompare) {
             parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE_1, Constants.NOT_KEYWORD, testCodePrefix));
-        }
-        else {
+        } else {
             parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_88_VALUE_1, "", testCodePrefix));
         }
 
@@ -1004,31 +957,29 @@ public class TestSuiteParser {
     }
 
     void addLinesForCurrentVerifyStatement(List<String> parsedTestSuiteLines) {
-            parsedTestSuiteLines.add(String.format(COBOL_MOVE, currentVerify.getExpectedCount(),
-                    currentVerify.getAttachedMock().getGeneratedMockCountExpectedIdentifier()));
+        parsedTestSuiteLines.add(String.format(COBOL_MOVE, currentVerify.getExpectedCount(),
+                currentVerify.getAttachedMock().getGeneratedMockCountExpectedIdentifier()));
 
-            parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_MOCK_ACCESSES,
-                    currentVerify.getAttachedMock().getGeneratedMockCountIdentifier(), testCodePrefix));
-            parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_MOCK_ACCESSES,
-                    currentVerify.getAttachedMock().getGeneratedMockCountExpectedIdentifier(), testCodePrefix));
-            parsedTestSuiteLines.add(String.format(COBOL_SET_MOCK_OPERATION,
-                    currentVerify.getAttachedMock().getGeneratedMockStringIdentifierName(), testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_ACTUAL_MOCK_ACCESSES,
+                currentVerify.getAttachedMock().getGeneratedMockCountIdentifier(), testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_EXPECTED_MOCK_ACCESSES,
+                currentVerify.getAttachedMock().getGeneratedMockCountExpectedIdentifier(), testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_SET_MOCK_OPERATION,
+                currentVerify.getAttachedMock().getGeneratedMockStringIdentifierName(), testCodePrefix));
 
-            //Set comparison
-            if (currentVerify.isSetToAtLeast()){
-                parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_AT_LEAST, testCodePrefix, "TRUE"));
+        //Set comparison
+        if (currentVerify.isSetToAtLeast()) {
+            parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_AT_LEAST, testCodePrefix, "TRUE"));
+        } else {
+            if (currentVerify.isSetToNoMoreThan()) {
+                parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_NO_MORE_THAN, testCodePrefix, "TRUE"));
+            } else {
+                parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_EXACT, testCodePrefix, "TRUE"));
             }
-            else{
-                if (currentVerify.isSetToNoMoreThan()){
-                    parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_NO_MORE_THAN, testCodePrefix, "TRUE"));
-                }
-                else {
-                    parsedTestSuiteLines.add(String.format(COBOL_SET_VERIFY_EXACT, testCodePrefix, "TRUE"));
-                }
 
-            }
-            parsedTestSuiteLines.add(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix));
-            parsedTestSuiteLines.add(String.format(COBOL_PERFORM_ASSERT_ACCESS, testCodePrefix));
+        }
+        parsedTestSuiteLines.add(String.format(COBOL_INCREMENT_TEST_CASE_COUNT, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_ASSERT_ACCESS, testCodePrefix));
     }
 
 
@@ -1082,32 +1033,26 @@ public class TestSuiteParser {
         parsedTestSuiteLines.add(cobolStatement.toString());
     }
 
-    private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword, String currentKey, boolean skipCurrentToken){
+    private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword, String currentKey, boolean skipCurrentToken) {
         List<String> lines = new ArrayList<>();
         //Find the remaining tokens on the current line
-        if (skipCurrentToken){
+        if (skipCurrentToken) {
             int index = fileLineIndexNumber + currentKey.length() - 1;
-            if (index < currentTestSuiteLine.length())
-            {
+            if (index < currentTestSuiteLine.length()) {
                 currentTestSuiteLine = "           " + currentTestSuiteLine.substring(index);
-            }
-            else
+            } else
                 currentTestSuiteLine = "";
-        }
-        else{
+        } else {
             int index = fileLineIndexNumber - 1;
-            if (index < currentTestSuiteLine.length())
-            {
+            if (index < currentTestSuiteLine.length()) {
                 currentTestSuiteLine = "           " + currentTestSuiteLine.substring(index);
-            }
-            else
+            } else
                 currentTestSuiteLine = "";
         }
-        if (!currentTestSuiteLine.trim().isEmpty())
-        {
+        if (!currentTestSuiteLine.trim().isEmpty()) {
             lines.add(currentTestSuiteLine);
         }
-        if(currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){
+        if (currentTestSuiteLine.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))) {
             String line = lines.get(0);
             int startIndex = line.toUpperCase(Locale.ROOT).indexOf(endingKeyword);
             int endIndex = startIndex + endingKeyword.length();
@@ -1122,12 +1067,12 @@ public class TestSuiteParser {
         }
         String line;
         while ((line = readNextLineFromTestSuite(testSuiteReader)) != null &&
-                !line.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))){
+                !line.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))) {
             lines.add(line);
         }
         int startIndex = line.toUpperCase(Locale.ROOT).indexOf(endingKeyword);
         int endIndex = startIndex + endingKeyword.length();
-        String lineToAdd =  line.substring(0, startIndex);
+        String lineToAdd = line.substring(0, startIndex);
         if (!lineToAdd.trim().isEmpty())
             lines.add(lineToAdd);
         if (endIndex < line.length())

@@ -33,7 +33,6 @@ public class TestSuiteErrorLog {
 
     private boolean errorOccured = false;
 
-    // TODO: Add all words here
     private final List<String> cobolCheckStartingAndEndingKeywords = Arrays.asList(Constants.TESTSUITE_KEYWORD,
             Constants.TESTCASE_KEYWORD, Constants.EXPECT_KEYWORD, Constants.MOCK_KEYWORD, Constants.ENDMOCK_KEYWORD,
             Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN,
