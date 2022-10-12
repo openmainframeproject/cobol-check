@@ -88,3 +88,27 @@
            END-MOCK
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "Exit section is handled correctly"
+
+           TestCase "Mock one-liner with end mock on next line"
+           MOCK SECTION 400-CHANGE-2 MOVE "it works1" TO VALUE-1
+           END-MOCK
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "it works1"
+
+           TestCase "Mock one-liner with content"
+           MOCK SECTION 400-CHANGE-2 MOVE "it works2" TO VALUE-1 END-MOCK
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "it works2"
+
+           TestCase "Mock content with end-mock on the same line"
+           MOCK SECTION 400-CHANGE-2
+           MOVE "it works3" TO VALUE-1 END-MOCK
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "it works3"
+
+           TestCase "Mock content on multiple lines, with end-mock on the same line as some content"
+           MOCK SECTION 400-CHANGE-2 MOVE "it works4" TO VALUE-1
+           MOVE "it works5" TO VALUE-2 END-MOCK
+           PERFORM 400-CHANGE-2
+           Expect VALUE-1 to be "it works4"
+           Expect VALUE-2 to be "it works5"

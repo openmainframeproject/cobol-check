@@ -26,6 +26,8 @@ public class TestSuiteErrorLog {
 
     private String followingExpectedGotMessage = "Following <%1s> classified as <%2s>" + Constants.NEWLINE +
             "Expected classification: %3s" + Constants.NEWLINE + "Got <%4s> classified as <%5s>";
+    private String followingExpectedInContextGotMessage = "Following <%1s> classified as <%2s>" + Constants.NEWLINE +
+            "Expected classification in the context of %3s: %4s" + Constants.NEWLINE + "Got <%5s> classified as <%6s>";
     private String keywordInBlock = "Cannot have Cobol Check keyword <%1s> inside a %2s block";
 
     private boolean errorOccured = false;
@@ -38,7 +40,7 @@ public class TestSuiteErrorLog {
 
     private String errorLogPath;
 
-    private String lastErrorLogMessage;
+    private String errorLogMessages = "";
 
     public TestSuiteErrorLog(){
         errorLogPath = getTestSuiteParserErrorLogPath();
@@ -49,7 +51,7 @@ public class TestSuiteErrorLog {
         return errorOccured;
     }
 
-    public String getLastErrorMessage(){ return lastErrorLogMessage; }
+    public String getErrorMessages(){ return errorLogMessages; }
 
     public String getLastKeywordValue() { return lastKeyword.value(); }
 
@@ -59,12 +61,18 @@ public class TestSuiteErrorLog {
             if (!lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
                 errorOccured = true;
                 String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).toArray());
-                String inContext = ContextHandler.insideOfContext() ? " in the context of " + ContextHandler.getCurrentContext() : "";
                 error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
-                error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value() + inContext, expectedKeywords,
-                        currentToken, currentKeyword.value()) +
-                        Constants.NEWLINE + Constants.NEWLINE;
+                if (ContextHandler.insideOfContext()){
+                    error += String.format(followingExpectedInContextGotMessage, lastToken, lastKeyword.value(), ContextHandler.getCurrentContext() , expectedKeywords,
+                            currentToken, currentKeyword.value()) +
+                            Constants.NEWLINE + Constants.NEWLINE;
+                }
+                else {
+                    error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value(), expectedKeywords,
+                            currentToken, currentKeyword.value()) +
+                            Constants.NEWLINE + Constants.NEWLINE;
+                }
                 outputError(error);
             }
         }
@@ -139,7 +147,7 @@ public class TestSuiteErrorLog {
     }
 
     private void outputError(String error) {
-        lastErrorLogMessage = error;
+        errorLogMessages += error;
         System.out.println(error);
         BufferedWriter errorLogWriter = null;
         try {

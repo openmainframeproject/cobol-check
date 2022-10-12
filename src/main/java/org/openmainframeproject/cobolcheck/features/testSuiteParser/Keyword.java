@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,14 +40,16 @@ public class Keyword {
     }
 
     public List<String> getvalidNextKeys(String context) {
-        if (validNextKeysInContext == null || context == null || context.isEmpty()){
+        if (context == null || context.isEmpty()){
             return validNextKeys;
         }
+        else if (validNextKeysInContext == null)
+            return new ArrayList<>();
         else {
             if (validNextKeysInContext.containsKey(context))
                 return validNextKeysInContext.get(context);
             else
-                return validNextKeys;
+                return new ArrayList<>();
         }
     }
 

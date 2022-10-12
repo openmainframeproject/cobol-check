@@ -66,7 +66,7 @@ public class TestSuiteErrorLogTest {
                     numericFields);
         });
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -80,11 +80,11 @@ public class TestSuiteErrorLogTest {
         testSuite.append("           PERFORM 600-MAKE-CALL"+ Constants.NEWLINE);
         testSuite.append("           EXPECT VALUE-1 TO BE \"From mocked PROG1\""+ Constants.NEWLINE);
 
-        String expectedResult = null;
+        String expectedResult = "";
 
         testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -106,7 +106,7 @@ public class TestSuiteErrorLogTest {
                     numericFields);
         });
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -122,13 +122,16 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:4:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 4, index  8:" + Constants.NEWLINE;
         expectedResult += "Cannot have Cobol Check keyword <VERIFY> inside a BEFORE EACH block" + Constants.NEWLINE + Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:3:33:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 33:" + Constants.NEWLINE;
+        expectedResult += "Cannot have Cobol Check keyword <HAPPENED> inside a BEFORE EACH block" + Constants.NEWLINE + Constants.NEWLINE;
 
         assertThrows(TestSuiteSyntaxException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
                     numericFields);
         });
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -153,7 +156,7 @@ public class TestSuiteErrorLogTest {
                     numericFields);
         });
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -177,7 +180,7 @@ public class TestSuiteErrorLogTest {
                     numericFields);
         });
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -197,7 +200,7 @@ public class TestSuiteErrorLogTest {
                             numericFields);
                 });
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -213,11 +216,11 @@ public class TestSuiteErrorLogTest {
         testSuite.append("           MOVE 0 TO BANKNR IN AARM503-PARM"+ Constants.NEWLINE);
         testSuite.append("           END-BEFORE"+ Constants.NEWLINE);
 
-        String expectedResult = null;
+        String expectedResult = "";
 
         testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 
@@ -226,11 +229,11 @@ public class TestSuiteErrorLogTest {
         testSuite.append("           TESTSUITE 'TEST'"+ Constants.NEWLINE);
         testSuite.append("           MOCK SECTION 000-START END-MOCK"+ Constants.NEWLINE);
 
-        String expectedResult = null;
+        String expectedResult = "";
 
         testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
-        String actualResult = testSuiteErrorLog.getLastErrorMessage();
+        String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
 }
