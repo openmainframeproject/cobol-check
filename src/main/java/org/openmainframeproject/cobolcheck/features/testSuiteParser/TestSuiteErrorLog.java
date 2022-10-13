@@ -60,9 +60,9 @@ public class TestSuiteErrorLog {
     public boolean checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
         String error = "";
         if (lastKeyword != null){
-            if (!lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
+            if (!lastKeyword.getValidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
                 errorOccured = true;
-                String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys(ContextHandler.getCurrentContext()).toArray());
+                String expectedKeywords = Arrays.toString(lastKeyword.getValidNextKeys(ContextHandler.getCurrentContext()).toArray());
                 error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
                 if (ContextHandler.insideOfContext()){

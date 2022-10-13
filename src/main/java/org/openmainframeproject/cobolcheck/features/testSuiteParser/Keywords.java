@@ -33,7 +33,12 @@ public class Keywords {
         //--------------------------------EXPECT
         keywordInfo.put(Constants.EXPECT_KEYWORD,
                 new Keyword(Constants.EXPECT_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
+                        Arrays.asList(),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
+                        }},
                         KeywordAction.ACTUAL_FIELDNAME));
 
         //--------------------------------FIELD NAME
@@ -66,6 +71,20 @@ public class Keywords {
                                     Constants.BY_CONTENT_TOKEN,
                                     Constants.BY_VALUE_TOKEN,
                                     Constants.USING_TOKEN)
+                            );
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.TO_BE_KEYWORD,
+                                    Constants.EQUAL_SIGN_KEYWORD,
+                                    Constants.TO_EQUAL_KEYWORD,
+                                    Constants.NOT_KEYWORD,
+                                    Constants.LESS_THAN_SIGN_KEYWORD,
+                                    Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                    Constants.LESS_THAN_SIGN_KEYWORD,
+                                    Constants.EQUAL_SIGN_KEYWORD,
+                                    Constants.GREATER_THAN_SIGN_KEYWORD,
+                                    Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD
+                                    )
                             );
                         }},
                         KeywordAction.FIELDNAME));

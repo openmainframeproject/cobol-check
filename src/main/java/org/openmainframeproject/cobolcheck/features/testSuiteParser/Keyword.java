@@ -39,7 +39,7 @@ public class Keyword {
         return value;
     }
 
-    public List<String> getvalidNextKeys(String context) {
+    public List<String> getValidNextKeys(String context) {
         if (context == null || context.isEmpty()){
             return validNextKeys;
         }
