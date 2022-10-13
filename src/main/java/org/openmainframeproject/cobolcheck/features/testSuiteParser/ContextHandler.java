@@ -14,6 +14,7 @@ public class ContextHandler {
     static {
         startAndEndOfContexts = new HashMap<>();
         startAndEndOfContexts.put(Constants.MOCK_KEYWORD,  Arrays.asList(Constants.ENDMOCK_KEYWORD));
+        startAndEndOfContexts.put(Constants.EXPECT_KEYWORD,  Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD, Constants.BOOLEAN_VALUE));
     }
 
     public static void tryEnterContext(String keyword){
