@@ -83,8 +83,7 @@ public class Keywords {
                                     Constants.EQUAL_SIGN_KEYWORD,
                                     Constants.GREATER_THAN_SIGN_KEYWORD,
                                     Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
-                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD
-                                    )
+                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD)
                             );
                         }},
                         KeywordAction.FIELDNAME));
@@ -120,6 +119,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------TO EQUAL
@@ -130,6 +136,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------EQUAL SIGN
@@ -140,6 +153,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------GREATER THAN SIGN
@@ -150,6 +170,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------GREATER THAN EQUAL TO SIGN
@@ -160,6 +187,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------LESS THAN SIGN
@@ -170,6 +204,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------LESS THAN EQUAL TO SIGN
@@ -180,6 +221,13 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE)
+                            );
+                        }},
                         KeywordAction.EXPECTED_VALUE));
 
         //--------------------------------PARENTHESIS-ENCLOSED
@@ -231,9 +279,8 @@ public class Keywords {
                                     Constants.BY_REFERENCE_TOKEN,
                                     Constants.BY_CONTENT_TOKEN,
                                     Constants.BY_VALUE_TOKEN,
-                                    Constants.USING_TOKEN)
-                            );
-                        }},
+                                    Constants.USING_TOKEN));
+                            }},
                         KeywordAction.FIELDNAME));
 
         //--------------------------------NUMERIC LITERAL
@@ -366,8 +413,13 @@ public class Keywords {
                         new HashMap<String, List<String>>() {{
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD,
-                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD)
-                            );
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD));
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.HAPPENED_KEYWORD,
+                                    Constants.USING_TOKEN,
+                                    Constants.NEVER_HAPPENED_KEYWORD,
+                                    Constants.NEVER_HAPPENED_KEYWORD)
+                                    );
                         }},
                         KeywordAction.NONE));
 
@@ -380,6 +432,10 @@ public class Keywords {
                                 Constants.BY_VALUE_TOKEN),
                         new HashMap<String, List<String>>() {{
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD,
+                                    Constants.BY_REFERENCE_TOKEN,
+                                    Constants.BY_CONTENT_TOKEN));
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.BY_REFERENCE_TOKEN,
                                     Constants.BY_CONTENT_TOKEN,
