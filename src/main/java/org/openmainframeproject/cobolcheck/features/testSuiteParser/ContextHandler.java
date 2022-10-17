@@ -39,7 +39,7 @@ public class ContextHandler {
     public static boolean doesKeyEndContext(String key) {
         if (insideOfContext()){
             for (String endKey : startAndEndOfContexts.get(currentContext)){
-                if (key.equals(endKey))
+                if (key.equals(endKey) || (key.startsWith(Constants.QUOTE) && key.endsWith(Constants.QUOTE)))
                     return true;
             }
             return false;
