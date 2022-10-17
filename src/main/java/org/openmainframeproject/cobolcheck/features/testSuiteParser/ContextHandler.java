@@ -9,12 +9,14 @@ import java.util.Map;
 
 public class ContextHandler {
     private static String currentContext;
+    private static Keyword keyword;
     private static Map<String, List<String>> startAndEndOfContexts;
 
     static {
         startAndEndOfContexts = new HashMap<>();
         startAndEndOfContexts.put(Constants.MOCK_KEYWORD,  Arrays.asList(Constants.ENDMOCK_KEYWORD));
         startAndEndOfContexts.put(Constants.EXPECT_KEYWORD,  Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD, Constants.BOOLEAN_VALUE));
+        startAndEndOfContexts.put(Constants.VERIFY_KEYWORD,  Arrays.asList(Constants.ONCE_KEYWORD, Constants.TIMES_KEYWORD, Constants.NEVER_HAPPENED_KEYWORD, Constants.USING_TOKEN));
     }
 
     public static void tryEnterContext(String keyword){
@@ -39,7 +41,8 @@ public class ContextHandler {
     public static boolean doesKeyEndContext(String key) {
         if (insideOfContext()){
             for (String endKey : startAndEndOfContexts.get(currentContext)){
-                if (key.equals(endKey) || (key.startsWith(Constants.QUOTE) && key.endsWith(Constants.QUOTE)))
+                keyword = Keywords.getKeywordFor(key, true);
+                if (keyword.value().equals(endKey))
                     return true;
             }
             return false;
