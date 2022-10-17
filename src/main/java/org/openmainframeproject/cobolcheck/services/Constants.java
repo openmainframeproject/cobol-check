@@ -82,6 +82,9 @@ public final class Constants {
     public static final String END_BEFORE_TOKEN = "END-BEFORE";
     public static final String AFTER_EACH_TOKEN = "AFTER EACH";
     public static final String END_AFTER_TOKEN = "END-AFTER";
+    public static final String IN_KEYWORD = "IN";
+    public static final String OF_KEYWORD = "OF";
+
     //BACKWARDS COMPATIBILITY TODO: remove values?
     public static final String BEFORE_EACH_TOKEN_HYPHEN = "BEFORE-EACH";
     public static final String AFTER_EACH_TOKEN_HYPHEN = "AFTER-EACH";

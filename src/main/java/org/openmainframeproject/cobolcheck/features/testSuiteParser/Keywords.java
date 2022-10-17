@@ -83,7 +83,15 @@ public class Keywords {
                                     Constants.EQUAL_SIGN_KEYWORD,
                                     Constants.GREATER_THAN_SIGN_KEYWORD,
                                     Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
-                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD)
+                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.IN_KEYWORD,
+                                    Constants.OF_KEYWORD)
+                            );
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.HAPPENED_KEYWORD,
+                                    Constants.USING_TOKEN,
+                                    Constants.NEVER_HAPPENED_KEYWORD)
                             );
                         }},
                         KeywordAction.FIELDNAME));
@@ -99,6 +107,18 @@ public class Keywords {
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.TO_BE_KEYWORD,
+                                    Constants.TO_EQUAL_KEYWORD,
+                                    Constants.EQUAL_SIGN_KEYWORD,
+                                    Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                    Constants.GREATER_THAN_SIGN_KEYWORD,
+                                    Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                    Constants.LESS_THAN_SIGN_KEYWORD,
+                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD)
+                            );
+                        }},
                         KeywordAction.REVERSE_LOGIC));
 
         //--------------------------------NOT EQUAL SIGN
@@ -109,6 +129,12 @@ public class Keywords {
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD)
+                            );
+                        }},
                         KeywordAction.REVERSE_LOGIC));
 
         //--------------------------------TO BE
@@ -279,7 +305,12 @@ public class Keywords {
                                     Constants.BY_REFERENCE_TOKEN,
                                     Constants.BY_CONTENT_TOKEN,
                                     Constants.BY_VALUE_TOKEN,
-                                    Constants.USING_TOKEN));
+                                    Constants.USING_TOKEN)
+                            );
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.HAPPENED_KEYWORD,
+                                    Constants.USING_TOKEN)
+                            );
                             }},
                         KeywordAction.FIELDNAME));
 
@@ -294,6 +325,11 @@ public class Keywords {
                                 Constants.VERIFY_KEYWORD,
                                 Constants.TIME_KEYWORD,
                                 Constants.TIMES_KEYWORD),
+                    new HashMap<String, List<String>>() {{
+                        put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                Constants.TIMES_KEYWORD)
+                            );
+                        }},
                         KeywordAction.FIELDNAME));
 
         //--------------------------------COBOL TOKEN
@@ -365,6 +401,29 @@ public class Keywords {
                                 Constants.MOCK_KEYWORD),
                         KeywordAction.NONE));
 
+        //--------------------------------IN
+        keywordInfo.put(Constants.IN_KEYWORD,
+                new Keyword(Constants.IN_KEYWORD,
+                        Arrays.asList(),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
+                        }},
+                        KeywordAction.NONE));
+
+        //--------------------------------OF
+        keywordInfo.put(Constants.OF_KEYWORD,
+                new Keyword(Constants.OF_KEYWORD,
+                        Arrays.asList(),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
+                        }},
+                        KeywordAction.NONE));
+
+
         //TODO: Remove hyphen keyword option? Backwards compatibility
         //--------------------------------BEFORE-EACH
         keywordInfo.put(Constants.BEFORE_EACH_TOKEN_HYPHEN,
@@ -415,10 +474,8 @@ public class Keywords {
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD));
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
-                                    Constants.HAPPENED_KEYWORD,
-                                    Constants.USING_TOKEN,
-                                    Constants.NEVER_HAPPENED_KEYWORD,
-                                    Constants.NEVER_HAPPENED_KEYWORD)
+                                    Constants.FIELDNAME_KEYWORD,
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD)
                                     );
                         }},
                         KeywordAction.NONE));
@@ -480,8 +537,13 @@ public class Keywords {
         //--------------------------------VERIFY
         keywordInfo.put(Constants.VERIFY_KEYWORD,
                 new Keyword(Constants.VERIFY_KEYWORD,
-                        Arrays.asList(Constants.MOCK_TYPE),
-                        KeywordAction.NONE));
+                        Arrays.asList(),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.MOCK_TYPE)
+                            );
+                        }},
+                        KeywordAction.ACTUAL_FIELDNAME));
 
         //--------------------------------NEVER HAPPENED
         keywordInfo.put(Constants.NEVER_HAPPENED_KEYWORD,
@@ -499,6 +561,16 @@ public class Keywords {
                 new Keyword(Constants.HAPPENED_KEYWORD,
                         Arrays.asList(Constants.ONCE_KEYWORD, Constants.AT_LEAST_KEYWORD,
                                 Constants.NO_MORE_THAN_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.ONCE_KEYWORD,
+                                    Constants.ZERO_TOKEN,
+                                    Constants.AT_LEAST_KEYWORD,
+                                    Constants.NO_MORE_THAN_KEYWORD
+                                    )
+                            );
+                        }},
                         KeywordAction.NONE));
 
         //--------------------------------ONCE
@@ -516,12 +588,22 @@ public class Keywords {
         keywordInfo.put(Constants.AT_LEAST_KEYWORD,
                 new Keyword(Constants.AT_LEAST_KEYWORD,
                         Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        new HashMap<String, List<String>>() {{
+                              put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_LITERAL_KEYWORD)
+                            );
+                        }},
                         KeywordAction.NONE));
 
         //--------------------------------NO MORE THAN
         keywordInfo.put(Constants.NO_MORE_THAN_KEYWORD,
                 new Keyword(Constants.NO_MORE_THAN_KEYWORD,
                         Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_LITERAL_KEYWORD)
+                            );
+                        }},
                         KeywordAction.NONE));
 
         //--------------------------------TIME
