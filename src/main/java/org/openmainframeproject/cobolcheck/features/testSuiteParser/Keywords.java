@@ -56,13 +56,14 @@ public class Keywords {
                                 Constants.HAPPENED_KEYWORD,
                                 Constants.NEVER_HAPPENED_KEYWORD,
                                 Constants.COBOL_TOKEN,
-                                Constants.FIELDNAME_KEYWORD,
                                 Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
-                                Constants.USING_TOKEN),
+                                Constants.USING_TOKEN,
+                                Constants.IN_KEYWORD,
+                                Constants.OF_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
                                     Constants.ENDMOCK_KEYWORD,
@@ -85,6 +86,7 @@ public class Keywords {
                                     Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                     Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.FIELDNAME_KEYWORD,
                                     Constants.IN_KEYWORD,
                                     Constants.OF_KEYWORD)
                             );
@@ -422,7 +424,6 @@ public class Keywords {
                             );
                         }},
                         KeywordAction.NONE));
-
 
         //TODO: Remove hyphen keyword option? Backwards compatibility
         //--------------------------------BEFORE-EACH
