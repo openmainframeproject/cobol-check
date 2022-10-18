@@ -324,6 +324,8 @@ public class TestSuiteParser {
                         if (qualifiedNameKeywords.contains(testSuiteToken)) {
                             fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                             expectQualifiedName = true;
+                        } else {
+                            fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                         }
                     } else if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
@@ -580,6 +582,12 @@ public class TestSuiteParser {
                     expectInProgress = false;
                     toBeInProgress = true;
                     break;
+
+                case Constants.OF_KEYWORD:
+                case Constants.IN_KEYWORD:
+                    fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
+                    break;
+
             }
 
             // take actions that were triggered by the previous token's action, pertaining
