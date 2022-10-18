@@ -4,8 +4,8 @@
            Move "Alpha" TO IN-FIELD-1
            Move "Beta" TO IN-FIELD-2
            Perform 5200-PREPARE-OUTPUT-RECORD
-           Expect IN-FIELD-1 OF INPUT-RECORD TO EQUAL OUT-FIELD-1
-           Expect OUT-FIELD-2 OF OUTPUT-RECORD TO EQUAL IN-FIELD-2
+           Expect IN-FIELD-1 OF INPUT-RECORD TO EQUAL "Alpha"
+           Expect OUT-FIELD-2 OF OUTPUT-RECORD TO EQUAL "Beta"
 
 
 
