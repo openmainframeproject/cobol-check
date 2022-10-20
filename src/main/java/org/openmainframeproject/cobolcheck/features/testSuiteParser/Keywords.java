@@ -33,7 +33,7 @@ public class Keywords {
         //--------------------------------EXPECT
         keywordInfo.put(Constants.EXPECT_KEYWORD,
                 new Keyword(Constants.EXPECT_KEYWORD,
-                        Arrays.asList(),
+                        Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
@@ -88,7 +88,9 @@ public class Keywords {
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.IN_KEYWORD,
-                                    Constants.OF_KEYWORD)
+                                    Constants.OF_KEYWORD,
+                                    Constants.PARENTHESIS_ENCLOSED_KEYWORD,
+                                    Constants.HAPPENED_KEYWORD)
                             );
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.HAPPENED_KEYWORD,
@@ -277,6 +279,12 @@ public class Keywords {
                                 Constants.MOCK_KEYWORD,
                                 Constants.VERIFY_KEYWORD,
                                 Constants.EXPECT_KEYWORD),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.TO_BE_KEYWORD
+                                    )
+                            );
+                        }},
                         KeywordAction.COBOL_STATEMENT));
 
         //--------------------------------ALPHANUMERIC LITERAL
@@ -295,6 +303,7 @@ public class Keywords {
                                 Constants.AFTER_EACH_TOKEN_HYPHEN,
                                 Constants.HAPPENED_KEYWORD,
                                 Constants.NEVER_HAPPENED_KEYWORD,
+                                Constants.ENDMOCK_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
@@ -329,7 +338,8 @@ public class Keywords {
                                 Constants.TIMES_KEYWORD),
                     new HashMap<String, List<String>>() {{
                         put(Constants.VERIFY_KEYWORD, Arrays.asList(
-                                Constants.TIMES_KEYWORD)
+                                Constants.TIMES_KEYWORD,
+                                Constants.TIME_KEYWORD)
                             );
                         }},
                         KeywordAction.FIELDNAME));
@@ -356,7 +366,9 @@ public class Keywords {
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.TIME_KEYWORD,
-                                Constants.TIMES_KEYWORD),
+                                Constants.TIMES_KEYWORD,
+                                Constants.IN_KEYWORD,
+                                Constants.OF_KEYWORD),
                         KeywordAction.COBOL_STATEMENT));
 
         //--------------------------------BOOLEAN VALUE
@@ -406,7 +418,8 @@ public class Keywords {
         //--------------------------------IN
         keywordInfo.put(Constants.IN_KEYWORD,
                 new Keyword(Constants.IN_KEYWORD,
-                        Arrays.asList(),
+                        Arrays.asList(Constants.COBOL_TOKEN,
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
@@ -417,7 +430,7 @@ public class Keywords {
         //--------------------------------OF
         keywordInfo.put(Constants.OF_KEYWORD,
                 new Keyword(Constants.OF_KEYWORD,
-                        Arrays.asList(),
+                        Arrays.asList(Constants.COBOL_TOKEN),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
@@ -569,7 +582,9 @@ public class Keywords {
                                     Constants.ZERO_TOKEN,
                                     Constants.AT_LEAST_KEYWORD,
                                     Constants.NO_MORE_THAN_KEYWORD
-                                    )
+                                    ));
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.ONCE_KEYWORD)
                             );
                         }},
                         KeywordAction.NONE));
@@ -591,7 +606,8 @@ public class Keywords {
                         Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
                         new HashMap<String, List<String>>() {{
                               put(Constants.VERIFY_KEYWORD, Arrays.asList(
-                                    Constants.NUMERIC_LITERAL_KEYWORD)
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                      Constants.ONCE_KEYWORD)
                             );
                         }},
                         KeywordAction.NONE));
@@ -602,7 +618,8 @@ public class Keywords {
                         Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
-                                    Constants.NUMERIC_LITERAL_KEYWORD)
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.ONCE_KEYWORD)
                             );
                         }},
                         KeywordAction.NONE));
