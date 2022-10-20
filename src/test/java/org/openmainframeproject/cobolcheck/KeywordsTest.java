@@ -47,14 +47,15 @@ public class KeywordsTest {
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.HAPPENED_KEYWORD,
                                 Constants.NEVER_HAPPENED_KEYWORD,
-                                Constants.USING_TOKEN,
                                 Constants.COBOL_TOKEN,
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
-                                Constants.ENDMOCK_KEYWORD),
+                                Constants.USING_TOKEN,
+                                Constants.IN_KEYWORD,
+                                Constants.OF_KEYWORD),
                         KeywordAction.FIELDNAME),
                 Arguments.of(Constants.NOT_KEYWORD, Constants.NOT_KEYWORD,
                         Arrays.asList(Constants.TO_BE_KEYWORD,
@@ -138,8 +139,13 @@ public class KeywordsTest {
                 Constants.AFTER_EACH_TOKEN_HYPHEN,
                 Constants.HAPPENED_KEYWORD,
                 Constants.NEVER_HAPPENED_KEYWORD,
-                Constants.USING_TOKEN,
-                Constants.ENDMOCK_KEYWORD), keyword.getValidNextKeys(null));
+                Constants.ENDMOCK_KEYWORD,
+                Constants.FIELDNAME_KEYWORD,
+                Constants.BY_REFERENCE_TOKEN,
+                Constants.BY_CONTENT_TOKEN,
+                Constants.BY_VALUE_TOKEN,
+                Constants.USING_TOKEN),
+            keyword.getValidNextKeys(null));
     }
 
     @Test
@@ -176,7 +182,9 @@ public class KeywordsTest {
                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                 Constants.TIME_KEYWORD,
-                Constants.TIMES_KEYWORD), keyword.getValidNextKeys(null));
+                Constants.TIMES_KEYWORD,
+                Constants.IN_KEYWORD,
+                Constants.OF_KEYWORD), keyword.getValidNextKeys(null));
     }
 
     @Test

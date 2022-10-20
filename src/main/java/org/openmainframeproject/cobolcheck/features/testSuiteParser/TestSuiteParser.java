@@ -325,7 +325,7 @@ public class TestSuiteParser {
                             fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                             expectQualifiedName = true;
                         } else {
-                            fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
+                            fieldNameForExpect += Constants.SPACE + testSuiteToken;
                         }
                     } else if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
@@ -585,7 +585,10 @@ public class TestSuiteParser {
 
                 case Constants.OF_KEYWORD:
                 case Constants.IN_KEYWORD:
-                    fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
+                    if (cobolTokenIsFieldName)
+                        fieldNameForExpect += Constants.SPACE + testSuiteToken;
+                    else
+                        appendTokenToCobolStatement(testSuiteToken);
                     break;
 
             }

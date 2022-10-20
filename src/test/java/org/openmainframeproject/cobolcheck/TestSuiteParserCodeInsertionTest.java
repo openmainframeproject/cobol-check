@@ -116,7 +116,7 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-TEXT                                                         ");
+        ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE \"Message\"                                                         ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("               TO UT-EXPECTED                                                   ");
         ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -131,7 +131,7 @@ public class TestSuiteParserCodeInsertionTest {
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-MESSAGE TO UT-ACTUAL                                         ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-TEXT                                                         ");
+        ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE \"Message\"                                                         ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("               TO UT-EXPECTED                                                   ");
         ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -198,7 +198,7 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-EXPECTED TO UT-EXPECTED-NUMERIC                              ");
+        NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           MOVE 42 TO UT-EXPECTED-NUMERIC                              ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -211,7 +211,7 @@ public class TestSuiteParserCodeInsertionTest {
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-ACTUAL TO UT-ACTUAL-NUMERIC                                  ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
-        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE WS-EXPECTED TO UT-EXPECTED-NUMERIC                              ");
+        NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           MOVE 42 TO UT-EXPECTED-NUMERIC                              ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append("           SET UT-RELATION-EQ TO TRUE                                           ");
         NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.append(Constants.NEWLINE);
@@ -362,19 +362,19 @@ public class TestSuiteParserCodeInsertionTest {
                              "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-MESSAGE != \"Hello\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_LITERAL_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE TO BE WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE TO BE \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE TO EQUAL \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE = WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE = \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO BE \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE NOT TO EQUAL \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE NOT = WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE NOT = \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-MESSAGE != WS-TEXT",
+                Arguments.of("           EXPECT WS-MESSAGE != \"Message\"",
                              "WS-MESSAGE", null, ALPHANUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
                 Arguments.of("           EXPECT WS-VALUE TO BE 18.92",
                              "WS-VALUE", DataType.FLOATING_POINT,
@@ -403,25 +403,25 @@ public class TestSuiteParserCodeInsertionTest {
                 Arguments.of("           EXPECT WS-ACTUAL > 18.004",
                              "WS-ACTUAL", DataType.FLOATING_POINT,
                                                  NUMERIC_LITERAL_GREATER_THAN_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL TO BE WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL TO BE 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL TO EQUAL WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL TO EQUAL 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL = WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL = 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL NOT TO BE WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL NOT TO BE 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL NOT TO EQUAL WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL NOT TO EQUAL 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL NOT = WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL NOT = 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString()),
-                Arguments.of("           EXPECT WS-ACTUAL != WS-EXPECTED",
+                Arguments.of("           EXPECT WS-ACTUAL != 42",
                              "WS-ACTUAL", DataType.PACKED_DECIMAL,
                                                  NUMERIC_FIELD_NON_EQUALITY_EXPECTED_RESULT.toString())
         );
