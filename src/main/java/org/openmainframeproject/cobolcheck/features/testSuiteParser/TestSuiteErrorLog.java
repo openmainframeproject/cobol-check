@@ -78,8 +78,8 @@ public class TestSuiteErrorLog {
                 outputError(error);
             }
         }
-        ContextHandler.tryEnterContext(currentToken);
-        ContextHandler.tryExitingContext(currentToken);
+        ContextHandler.tryEnterContext(currentKeyword.value());
+        ContextHandler.tryExitingContext(currentKeyword.value());
         lastKeyword = currentKeyword;
         lastToken = currentToken;
         return error.isEmpty();
