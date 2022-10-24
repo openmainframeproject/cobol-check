@@ -383,7 +383,9 @@ public class TestSuiteParser {
 
                     if (verifyInProgress) {
                         if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)) {
-                            currentVerify.setExpectedCount("0");
+                            if (currentVerify != null) {
+                                currentVerify.setExpectedCount("0");
+                            }
                         }
                     }
 
@@ -556,18 +558,24 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ONCE_KEYWORD:
-                    currentVerify.setExpectedCount("1");
-                    handleEndOfVerifyStatement(parsedTestSuiteLines);
+                    if (currentVerify != null){
+                        currentVerify.setExpectedCount("1");
+                        handleEndOfVerifyStatement(parsedTestSuiteLines);
+                    }
                     break;
 
                 case Constants.AT_LEAST_KEYWORD:
-                    // Actual value is set at next token
-                    currentVerify.expectAtLeast("N/A");
+                    if (currentVerify != null) {
+                        // Actual value is set at next token
+                        currentVerify.expectAtLeast("N/A");
+                    }
                     break;
 
                 case Constants.NO_MORE_THAN_KEYWORD:
-                    // Actual value is set at next token
-                    currentVerify.expectNoMoreThan("N/A");
+                    if (currentVerify != null) {
+                        // Actual value is set at next token
+                        currentVerify.expectNoMoreThan("N/A");
+                    }
                     break;
 
                 case Constants.TIME_KEYWORD:

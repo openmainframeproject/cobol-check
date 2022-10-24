@@ -89,7 +89,7 @@ public final class Constants {
     public static final String BEFORE_EACH_TOKEN_HYPHEN = "BEFORE-EACH";
     public static final String AFTER_EACH_TOKEN_HYPHEN = "AFTER-EACH";
     public static final String PARA_TOKEN = "PARA";
-    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL", "END-MOCK");
+    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL");
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";

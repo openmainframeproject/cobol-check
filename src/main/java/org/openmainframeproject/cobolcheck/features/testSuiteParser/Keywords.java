@@ -89,12 +89,15 @@ public class Keywords {
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.IN_KEYWORD,
                                     Constants.OF_KEYWORD,
-                                    Constants.PARENTHESIS_ENCLOSED_KEYWORD,
-                                    Constants.HAPPENED_KEYWORD)
+                                    Constants.PARENTHESIS_ENCLOSED_KEYWORD)
                             );
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
-                                    Constants.HAPPENED_KEYWORD,
+                                    Constants.FIELDNAME_KEYWORD,
+                                    Constants.BY_REFERENCE_TOKEN,
+                                    Constants.BY_CONTENT_TOKEN,
+                                    Constants.BY_VALUE_TOKEN,
                                     Constants.USING_TOKEN,
+                                    Constants.HAPPENED_KEYWORD,
                                     Constants.NEVER_HAPPENED_KEYWORD)
                             );
                         }},
@@ -523,6 +526,9 @@ public class Keywords {
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
                             );
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
                         }},
                         KeywordAction.NONE));
 
@@ -534,6 +540,9 @@ public class Keywords {
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
                             );
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
                         }},
                         KeywordAction.NONE));
 
@@ -543,6 +552,9 @@ public class Keywords {
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
                             );
                         }},
@@ -583,9 +595,6 @@ public class Keywords {
                                     Constants.AT_LEAST_KEYWORD,
                                     Constants.NO_MORE_THAN_KEYWORD
                                     ));
-                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
-                                    Constants.ONCE_KEYWORD)
-                            );
                         }},
                         KeywordAction.NONE));
 
