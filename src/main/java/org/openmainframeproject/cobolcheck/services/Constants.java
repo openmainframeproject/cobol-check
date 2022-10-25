@@ -69,6 +69,7 @@ public final class Constants {
     public static final String LESS_THAN_EQUAL_TO_SIGN_KEYWORD = "<=";
     public static final String MOCK_KEYWORD = "MOCK";
     public static final String MOCK_TYPE = "mock-type";
+    public static final String QUALIFIED_FIELD_NAME = "qualified-field-name";
     public static final String ENDMOCK_KEYWORD = "END-MOCK";
     public static final String VERIFY_KEYWORD = "VERIFY";
     public static final String NEVER_HAPPENED_KEYWORD = "NEVER HAPPENED";

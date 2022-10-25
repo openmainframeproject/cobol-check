@@ -34,9 +34,6 @@ public class TestSuiteParser {
 
     private TestSuiteErrorLog testSuiteErrorLog;
 
-    // Source tokens used in fully-qualified data item names
-    private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
-
     private final BeforeAfterRepo beforeAfterRepo;
 
     // Used for mocking
@@ -320,13 +317,6 @@ public class TestSuiteParser {
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
-                    } else if (possibleQualifiedName) {
-                        if (qualifiedNameKeywords.contains(testSuiteToken)) {
-                            fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
-                            expectQualifiedName = true;
-                        } else {
-                            fieldNameForExpect += Constants.SPACE + testSuiteToken;
-                        }
                     } else if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
                         possibleQualifiedName = true;
@@ -591,10 +581,12 @@ public class TestSuiteParser {
                     toBeInProgress = true;
                     break;
 
-                case Constants.OF_KEYWORD:
-                case Constants.IN_KEYWORD:
-                    if (cobolTokenIsFieldName)
-                        fieldNameForExpect += Constants.SPACE + testSuiteToken;
+                case Constants.QUALIFIED_FIELD_NAME:
+                    if (cobolTokenIsFieldName){
+                        fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
+                        expectQualifiedName = true;
+                    }
+
                     else
                         appendTokenToCobolStatement(testSuiteToken);
                     break;
