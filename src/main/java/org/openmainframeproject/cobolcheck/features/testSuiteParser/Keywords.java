@@ -15,6 +15,7 @@ import java.util.*;
 public class Keywords {
     private static final Map<String, Keyword> keywordInfo;
     private static final List<String> mockTypes;
+    private static final List<String> qualifiedNameKeywords;
 
     static {
         keywordInfo = new HashMap<>();
@@ -44,17 +45,12 @@ public class Keywords {
         //--------------------------------FIELD NAME
         keywordInfo.put(Constants.FIELDNAME_KEYWORD,
                 new Keyword(Constants.FIELDNAME_KEYWORD,
-                        Arrays.asList(Constants.TO_BE_KEYWORD,
-                                Constants.NOT_KEYWORD,
-                                Constants.NOT_EQUAL_SIGN_KEYWORD,
-                                Constants.TO_EQUAL_KEYWORD,
+                        Arrays.asList(Constants.NOT_KEYWORD,
                                 Constants.EQUAL_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
-                                Constants.HAPPENED_KEYWORD,
-                                Constants.NEVER_HAPPENED_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
@@ -62,8 +58,7 @@ public class Keywords {
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
                                 Constants.USING_TOKEN,
-                                Constants.IN_KEYWORD,
-                                Constants.OF_KEYWORD),
+                                Constants.QUALIFIED_FIELD_NAME),
                         new HashMap<String, List<String>>() {{
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
                                     Constants.ENDMOCK_KEYWORD,
@@ -87,8 +82,7 @@ public class Keywords {
                                     Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.FIELDNAME_KEYWORD,
-                                    Constants.IN_KEYWORD,
-                                    Constants.OF_KEYWORD,
+                                    Constants.QUALIFIED_FIELD_NAME,
                                     Constants.PARENTHESIS_ENCLOSED_KEYWORD)
                             );
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
@@ -106,10 +100,7 @@ public class Keywords {
         //--------------------------------NOT
         keywordInfo.put(Constants.NOT_KEYWORD,
                 new Keyword(Constants.NOT_KEYWORD,
-                        Arrays.asList(Constants.TO_BE_KEYWORD,
-                                Constants.TO_EQUAL_KEYWORD,
-                                Constants.EQUAL_SIGN_KEYWORD,
-                                Constants.NOT_EQUAL_SIGN_KEYWORD,
+                        Arrays.asList(Constants.EQUAL_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
@@ -131,11 +122,7 @@ public class Keywords {
         //--------------------------------NOT EQUAL SIGN
         keywordInfo.put(Constants.NOT_EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.NOT_EQUAL_SIGN_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
-                                Constants.COBOL_TOKEN,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.BOOLEAN_VALUE),
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
@@ -147,11 +134,7 @@ public class Keywords {
         //--------------------------------TO BE
         keywordInfo.put(Constants.TO_BE_KEYWORD,
                 new Keyword(Constants.TO_BE_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
-                                Constants.COBOL_TOKEN,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.BOOLEAN_VALUE),
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
@@ -164,11 +147,7 @@ public class Keywords {
         //--------------------------------TO EQUAL
         keywordInfo.put(Constants.TO_EQUAL_KEYWORD,
                 new Keyword(Constants.TO_EQUAL_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
-                                Constants.COBOL_TOKEN,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.BOOLEAN_VALUE),
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
@@ -267,11 +246,8 @@ public class Keywords {
         keywordInfo.put(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                 new Keyword(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                         Arrays.asList(Constants.PARENTHESIS_ENCLOSED_KEYWORD,
-                                Constants.TO_BE_KEYWORD,
-                                Constants.TO_EQUAL_KEYWORD,
                                 Constants.NOT_KEYWORD,
                                 Constants.EQUAL_SIGN_KEYWORD,
-                                Constants.NOT_EQUAL_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
@@ -284,8 +260,21 @@ public class Keywords {
                                 Constants.EXPECT_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
-                                    Constants.TO_BE_KEYWORD
-                                    )
+                                    Constants.TO_BE_KEYWORD,
+                                    Constants.EQUAL_SIGN_KEYWORD,
+                                    Constants.TO_EQUAL_KEYWORD,
+                                    Constants.NOT_KEYWORD,
+                                    Constants.LESS_THAN_SIGN_KEYWORD,
+                                    Constants.NOT_EQUAL_SIGN_KEYWORD,
+                                    Constants.LESS_THAN_SIGN_KEYWORD,
+                                    Constants.EQUAL_SIGN_KEYWORD,
+                                    Constants.GREATER_THAN_SIGN_KEYWORD,
+                                    Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                    Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.FIELDNAME_KEYWORD,
+                                    Constants.QUALIFIED_FIELD_NAME,
+                                    Constants.PARENTHESIS_ENCLOSED_KEYWORD)
                             );
                         }},
                         KeywordAction.COBOL_STATEMENT));
@@ -304,9 +293,6 @@ public class Keywords {
                                 Constants.BEFORE_EACH_TOKEN_HYPHEN,
                                 Constants.AFTER_EACH_TOKEN,
                                 Constants.AFTER_EACH_TOKEN_HYPHEN,
-                                Constants.HAPPENED_KEYWORD,
-                                Constants.NEVER_HAPPENED_KEYWORD,
-                                Constants.ENDMOCK_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
@@ -322,8 +308,9 @@ public class Keywords {
                                     Constants.USING_TOKEN)
                             );
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
+                                    Constants.USING_TOKEN,
                                     Constants.HAPPENED_KEYWORD,
-                                    Constants.USING_TOKEN)
+                                    Constants.NEVER_HAPPENED_KEYWORD)
                             );
                             }},
                         KeywordAction.FIELDNAME));
@@ -337,7 +324,6 @@ public class Keywords {
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
                                 Constants.VERIFY_KEYWORD,
-                                Constants.TIME_KEYWORD,
                                 Constants.TIMES_KEYWORD),
                     new HashMap<String, List<String>>() {{
                         put(Constants.VERIFY_KEYWORD, Arrays.asList(
@@ -359,7 +345,6 @@ public class Keywords {
                                 Constants.TESTSUITE_KEYWORD,
                                 Constants.TESTCASE_KEYWORD,
                                 Constants.MOCK_KEYWORD,
-                                Constants.ENDMOCK_KEYWORD,
                                 Constants.VERIFY_KEYWORD,
                                 Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
@@ -370,8 +355,7 @@ public class Keywords {
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.TIME_KEYWORD,
                                 Constants.TIMES_KEYWORD,
-                                Constants.IN_KEYWORD,
-                                Constants.OF_KEYWORD),
+                                Constants.QUALIFIED_FIELD_NAME),
                         KeywordAction.COBOL_STATEMENT));
 
         //--------------------------------BOOLEAN VALUE
@@ -418,22 +402,10 @@ public class Keywords {
                                 Constants.MOCK_KEYWORD),
                         KeywordAction.NONE));
 
-        //--------------------------------IN
-        keywordInfo.put(Constants.IN_KEYWORD,
-                new Keyword(Constants.IN_KEYWORD,
-                        Arrays.asList(Constants.COBOL_TOKEN,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD),
-                        new HashMap<String, List<String>>() {{
-                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
-                                    Constants.FIELDNAME_KEYWORD)
-                            );
-                        }},
-                        KeywordAction.NONE));
-
-        //--------------------------------OF
-        keywordInfo.put(Constants.OF_KEYWORD,
-                new Keyword(Constants.OF_KEYWORD,
-                        Arrays.asList(Constants.COBOL_TOKEN),
+        //--------------------------------QUALIFIED FIELD NAME
+        keywordInfo.put(Constants.QUALIFIED_FIELD_NAME,
+                new Keyword(Constants.QUALIFIED_FIELD_NAME,
+                        Arrays.asList(Constants.COBOL_TOKEN, Constants.FIELDNAME_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
@@ -508,7 +480,8 @@ public class Keywords {
                             put(Constants.MOCK_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.BY_REFERENCE_TOKEN,
-                                    Constants.BY_CONTENT_TOKEN));
+                                    Constants.BY_CONTENT_TOKEN,
+                                    Constants.BY_VALUE_TOKEN));
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.BY_REFERENCE_TOKEN,
@@ -585,8 +558,7 @@ public class Keywords {
         //--------------------------------HAPPENED
         keywordInfo.put(Constants.HAPPENED_KEYWORD,
                 new Keyword(Constants.HAPPENED_KEYWORD,
-                        Arrays.asList(Constants.ONCE_KEYWORD, Constants.AT_LEAST_KEYWORD,
-                                Constants.NO_MORE_THAN_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.NUMERIC_LITERAL_KEYWORD,
@@ -612,7 +584,7 @@ public class Keywords {
         //--------------------------------AT LEAST
         keywordInfo.put(Constants.AT_LEAST_KEYWORD,
                 new Keyword(Constants.AT_LEAST_KEYWORD,
-                        Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                               put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.NUMERIC_LITERAL_KEYWORD,
@@ -624,7 +596,7 @@ public class Keywords {
         //--------------------------------NO MORE THAN
         keywordInfo.put(Constants.NO_MORE_THAN_KEYWORD,
                 new Keyword(Constants.NO_MORE_THAN_KEYWORD,
-                        Arrays.asList(Constants.ONCE_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD),
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.NUMERIC_LITERAL_KEYWORD,
@@ -656,6 +628,7 @@ public class Keywords {
                         KeywordAction.NONE));
 
         mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.PARA_TOKEN, Constants.CALL_TOKEN);
+        qualifiedNameKeywords = Arrays.asList(Constants.IN_KEYWORD, Constants.OF_KEYWORD);
     }
 
 
@@ -691,6 +664,9 @@ public class Keywords {
                 }
                 if (mockTypes.contains(key)) {
                     key = Constants.MOCK_TYPE;
+                }
+                if (qualifiedNameKeywords.contains(key)){
+                    key = Constants.QUALIFIED_FIELD_NAME;
                 }
             }
         }

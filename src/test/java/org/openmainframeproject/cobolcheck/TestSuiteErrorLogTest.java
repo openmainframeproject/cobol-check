@@ -325,7 +325,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "Unexpected token on line 3, index 24:" + Constants.NEWLINE;
         expectedResult += "Following <WS-HELLO> classified as <fieldname>" + Constants.NEWLINE;
         expectedResult += "Expected classification in the context of EXPECT: [TO BE, =, TO EQUAL, NOT, <, !=, <, =, >, " +
-                ">=, <=, alphanumeric-literal, fieldname, IN, OF, parenthesis-enclosed]" + Constants.NEWLINE;
+                ">=, <=, alphanumeric-literal, fieldname, qualified-field-name, parenthesis-enclosed]" + Constants.NEWLINE;
         expectedResult += "Got <HAPPENED> classified as <HAPPENED>" + Constants.NEWLINE + Constants.NEWLINE;
         expectedResult += "SYNTAX ERROR in file: null:3:33:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 33:" + Constants.NEWLINE;
