@@ -15,7 +15,7 @@ Cobol Check provides fine-grained unit testing/checking for Cobol at the same co
 
 A big thank you to [Vicom Infinity](https://www.vicominfinity.com/) for kindly providing a test z/OS environment for the project!
 
-Another thank you, goes towards BankData, for major contributions to the project.
+Another thank you, goes towards Bankdata, for major contributions to the project.
 
 ## Immediate needs 
 
@@ -26,7 +26,7 @@ As of March 2022 we could use help with:
 
 ## Downloads 
 
-Version 0.2.2 pre-release is available! 
+Version 0.2.3 pre-release is available! 
 
 [//]: # (- Find the download on the project home page on the [Neo Pragma site]&#40;https://neopragma.com/projects/cobol-check/&#41;.)
 - Find distributions here: [Cobol Check Ditributions](https://github.com/openmainframeproject/cobol-check/blob/main/build/distributions).
