@@ -1,6 +1,7 @@
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.services.Config;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,11 +125,11 @@ public class Mock {
     }
 
     public void addLine(String line) {
-        lines.add(line);
+        lines.add(StringHelper.moveToAreaB(line));
     }
 
     public void addLines(List<String> lines) {
-        this.lines.addAll(lines);
+        this.lines.addAll(StringHelper.moveToAreaB(lines));
     }
 
     public void addArgument(String argument) {arguments.add(argument);}

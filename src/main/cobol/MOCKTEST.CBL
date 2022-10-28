@@ -84,6 +84,7 @@
            MOVE "arg1" to VALUE-1
            MOVE "arg2" to VALUE-2
            CALL VALUE-2 USING VALUE-1
+           CALL VALUE-2
            END-CALL.
 
        800-MAKE-CALL.

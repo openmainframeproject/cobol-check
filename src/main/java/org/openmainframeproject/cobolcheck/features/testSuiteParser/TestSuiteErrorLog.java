@@ -26,18 +26,23 @@ public class TestSuiteErrorLog {
 
     private String followingExpectedGotMessage = "Following <%1s> classified as <%2s>" + Constants.NEWLINE +
             "Expected classification: %3s" + Constants.NEWLINE + "Got <%4s> classified as <%5s>";
+    private String followingExpectedInContextGotMessage = "Following <%1s> classified as <%2s>" + Constants.NEWLINE +
+            "Expected classification in the context of %3s: %4s" + Constants.NEWLINE + "Got <%5s> classified as <%6s>";
     private String keywordInBlock = "Cannot have Cobol Check keyword <%1s> inside a %2s block";
 
     private boolean errorOccured = false;
 
     private final List<String> cobolCheckStartingAndEndingKeywords = Arrays.asList(Constants.TESTSUITE_KEYWORD,
             Constants.TESTCASE_KEYWORD, Constants.EXPECT_KEYWORD, Constants.MOCK_KEYWORD, Constants.ENDMOCK_KEYWORD,
-            Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN, Constants.AFTER_EACH_TOKEN,
-            Constants.END_AFTER_TOKEN);
+            Constants.VERIFY_KEYWORD, Constants.BEFORE_EACH_TOKEN, Constants.END_BEFORE_TOKEN,
+            Constants.AFTER_EACH_TOKEN,
+            Constants.END_AFTER_TOKEN, Constants.HAPPENED_KEYWORD, Constants.TO_BE_KEYWORD, Constants.TO_EQUAL_KEYWORD,
+            Constants.BEFORE_EACH_TOKEN_HYPHEN, Constants.AFTER_EACH_TOKEN_HYPHEN, Constants.NEVER_HAPPENED_KEYWORD,
+            Constants.ONCE_KEYWORD, Constants.AT_LEAST_KEYWORD, Constants.NO_MORE_THAN_KEYWORD);
 
     private String errorLogPath;
 
-    private String lastErrorLogMessage;
+    private String errorLogMessages = "";
 
     public TestSuiteErrorLog(){
         errorLogPath = getTestSuiteParserErrorLogPath();
@@ -48,26 +53,36 @@ public class TestSuiteErrorLog {
         return errorOccured;
     }
 
-    public String getLastErrorMessage(){ return lastErrorLogMessage; }
+    public String getErrorMessages(){ return errorLogMessages; }
 
     public String getLastKeywordValue() { return lastKeyword.value(); }
 
-    public void checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
+    public boolean checkExpectedTokenSyntax(Keyword currentKeyword, String currentToken, String currentFile, int lineNumber, int lineIndex){
+        String error = "";
         if (lastKeyword != null){
-            String error = "";
-            if (!lastKeyword.getvalidNextKeys().contains(currentKeyword.value())){
+            if (!lastKeyword.getValidNextKeys(ContextHandler.getCurrentContext()).contains(currentKeyword.value())){
                 errorOccured = true;
-                String expectedKeywords = Arrays.toString(lastKeyword.getvalidNextKeys().toArray());
+                String expectedKeywords = Arrays.toString(lastKeyword.getValidNextKeys(ContextHandler.getCurrentContext()).toArray());
                 error += String.format(fileMessage, displayErrorType(ErrorTypes.SYNTAX_ERROR), currentFile) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
                 error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
-                error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value(), expectedKeywords,
-                        currentToken, currentKeyword.value()) +
-                        Constants.NEWLINE + Constants.NEWLINE;
+                if (ContextHandler.insideOfContext()){
+                    error += String.format(followingExpectedInContextGotMessage, lastToken, lastKeyword.value(), ContextHandler.getCurrentContext() , expectedKeywords,
+                            currentToken, currentKeyword.value()) +
+                            Constants.NEWLINE + Constants.NEWLINE;
+                }
+                else {
+                    error += String.format(followingExpectedGotMessage, lastToken, lastKeyword.value(), expectedKeywords,
+                            currentToken, currentKeyword.value()) +
+                            Constants.NEWLINE + Constants.NEWLINE;
+                }
                 outputError(error);
             }
         }
+        ContextHandler.tryEnterContext(currentKeyword.value());
+        ContextHandler.tryExitingContext(currentKeyword.value());
         lastKeyword = currentKeyword;
         lastToken = currentToken;
+        return error.isEmpty();
     }
 
     public void checkSyntaxInsideBlock(String blockKeyword, List<String> cobolLines, TokenExtractor tokenExtractor, String currentFile, int lineNumber) {
@@ -134,7 +149,7 @@ public class TestSuiteErrorLog {
     }
 
     private void outputError(String error) {
-        lastErrorLogMessage = error;
+        errorLogMessages += error;
         System.out.println(error);
         BufferedWriter errorLogWriter = null;
         try {

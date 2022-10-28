@@ -406,7 +406,7 @@ public class MockIT {
             "      *In testcase: \"Local mock overwrites global mock\"                         " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "           ADD 1 TO UT-1-1-1-MOCK-COUNT                                         " + Constants.NEWLINE +
-            "                MOVE \"This is\" TO VALUE-1                                       " + Constants.NEWLINE +
+            "           MOVE \"This is\" TO VALUE-1                                            " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-1-2-1-MOCK.                                                              " + Constants.NEWLINE +
@@ -624,7 +624,7 @@ public class MockIT {
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "           ADD 1 TO UT-1-0-1-MOCK-COUNT                                         " + Constants.NEWLINE +
-            "               MOVE \"mock\" TO VALUE-1                                           " + Constants.NEWLINE +
+            "           MOVE \"mock\" TO VALUE-1                                               " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-1-0-2-MOCK.                                                              " + Constants.NEWLINE +
@@ -634,7 +634,7 @@ public class MockIT {
             "      *In testsuite: \"Mocking tests\"                                            " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "           ADD 1 TO UT-1-0-2-MOCK-COUNT                                         " + Constants.NEWLINE +
-            "               MOVE \"prog2\" TO VALUE-1                                          " + Constants.NEWLINE +
+            "           MOVE \"prog2\" TO VALUE-1                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-1-1-1-MOCK.                                                              " + Constants.NEWLINE +
@@ -644,7 +644,7 @@ public class MockIT {
             "      *In testcase: \"Local mock overwrites global mock\"                         " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
             "           ADD 1 TO UT-1-1-1-MOCK-COUNT                                         " + Constants.NEWLINE +
-            "                MOVE \"Goodbye\" TO VALUE-1                                       " + Constants.NEWLINE +
+            "           MOVE \"Goodbye\" TO VALUE-1                                           " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-1-2-1-MOCK.                                                              " + Constants.NEWLINE +
