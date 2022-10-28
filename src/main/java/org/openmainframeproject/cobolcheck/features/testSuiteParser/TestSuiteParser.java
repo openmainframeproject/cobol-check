@@ -34,9 +34,6 @@ public class TestSuiteParser {
 
     private TestSuiteErrorLog testSuiteErrorLog;
 
-    // Source tokens used in fully-qualified data item names
-    private final List<String> qualifiedNameKeywords = Arrays.asList("IN", "OF");
-
     private final BeforeAfterRepo beforeAfterRepo;
 
     // Used for mocking
@@ -320,13 +317,6 @@ public class TestSuiteParser {
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
-                    } else if (possibleQualifiedName) {
-                        if (qualifiedNameKeywords.contains(testSuiteToken)) {
-                            fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
-                            expectQualifiedName = true;
-                        } else {
-                            fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
-                        }
                     } else if (expectInProgress) {
                         fieldNameForExpect = testSuiteToken;
                         possibleQualifiedName = true;
@@ -383,7 +373,9 @@ public class TestSuiteParser {
 
                     if (verifyInProgress) {
                         if (testSuiteToken.equalsIgnoreCase(Constants.ZERO_TOKEN)) {
-                            currentVerify.setExpectedCount("0");
+                            if (currentVerify != null) {
+                                currentVerify.setExpectedCount("0");
+                            }
                         }
                     }
 
@@ -556,18 +548,24 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ONCE_KEYWORD:
-                    currentVerify.setExpectedCount("1");
-                    handleEndOfVerifyStatement(parsedTestSuiteLines);
+                    if (currentVerify != null){
+                        currentVerify.setExpectedCount("1");
+                        handleEndOfVerifyStatement(parsedTestSuiteLines);
+                    }
                     break;
 
                 case Constants.AT_LEAST_KEYWORD:
-                    // Actual value is set at next token
-                    currentVerify.expectAtLeast("N/A");
+                    if (currentVerify != null) {
+                        // Actual value is set at next token
+                        currentVerify.expectAtLeast("N/A");
+                    }
                     break;
 
                 case Constants.NO_MORE_THAN_KEYWORD:
-                    // Actual value is set at next token
-                    currentVerify.expectNoMoreThan("N/A");
+                    if (currentVerify != null) {
+                        // Actual value is set at next token
+                        currentVerify.expectNoMoreThan("N/A");
+                    }
                     break;
 
                 case Constants.TIME_KEYWORD:
@@ -583,9 +581,14 @@ public class TestSuiteParser {
                     toBeInProgress = true;
                     break;
 
-                case Constants.OF_KEYWORD:
-                case Constants.IN_KEYWORD:
-                    fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
+                case Constants.QUALIFIED_FIELD_NAME:
+                    if (cobolTokenIsFieldName){
+                        fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
+                        expectQualifiedName = true;
+                    }
+
+                    else
+                        appendTokenToCobolStatement(testSuiteToken);
                     break;
 
             }

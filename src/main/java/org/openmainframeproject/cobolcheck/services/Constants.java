@@ -69,6 +69,7 @@ public final class Constants {
     public static final String LESS_THAN_EQUAL_TO_SIGN_KEYWORD = "<=";
     public static final String MOCK_KEYWORD = "MOCK";
     public static final String MOCK_TYPE = "mock-type";
+    public static final String QUALIFIED_FIELD_NAME = "qualified-field-name";
     public static final String ENDMOCK_KEYWORD = "END-MOCK";
     public static final String VERIFY_KEYWORD = "VERIFY";
     public static final String NEVER_HAPPENED_KEYWORD = "NEVER HAPPENED";
@@ -89,7 +90,7 @@ public final class Constants {
     public static final String BEFORE_EACH_TOKEN_HYPHEN = "BEFORE-EACH";
     public static final String AFTER_EACH_TOKEN_HYPHEN = "AFTER-EACH";
     public static final String PARA_TOKEN = "PARA";
-    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL", "END-MOCK");
+    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL");
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";

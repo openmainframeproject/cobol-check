@@ -16,7 +16,7 @@ public class ContextHandler {
         startAndEndOfContexts = new HashMap<>();
         startAndEndOfContexts.put(Constants.MOCK_KEYWORD,  Arrays.asList(Constants.ENDMOCK_KEYWORD));
         startAndEndOfContexts.put(Constants.EXPECT_KEYWORD,  Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD, Constants.BOOLEAN_VALUE));
-        startAndEndOfContexts.put(Constants.VERIFY_KEYWORD,  Arrays.asList(Constants.ONCE_KEYWORD, Constants.TIMES_KEYWORD, Constants.NEVER_HAPPENED_KEYWORD, Constants.USING_TOKEN));
+        startAndEndOfContexts.put(Constants.VERIFY_KEYWORD,  Arrays.asList(Constants.ONCE_KEYWORD, Constants.TIMES_KEYWORD, Constants.NEVER_HAPPENED_KEYWORD, Constants.TIME_KEYWORD));
     }
 
     public static void tryEnterContext(String keyword){
@@ -29,6 +29,11 @@ public class ContextHandler {
         if (insideOfContext() && doesKeyEndContext(keyword)){
             currentContext = null;
         }
+    }
+
+    //Used only for testing
+    public static void forceContextExit(){
+        currentContext = null;
     }
 
 
