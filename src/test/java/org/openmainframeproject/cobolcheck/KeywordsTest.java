@@ -27,7 +27,7 @@ public class KeywordsTest {
         Keyword keyword = Keywords.getKeywordFor(key, false);
         assertEquals(expectedKeywordValue, keyword.value());
         assertEquals(expectedKeywordAction, keyword.keywordAction());
-        assertEquals(expectedValidNextKey, keyword.getvalidNextKeys());
+        assertEquals(expectedValidNextKey, keyword.getValidNextKeys(null));
     }
 
     private static Stream<Arguments> KeywordProvider() {
@@ -36,42 +36,30 @@ public class KeywordsTest {
                         Arrays.asList(Constants.FIELDNAME_KEYWORD),
                         KeywordAction.ACTUAL_FIELDNAME),
                 Arguments.of(Constants.FIELDNAME_KEYWORD, Constants.FIELDNAME_KEYWORD,
-                        Arrays.asList(Constants.TO_BE_KEYWORD,
-                                Constants.NOT_KEYWORD,
-                                Constants.NOT_EQUAL_SIGN_KEYWORD,
-                                Constants.TO_EQUAL_KEYWORD,
+                        Arrays.asList(Constants.NOT_KEYWORD,
                                 Constants.EQUAL_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
-                                Constants.HAPPENED_KEYWORD,
-                                Constants.NEVER_HAPPENED_KEYWORD,
-                                Constants.USING_TOKEN,
                                 Constants.COBOL_TOKEN,
+                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                                 Constants.FIELDNAME_KEYWORD,
                                 Constants.BY_REFERENCE_TOKEN,
                                 Constants.BY_CONTENT_TOKEN,
                                 Constants.BY_VALUE_TOKEN,
-                                Constants.PARENTHESIS_ENCLOSED_KEYWORD,
-                                Constants.ENDMOCK_KEYWORD),
+                                Constants.USING_TOKEN,
+                                Constants.QUALIFIED_FIELD_NAME),
                         KeywordAction.FIELDNAME),
                 Arguments.of(Constants.NOT_KEYWORD, Constants.NOT_KEYWORD,
-                        Arrays.asList(Constants.TO_BE_KEYWORD,
-                                Constants.TO_EQUAL_KEYWORD,
-                                Constants.EQUAL_SIGN_KEYWORD,
-                                Constants.NOT_EQUAL_SIGN_KEYWORD,
+                        Arrays.asList(Constants.EQUAL_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_SIGN_KEYWORD,
                                 Constants.LESS_THAN_SIGN_KEYWORD,
                                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD),
                         KeywordAction.REVERSE_LOGIC),
                 Arguments.of(Constants.TO_BE_KEYWORD, Constants.TO_BE_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
-                                Constants.COBOL_TOKEN,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.BOOLEAN_VALUE),
+                        Arrays.asList(),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.TESTSUITE_KEYWORD, Constants.TESTSUITE_KEYWORD,
                         Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
@@ -84,11 +72,7 @@ public class KeywordsTest {
                                 Constants.BOOLEAN_VALUE),
                         KeywordAction.EXPECTED_VALUE),
                 Arguments.of(Constants.NOT_EQUAL_SIGN_KEYWORD, Constants.NOT_EQUAL_SIGN_KEYWORD,
-                        Arrays.asList(Constants.FIELDNAME_KEYWORD,
-                                Constants.COBOL_TOKEN,
-                                Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                                Constants.NUMERIC_LITERAL_KEYWORD,
-                                Constants.BOOLEAN_VALUE),
+                        Arrays.asList(),
                         KeywordAction.REVERSE_LOGIC),
                 Arguments.of(Constants.GREATER_THAN_SIGN_KEYWORD, Constants.GREATER_THAN_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
@@ -126,20 +110,22 @@ public class KeywordsTest {
         assertEquals(Constants.ALPHANUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
         assertEquals(Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD,
-                Constants.EXPECT_KEYWORD,
-                Constants.COBOL_TOKEN,
-                Constants.TESTSUITE_KEYWORD,
-                Constants.TESTCASE_KEYWORD,
-                Constants.MOCK_KEYWORD,
-                Constants.VERIFY_KEYWORD,
-                Constants.BEFORE_EACH_TOKEN,
-                Constants.BEFORE_EACH_TOKEN_HYPHEN,
-                Constants.AFTER_EACH_TOKEN,
-                Constants.AFTER_EACH_TOKEN_HYPHEN,
-                Constants.HAPPENED_KEYWORD,
-                Constants.NEVER_HAPPENED_KEYWORD,
-                Constants.USING_TOKEN,
-                Constants.ENDMOCK_KEYWORD), keyword.getvalidNextKeys());
+                        Constants.EXPECT_KEYWORD,
+                        Constants.COBOL_TOKEN,
+                        Constants.TESTSUITE_KEYWORD,
+                        Constants.TESTCASE_KEYWORD,
+                        Constants.MOCK_KEYWORD,
+                        Constants.VERIFY_KEYWORD,
+                        Constants.BEFORE_EACH_TOKEN,
+                        Constants.BEFORE_EACH_TOKEN_HYPHEN,
+                        Constants.AFTER_EACH_TOKEN,
+                        Constants.AFTER_EACH_TOKEN_HYPHEN,
+                        Constants.FIELDNAME_KEYWORD,
+                        Constants.BY_REFERENCE_TOKEN,
+                        Constants.BY_CONTENT_TOKEN,
+                        Constants.BY_VALUE_TOKEN,
+                        Constants.USING_TOKEN),
+            keyword.getValidNextKeys(null));
     }
 
     @Test
@@ -148,8 +134,8 @@ public class KeywordsTest {
         assertEquals(Constants.NUMERIC_LITERAL_KEYWORD, keyword.value());
         assertEquals(KeywordAction.FIELDNAME, keyword.keywordAction());
         assertEquals(Arrays.asList(Constants.EXPECT_KEYWORD, Constants.COBOL_TOKEN, Constants.TESTSUITE_KEYWORD,
-                Constants.TESTCASE_KEYWORD, Constants.MOCK_KEYWORD, Constants.VERIFY_KEYWORD, Constants.TIME_KEYWORD,
-                        Constants.TIMES_KEYWORD), keyword.getvalidNextKeys());
+                Constants.TESTCASE_KEYWORD, Constants.MOCK_KEYWORD, Constants.VERIFY_KEYWORD,
+                        Constants.TIMES_KEYWORD), keyword.getValidNextKeys(null));
     }
 
     @Test
@@ -166,7 +152,6 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
-                Constants.ENDMOCK_KEYWORD,
                 Constants.VERIFY_KEYWORD,
                 Constants.PARENTHESIS_ENCLOSED_KEYWORD,
                 Constants.GREATER_THAN_SIGN_KEYWORD,
@@ -176,7 +161,8 @@ public class KeywordsTest {
                 Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                 Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                 Constants.TIME_KEYWORD,
-                Constants.TIMES_KEYWORD), keyword.getvalidNextKeys());
+                Constants.TIMES_KEYWORD,
+                Constants.QUALIFIED_FIELD_NAME), keyword.getValidNextKeys(null));
     }
 
     @Test
@@ -189,7 +175,7 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
-                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys());
+                Constants.VERIFY_KEYWORD), keyword.getValidNextKeys(null));
     }
 
     @Test
@@ -202,7 +188,71 @@ public class KeywordsTest {
                 Constants.TESTSUITE_KEYWORD,
                 Constants.TESTCASE_KEYWORD,
                 Constants.MOCK_KEYWORD,
-                Constants.VERIFY_KEYWORD), keyword.getvalidNextKeys());
+                Constants.VERIFY_KEYWORD), keyword.getValidNextKeys(null));
+    }
+
+    @Test
+    public void when_the_token_is_IN_it_is_treated_as_a_qualified_field_name() {
+        Keyword keyword = Keywords.getKeywordFor("IN", false);
+        assertEquals(Constants.QUALIFIED_FIELD_NAME, keyword.value());
+        assertEquals(KeywordAction.NONE, keyword.keywordAction());
+        assertEquals(Arrays.asList(Constants.COBOL_TOKEN, Constants.FIELDNAME_KEYWORD),
+                keyword.getValidNextKeys(null));
+    }
+
+    @Test
+    public void when_the_token_is_OF_it_is_treated_as_a_qualified_field_name() {
+        Keyword keyword = Keywords.getKeywordFor("OF", false);
+        assertEquals(Constants.QUALIFIED_FIELD_NAME, keyword.value());
+        assertEquals(KeywordAction.NONE, keyword.keywordAction());
+        assertEquals(Arrays.asList(Constants.COBOL_TOKEN, Constants.FIELDNAME_KEYWORD),
+                keyword.getValidNextKeys(null));
+    }
+
+    @Test
+    public void it_gets_valid_next_keys_in_mock_context_for_field_name() {
+        Keyword keyword = Keywords.getKeywordFor("100-DO-WORK", true);
+        assertEquals(Arrays.asList(Constants.ENDMOCK_KEYWORD,
+                        Constants.FIELDNAME_KEYWORD,
+                        Constants.BY_REFERENCE_TOKEN,
+                        Constants.BY_CONTENT_TOKEN,
+                        Constants.BY_VALUE_TOKEN,
+                        Constants.USING_TOKEN),
+                keyword.getValidNextKeys(Constants.MOCK_KEYWORD));
+    }
+
+    @Test
+    public void it_gets_valid_next_keys_in_verify_context_for_field_name() {
+        Keyword keyword = Keywords.getKeywordFor("100-DO-WORK", true);
+        assertEquals(Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                        Constants.BY_REFERENCE_TOKEN,
+                        Constants.BY_CONTENT_TOKEN,
+                        Constants.BY_VALUE_TOKEN,
+                        Constants.USING_TOKEN,
+                        Constants.HAPPENED_KEYWORD,
+                        Constants.NEVER_HAPPENED_KEYWORD),
+                keyword.getValidNextKeys(Constants.VERIFY_KEYWORD));
+    }
+
+    @Test
+    public void it_gets_valid_next_keys_in_expect_context_for_field_name() {
+        Keyword keyword = Keywords.getKeywordFor("100-DO-WORK", true);
+        assertEquals(Arrays.asList(Constants.TO_BE_KEYWORD,
+                        Constants.EQUAL_SIGN_KEYWORD,
+                        Constants.TO_EQUAL_KEYWORD,
+                        Constants.NOT_KEYWORD,
+                        Constants.LESS_THAN_SIGN_KEYWORD,
+                        Constants.NOT_EQUAL_SIGN_KEYWORD,
+                        Constants.LESS_THAN_SIGN_KEYWORD,
+                        Constants.EQUAL_SIGN_KEYWORD,
+                        Constants.GREATER_THAN_SIGN_KEYWORD,
+                        Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
+                        Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
+                        Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                        Constants.FIELDNAME_KEYWORD,
+                        Constants.QUALIFIED_FIELD_NAME,
+                        Constants.PARENTHESIS_ENCLOSED_KEYWORD),
+                keyword.getValidNextKeys(Constants.EXPECT_KEYWORD));
     }
 
 }

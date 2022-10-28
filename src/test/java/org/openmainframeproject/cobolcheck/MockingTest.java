@@ -200,8 +200,8 @@ public class MockingTest {
         String str6 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
@@ -219,8 +219,8 @@ public class MockingTest {
         String str6 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
@@ -238,8 +238,8 @@ public class MockingTest {
         String str6 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
@@ -258,9 +258,9 @@ public class MockingTest {
         String str7 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add("          ");
-        expected.add(str5);
-        expected.add(str6);
+        expected.add("           ");
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
 
@@ -338,8 +338,8 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("       UT-1-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
 
@@ -423,8 +423,8 @@ public class MockingTest {
         expected.add("      *In testcase: \"Name of test case\"");
         expected.add("      *****************************************************************");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
 
@@ -458,8 +458,8 @@ public class MockingTest {
         expected.add("      *In testcase: \"Name of test case\"");
         expected.add("      *****************************************************************");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
 
@@ -493,8 +493,8 @@ public class MockingTest {
         expected.add("      *In testcase: \"Name of test case\"");
         expected.add("      *****************************************************************");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
 
@@ -529,8 +529,8 @@ public class MockingTest {
         expected.add("      *In testcase: \"Name of test case\"");
         expected.add("      *****************************************************************");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
 
@@ -574,26 +574,26 @@ public class MockingTest {
         expected.add("      *****************************************************************");
         expected.add("       UT-1-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-1-MOCK-COUNT");
-        expected.add(str4);
-        expected.add(str5);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
         expected.add("       UT-1-1-2-MOCK.");
         expected.add("           ADD 1 TO UT-1-1-2-MOCK-COUNT");
-        expected.add(str8);
-        expected.add(str9);
+        expected.add("           MOVE \"hey\" TO greeting");
+        expected.add("           MOVE \"bye\" TO greeting2");
         expected.add("           .");
         expected.add("");
         expected.add("       UT-1-2-1-MOCK.");
         expected.add("           ADD 1 TO UT-1-2-1-MOCK-COUNT");
-        expected.add(str13);
-        expected.add(str14);
+        expected.add("           ADD 1 TO WS-COUNT");
+        expected.add("           MOVE \"something else\" TO other");
         expected.add("           .");
         expected.add("");
         expected.add("       UT-2-1-1-MOCK.");
         expected.add("           ADD 1 TO UT-2-1-1-MOCK-COUNT");
-        expected.add(str19);
-        expected.add(str20);
+        expected.add("           MOVE \"something\" TO this");
+        expected.add("           ADD 1 TO WS-COUNT");
         expected.add("           .");
         expected.add("");
 

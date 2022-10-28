@@ -3,6 +3,7 @@ package org.openmainframeproject.cobolcheck.services;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -213,6 +214,17 @@ public class StringHelper {
 
     public static boolean isStringContinuationLine(String line) {
         return line.startsWith("      -    '") || line.startsWith("      -    \"");
+    }
+
+    public static String moveToAreaB(String line){
+        return "           " + line.trim();
+    }
+
+    public static List<String> moveToAreaB(List<String> lines){
+        for (int i = 0; i < lines.size(); i++){
+            lines.set(i, moveToAreaB(lines.get(i)));
+        }
+        return lines;
     }
 
     /**
