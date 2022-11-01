@@ -56,6 +56,11 @@
            move 6 to ws-display-numeric
            expect ws-display-numeric to be 6
 
+           TestCase "Variable must be SPACE"
+           move space to ws-field-1
+           expect ws-field-1 to be space
 
-
-
+           TestCase "Variable must be SPACES"
+           move spaces to ws-field-1
+           expect ws-field-1 to be spaces
+           

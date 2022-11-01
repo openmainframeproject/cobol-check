@@ -139,7 +139,8 @@ public class Keywords {
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
-                                    Constants.BOOLEAN_VALUE)
+                                    Constants.BOOLEAN_VALUE,
+                                    Constants.COBOL_TOKEN)
                             );
                         }},
                         KeywordAction.EXPECTED_VALUE));
