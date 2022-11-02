@@ -139,7 +139,8 @@ public class Keywords {
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
-                                    Constants.BOOLEAN_VALUE)
+                                    Constants.BOOLEAN_VALUE,
+                                    Constants.COBOL_TOKEN)
                             );
                         }},
                         KeywordAction.EXPECTED_VALUE));
@@ -642,12 +643,13 @@ public class Keywords {
             if (key.startsWith("(")) {
                 key = Constants.PARENTHESIS_ENCLOSED_KEYWORD;
             } else {
-                if (Character.isDigit(key.charAt(0))) {
+                if (Character.isDigit(key.charAt(0)) || key.charAt(0) == '-') {
                     boolean isNumeric = true;
                     for (char digit : key.toCharArray()) {
                         if (!Character.isDigit(digit) &&
                                 digit != '.' &&
-                                digit != ',') {
+                                digit != ',' &&
+                                digit != '-') {
                             isNumeric = false;
                             break;
                         }
