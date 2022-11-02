@@ -239,3 +239,4 @@
            TestCase "Variable must be -123"
            move -123 to ws-field-3
            expect ws-field-3 to be -123
+
