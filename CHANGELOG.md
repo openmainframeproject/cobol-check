@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
-## \[0.2.4\] 2022-11-01
+## \[0.2.4\] 2022-11-02
 ### Implemented
 - EXPECT accepts COBOL keywords again as the last keyword 
 - EXPECT handles negative numbers again
