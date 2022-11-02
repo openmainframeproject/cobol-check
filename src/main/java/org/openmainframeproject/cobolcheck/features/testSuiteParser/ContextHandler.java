@@ -15,7 +15,7 @@ public class ContextHandler {
     static {
         startAndEndOfContexts = new HashMap<>();
         startAndEndOfContexts.put(Constants.MOCK_KEYWORD,  Arrays.asList(Constants.ENDMOCK_KEYWORD));
-        startAndEndOfContexts.put(Constants.EXPECT_KEYWORD,  Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD, Constants.BOOLEAN_VALUE));
+        startAndEndOfContexts.put(Constants.EXPECT_KEYWORD,  Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD, Constants.NUMERIC_LITERAL_KEYWORD, Constants.BOOLEAN_VALUE, Constants.COBOL_TOKEN));
         startAndEndOfContexts.put(Constants.VERIFY_KEYWORD,  Arrays.asList(Constants.ONCE_KEYWORD, Constants.TIMES_KEYWORD, Constants.NEVER_HAPPENED_KEYWORD, Constants.TIME_KEYWORD));
     }
 

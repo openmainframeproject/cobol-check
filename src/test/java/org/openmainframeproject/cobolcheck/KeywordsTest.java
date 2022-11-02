@@ -255,4 +255,10 @@ public class KeywordsTest {
                 keyword.getValidNextKeys(Constants.EXPECT_KEYWORD));
     }
 
+    @Test
+    public void it_gets_correct_key_for_negative_numbers() {
+        Keyword keyword = Keywords.getKeywordFor("-12345,67", false);
+        assertEquals(Constants.NUMERIC_LITERAL_KEYWORD,keyword.value());
+    }
+
 }

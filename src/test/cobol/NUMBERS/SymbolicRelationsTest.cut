@@ -208,9 +208,35 @@
            move 123.45 to ws-display-field
            expect ws-display-field to be 123.45
 
+           TestCase "Display Numeric field equals literal"
+           move -123.45 to ws-display-field
+           expect ws-display-field to be -123.45
 
+           TestCase "Variable must be ZERO"
+           move zero to ws-field-3
+           expect ws-field-3 to be zero
 
+           TestCase "Variable must be ZEROS"
+           move zeros to ws-field-3
+           expect ws-field-3 to be zeros
 
+           TestCase "Variable must be ZEROES"
+           move zeroes to ws-field-3
+           expect ws-field-3 to be zeroes
 
+           TestCase "Variable must be NUMERIC 123"
+           move 123 to ws-field-3
+           expect ws-field-3 to be numeric 123
 
+           TestCase "Variable must be NUMERIC -123"
+           move -123 to ws-field-3
+           expect ws-field-3 to be numeric -123
+
+           TestCase "Variable must be 123"
+           move 123 to ws-field-3
+           expect ws-field-3 to be 123
+
+           TestCase "Variable must be -123"
+           move -123 to ws-field-3
+           expect ws-field-3 to be -123
 
