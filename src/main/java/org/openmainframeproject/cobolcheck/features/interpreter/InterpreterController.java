@@ -331,6 +331,7 @@ public class InterpreterController {
      * - It has a SELECT token. File identifier and corresponding FILE STATUS will be saved
      * - It contains a copy token
      * - It is a file section statement (file section statements from referenced copybooks are also included)
+     * - It has an SQL statement and within le WORKING SECTION
      * @param line - current source line
      */
     private void updateLineRepository(CobolLine line) throws IOException {
@@ -347,6 +348,18 @@ public class InterpreterController {
             }
             else if(reader.isFlagSet(Constants.LEVEL_01_TOKEN)){
                 lineRepository.addFileSectionStatement(line.getUnNumberedString());
+            }
+        }
+        if(reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) && 
+        line.containsToken(Constants.EXEC_SQL_TOKEN) && 
+        (line.containsToken(Constants.INCLUDE) || reader.appendNextMeaningfulLineToCurrentLine().containsToken(Constants.INCLUDE))) {
+            lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
+        }
+        if(lineRepository.getFileSectionStatements().size() > 0) {
+            for(int i=0; i < lineRepository.getFileSectionStatements().size(); i++) {
+                StringTokenizerExtractor stringTokenizerExtractor = new StringTokenizerExtractor();
+                CobolLine cobolLine = new CobolLine(lineRepository.getFileSectionStatements().get(i), stringTokenizerExtractor);
+                updateNumericFields(cobolLine);
             }
         }
     }

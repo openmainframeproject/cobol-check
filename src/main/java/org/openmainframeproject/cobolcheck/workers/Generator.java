@@ -126,6 +126,8 @@ public class Generator {
             workingStorageHasEnded = true;
         }
         if (interpreter.didLineJustEnter(Constants.PROCEDURE_DIVISION) && interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)){
+            if (interpreter.getFileSectionStatements().size() > 0) 
+                writerController.writeLines(interpreter.getFileSectionStatements());
             writerController.stopStoringLines();
             testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());

@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringTuple;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -124,6 +125,20 @@ public class LineRepository {
         CopybookExpander copybookExpander = new CopybookExpander();
         try {
             copyLines = copybookExpander.expand(copyLines, copybookName, replacingValues);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        fileSectionStatements.addAll(copyLines);
+    }
+
+    void addExpandedCopyDB2Statements(CobolLine line) {
+        List<String> copyLines = new ArrayList<>();
+        CopybookExpander copybookExpander = new CopybookExpander();
+        String copybookName = line.getToken(2);
+        StringTuple replacingValues = new StringTuple(null, null);
+
+        try {
+            copyLines = copybookExpander.expandDB2(copyLines, copybookName, replacingValues);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

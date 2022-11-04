@@ -841,6 +841,80 @@ public class InterpreterControllerTest {
         }
         assertTrue(testsRan);
     }
+    @Test
+    public void it_adds_file_section_statements_from_source_and_db2copybook_multipleLines() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL";
+        String str4 = "       INCLUDE TEXEM";
+        String str5 = "       END-EXEC.";
+        String str6 = "       PROCEDURE DIVISION.";
 
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
 
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals(4,interpreterController.getFileSectionStatements().size());
+        assertTrue(interpreterController.getFileSectionStatements().contains("       01  TEXEM."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 FIRST-NAME           PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 LAST-NAME            PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 TMS-CREA             PIC X(26)."));
+    }
+
+    @Test
+    public void it_adds_file_section_statements_from_source_and_db2copybook() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL INCLUDE TEXEM END-EXEC.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals(4,interpreterController.getFileSectionStatements().size());
+        assertTrue(interpreterController.getFileSectionStatements().contains("       01  TEXEM."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 FIRST-NAME           PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 LAST-NAME            PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 TMS-CREA             PIC X(26)."));
+    }
+
+    @Test
+    public void it_updates_numeric_fields_from_DB2Copybook() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL INCLUDE TEXE2 END-EXEC.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals("PACKED_DECIMAL",
+                interpreterController.getNumericFieldDataTypeFor("WALLET").name());
+    }
+
+    @Test
+    public void it_updates_numeric_fields_from_copybook() throws IOException {
+        String str1 = "       FILE SECTION.";
+        String str2 = "       FD  INPUT-FILE";
+        String str3 = "       01  OUTPUT-RECORD.";
+        String str4 = "         COPY COPY001-padded.";
+        String str5 = "       WORKING-STORAGE SECTION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        while (interpreterController.interpretNextLine() != null) {
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals("PACKED_DECIMAL",
+                interpreterController.getNumericFieldDataTypeFor("TEST-DATA-ELEMENT-001-B2").name());
+    }
 }
