@@ -1,1 +1,7 @@
-S
+           TestSuite "Tests of DB2 includes"
+
+           TestCase "DB2 Copybook added to PRG"
+           move  "John" to FIRST-NAME
+           move  "Doe" to LAST-NAME
+           Expect FIRST-NAME to be "John"
+           Expect LAST-NAME to be "Doe"

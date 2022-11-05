@@ -12,7 +12,6 @@
        01  FILLER.
            05  WS-FIELD-1           PIC X(80).
            05  ws-Field-2           PIC X(80).
-           05  ws-table-1.
        
        
        EXEC SQL INCLUDE SQLCA  END-EXEC.

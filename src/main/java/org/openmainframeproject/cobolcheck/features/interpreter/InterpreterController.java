@@ -354,6 +354,7 @@ public class InterpreterController {
         line.containsToken(Constants.EXEC_SQL_TOKEN) && 
         (line.containsToken(Constants.INCLUDE) || reader.appendNextMeaningfulLineToCurrentLine().containsToken(Constants.INCLUDE))) {
             lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
+            line.setUnNumberedString("      **");
         }
         if(lineRepository.getFileSectionStatements().size() > 0) {
             for(int i=0; i < lineRepository.getFileSectionStatements().size(); i++) {
