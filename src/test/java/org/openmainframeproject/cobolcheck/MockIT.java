@@ -49,7 +49,6 @@ public class MockIT {
     void commonSetup() throws IOException {
         mockedInterpreterReader = Mockito.mock(BufferedReader.class);
         interpreterController = new InterpreterController(mockedInterpreterReader);
-        interpreter = new Interpreter();
 
         writer = new StringWriter();
         cobolWriter = new CobolWriter(writer);

@@ -841,6 +841,7 @@ public class InterpreterControllerTest {
         }
         assertTrue(testsRan);
     }
+
     @Test
     public void it_adds_file_section_statements_from_source_and_db2copybook_multipleLines() throws IOException {
         String str1 = "       DATA DIVISION.";
@@ -917,4 +918,49 @@ public class InterpreterControllerTest {
         assertEquals("PACKED_DECIMAL",
                 interpreterController.getNumericFieldDataTypeFor("TEST-DATA-ELEMENT-001-B2").name());
     }
+
+    @Test
+    public void it_registers_DB2Copybook_as_stub() throws IOException {
+        String str1 ="        DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL INCLUDE TEXE2 END-EXEC.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("EXEC SQL")){
+                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
+
+    @Test
+    public void it_registers_DB2Copybook_on_multiple_lines_as_stub() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL";
+        String str4 = "       INCLUDE TEXEM";
+        String str5 = "       END-EXEC.";
+        String str6 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4,  str5, str6, null);
+
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("EXEC SQL")) {
+                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
+    
 }

@@ -25,8 +25,6 @@ public class CobolLine {
         return tokens;
     }
     public String getToken(int index) { return tokens.get(index); }
-    
-    public void setUnNumberedString(String s) {unNumberedString = s;}
 
     public int tokensSize() { return tokens.size(); }
 

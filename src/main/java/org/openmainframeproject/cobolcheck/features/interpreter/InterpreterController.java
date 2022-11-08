@@ -20,6 +20,7 @@ public class InterpreterController {
     private String possibleMockIdentifier;
     private String possibleMockType;
     private List<String> possibleMockArgs;
+    private List<String> extractedCopyBook;
     private boolean insideSectionOrParagraphMockBody;
 
     public InterpreterController(BufferedReader sourceReader) {
@@ -33,52 +34,92 @@ public class InterpreterController {
         tokenExtractor = new StringTokenizerExtractor();
     }
 
-    //Getters for lists of specific source lines
-    public List<String> getFileSectionStatements(){
+    // Getters for lists of specific source lines
+    public List<String> getFileSectionStatements() {
         return lineRepository.getFileSectionStatements();
     }
-    public List<String> getFileControlStatements() { return lineRepository.getFileControlStatements(); }
-    public Map<String, String> getFileIdentifiersAndStatuses() { return lineRepository.getFileIdentifiersAndStatuses(); }
-    public List<String> getCopyTokens() { return lineRepository.getCopyTokens(); }
 
-    //Getters for numeric field info
-    public DataType getNumericFieldDataTypeFor(String fieldName){
+    public List<String> getFileControlStatements() {
+        return lineRepository.getFileControlStatements();
+    }
+
+    public Map<String, String> getFileIdentifiersAndStatuses() {
+        return lineRepository.getFileIdentifiersAndStatuses();
+    }
+
+    public List<String> getCopyTokens() {
+        return lineRepository.getCopyTokens();
+    }
+
+    // Getters for numeric field info
+    public DataType getNumericFieldDataTypeFor(String fieldName) {
         return numericFields.dataTypeOf(fieldName);
     }
-    public NumericFields getNumericFields() { return numericFields; }
 
-    //Getters from reader
-    public List<String> getTokensForCurrentLine(){
+    public NumericFields getNumericFields() {
+        return numericFields;
+    }
+
+    // Getters from reader
+    public List<String> getTokensForCurrentLine() {
         return reader.getCurrentLine().getTokens();
     }
-    public List<String> getCurrentStatement(){
+
+    public List<String> getCurrentStatement() {
         return convertToStrings(reader.getCurrentStatement());
     }
 
-    //Getting info from reader
-    public boolean hasStatementBeenRead(){
+    public CobolLine getCurrentLineAsStatement() throws IOException {
+        return reader.readStatementAsOneLine();
+    }
+
+    // Getting info from reader
+    public boolean hasStatementBeenRead() {
         return reader.hasStatementBeenRead();
     }
-    public boolean isReading(String partOfProgram){
+
+    public boolean isReading(String partOfProgram) {
         return reader.isFlagSet(partOfProgram);
     }
-    public boolean didLineJustEnter(String partOfProgram) { return partOfProgram.equals(reader.getLineJustEntered()); }
-    public boolean hasReaderStateChanged() {return reader.getLineJustEntered() != null;}
-    public boolean currentLineContains(String str){
+
+    public boolean didLineJustEnter(String partOfProgram) {
+        return partOfProgram.equals(reader.getLineJustEntered());
+    }
+
+    public boolean hasReaderStateChanged() {
+        return reader.getLineJustEntered() != null;
+    }
+
+    public boolean currentLineContains(String str) {
         return reader.getCurrentLine().containsToken(str);
     }
 
-    //Mock info
-    public boolean isCurrentComponentMockable() { return possibleMockIdentifier != null; }
-    public String getPossibleMockIdentifier() { return possibleMockIdentifier; }
-    public String getPossibleMockType() { return possibleMockType; }
-    public List<String> getPossibleMockArgs() { return possibleMockArgs; }
-    public boolean isInsideSectionOrParagraphMockBody() {return insideSectionOrParagraphMockBody;}
+    // Mock info
+    public boolean isCurrentComponentMockable() {
+        return possibleMockIdentifier != null;
+    }
+
+    public String getPossibleMockIdentifier() {
+        return possibleMockIdentifier;
+    }
+
+    public String getPossibleMockType() {
+        return possibleMockType;
+    }
+
+    public List<String> getPossibleMockArgs() {
+        return possibleMockArgs;
+    }
+
+    public boolean isInsideSectionOrParagraphMockBody() {
+        return insideSectionOrParagraphMockBody;
+    }
+
     public void setInsideSectionOrParagraphMockBody(boolean insideSectionOrParagraphMockBody) {
         this.insideSectionOrParagraphMockBody = insideSectionOrParagraphMockBody;
     }
 
-    public boolean shouldCurrentLineBeParsed(){
+    public boolean shouldCurrentLineBeParsed() {
         if (hasStatementBeenRead() && !getCurrentStatement().isEmpty())
             return Interpreter.shouldLineBeParsed(reader.getCurrentStatement().get(0), reader.getState());
         else
@@ -86,18 +127,24 @@ public class InterpreterController {
     }
 
     public boolean shouldCurrentLineBeStubbed() throws IOException {
-        if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())){
-            if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
-                reader.putNextLine("           .");
-            reader.putNextLine("            CONTINUE");
-            return true;
+        if (reader.getState().isFlagSetFor(Constants.PROCEDURE_DIVISION))
+            if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
+                if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
+                    reader.putNextLine("           .");
+                reader.putNextLine("            CONTINUE");
+                return true;
+            }
+        if (reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+            if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean shouldCurrentStatementBeStubbed(){
-        for (CobolLine line : reader.getCurrentStatement()){
-            if (Interpreter.shouldLineBeStubbed(line, reader.getState())){
+    public boolean shouldCurrentStatementBeStubbed() {
+        for (CobolLine line : reader.getCurrentStatement()) {
+            if (Interpreter.shouldLineBeStubbed(line, reader.getState())) {
                 if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
                     reader.putNextLine("           .");
                 reader.putNextLine("            CONTINUE");
@@ -111,108 +158,117 @@ public class InterpreterController {
         CobolLine nextLine = reader.peekNextMeaningfulLine();
         CobolLine lineFollowingNext = reader.peekNextMeaningfulLine();
 
-        return Interpreter.lineEndsParagraphOrSection(reader.getCurrentLine(), nextLine, lineFollowingNext, reader.getState());
+        return Interpreter.lineEndsParagraphOrSection(reader.getCurrentLine(), nextLine, lineFollowingNext,
+                reader.getState());
     }
 
-    public boolean isCurrentLineEndingWorkingStorageSection(){
-        return (reader.getCurrentLine().containsToken(Constants.LOCAL_STORAGE_SECTION)||
-                reader.getCurrentLine().containsToken(Constants.LINKAGE_SECTION)||
+    public boolean isCurrentLineEndingWorkingStorageSection() {
+        return (reader.getCurrentLine().containsToken(Constants.LOCAL_STORAGE_SECTION) ||
+                reader.getCurrentLine().containsToken(Constants.LINKAGE_SECTION) ||
                 reader.getCurrentLine().containsToken(Constants.PROCEDURE_DIVISION));
     }
 
-    public boolean canWriteEndEvaluateBeforeCurrentLine(){
+    public boolean canWriteEndEvaluateBeforeCurrentLine() {
         if (Interpreter.containsOnlyPeriod(reader.getCurrentLine()))
             return true;
-        else if (Interpreter.endsInPeriod(reader.getCurrentLine())){
-                    reader.putNextLine("           .");
-                    return false;
-            }
+        else if (Interpreter.endsInPeriod(reader.getCurrentLine())) {
+            reader.putNextLine("           .");
+            return false;
+        }
         return false;
 
     }
 
-    /**Interprets the next line from the source file. Based on the line, the following values
+    /**
+     * Interprets the next line from the source file. Based on the line, the
+     * following values
      * will be updated:
      * - Current line
      * - Current tokens
      * - previous line
      * The following values can be updated, based on the line:
      * - Current statement (only if multiline statement was read)
-     * - The state of the reader (flags that shows what part of the program we are reading)
+     * - The state of the reader (flags that shows what part of the program we are
+     * reading)
      * - List of FILE SECTION statements
      * - List of FILE CONTROL statements
      * - List mapping file identifiers to statuses
      * - List of copy tokens
      * - Numeric fields
-     * If the line is part of a longer statement, the reader might read multiple lines.
+     * If the line is part of a longer statement, the reader might read multiple
+     * lines.
+     * 
      * @return The line that was read as a string
      */
-    public String interpretNextLine(){
+    public String interpretNextLine() {
         CobolLine line;
 
         resetPossibleMockValues();
-        try{
+        try {
             line = reader.readLine();
 
-            if (line == null){
-                if (!hasReadLine){
+            if (line == null) {
+                if (!hasReadLine) {
                     throw new PossibleInternalLogicErrorException(Messages.get("ERR007"));
                 }
                 return null;
             }
 
-            if (reader.getLineNumber() == 1){
+            if (reader.getLineNumber() == 1) {
                 updateCBLOptions(line);
             }
 
-            if (Interpreter.isMeaningful(line)){
+            if (Interpreter.isMeaningful(line)) {
                 updateDependencies(line);
                 hasReadLine = true;
             }
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new CobolSourceCouldNotBeReadException(ex);
         }
 
-        //Current line might change from when it was originally read
+        // Current line might change from when it was originally read
         return reader.getCurrentLine().getUnNumberedString();
     }
 
-    public void closeReader(){
-        try{
+    public void closeReader() {
+        try {
             reader.close();
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new CobolSourceCouldNotBeReadException(ex);
         }
     }
 
-     /**Updates dependencies of the interpreter.
-      * The following values can be updated, based on the given line:
+    /**
+     * Updates dependencies of the interpreter.
+     * The following values can be updated, based on the given line:
      * - Current statement (only if multiline statement was read)
-     * - The state of the reader (flags that shows what part of the program we are reading)
+     * - The state of the reader (flags that shows what part of the program we are
+     * reading)
      * - List of FILE SECTION statements
      * - List of FILE CONTROL statements
      * - List mapping file identifiers to statuses
      * - List of copy tokens
      * - Numeric fields
-      * @param line - The line the update is based upon
+     * 
+     * @param line - The line the update is based upon
      */
     private void updateDependencies(CobolLine line) throws IOException {
         reader.updateState();
         updateLineRepository(line);
 
-        if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())){
+        if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())) {
             reader.readTillEndOfStatement();
         }
 
-        if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)){
+        if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)) {
             updateDecimalPointIsComma(line);
         }
 
-        if (reader.isFlagSet(Constants.DATA_DIVISION)){
+        if (reader.isFlagSet(Constants.DATA_DIVISION)) {
             updateNumericFields(line);
         }
 
-        if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)){
+        if (reader.isFlagSet(Constants.PROCEDURE_DIVISION)) {
             updatePossibleMock(line);
             updatePossibleStub(line);
             tryReadBatchFileIOStatement();
@@ -223,7 +279,7 @@ public class InterpreterController {
         List<String> orderedDecimalIsCommaKeywords = Arrays.asList(Constants.DECIMAL_POINT_KEYWORD,
                 Constants.IS_TOKEN, Constants.COMMA_KEYWORD);
 
-        if (line.containsAllTokensInConsecutiveOrder(orderedDecimalIsCommaKeywords)){
+        if (line.containsAllTokensInConsecutiveOrder(orderedDecimalIsCommaKeywords)) {
             Config.setDecimalPointIsComma(true);
         }
     }
@@ -232,42 +288,46 @@ public class InterpreterController {
         List<String> orderedDecimalIsCommaKeywords = Arrays.asList(Constants.DECIMAL_POINT_KEYWORD,
                 Constants.IS_TOKEN, Constants.COMMA_KEYWORD);
 
-        if (line.containsAllTokensInConsecutiveOrder(orderedDecimalIsCommaKeywords)){
+        if (line.containsAllTokensInConsecutiveOrder(orderedDecimalIsCommaKeywords)) {
             Config.setDecimalPointIsComma(true);
         }
     }
 
-    /**Updates possibleMockIdentifier, possibleMockType and possibleMockArgs
+    /**
+     * Updates possibleMockIdentifier, possibleMockType and possibleMockArgs
      * if a specific part of the program was just entered.
+     * 
      * @param line - The line the update is based upon
      */
     private void updatePossibleMock(CobolLine line) throws IOException {
         boolean periodShouldBeOnThisLine = false;
         CobolLine nextLine = reader.peekNextMeaningfulLine();
-        if (Interpreter.isSectionHeader(line, reader.getState())){
+        if (Interpreter.isSectionHeader(line, reader.getState())) {
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
             possibleMockType = Constants.SECTION_TOKEN;
             possibleMockArgs = new ArrayList<>();
             periodShouldBeOnThisLine = true;
         }
-        if (Interpreter.isParagraphHeader(line, nextLine, reader.getState())){
+        if (Interpreter.isParagraphHeader(line, nextLine, reader.getState())) {
             possibleMockIdentifier = Interpreter.getSectionOrParagraphName(line);
             possibleMockType = Constants.PARAGRAPH_TOKEN;
             possibleMockArgs = new ArrayList<>();
             periodShouldBeOnThisLine = true;
         }
-        if (didLineJustEnter(Constants.CALL_TOKEN)){
+        if (didLineJustEnter(Constants.CALL_TOKEN)) {
             CobolLine statement = reader.readStatementAsOneLine();
-            possibleMockIdentifier = statement.getToken(statement.getTokenIndexOf(Constants.CALL_TOKEN)+1);
+            possibleMockIdentifier = statement.getToken(statement.getTokenIndexOf(Constants.CALL_TOKEN) + 1);
             possibleMockType = Constants.CALL_TOKEN;
             possibleMockArgs = Interpreter.getUsingArgs(statement);
         }
 
         if (possibleMockIdentifier != null && periodShouldBeOnThisLine
                 && !Interpreter.endsInPeriod(line)
-                && Interpreter.containsOnlyPeriod(nextLine)){
-            //We might generate code after the current line, thus if the period is on the next line,
-            //we append it to this line. This prevents us generating code in the wrong place.
+                && Interpreter.containsOnlyPeriod(nextLine)) {
+            // We might generate code after the current line, thus if the period is on the
+            // next line,
+            // we append it to this line. This prevents us generating code in the wrong
+            // place.
             reader.appendNextMeaningfulLineToCurrentLine();
         }
     }
@@ -280,26 +340,32 @@ public class InterpreterController {
         }
     }
 
-    /**If the current line is a batch file IO statement, the reader will read the
+    /**
+     * If the current line is a batch file IO statement, the reader will read the
      * whole statement no matter how many lines it spans.
      */
-    private void tryReadBatchFileIOStatement(){
+    private void tryReadBatchFileIOStatement() {
         CobolLine line = reader.getCurrentLine();
-        if (Interpreter.checkForBatchFileIOStatement(line)){
-            try{
+        if (Interpreter.checkForBatchFileIOStatement(line)) {
+            try {
                 reader.readTillEndOfStatement();
-            } catch (IOException ex){
+            } catch (IOException ex) {
                 throw new CobolSourceCouldNotBeReadException(ex);
             }
 
         }
     }
-    /**If the current line is a numeric field, it will be added to the list of numeric fields.
-     * We need to save field names of numeric data items in the DATA DIVISION in case a test case
-     * references them. There's no way to distinguish numeric fields while reading the PROCEDURE
+
+    /**
+     * If the current line is a numeric field, it will be added to the list of
+     * numeric fields.
+     * We need to save field names of numeric data items in the DATA DIVISION in
+     * case a test case
+     * references them. There's no way to distinguish numeric fields while reading
+     * the PROCEDURE
      * DIVISION.
      */
-    private void updateNumericFields(CobolLine line){
+    private void updateNumericFields(CobolLine line) {
         if (line.tokensSize() > 1) {
             if (line.containsToken(Constants.COMP_3_VALUE)) {
                 numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
@@ -312,7 +378,8 @@ public class InterpreterController {
                         if (token.equalsIgnoreCase(Constants.PIC_VALUE)
                                 || (token.equalsIgnoreCase(Constants.PICTURE_VALUE))) {
                             if (Interpreter.isInNumericFormat(line.getToken(ix + 1))) {
-                                numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.DISPLAY_NUMERIC);
+                                numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT),
+                                        DataType.DISPLAY_NUMERIC);
                             }
                             break;
                         }
@@ -324,62 +391,68 @@ public class InterpreterController {
     }
 
     /**
-     * Updates the line repository with the given line, if it might have further use when testing.
-     * Lines ahead of the current one, might be peeked or even read, if the current statement spans
-     * multiple lines. If the line fits any of below it will be saved in the repository:
+     * Updates the line repository with the given line, if it might have further use
+     * when testing.
+     * Lines ahead of the current one, might be peeked or even read, if the current
+     * statement spans
+     * multiple lines. If the line fits any of below it will be saved in the
+     * repository:
      * - It is a line read under FILE CONTROL
-     * - It has a SELECT token. File identifier and corresponding FILE STATUS will be saved
+     * - It has a SELECT token. File identifier and corresponding FILE STATUS will
+     * be saved
      * - It contains a copy token
-     * - It is a file section statement (file section statements from referenced copybooks are also included)
+     * - It is a file section statement (file section statements from referenced
+     * copybooks are also included)
      * - It has an SQL statement and within le WORKING SECTION
+     * 
      * @param line - current source line
      */
     private void updateLineRepository(CobolLine line) throws IOException {
-        if (reader.isFlagSet(Constants.FILE_CONTROL)){
+        if (reader.isFlagSet(Constants.FILE_CONTROL)) {
             lineRepository.addFileControlStatement(line.getUnNumberedString());
 
             updateLineRepoBySelectToken(line);
             updateLineRepoByFileStatusToken(line);
         }
-        if(reader.isFlagSet(Constants.FILE_SECTION) && reader.isFlagSet(Constants.FD_TOKEN)){
-            if (line.containsToken(Constants.COPY_TOKEN)){
+        if (reader.isFlagSet(Constants.FILE_SECTION) && reader.isFlagSet(Constants.FD_TOKEN)) {
+            if (line.containsToken(Constants.COPY_TOKEN)) {
                 updateLineRepoByCopyStatement();
-                lineRepository.addExpandedCopyStatementsToFileSectionStatements();
-            }
-            else if(reader.isFlagSet(Constants.LEVEL_01_TOKEN)){
+                extractedCopyBook = lineRepository.addExpandedCopyStatementsToFileSectionStatements();
+                for (int i = 0; i < extractedCopyBook.size(); i++) {
+                    CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
+                    updateNumericFields(cobolLine);
+                }
+            } else if (reader.isFlagSet(Constants.LEVEL_01_TOKEN)) {
                 lineRepository.addFileSectionStatement(line.getUnNumberedString());
             }
         }
-        if(reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) && 
-        line.containsToken(Constants.EXEC_SQL_TOKEN) && 
-        (line.containsToken(Constants.INCLUDE) || reader.appendNextMeaningfulLineToCurrentLine().containsToken(Constants.INCLUDE))) {
-            lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
-            line.setUnNumberedString("      **");
-        }
-        if(lineRepository.getFileSectionStatements().size() > 0) {
-            for(int i=0; i < lineRepository.getFileSectionStatements().size(); i++) {
-                StringTokenizerExtractor stringTokenizerExtractor = new StringTokenizerExtractor();
-                CobolLine cobolLine = new CobolLine(lineRepository.getFileSectionStatements().get(i), stringTokenizerExtractor);
+        if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) &&
+                line.containsToken(Constants.EXEC_SQL_TOKEN) &&
+                (line.containsToken(Constants.INCLUDE)
+                        || reader.peekNextMeaningfulLine().containsToken(Constants.INCLUDE))) {
+            extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
+            for (int i = 0; i < extractedCopyBook.size(); i++) {
+                CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
                 updateNumericFields(cobolLine);
             }
         }
     }
 
     /**
-     * If the given line contains a SELECT token, the file identifier will be added, waiting for
+     * If the given line contains a SELECT token, the file identifier will be added,
+     * waiting for
      * a mapping to a corresponding file status.
+     * 
      * @param line - current source line
      */
-    private void updateLineRepoBySelectToken(CobolLine line){
-        if (line.containsToken(Constants.SELECT_TOKEN)){
+    private void updateLineRepoBySelectToken(CobolLine line) {
+        if (line.containsToken(Constants.SELECT_TOKEN)) {
             if (line.tokensSize() > 1) {
                 lineRepository.addFileIdentifierWithNoStatus(line.getToken(1));
-            }
-            else {
+            } else {
                 // First token on the next line should be the file identifier
                 String nextLineToken0 = peekNextMeaningfulLineAndGetTokenAtIndex0();
-                if (nextLineToken0 == null)
-                {
+                if (nextLineToken0 == null) {
                     throw new PossibleInternalLogicErrorException("Line after SELECT is empty");
                 }
                 lineRepository.addFileIdentifierWithNoStatus(nextLineToken0);
@@ -388,31 +461,33 @@ public class InterpreterController {
     }
 
     /**
-     * If the given line contains a file status token, it will be added to a map to a
+     * If the given line contains a file status token, it will be added to a map to
+     * a
      * corresponding file identifier.
+     * 
      * @param line - current source line
      */
     private void updateLineRepoByFileStatusToken(CobolLine line) throws IOException {
-        if (line.containsToken(Constants.FILE_STATUS_TOKEN)){
-            if (Interpreter.isEndOfStatement(line, reader.peekNextMeaningfulLine())){
-                //File status statement is on one line
+        if (line.containsToken(Constants.FILE_STATUS_TOKEN)) {
+            if (Interpreter.isEndOfStatement(line, reader.peekNextMeaningfulLine())) {
+                // File status statement is on one line
                 if (line.tokensSize() > 2) {
                     if (line.getToken(1).equalsIgnoreCase(Constants.IS_TOKEN)) {
                         lineRepository.addStatusForLastSetIdentifier(line.getToken(2));
                     }
-                }
-                else if (line.tokensSize() > 1){
+                } else if (line.tokensSize() > 1) {
                     if (!line.containsToken(Constants.IS_TOKEN)) {
                         lineRepository.addStatusForLastSetIdentifier(line.getToken(1));
                     }
                 }
             } else {
-                //File status statement is written across multiple lines
+                // File status statement is written across multiple lines
                 List<CobolLine> statement = reader.readTillEndOfStatement();
-                for (CobolLine l : statement){
+                for (CobolLine l : statement) {
                     List<String> tokens = l.getTokens();
-                    for(String token : tokens){
-                        if (!token.equalsIgnoreCase(Constants.FILE_STATUS_TOKEN) && !token.equalsIgnoreCase(Constants.IS_TOKEN)){
+                    for (String token : tokens) {
+                        if (!token.equalsIgnoreCase(Constants.FILE_STATUS_TOKEN)
+                                && !token.equalsIgnoreCase(Constants.IS_TOKEN)) {
                             lineRepository.addStatusForLastSetIdentifier(token);
                         }
                     }
@@ -426,65 +501,62 @@ public class InterpreterController {
      * Reads the whole copy statement and adds each token of each line, to a list
      * of copy tokens.
      */
-    private void updateLineRepoByCopyStatement(){
+    private void updateLineRepoByCopyStatement() {
         List<CobolLine> copystatementLines;
-        try{
+        try {
             copystatementLines = reader.readTillEndOfStatement();
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new CobolSourceCouldNotBeReadException(ex);
         }
 
-        if (copystatementLines == null)
-        {
+        if (copystatementLines == null) {
             throw new PossibleInternalLogicErrorException("Copy statements was read as null");
         }
-        for(CobolLine line : copystatementLines){
-            if(!Interpreter.isComment(line) && !Interpreter.isEmpty(line) && !Interpreter.isTooShortToBeMeaningful(line)){
+        for (CobolLine line : copystatementLines) {
+            if (!Interpreter.isComment(line) && !Interpreter.isEmpty(line)
+                    && !Interpreter.isTooShortToBeMeaningful(line)) {
                 lineRepository.addAccumulatedTokensFromCopyStatementToCopyTokens(line.getUnNumberedString());
             }
 
         }
     }
 
-    private void updateCBLOptions(CobolLine line){
+    private void updateCBLOptions(CobolLine line) {
         String appendOptions = Config.getAppendRulesAndOptions();
-        if (appendOptions != null){
-            if (line.containsToken(Constants.CBL_TOKEN)){
+        if (appendOptions != null) {
+            if (line.containsToken(Constants.CBL_TOKEN)) {
                 line = reader.appendToCurrentLine(", " + appendOptions);
-            }
-            else {
+            } else {
 
                 reader.addLineBeforeCurrentRead("       " + Constants.CBL_TOKEN + " " + appendOptions);
             }
         }
     }
 
-    private String peekNextMeaningfulLineAndGetTokenAtIndex0()
-    {
+    private String peekNextMeaningfulLineAndGetTokenAtIndex0() {
         CobolLine peekedLine;
-        try{
+        try {
             peekedLine = reader.peekNextMeaningfulLine();
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new CobolSourceCouldNotBeReadException(ex);
         }
 
-        if (peekedLine != null && peekedLine.tokensSize() > 0){
+        if (peekedLine != null && peekedLine.tokensSize() > 0) {
             return peekedLine.getToken(0);
-        }
-        else {
+        } else {
             return null;
         }
     }
 
-    private List<String> convertToStrings(List<CobolLine> lines){
+    private List<String> convertToStrings(List<CobolLine> lines) {
         List<String> stringLines = new ArrayList<>();
-        for (CobolLine l : lines){
+        for (CobolLine l : lines) {
             stringLines.add(l.getUnNumberedString());
         }
         return stringLines;
     }
 
-    private void resetPossibleMockValues(){
+    private void resetPossibleMockValues() {
         possibleMockIdentifier = null;
         possibleMockType = null;
     }

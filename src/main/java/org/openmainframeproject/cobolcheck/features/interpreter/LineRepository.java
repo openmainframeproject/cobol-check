@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.features.interpreter;
 
+import org.openmainframeproject.cobolcheck.exceptions.CopybookCouldNotBeExpanded;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
@@ -97,7 +98,7 @@ public class LineRepository {
         }
     }
 
-    void addExpandedCopyStatementsToFileSectionStatements() {
+    List<String> addExpandedCopyStatementsToFileSectionStatements() {
         for (int i = 0 ; i < copyTokens.size() ; i++) {
             if (copyTokens.get(i).equals(Constants.EMPTY_STRING)) {
                 copyTokens.remove(i);
@@ -129,9 +130,10 @@ public class LineRepository {
             ioException.printStackTrace();
         }
         fileSectionStatements.addAll(copyLines);
+        return copyLines;
     }
 
-    void addExpandedCopyDB2Statements(CobolLine line) {
+    List<String> addExpandedCopyDB2Statements(CobolLine line) throws IOException {
         List<String> copyLines = new ArrayList<>();
         CopybookExpander copybookExpander = new CopybookExpander();
         String copybookName = line.getToken(2);
@@ -139,9 +141,10 @@ public class LineRepository {
 
         try {
             copyLines = copybookExpander.expandDB2(copyLines, copybookName, replacingValues);
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
+        } catch (IOException ioEx) {
+            throw new CopybookCouldNotBeExpanded(ioEx);
         }
         fileSectionStatements.addAll(copyLines);
+        return copyLines;
     }
 }
