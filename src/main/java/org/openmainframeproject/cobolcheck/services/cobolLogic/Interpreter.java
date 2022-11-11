@@ -23,7 +23,7 @@ public class Interpreter {
     // Used for handling source lines from copybooks that may not have the standard 80-byte length
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
-    private static final char commentIndicator = '*';
+    private static final List<Character> commentIndicators = Arrays.asList('*', '/');
 
     //Used to find areas
     private static final int sequenceNumberAreaEnd = 6;
@@ -195,11 +195,11 @@ public class Interpreter {
      * @return true if the source line "looks like" a Cobol comment line.
      */
     public static boolean isComment(CobolLine line) {
-        return line.getUnNumberedString().charAt(commentIndicatorOffset) == commentIndicator;
+        return isComment(line.getUnNumberedString());
     }
 
     public static boolean isComment(String line) {
-        return line.charAt(commentIndicatorOffset) == commentIndicator;
+        return commentIndicators.contains(line.charAt(commentIndicatorOffset));
     }
 
     public static boolean isMeaningful(CobolLine line){
