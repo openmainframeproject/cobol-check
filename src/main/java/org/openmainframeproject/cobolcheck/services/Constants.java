@@ -145,6 +145,7 @@ public final class Constants {
     public static final String EXEC_CICS_TOKEN = "EXEC CICS";
     public static final String END_EXEC_TOKEN = "END-EXEC";
     public static final String CONTINUE_TOKEN = "CONTINUE";
+    public static final String INCLUDE = "INCLUDE";
 
     public static final String COMP_3_VALUE = "COMP-3";
     public static final String COMP_VALUE = "COMP";
