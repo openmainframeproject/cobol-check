@@ -139,6 +139,11 @@ public class InterpreterController {
                 return true;
             }
         }
+        if (reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+            if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
+                return true;
+            }
+        }
         return false;
     }
 
