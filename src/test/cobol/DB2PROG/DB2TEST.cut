@@ -1,4 +1,3 @@
-      *From file: C:\workspace\cobol-check\src\test\cobol\DB2PROG\DB2TEST.cut
            TestSuite "Tests of DB2 includes"
 
            TestCase "DB2 Copybook added to PRG"
