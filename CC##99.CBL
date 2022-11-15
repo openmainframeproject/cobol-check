@@ -493,6 +493,7 @@
        UT-END.                                                                  
                                                                                 
       * CCHECKPARAGRAPHSPD.CPY END                                              
+       0000-MAIN.                                                               
                                                                                 
        100-ASSIGN.                                                              
             EVALUATE UT-TEST-SUITE-NAME                                         
