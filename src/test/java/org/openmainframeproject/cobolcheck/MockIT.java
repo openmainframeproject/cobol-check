@@ -7,6 +7,7 @@ import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.workers.Generator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ public class MockIT {
     private BufferedReader mockedParserReader;
     private InterpreterController interpreterController;
     private BufferedReader mockedInterpreterReader;
+    private Interpreter interpreter;
     private CobolWriter cobolWriter;
     private WriterController writerController;
     private Writer writer;
