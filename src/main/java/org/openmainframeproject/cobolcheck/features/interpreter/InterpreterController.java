@@ -134,7 +134,7 @@ public class InterpreterController {
                 reader.putNextLine("            CONTINUE");
                 return true;
             }
-        if (reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+        if (reader.getState().isFlagSetFor(Constants.LINKAGE_SECTION)) {
             if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
                 return true;
             }
