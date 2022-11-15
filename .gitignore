@@ -120,3 +120,8 @@ nb-configuration.xml
 ## OS X
 ##############################
 .DS_Store
+output/testResults.txt
+approval-test-actual.txt
+default.conf
+null
+ParserErrorLog.txt
