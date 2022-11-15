@@ -963,4 +963,24 @@ public class InterpreterControllerTest {
         assertTrue(testsRan);
     }
     
+    @Test
+    public void it_stubs_linkage_line() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       LINKAGE SECTION.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("LINKAGE SECTION.")) {
+                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
 }
