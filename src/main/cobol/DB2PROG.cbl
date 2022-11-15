@@ -22,6 +22,10 @@
               SELECT FIRST_NAME, LAST_NAME FROM TEXEM
            END-EXEC.
 
+       LINKAGE SECTION.
+       
+       COPY COPY002.
+
        PROCEDURE DIVISION.
        0000-MAIN.
 
