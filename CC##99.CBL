@@ -1,9 +1,12 @@
        IDENTIFICATION DIVISION.                                                 
-       PROGRAM-ID.  DB2PROG.                                                    
+       PROGRAM-ID.  NUMBERS2.                                                   
       *****************************************************************         
-      * Program to exercise DB2 instructions                                    
+      * Program to exercise DECIMAL-POINT IS COMMA                              
       *****************************************************************         
        ENVIRONMENT DIVISION.                                                    
+       CONFIGURATION SECTION.                                                   
+       SPECIAL-NAMES.                                                           
+           DECIMAL-POINT IS COMMA.                                              
        INPUT-OUTPUT SECTION.                                                    
        FILE-CONTROL.                                                            
        DATA DIVISION.                                                           
@@ -63,8 +66,8 @@
                88 UT-ACTUAL-88-VALUE               VALUE 'T', FALSE 'F'.        
            05  UT-EXPECTED-ACCESSES      PIC 9(18) VALUE ZERO.                  
            05  UT-ACTUAL-ACCESSES        PIC 9(18) VALUE ZERO.                  
-           05  UT-EXPECTED-ACCESSES-FMT  PIC ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9.           
-           05  UT-ACTUAL-ACCESSES-FMT    PIC ZZZ,ZZZ,ZZZ,ZZZ,ZZZ,ZZ9.           
+           05  UT-EXPECTED-ACCESSES-FMT  PIC ZZZ.ZZZ.ZZZ.ZZZ.ZZZ.ZZ9.           
+           05  UT-ACTUAL-ACCESSES-FMT    PIC ZZZ.ZZZ.ZZZ.ZZZ.ZZZ.ZZ9.           
            05  UT-EXPECTED-ACCESSES-DISP PIC X(18).                             
            05  UT-ACTUAL-ACCESSES-DISP   PIC X(18).                             
            05  UT-FAILED                 PIC X(11)  VALUE "**** FAIL: ".        
@@ -136,78 +139,64 @@
                    15  UT-FILE-STATUS-FIELD-NAME PIC X(31).                     
                                                                                 
       * CCHECKWS.CPY END                                                        
-                                                                                
        01  FILLER.                                                              
-           05  WS-FIELD-1           PIC X(80).                                  
-           05  ws-Field-2           PIC X(80).                                  
+           05  VALUE-1           PIC Z.ZZ9,99.                                  
+           05  VALUE-2           PIC ZZ.ZZZ,ZZ.                                 
                                                                                 
-                                                                                
-      *EXEC SQL INCLUDE SQLCA  END-EXEC.                                        
-      *EXEC SQL INCLUDE  TEXEM END-EXEC.                                        
-                                                                                
-      *    EXEC SQL   DECLARE NAME-CUR CURSOR FOR SELECT FIRST_NAME, LAS        
-      * T_NAME FROM TEXEM END-EXEC.                                             
-                                                                                
-       01  SQLCA.                                                               
-           03  SQLCAID         PIC X(8)          VALUE "SQLCA   ".              
-           03  SQLCABC         USAGE BINARY-LONG VALUE 136.                     
-           03  SQLCODE         USAGE BINARY-LONG VALUE 0.                       
-           03  SQLERRM.                                                         
-               05  SQLERRML    USAGE BINARY-SHORT.                              
-               05  SQLERRMC    PIC X(70).                                       
-           03  SQLERRP         PIC X(8).                                        
-           03  SQLERRD         USAGE BINARY-LONG OCCURS 6.                      
-           03  SQLWARN.                                                         
-               05  SQLWARN0    PIC X.                                           
-               05  SQLWARN1    PIC X.                                           
-               05  SQLWARN2    PIC X.                                           
-               05  SQLWARN3    PIC X.                                           
-               05  SQLWARN4    PIC X.                                           
-               05  SQLWARN5    PIC X.                                           
-               05  SQLWARN6    PIC X.                                           
-               05  SQLWARN7    PIC X.                                           
-               05  SQLWARN8    PIC X.                                           
-               05  SQLWARN9    PIC X.                                           
-               05  SQLWARN10   PIC X.                                           
-               05  SQLWARNA    REDEFINES SQLWARN10 PIC X.                       
-           03  SQLSTATE        PIC X(5).                                        
-           03  FILLER          PIC X(21).                                       
-       01  TEXEM.                                                               
-           10 FIRST-NAME           PIC X(10).                                   
-           10 LAST-NAME            PIC X(10).                                   
-           10 TMS-CREA             PIC X(26).                                   
+       01  UT-MOCKS-GENERATED.                                                  
+           05  UT-1-2-1-MOCK-COUNT       PIC 9(18) VALUE ZERO COMP.             
+           05  UT-1-2-1-MOCK-EXPECTED    PIC 9(18) VALUE ZERO COMP.             
+           05  UT-1-2-1-MOCK-NAME        PIC X(40)                              
+                   VALUE "PARAGRAPH 100-ASSIGN".                                
        PROCEDURE DIVISION.                                                      
            PERFORM UT-INITIALIZE                                                
-      *============= "Tests of DB2 includes" =============*                     
+      *============= "Verify Cobol Check handles decimal is comma proper        
+      * ly" =============*                                                      
            DISPLAY "TESTSUITE:"                                                 
-           DISPLAY "Tests of DB2 includes"                                      
-           MOVE "Tests of DB2 includes"                                         
+           DISPLAY "Verify Cobol Check handles decimal is comma properly        
+      -    ""                                                                   
+           MOVE "Verify Cobol Check handles decimal is comma properly"          
                TO UT-TEST-SUITE-NAME                                            
-      *-------- "DB2 Copybook added to PRG"                                     
+      *-------- "simple expect for number"                                      
            MOVE SPACES                                                          
                TO UT-TEST-CASE-NAME                                             
            PERFORM UT-BEFORE-EACH                                               
-           MOVE "DB2 Copybook added to PRG"                                     
+           MOVE "simple expect for number"                                      
                TO UT-TEST-CASE-NAME                                             
            PERFORM UT-INITIALIZE-MOCK-COUNT                                     
-            MOVE "John" TO FIRST-NAME                                           
-            MOVE "Doe" TO LAST-NAME                                             
+            MOVE 25,74 TO VALUE-1                                               
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
-           MOVE FIRST-NAME TO UT-ACTUAL                                         
-           MOVE "John"                                                          
-               TO UT-EXPECTED                                                   
+           SET UT-NUMERIC-COMPARE TO TRUE                                       
+           MOVE VALUE-1 TO UT-ACTUAL-NUMERIC                                    
+           MOVE 25,74 TO UT-EXPECTED-NUMERIC                                    
            SET UT-RELATION-EQ TO TRUE                                           
            PERFORM UT-CHECK-EXPECTATION                                         
+           MOVE SPACES                                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-AFTER-EACH                                                
+      *-------- "simple expect for number"                                      
+           MOVE SPACES                                                          
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-BEFORE-EACH                                               
+           MOVE "simple expect for number"                                      
+               TO UT-TEST-CASE-NAME                                             
+           PERFORM UT-INITIALIZE-MOCK-COUNT                                     
+            PERFORM 100-ASSIGN                                                  
            ADD 1 TO UT-TEST-CASE-COUNT                                          
            SET UT-NORMAL-COMPARE TO TRUE                                        
-           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  
-           MOVE LAST-NAME TO UT-ACTUAL                                          
-           MOVE "Doe"                                                           
-               TO UT-EXPECTED                                                   
+           SET UT-NUMERIC-COMPARE TO TRUE                                       
+           MOVE VALUE-1 TO UT-ACTUAL-NUMERIC                                    
+           MOVE 00105 TO UT-EXPECTED-NUMERIC                                    
            SET UT-RELATION-EQ TO TRUE                                           
            PERFORM UT-CHECK-EXPECTATION                                         
+           MOVE 1 TO UT-1-2-1-MOCK-EXPECTED                                     
+           MOVE UT-1-2-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES                       
+           MOVE UT-1-2-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES                  
+           MOVE UT-1-2-1-MOCK-NAME TO UT-MOCK-OPERATION                         
+           SET UT-VERIFY-EXACT TO TRUE                                          
+           ADD 1 TO UT-TEST-CASE-COUNT                                          
+           PERFORM UT-ASSERT-ACCESSES                                           
            MOVE SPACES                                                          
                TO UT-TEST-CASE-NAME                                             
            PERFORM UT-AFTER-EACH                                                
@@ -242,7 +231,20 @@
       *****************************************************************         
       *Sets all global mock counters and expected count to 0                    
       *****************************************************************         
-           CONTINUE                                                             
+           .                                                                    
+                                                                                
+      *****************************************************************         
+      *Paragraphs called when mocking                                           
+      *****************************************************************         
+       UT-1-2-1-MOCK.                                                           
+      *****************************************************************         
+      *Local mock of: PARAGRAPH: 100-ASSIGN                                     
+      *In testsuite: "Verify Cobol Check handles decimal is comma proper        
+      * ly"                                                                     
+      *In testcase: "simple expect for number"                                  
+      *****************************************************************         
+           ADD 1 TO UT-1-2-1-MOCK-COUNT                                         
+           MOVE 105 TO VALUE-1                                                  
            .                                                                    
                                                                                 
       * CCHECKPARAGRAPHSPD.CPY                                                  
@@ -491,82 +493,18 @@
        UT-END.                                                                  
                                                                                 
       * CCHECKPARAGRAPHSPD.CPY END                                              
-       0000-MAIN.                                                               
                                                                                 
-           PERFORM 1000-SELECT                                                  
-           PERFORM 2000-OPEN-CURSOR.                                            
-           PERFORM 3000-FETCH-SQL                                               
-              UNTIL SQLCODE = 100.                                              
+       100-ASSIGN.                                                              
+            EVALUATE UT-TEST-SUITE-NAME                                         
+                   ALSO UT-TEST-CASE-NAME                                       
+                WHEN "Verify Cobol Check handles decimal is comma proper        
+      -    "ly"                                                                 
+                   ALSO "simple expect for number"                              
+                    PERFORM UT-1-2-1-MOCK                                       
+           WHEN OTHER                                                           
+           MOVE 10 TO VALUE-1                                                   
+            END-EVALUATE                                                        
+           .                                                                    
                                                                                 
-           PERFORM 4000-CLOSE-CURSOR.                                           
+       999-END.                                                                 
            GOBACK.                                                              
-                                                                                
-       1000-SELECT.                                                             
-      *    EXEC SQL                                                             
-      *         SELECT FIRST_NAME,                                              
-      *            LAST_NAME,                                                   
-      *            TMS_CREA                                                     
-      *         INTO                                                            
-      *            :FIRST-NAME,                                                 
-      *            :LAST-NAME,                                                  
-      *            :TMS-CREA                                                    
-      *         FROM TEXEM                                                      
-      *    END-EXEC.                                                            
-            CONTINUE                                                            
-           .                                                                    
-           EVALUATE SQLCODE                                                     
-             WHEN ZEROES                                                        
-                MOVE 'GOOD JOB' TO WS-FIELD-1                                   
-                                                                                
-             WHEN -100                                                          
-                MOVE 'NOT FOUND' TO WS-FIELD-1                                  
-                                                                                
-             WHEN OTHER                                                         
-                MOVE 'THIS IS BAD' TO WS-FIELD-1                                
-           END-EVALUATE.                                                        
-                                                                                
-                                                                                
-       2000-OPEN-CURSOR.                                                        
-      *    EXEC SQL                                                             
-      *       OPEN NAME-CUR                                                     
-      *    END-EXEC.                                                            
-            CONTINUE                                                            
-           .                                                                    
-           EVALUATE SQLCODE                                                     
-             WHEN ZEROES                                                        
-                MOVE 'CURS OPENED' TO WS-FIELD-1                                
-                                                                                
-             WHEN OTHER                                                         
-                MOVE 'THIS IS BAD' TO WS-FIELD-1                                
-           END-EVALUATE.                                                        
-                                                                                
-       3000-FETCH-SQL.                                                          
-      *    EXEC SQL                                                             
-      *       CLOSE NAME-CUR                                                    
-      *    END-EXEC.                                                            
-            CONTINUE                                                            
-           .                                                                    
-           EVALUATE SQLCODE                                                     
-             WHEN ZEROES                                                        
-                MOVE 'GOOD JOB' TO WS-FIELD-1                                   
-                                                                                
-             WHEN -100                                                          
-                MOVE 'NOT FOUND' TO WS-FIELD-1                                  
-                                                                                
-             WHEN OTHER                                                         
-                MOVE 'THIS IS BAD' TO WS-FIELD-1                                
-           END-EVALUATE.                                                        
-                                                                                
-       4000-CLOSE-CURSOR.                                                       
-      *    EXEC SQL                                                             
-      *       CLOSE NAME-CUR                                                    
-      *    END-EXEC.                                                            
-            CONTINUE                                                            
-           .                                                                    
-           EVALUATE SQLCODE                                                     
-             WHEN ZEROES                                                        
-                MOVE 'CURS CLOSED' TO WS-FIELD-1                                
-                                                                                
-             WHEN OTHER                                                         
-                MOVE 'THIS IS BAD' TO WS-FIELD-1                                
-           END-EVALUATE.                                                        

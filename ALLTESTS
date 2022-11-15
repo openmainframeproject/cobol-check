@@ -1,8 +1,14 @@
-      *From file: C:\workspace\cobol-check\src\test\cobol\DB2PROG\DB2TEST.cut
-           TestSuite "Tests of DB2 includes"
+      *From file: c:\workspace\cobol-check\src\test\cobol\DPICNUMBERS\NumbersExpect.cut
+           TestSuite "Verify Cobol Check handles decimal is comma properly"
 
-           TestCase "DB2 Copybook added to PRG"
-           move  "John" to FIRST-NAME
-           move  "Doe" to LAST-NAME
-           Expect FIRST-NAME to be "John"
-           Expect LAST-NAME to be "Doe"
+           TestCase "simple expect for number"
+           Move 25,74 to VALUE-1
+           Expect VALUE-1 = 25,74
+
+           TestCase "simple expect for number"
+           MOCK PARAGRAPH 100-ASSIGN
+               MOVE 105 TO VALUE-1
+           END-MOCK
+           PERFORM 100-ASSIGN
+           EXPECT VALUE-1 = 00105
+           VERIFY PARAGRAPH 100-ASSIGN HAPPENED ONCE
