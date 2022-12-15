@@ -74,8 +74,4 @@ public class WindowsProcessLauncher implements ProcessLauncher {
         }
         return process;
     }
-
-
-
-
 }
