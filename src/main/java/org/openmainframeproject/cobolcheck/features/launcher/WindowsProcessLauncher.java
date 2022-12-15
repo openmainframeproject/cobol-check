@@ -52,7 +52,7 @@ public class WindowsProcessLauncher implements ProcessLauncher {
             scriptDirectory += Constants.FILE_SEPARATOR;
         }
 
-        String compileOptions = getGnuCOBOLCompileOptions();
+        String compileOptions = Config.getGnuCOBOLCompileOptions();
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(scriptDirectory + scriptName, "\"" + programName + "\"", "\"" + compileOptions + "\"");
 
