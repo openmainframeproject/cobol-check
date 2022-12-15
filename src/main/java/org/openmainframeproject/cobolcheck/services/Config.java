@@ -61,6 +61,7 @@ public class Config {
     public static final String DEFAULT_TESTSUITE_DIRECTORY = "src/test/cobol";
     public static final String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
     public static final String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
+    public static final String GNUCOBOL_COMPILE_OPTIONS = "gnucobol.compile.options";
 
     private static Properties settings = null;
 
@@ -329,6 +330,10 @@ public class Config {
     public static String getScriptDirectory() {
         return getCorrectRunContext(settings.getProperty(COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
                 DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY));
+    }
+    public static String getGnuCOBOLCompileOptions() {
+        return settings.getProperty(GNUCOBOL_COMPILE_OPTIONS,
+        "") ;
     }
 
     private static void setCopybookFilenameSuffix() {
