@@ -62,6 +62,7 @@ public class Config {
     public static final String COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY = "cobolcheck.script.directory";
     public static final String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
     public static final String GNUCOBOL_COMPILE_OPTIONS = "gnucobol.compile.options";
+    public static final String RESOLVED_GNUCOBOL_COMPILE_OPTIONS = "resolved.gnucobol.compile.options";
 
     private static Properties settings = null;
 
@@ -331,9 +332,14 @@ public class Config {
         return getCorrectRunContext(settings.getProperty(COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY,
                 DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY));
     }
-    public static String getGnuCOBOLCompileOptions() {
-        return settings.getProperty(GNUCOBOL_COMPILE_OPTIONS,
-        "") ;
+
+    public static List<String> getGnuCOBOLCompileOptions() {
+        setGnuCOBOLCompileOptions();
+        return (List<String>)settings.get(RESOLVED_GNUCOBOL_COMPILE_OPTIONS);
+    }
+
+    public static void setGnuCOBOLCompileOptions() {
+        resolveConfigList(GNUCOBOL_COMPILE_OPTIONS, RESOLVED_GNUCOBOL_COMPILE_OPTIONS);
     }
 
     private static void setCopybookFilenameSuffix() {
@@ -351,6 +357,19 @@ public class Config {
             }
         }
         settings.put(resolvedConfigKey, suffixes);
+    }
+
+    private static void resolveConfigList(String configKey, String resolvedConfigKey) {
+        String configCommaSeperatedList = getString(configKey, NONE);
+        List<String> items = new ArrayList();
+        String[] configListValues = null;
+        if (!configCommaSeperatedList.equalsIgnoreCase(NONE)) {
+            configListValues = configCommaSeperatedList.split(Constants.COMMA);
+            for (String item : configListValues) {
+                items.add(item);
+            }
+        }
+        settings.put(resolvedConfigKey, items);
     }
 
     private static void setDefaultLocaleOverride() {
