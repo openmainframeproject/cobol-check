@@ -360,10 +360,10 @@ public class Config {
     }
 
     private static void resolveConfigList(String configKey, String resolvedConfigKey) {
-        String configCommaSeperatedList = getString(configKey, NONE);
+        String configCommaSeperatedList = getString(configKey, "NULL");
         List<String> items = new ArrayList();
         String[] configListValues = null;
-        if (!configCommaSeperatedList.equalsIgnoreCase(NONE)) {
+        if (!configCommaSeperatedList.trim().equalsIgnoreCase("NULL")) {
             configListValues = configCommaSeperatedList.split(Constants.COMMA);
             for (String item : configListValues) {
                 items.add(item);

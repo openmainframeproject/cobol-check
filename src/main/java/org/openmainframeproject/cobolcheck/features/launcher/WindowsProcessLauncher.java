@@ -8,6 +8,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * Launch a script to compile and execute a generated test program (Cobol)
@@ -52,9 +53,11 @@ public class WindowsProcessLauncher implements ProcessLauncher {
             scriptDirectory += Constants.FILE_SEPARATOR;
         }
 
-        String compileOptions = Config.getGnuCOBOLCompileOptions();
+        List<String> compileOptions = Config.getGnuCOBOLCompileOptions();
+        String[] commandParms = LaunchHelper.generateCommandParms(scriptDirectory + scriptName, programName, compileOptions);
+
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(scriptDirectory + scriptName, "\"" + programName + "\"", "\"" + compileOptions + "\"");
+        processBuilder.command(commandParms);
 
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
