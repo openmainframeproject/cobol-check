@@ -1,7 +1,7 @@
 # Change Log
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
-## [0.3.7] 20.12.2022
+## [0.3.7] 21.12.2022
 - Now using Cobol Check version 0.2.5
 - Prepared for GnuCOBOL compiler options in config and scripts
 
