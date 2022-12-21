@@ -62,6 +62,7 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 
 		if (!keyHasBeenFound){
 			vscode.window.showErrorMessage('Could not find key: ' + key + ' in config file: ' + configurationPath)
+			return;
 		}
 		fs.writeFile(configurationPath, newConfigurationText, 'utf8', function (err) {
 			if(err) {

@@ -5,4 +5,4 @@ rem  Assumptions:
 rem
 rem GnuCOBOL 3.+ is installed and on the path. Its executable or alias or symlink is named "cobc".
 
-cobc -x %1 && %~n1
+cobc -x %* && %~n1
