@@ -1,6 +1,9 @@
 # Change Log
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
+## [0.3.9] 02.01.2023
+- Bugfix: Fixed an issue where the configure-command would remove a line from the configuration file, everytime you would overwrite an existing value.
+
 ## [0.3.8] 21.12.2022
 - Fix for last release
 
