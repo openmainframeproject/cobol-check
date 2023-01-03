@@ -52,7 +52,7 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 
 			let keyValue = trimmedLine.split('=');
 			if (keyValue.length > 1 && keyValue[0].trim() === key){
-				newConfigurationText += key + ' = ' + newValue;
+				newConfigurationText += key + ' = ' + newValue + '\n';
 				keyHasBeenFound = true;
 				LOGGER.log("Updated configuration key: " + key + " with value: " + newValue, LOGGER.INFO);
 			} else{

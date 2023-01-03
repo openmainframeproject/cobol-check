@@ -54,7 +54,7 @@ public class WindowsProcessLauncher implements ProcessLauncher {
         }
 
         List<String> compileOptions = Config.getGnuCOBOLCompileOptions();
-        String[] commandParms = LaunchHelper.generateCommandParms(scriptDirectory + scriptName, programName, compileOptions);
+        String[] commandParms = LaunchHelper.generateCommandParms(scriptDirectory + scriptName, programName, compileOptions, true);
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(commandParms);
