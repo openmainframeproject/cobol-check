@@ -139,6 +139,7 @@ public class Keywords {
                         Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
                                     Constants.BOOLEAN_VALUE,
@@ -153,6 +154,7 @@ public class Keywords {
                         Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
                                     Constants.BOOLEAN_VALUE,
@@ -165,12 +167,14 @@ public class Keywords {
         keywordInfo.put(Constants.EQUAL_SIGN_KEYWORD,
                 new Keyword(Constants.EQUAL_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.NUMERIC_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
                                     Constants.BOOLEAN_VALUE,
@@ -183,12 +187,14 @@ public class Keywords {
         keywordInfo.put(Constants.GREATER_THAN_SIGN_KEYWORD,
                 new Keyword(Constants.GREATER_THAN_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.NUMERIC_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
                                     Constants.BOOLEAN_VALUE,
@@ -201,12 +207,14 @@ public class Keywords {
         keywordInfo.put(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                 new Keyword(Constants.GREATER_THAN_EQUAL_TO_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.NUMERIC_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
                                     Constants.BOOLEAN_VALUE,
@@ -219,12 +227,14 @@ public class Keywords {
         keywordInfo.put(Constants.LESS_THAN_SIGN_KEYWORD,
                 new Keyword(Constants.LESS_THAN_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.NUMERIC_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                     Constants.NUMERIC_LITERAL_KEYWORD,
                                     Constants.BOOLEAN_VALUE,
@@ -237,10 +247,26 @@ public class Keywords {
         keywordInfo.put(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                 new Keyword(Constants.LESS_THAN_EQUAL_TO_SIGN_KEYWORD,
                         Arrays.asList(Constants.FIELDNAME_KEYWORD,
+                                Constants.NUMERIC_KEYWORD,
                                 Constants.COBOL_TOKEN,
                                 Constants.ALPHANUMERIC_LITERAL_KEYWORD,
                                 Constants.NUMERIC_LITERAL_KEYWORD,
                                 Constants.BOOLEAN_VALUE),
+                        new HashMap<String, List<String>>() {{
+                            put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.NUMERIC_KEYWORD,
+                                    Constants.ALPHANUMERIC_LITERAL_KEYWORD,
+                                    Constants.NUMERIC_LITERAL_KEYWORD,
+                                    Constants.BOOLEAN_VALUE,
+                                    Constants.COBOL_TOKEN)
+                            );
+                        }},
+                        KeywordAction.EXPECTED_VALUE));
+
+        //--------------------------------NUMERIC
+        keywordInfo.put(Constants.NUMERIC_KEYWORD,
+                new Keyword(Constants.NUMERIC_KEYWORD,
+                        Arrays.asList(),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
                                     Constants.ALPHANUMERIC_LITERAL_KEYWORD,

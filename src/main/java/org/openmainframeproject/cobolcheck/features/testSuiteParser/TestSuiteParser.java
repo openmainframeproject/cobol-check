@@ -8,10 +8,8 @@ import org.openmainframeproject.cobolcheck.services.log.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * Parses the concatenated test suite and writes Cobol test code to the output
@@ -76,6 +74,7 @@ public class TestSuiteParser {
     private int testSuiteNumber = 0;
     private String currentTestCaseName = Constants.EMPTY_STRING;
     private int testCaseNumber = 0;
+    private boolean expectNumericCompare;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE = "           PERFORM %sINITIALIZE";
@@ -307,13 +306,6 @@ public class TestSuiteParser {
 
                 case Constants.COBOL_TOKEN:
                 case Constants.FIELDNAME_KEYWORD:
-                    // TODO:remove when implementing EXPECT NUMERIC
-                    if (testSuiteToken.equals("NUMERIC")) {
-                        Log.debug(
-                                "==WARNING== <EXPECT ... TO BE NUMERIC ...> is not implemented and could cause unintended behaviour ==WARNING==");
-                        ignoreCobolStatementAndFieldNameKeyAction = true;
-                        break;
-                    }
                     if (expectQualifiedName) {
                         fieldNameForExpect += testSuiteToken;
                         expectQualifiedName = false;
@@ -579,6 +571,10 @@ public class TestSuiteParser {
                     possibleQualifiedName = false;
                     expectInProgress = false;
                     toBeInProgress = true;
+                    break;
+
+                case Constants.NUMERIC_KEYWORD:
+                    expectNumericCompare = true;
                     break;
 
                 case Constants.QUALIFIED_FIELD_NAME:
@@ -889,6 +885,10 @@ public class TestSuiteParser {
     void addTestCodeForAssertion(List<String> parsedTestSuiteLines, NumericFields numericFields) {
         addSetNormalOrReverseCompare(parsedTestSuiteLines);
         if (boolean88LevelCompare) {
+            if (expectNumericCompare){
+                testSuiteErrorLog.logVariableTypeMismatch(Constants.NUMERIC_KEYWORD, "BOOLEAN88",
+                        currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
+            }
             addTestCodeFor88LevelEqualityCheck(parsedTestSuiteLines);
         } else {
             if (fieldIsANumericDataType(fieldNameForExpect)) {
@@ -899,6 +899,10 @@ public class TestSuiteParser {
                 parsedTestSuiteLines.add(String.format(
                         COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare));
             } else {
+                if (expectNumericCompare){
+                    testSuiteErrorLog.logVariableTypeMismatch(Constants.NUMERIC_KEYWORD, "ALPHANUMERIC",
+                            currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
+                }
                 parsedTestSuiteLines.add(String.format(
                         COBOL_SET_ALPHANUMERIC_COMPARE, testCodePrefix, Constants.TRUE));
                 parsedTestSuiteLines.add(String.format(
@@ -919,6 +923,7 @@ public class TestSuiteParser {
             greaterThanComparison = false;
             lessThanComparison = false;
         }
+        expectNumericCompare = false;
     }
 
     void addTestCodeFor88LevelEqualityCheck(List<String> parsedTestSuiteLines) {
