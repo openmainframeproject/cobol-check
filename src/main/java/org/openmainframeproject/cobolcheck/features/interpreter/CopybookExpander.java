@@ -23,22 +23,16 @@ import java.util.StringTokenizer;
  * In the general use case, COPY statements are left alone and the compiler
  * handles expansion.
  *
- * Cobol-check runs as a precompiler and does not "see" the expanded Cobol
- * source code.
+ * Cobol-check runs as a precompiler and does not "see" the expanded Cobol source code.
  * There are two cases in which cobol-check may need to "see" the expanded code.
  *
- * 1. If source statements pertinent to a mock are contained in copybooks,
- * cobol-check needs to
+ * 1. If source statements pertinent to a mock are contained in copybooks, cobol-check needs to
  * be able to comment-out those statements in the merged test program.
  *
- * 2. IBM z/OS compilers support nested COPY statements with the REPLACING
- * option. Off-platform
- * compilers written by others do not support this, as it is an IBM extension to
- * Cobol. When the
- * code under test uses this feature, and cobol-check is running on a platform
- * other than z/OS,
- * cobol-check needs to expand the copybooks recursively during preprocessing so
- * the compilation will work.
+ * 2. IBM z/OS compilers support nested COPY statements with the REPLACING option. Off-platform
+ * compilers written by others do not support this, as it is an IBM extension to Cobol. When the
+ * code under test uses this feature, and cobol-check is running on a platform other than z/OS,
+ * cobol-check needs to expand the copybooks recursively during preprocessing so the compilation will work.
  *
  * @author Dave Nicolette (neopragma)
  * @since 14
