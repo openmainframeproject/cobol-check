@@ -148,6 +148,15 @@ public class TestSuiteErrorLog {
         }
     }
 
+    public void logVariableTypeMismatch(String expectedType, String actualType, String currentFile, int lineNumber, int lineIndex){
+        String error = "";
+        error += String.format(fileMessage, displayErrorType(ErrorTypes.WARNING), currentFile) + ":" + lineNumber + ":" + lineIndex + ":" + Constants.NEWLINE;
+        error += String.format(lineIndexMessage, lineNumber, lineIndex) + Constants.NEWLINE;
+        error += "Expected compare to be of type <" + expectedType +">, but the variable was classified as the type <" + actualType + ">" + Constants.NEWLINE;
+        error += "The test was carried out with the compare type <" + actualType + ">" + Constants.NEWLINE + Constants.NEWLINE;
+        outputError(error);
+    }
+
     private void outputError(String error) {
         errorLogMessages += error;
         System.out.println(error);
