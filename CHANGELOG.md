@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.5\] 2022-12-21
+### Implemented
+- Compiler options for COBOL Check's run of GnuCOBOL can be set in the config-file
+- Minor improvements to error handling
+
 ## \[0.2.4\] 2022-11-02
 ### Implemented
 - EXPECT accepts COBOL keywords again as the last keyword 

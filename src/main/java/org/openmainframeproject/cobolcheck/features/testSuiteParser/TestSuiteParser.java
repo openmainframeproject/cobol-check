@@ -1009,10 +1009,21 @@ public class TestSuiteParser {
      * @return true when the field name represents any numeric data type
      */
     boolean fieldIsANumericDataType(String fieldNameForExpect) {
-        // Remove potential qualifiers and indexing, so we only get the single field
-        // name.
-        if (fieldNameForExpect != null && !fieldNameForExpect.isEmpty())
-            fieldNameForExpect = fieldNameForExpect.split(" ")[0];
+        // We want to isolate the datastructure, so we only parse the fieldname and direct referenced structure. 
+        if (fieldNameForExpect != null && !fieldNameForExpect.isEmpty()) {
+            String[] splitFieldNameForExpect = fieldNameForExpect.split(" ");
+            fieldNameForExpect = splitFieldNameForExpect[0];
+            for (int i = 1; i < splitFieldNameForExpect.length; i+=2) {
+                if (splitFieldNameForExpect[i].toUpperCase().equals("OF") || splitFieldNameForExpect[i].equals("IN")) {
+                    String inOrOf = splitFieldNameForExpect[i];
+                    String dataStructureFieldName = splitFieldNameForExpect[i+1];
+                    if (dataStructureFieldName.contains("("))
+                        fieldNameForExpect += " " + inOrOf + " " + dataStructureFieldName.substring(0, dataStructureFieldName.indexOf("("));
+                    else
+                        fieldNameForExpect += " " + splitFieldNameForExpect[i] + " " + splitFieldNameForExpect[i+1];
+                }
+            }
+        }
 
         return numericFields.dataTypeOf(fieldNameForExpect) == DataType.PACKED_DECIMAL
                 || (numericFields.dataTypeOf(fieldNameForExpect) == DataType.FLOATING_POINT)

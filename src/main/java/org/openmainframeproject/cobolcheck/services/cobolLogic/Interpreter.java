@@ -4,10 +4,7 @@ import org.openmainframeproject.cobolcheck.features.interpreter.Area;
 import org.openmainframeproject.cobolcheck.features.interpreter.State;
 import org.openmainframeproject.cobolcheck.services.Constants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /*
  * Used by Writer
@@ -444,5 +441,43 @@ public class Interpreter {
      */
     public static boolean endsInPeriod(List<CobolLine> lines) {
         return lines.size() > 0 && lines.get(lines.size() - 1).getTrimmedString().endsWith(Constants.PERIOD);
+    }
+
+    /**
+     * Depending on the line that is being interpreted, we want to make sure that we update 
+     * the current datastructure. This structure is based on the lines we have read so far in 
+     * working storage.
+     * This will make sure to add or remove any referenced field within the structure, based on
+     * the level of said field within the structure.
+     */
+    public static TreeMap<Integer,String> updateCurrentDataStructure(CobolLine line, TreeMap<Integer, String> currentHierarchy) {
+        if (currentHierarchy==null) {
+            currentHierarchy = new TreeMap<>();
+        }
+
+        int lastKeyOfCurrentHierarchy;
+        if (currentHierarchy.isEmpty()) {
+            lastKeyOfCurrentHierarchy=0;
+        }
+        else {
+            lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
+        }
+        int tokenWeWantToAdd;
+        try {
+            tokenWeWantToAdd=Integer.parseInt(line.getToken(0));
+        }
+        catch (NumberFormatException e) {
+            return currentHierarchy;
+        }
+        String variableName = line.getToken(1);
+        while (lastKeyOfCurrentHierarchy > tokenWeWantToAdd && tokenWeWantToAdd > 0) {
+            currentHierarchy.remove(lastKeyOfCurrentHierarchy);
+            lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
+        }
+        if (currentHierarchy.containsKey(tokenWeWantToAdd))
+            currentHierarchy.replace(tokenWeWantToAdd, variableName);
+        else
+            currentHierarchy.put(tokenWeWantToAdd, variableName);
+        return currentHierarchy;
     }
 }
