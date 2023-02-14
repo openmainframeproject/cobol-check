@@ -54,6 +54,7 @@ public class LinuxProcessLauncher implements ProcessLauncher {
             Log.error(Messages.get("ERR022", Config.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
             throw new PossibleInternalLogicErrorException(Messages.get("ERR022", Config.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
         }
+
         if (!scriptDirectory.endsWith(Constants.FILE_SEPARATOR)) {
             scriptDirectory += Constants.FILE_SEPARATOR;
         }
@@ -82,4 +83,5 @@ public class LinuxProcessLauncher implements ProcessLauncher {
         }
         return process;
     }
+
 }

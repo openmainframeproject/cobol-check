@@ -52,7 +52,7 @@ public class NumericFields {
     }
 
     /**
-     * Based on the given value of the parsed fieldName, we want to make sure we
+     * Based on the given value of the parsed fieldName, we want to make sure we 
      * find the correct key based on the datastructre that were referenced.
      * If we cannot find the key, we return null
      */
