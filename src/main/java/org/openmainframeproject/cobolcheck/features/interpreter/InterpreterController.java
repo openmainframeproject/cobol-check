@@ -141,13 +141,8 @@ public class InterpreterController {
                 return true;
             }
         }
-        if (reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+        if (reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION)||reader.getState().isFlagSetFor(Constants.LINKAGE_SECTION)) {
             return Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState());
-        }
-        if (reader.getState().isFlagSetFor(Constants.LINKAGE_SECTION)) {
-            if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
-                return true;
-            }
         }
         return false;
     }
