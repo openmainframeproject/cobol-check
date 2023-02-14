@@ -342,7 +342,6 @@ public class Config {
         resolveConfigList(GNUCOBOL_COMPILE_OPTIONS, RESOLVED_GNUCOBOL_COMPILE_OPTIONS);
     }
 
-
     private static void setCopybookFilenameSuffix() {
         resolveFilenameSuffixes(APPLICATION_COPYBOOK_FILENAME_SUFFIX, RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX);
     }
@@ -372,7 +371,6 @@ public class Config {
         }
         settings.put(resolvedConfigKey, items);
     }
-
 
     private static void setDefaultLocaleOverride() {
         if (!settings.containsKey(LOCALE_LANGUAGE_CONFIG_KEY)) {
