@@ -115,7 +115,8 @@ public abstract class Formatter {
                 dataTransferObject.setNumberOffAllFailures(tokens[0]);
             }
 
-            else{
+            else if (line.trim().toUpperCase(Locale.ROOT).startsWith(passKeyword) ||
+            line.trim().toUpperCase(Locale.ROOT).startsWith(failPrefixKeyword + " " + failKeyword)){
                 try{
                     setTestCaseValues(line);
                 } catch (PossibleInternalLogicErrorException e){

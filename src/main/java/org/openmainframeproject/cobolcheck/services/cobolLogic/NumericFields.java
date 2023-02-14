@@ -5,6 +5,7 @@ import org.openmainframeproject.cobolcheck.services.Messages;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Stores field type information for Data Division items in the program under test so the TestSuiteParser can
@@ -22,6 +23,10 @@ public class NumericFields {
     public DataType dataTypeOf(String fieldName) {
         argumentCheck(fieldName, "ERR027");
         if (fieldTypes == null) reset();
+        
+        // We assume the fieldName has defined a datastructure.
+        fieldName=getKeyBasedOnAssumedDataStructure(fieldName);
+
         return fieldTypes.getOrDefault(fieldName, DataType.ALPHANUMERIC);
     }
 
@@ -44,6 +49,38 @@ public class NumericFields {
             );
         }
 
+    }
+
+    /**
+     * Based on the given value of the parsed fieldName, we want to make sure we 
+     * find the correct key based on the datastructre that were referenced.
+     * If we cannot find the key, we return null
+     */
+    private String getKeyBasedOnAssumedDataStructure(String line) {
+        // We will attempt to split the line on any " IN " and " OF " statements, to isolate the names
+        // in the referenced data structure.
+        String[] nameTokens = line.toUpperCase().split("(?:^|\\W)OF(?:$|\\W)|(?:^|\\W)IN(?:$|\\W)");
+        Boolean found=false;
+        for (String key : fieldTypes.keySet()) {
+            if (key.toUpperCase().contains(nameTokens[0])) {
+                int previousNameIndex = 0;
+                int currentSearchIteration = 1;
+                found = true;
+                while (found && currentSearchIteration < nameTokens.length) {
+                    int currentNameIndex = key.toUpperCase().indexOf(nameTokens[currentSearchIteration]);
+                    if (currentNameIndex > previousNameIndex) {
+                        currentSearchIteration++;
+                        previousNameIndex = currentNameIndex;
+                    }
+                    else
+                        found = false;
+                }
+                if (found) {
+                    return key;
+                }
+            }
+        }
+        return null;
     }
 
 }

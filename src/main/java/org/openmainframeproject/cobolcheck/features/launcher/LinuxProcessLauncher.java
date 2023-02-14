@@ -9,6 +9,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Launch a script to compile and execute a generated test program (Cobol)
@@ -53,12 +54,15 @@ public class LinuxProcessLauncher implements ProcessLauncher {
             Log.error(Messages.get("ERR022", Config.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
             throw new PossibleInternalLogicErrorException(Messages.get("ERR022", Config.COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY));
         }
-
         if (!scriptDirectory.endsWith(Constants.FILE_SEPARATOR)) {
             scriptDirectory += Constants.FILE_SEPARATOR;
         }
+
+        List<String> compileOptions = Config.getGnuCOBOLCompileOptions();
+        String[] commandParms = LaunchHelper.generateCommandParms(scriptDirectory + scriptName, programName, compileOptions, false);
+
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(scriptDirectory + scriptName, programName);
+        processBuilder.command(commandParms);
 
         Process process = null;
         StringBuilder processArguments = new StringBuilder();
@@ -78,6 +82,4 @@ public class LinuxProcessLauncher implements ProcessLauncher {
         }
         return process;
     }
-
-
 }

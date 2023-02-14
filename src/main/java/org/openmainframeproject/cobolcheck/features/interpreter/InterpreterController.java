@@ -6,10 +6,14 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
+
+import static org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter.updateCurrentDataStructure;
+
 
 public class InterpreterController {
     private CobolReader reader;
@@ -22,16 +26,18 @@ public class InterpreterController {
     private List<String> possibleMockArgs;
     private List<String> extractedCopyBook;
     private boolean insideSectionOrParagraphMockBody;
-
+    private TreeMap<Integer,String> currentDataStructure;
+    
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
             throw new PossibleInternalLogicErrorException(
-                    Messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
-        }
-        reader = new CobolReader(sourceReader);
-        lineRepository = new LineRepository();
-        numericFields = new NumericFields();
-        tokenExtractor = new StringTokenizerExtractor();
+                Messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
+            }
+            reader = new CobolReader(sourceReader);
+            lineRepository = new LineRepository();
+            numericFields = new NumericFields();
+            tokenExtractor = new StringTokenizerExtractor();
+            currentDataStructure = new TreeMap<>();
     }
 
     // Getters for lists of specific source lines
@@ -367,18 +373,23 @@ public class InterpreterController {
      */
     private void updateNumericFields(CobolLine line) {
         if (line.tokensSize() > 1) {
+            String variableNameWeWantToSave = line.getToken(1);
+
+            if (!this.currentDataStructure.isEmpty()) {
+                variableNameWeWantToSave = generateVariableNameBasedOnDataStructure(this.currentDataStructure);
+            }
             if (line.containsToken(Constants.COMP_3_VALUE)) {
-                numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
+                numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
             } else {
                 if (line.containsToken(Constants.COMP_VALUE)) {
-                    numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT), DataType.FLOATING_POINT);
+                    numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.FLOATING_POINT);
                 } else {
                     int ix = 0;
                     for (String token : line.getTokens()) {
                         if (token.equalsIgnoreCase(Constants.PIC_VALUE)
                                 || (token.equalsIgnoreCase(Constants.PICTURE_VALUE))) {
                             if (Interpreter.isInNumericFormat(line.getToken(ix + 1))) {
-                                numericFields.setDataTypeOf(line.getToken(1).toUpperCase(Locale.ROOT),
+                                numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT),
                                         DataType.DISPLAY_NUMERIC);
                             }
                             break;
@@ -389,6 +400,19 @@ public class InterpreterController {
             }
         }
     }
+
+    /**
+    * In order for us to verify wether a given field is numeric, we need to generate a key,
+    * based on how the datastructure for the field is referenced.
+    * We will generate this key, by using the fieldname and seperate each datastructure value
+    * with a comma.
+    * Example: FIELD IN DATA2 OF DATA1 will get the following key: FIELD,DATA2,DATA1
+    */
+   private String generateVariableNameBasedOnDataStructure(TreeMap<Integer,String> dataStructure) {
+       NavigableMap<Integer,String> descendingMap = dataStructure.descendingMap();
+       Collection<String> structureValues = descendingMap.values();
+       return String.join(",",structureValues);
+   }
 
     /**
      * Updates the line repository with the given line, if it might have further use

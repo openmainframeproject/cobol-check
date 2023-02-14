@@ -1,6 +1,17 @@
 # Change Log
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
+All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/
+ 
+## [0.3.9] 02.01.2023
+- Bugfix: Fixed an issue where the configure-command would remove a line from the configuration file, everytime you would overwrite an existing value.
+
+## [0.3.8] 21.12.2022
+- Fix for last release
+
+## [0.3.7] 21.12.2022
+- Now using Cobol Check version 0.2.5
+- Prepared for GnuCOBOL compiler options in config and scripts
 
 ## [0.3.6] 02.11.2022
 - Now using Cobol Check version 0.2.4

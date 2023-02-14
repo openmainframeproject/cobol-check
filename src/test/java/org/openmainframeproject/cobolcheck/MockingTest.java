@@ -192,18 +192,20 @@ public class MockingTest {
 
     @Test
     public void mock_gets_correct_lines() throws IOException {
-        String str1 = "       TESTSUITE \"Name of test suite\"";
-        String str2 = "       TESTCASE \"Name of test case\"";
-        String str3 = "       MOCK SECTION 000-START";
-        String str4 = "          MOVE \"something\" TO this";
-        String str5 = "          MOVE \"something else\" TO other";
-        String str6 = "       END-MOCK";
+        String str1 = "           TESTSUITE \"Name of test suite\"";
+        String str2 = "           TESTCASE \"Name of test case\"";
+        String str3 = "           MOCK SECTION 000-START";
+        String str4 = "      *       MOVE \"something\" TO this";
+        String str5 = "              MOVE \"something\" TO this";
+        String str6 = "              MOVE \"something else\" TO other";
+        String str7 = "           END-MOCK";
 
         List<String> expected = new ArrayList<>();
+        expected.add("      *       MOVE \"something\" TO this");
         expected.add("           MOVE \"something\" TO this");
         expected.add("           MOVE \"something else\" TO other");
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
 
         testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
         assertEquals(expected, mockRepository.getMocks().get(0).getLines());
