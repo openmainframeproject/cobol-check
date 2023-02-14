@@ -167,15 +167,7 @@ public class Generator {
                 }
             }
             else {
-                if (interpreter.shouldCurrentLineBeStubbed()) {
-                    if(interpreter.isReading(Constants.WORKING_STORAGE_SECTION))
-                        writerController.writeStubbedLine(interpreter.getCurrentLineAsStatement().getUnNumberedString());
-                    else 
-                        writerController.writeStubbedLine(sourceLine);
-                }
-                else {
-                    writerController.writeLine(sourceLine);
-                }
+                writerController.writeLine(sourceLine);
             }
         }
     }
