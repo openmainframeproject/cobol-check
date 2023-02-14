@@ -69,6 +69,10 @@ public class InterpreterController {
         return convertToStrings(reader.getCurrentStatement());
     }
 
+    public CobolLine getCurrentLineAsStatement() throws IOException {
+        return reader.readStatementAsOneLine();
+    }
+
     // Getting info from reader
     public boolean hasStatementBeenRead() {
         return reader.hasStatementBeenRead();
