@@ -217,10 +217,7 @@ public class StringHelper {
     }
 
     public static String moveToAreaB(String line){
-        if (line.trim().startsWith("*"))
-            return "      " + line.trim();
-        else
-            return "           " + line.trim();
+        return "           " + line.trim();
     }
 
     public static List<String> moveToAreaB(List<String> lines){

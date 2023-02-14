@@ -194,7 +194,7 @@ public class TestSuiteParserParsingTest {
     public void it_finds_correct_data_type_for_table() {
         String expectedLine = "           SET UT-NUMERIC-COMPARE TO TRUE";
         testSuite.append("           EXPECT TABLE-FIELD IN WS-FIELDS (2 3) TO BE \"some value\"");
-        numericFields.setDataTypeOf("TABLE-FIELD,WS-FIELDS", DataType.DISPLAY_NUMERIC);
+        numericFields.setDataTypeOf("TABLE-FIELD", DataType.DISPLAY_NUMERIC);
         List<String> actual = testSuiteParser.getParsedTestSuiteLines(
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);

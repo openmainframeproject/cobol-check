@@ -5,7 +5,7 @@ on:
     branches:
       - '*'
   pull_request:
-    branches: [ main ]
+    branches: [ main,Developer ]
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest, macos-latest]
+        os: [ubuntu-18.04, windows-latest, macos-latest]
         java-version: [8, 11]
 
     steps:

@@ -19,7 +19,7 @@ import path = require('path');
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
 let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
 let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
-let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.5.jar');
+let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.2.jar');
 
 let lastCurrentFile = null;
 let cutLanguageRunning = false;
@@ -57,19 +57,17 @@ export function activate(context: ExtensionContext) {
 		});
 	});
 
-	let setConfiguration_Cmd = vscode.commands.registerCommand('cobolcheck.configure', (key : string, value : string) => {
-		if (key && value){
-			setConfiguration(configPath, key, value);
-		}
-		else{
-			getConfigurationMap(configPath, async (configMap) => {
-				if (configMap === null) return;
-				key = await vscode.window.showQuickPick(Array.from(configMap.keys()), {placeHolder: 'Pick a configuration'});
-				const value = await vscode.window.showInputBox({placeHolder: 'New configuration value'})
-				if (!key || !value) return;
-				setConfiguration(configPath, key, value);
-			});
-		}
+	let setConfiguration_Cmd = vscode.commands.registerCommand('cobolcheck.configure', () => {
+		getConfigurationMap(configPath, async (configMap) => {
+			if (configMap === null) return;
+			const configKey = await vscode.window.showQuickPick(Array.from(configMap.keys()), {placeHolder: 'Pick a configuration'});
+			if (configKey === undefined) return;
+
+			const newValue = await vscode.window.showInputBox({placeHolder: 'New configuration value'})
+			if (newValue === undefined) return;
+
+			setConfiguration(configPath, configKey, newValue);
+		});
 	});
 
 	let resetConfigurations_Cmd = vscode.commands.registerCommand('cobolcheck.reset.configuration', () => {

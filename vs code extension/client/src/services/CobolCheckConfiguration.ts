@@ -52,7 +52,7 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 
 			let keyValue = trimmedLine.split('=');
 			if (keyValue.length > 1 && keyValue[0].trim() === key){
-				newConfigurationText += key + ' = ' + newValue + '\n';
+				newConfigurationText += key + ' = ' + newValue;
 				keyHasBeenFound = true;
 				LOGGER.log("Updated configuration key: " + key + " with value: " + newValue, LOGGER.INFO);
 			} else{
@@ -62,7 +62,6 @@ export function setConfiguration(configurationPath : string, key : string, newVa
 
 		if (!keyHasBeenFound){
 			vscode.window.showErrorMessage('Could not find key: ' + key + ' in config file: ' + configurationPath)
-			return;
 		}
 		fs.writeFile(configurationPath, newConfigurationText, 'utf8', function (err) {
 			if(err) {
