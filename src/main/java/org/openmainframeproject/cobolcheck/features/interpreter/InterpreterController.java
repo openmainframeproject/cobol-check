@@ -133,13 +133,17 @@ public class InterpreterController {
     }
 
     public boolean shouldCurrentLineBeStubbed() throws IOException {
-        if (reader.getState().isFlagSetFor(Constants.PROCEDURE_DIVISION))
+        if (reader.getState().isFlagSetFor(Constants.PROCEDURE_DIVISION)) {
             if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
                 if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
-                    reader.putNextLine("           .");
+                reader.putNextLine("           .");
                 reader.putNextLine("            CONTINUE");
                 return true;
             }
+        }
+        if (reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+            return Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState());
+        }
         if (reader.getState().isFlagSetFor(Constants.LINKAGE_SECTION)) {
             if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
                 return true;
