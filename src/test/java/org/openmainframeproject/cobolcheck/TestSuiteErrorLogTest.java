@@ -392,38 +392,38 @@ public class TestSuiteErrorLogTest {
         assertEquals(expectedResult, actualResult);
     }
 
-}
+    @Test
+    public void it_catches_type_mismatch_of_numeric_and_alphanumeric_for_explicit_numeric_in_unit_test() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       EXPECT WS-ALPHA-VALUE TO BE NUMERIC \"Hello\""+ Constants.NEWLINE);
 
-@Test
-public void it_catches_type_mismatch_of_numeric_and_alphanumeric_for_explicit_numeric_in_unit_test() {
-    testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
-    testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
-    testSuite.append("       EXPECT WS-ALPHA-VALUE TO BE NUMERIC \"Hello\""+ Constants.NEWLINE);
+        String expectedResult = "";
+        expectedResult += "WARNING in file: null:3:44:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 44:" + Constants.NEWLINE;
+        expectedResult += "Expected compare to be of type <NUMERIC>, but the variable was classified as the type <ALPHANUMERIC>" + Constants.NEWLINE;
+        expectedResult += "The test was carried out with the compare type <ALPHANUMERIC>" + Constants.NEWLINE + Constants.NEWLINE;
 
-    String expectedResult = "";
-    expectedResult += "WARNING in file: null:3:44:" + Constants.NEWLINE;
-    expectedResult += "Unexpected token on line 3, index 44:" + Constants.NEWLINE;
-    expectedResult += "Expected compare to be of type <NUMERIC>, but the variable was classified as the type <ALPHANUMERIC>" + Constants.NEWLINE;
-    expectedResult += "The test was carried out with the compare type <ALPHANUMERIC>" + Constants.NEWLINE + Constants.NEWLINE;
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
-    testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
 
-    String actualResult = testSuiteErrorLog.getErrorMessages();
-    assertEquals(expectedResult, actualResult);
-}
+    @Test
+    public void explicit_numeric_gives_no_warning_when_variable_is_numeric() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       EXPECT WS-NUMERIC-VALUE TO BE NUMERIC 1"+ Constants.NEWLINE);
 
-@Test
-public void explicit_numeric_gives_no_warning_when_variable_is_numeric() {
-    testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
-    testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
-    testSuite.append("       EXPECT WS-NUMERIC-VALUE TO BE NUMERIC 1"+ Constants.NEWLINE);
+        String expectedResult = "";
 
-    String expectedResult = "";
+        numericFields.setDataTypeOf("WS-NUMERIC-VALUE", DataType.PACKED_DECIMAL);
 
-    numericFields.setDataTypeOf("WS-NUMERIC-VALUE", DataType.PACKED_DECIMAL);
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
-    testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
 
-    String actualResult = testSuiteErrorLog.getErrorMessages();
-    assertEquals(expectedResult, actualResult);
 }
