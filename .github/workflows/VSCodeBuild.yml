@@ -17,7 +17,7 @@ jobs:
         working-directory: ./vs code extension
     environment: production
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js
       uses: actions/setup-node@v2
       with:
