@@ -26,7 +26,7 @@ public class Keywords {
                 Constants.TESTSUITE_KEYWORD,
                 Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                 KeywordAction.TESTSUITE_NAME
-            );
+            )
         );
 
         //--------------------------------TESTCASE
@@ -35,7 +35,7 @@ public class Keywords {
             new Keyword(Constants.TESTCASE_KEYWORD,
                 Arrays.asList(Constants.ALPHANUMERIC_LITERAL_KEYWORD),
                 KeywordAction.NEW_TESTCASE
-            );
+            )
         );
 
         //--------------------------------EXPECT
@@ -51,7 +51,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.ACTUAL_FIELDNAME
-            );
+            )
         );
 
         //--------------------------------FIELD NAME
@@ -121,7 +121,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.FIELDNAME
-            );
+            )
         );
 
         //--------------------------------NOT
@@ -171,7 +171,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.REVERSE_LOGIC
-            );
+            )
         );
 
         //--------------------------------TO BE
@@ -193,7 +193,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------TO EQUAL
@@ -215,7 +215,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------EQUAL SIGN
@@ -243,7 +243,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------GREATER THAN SIGN
@@ -272,7 +272,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------GREATER THAN EQUAL TO SIGN
@@ -301,7 +301,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------LESS THAN SIGN
@@ -330,7 +330,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------LESS THAN EQUAL TO SIGN
@@ -359,7 +359,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------NUMERIC
@@ -379,7 +379,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.EXPECTED_VALUE
-            );
+            )
         );
 
         //--------------------------------PARENTHESIS-ENCLOSED
@@ -425,7 +425,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.COBOL_STATEMENT
-            );
+            )
         );
 
         //--------------------------------ALPHANUMERIC LITERAL
@@ -473,7 +473,7 @@ public class Keywords {
                         );
                     }},
                 KeywordAction.FIELDNAME
-            );
+            )
         );
 
         //--------------------------------NUMERIC LITERAL
@@ -500,7 +500,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.FIELDNAME
-            );
+            )
         );
 
         //--------------------------------COBOL TOKEN
@@ -531,7 +531,7 @@ public class Keywords {
                     Constants.QUALIFIED_FIELD_NAME
                 ),
                 KeywordAction.COBOL_STATEMENT
-            );
+            )
         );
 
         //--------------------------------BOOLEAN VALUE
@@ -548,7 +548,7 @@ public class Keywords {
                     Constants.VERIFY_KEYWORD
                 ),
                 KeywordAction.BOOLEAN_COMPARE
-            );
+            )
         );
 
         //--------------------------------BEFORE EACH
@@ -558,7 +558,7 @@ public class Keywords {
                 Constants.BEFORE_EACH_TOKEN,
                 Arrays.asList(Constants.END_BEFORE_TOKEN),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------END BEFORE
@@ -574,7 +574,7 @@ public class Keywords {
                     Constants.MOCK_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------AFTER EACH
@@ -584,7 +584,7 @@ public class Keywords {
                 Constants.AFTER_EACH_TOKEN,
                 Arrays.asList(Constants.END_AFTER_TOKEN),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------END AFTER
@@ -601,7 +601,7 @@ public class Keywords {
                     Constants.MOCK_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------QUALIFIED FIELD NAME
@@ -620,7 +620,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //TODO: Remove hyphen keyword option? Backwards compatibility
@@ -631,7 +631,7 @@ public class Keywords {
                 Constants.BEFORE_EACH_TOKEN_HYPHEN,
                 Arrays.asList(Constants.END_BEFORE_TOKEN),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------AFTER-EACH
@@ -641,7 +641,7 @@ public class Keywords {
                 Constants.AFTER_EACH_TOKEN_HYPHEN,
                 Arrays.asList(Constants.END_AFTER_TOKEN),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------MOCK
@@ -657,7 +657,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------END MOCK
@@ -678,7 +678,7 @@ public class Keywords {
                     Constants.EXPECT_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------MOCK TYPE
@@ -706,7 +706,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------USING
@@ -741,7 +741,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------BY REFERENCE
@@ -761,7 +761,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------BY CONTENT
@@ -781,7 +781,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------BY VALUE
@@ -801,7 +801,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------VERIFY
@@ -817,7 +817,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.ACTUAL_FIELDNAME
-            );
+            )
         );
 
         //--------------------------------NEVER HAPPENED
@@ -834,7 +834,7 @@ public class Keywords {
                     Constants.EXPECT_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------HAPPENED
@@ -856,7 +856,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------ONCE
@@ -873,7 +873,7 @@ public class Keywords {
                     Constants.EXPECT_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------AT LEAST
@@ -892,7 +892,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------NO MORE THAN
@@ -911,7 +911,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------TIME
@@ -928,7 +928,7 @@ public class Keywords {
                     Constants.EXPECT_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         //--------------------------------TIMES
@@ -945,7 +945,7 @@ public class Keywords {
                     Constants.EXPECT_KEYWORD
                 ),
                 KeywordAction.NONE
-            );
+            )
         );
 
         mockTypes = Arrays.asList(Constants.SECTION_TOKEN, Constants.PARAGRAPH_TOKEN, Constants.PARA_TOKEN, Constants.CALL_TOKEN);
