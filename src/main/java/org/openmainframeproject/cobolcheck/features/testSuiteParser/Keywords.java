@@ -151,7 +151,7 @@ public class Keywords {
                     );
                 }},
                 KeywordAction.REVERSE_LOGIC
-            );
+            )
         );
 
         //--------------------------------NOT EQUAL SIGN
