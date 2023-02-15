@@ -135,7 +135,7 @@ public class Keywords {
                 ),
                 new HashMap<String, List<String>>() {{
                     put(
-                        Constants.EXPECT_KEYWORD
+                        Constants.EXPECT_KEYWORD,
                         Arrays.asList(
                             Constants.TO_BE_KEYWORD,
                             Constants.TO_EQUAL_KEYWORD,
