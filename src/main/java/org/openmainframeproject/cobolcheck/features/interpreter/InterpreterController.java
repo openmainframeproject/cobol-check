@@ -32,12 +32,12 @@ public class InterpreterController {
         if (sourceReader == null) {
             throw new PossibleInternalLogicErrorException(
                 Messages.get("ERR001", "cobolSourceIn", "Generator.runSuite()"));
-            }
-            reader = new CobolReader(sourceReader);
-            lineRepository = new LineRepository();
-            numericFields = new NumericFields();
-            tokenExtractor = new StringTokenizerExtractor();
-            currentDataStructure = new TreeMap<>();
+        }
+        reader = new CobolReader(sourceReader);
+        lineRepository = new LineRepository();
+        numericFields = new NumericFields();
+        tokenExtractor = new StringTokenizerExtractor();
+        currentDataStructure = new TreeMap<>();
     }
 
     // Getters for lists of specific source lines
@@ -185,23 +185,20 @@ public class InterpreterController {
     }
 
     /**
-     * Interprets the next line from the source file. Based on the line, the
-     * following values
+     * Interprets the next line from the source file. Based on the line, the following values
      * will be updated:
      * - Current line
      * - Current tokens
      * - previous line
      * The following values can be updated, based on the line:
      * - Current statement (only if multiline statement was read)
-     * - The state of the reader (flags that shows what part of the program we are
-     * reading)
+     * - The state of the reader (flags that shows what part of the program we are reading)
      * - List of FILE SECTION statements
      * - List of FILE CONTROL statements
      * - List mapping file identifiers to statuses
      * - List of copy tokens
      * - Numeric fields
-     * If the line is part of a longer statement, the reader might read multiple
-     * lines.
+     * If the line is part of a longer statement, the reader might read multiple lines.
      * 
      * @return The line that was read as a string
      */
@@ -247,8 +244,7 @@ public class InterpreterController {
      * Updates dependencies of the interpreter.
      * The following values can be updated, based on the given line:
      * - Current statement (only if multiline statement was read)
-     * - The state of the reader (flags that shows what part of the program we are
-     * reading)
+     * - The state of the reader (flags that shows what part of the program we are reading)
      * - List of FILE SECTION statements
      * - List of FILE CONTROL statements
      * - List mapping file identifiers to statuses
@@ -329,10 +325,8 @@ public class InterpreterController {
         if (possibleMockIdentifier != null && periodShouldBeOnThisLine
                 && !Interpreter.endsInPeriod(line)
                 && Interpreter.containsOnlyPeriod(nextLine)) {
-            // We might generate code after the current line, thus if the period is on the
-            // next line,
-            // we append it to this line. This prevents us generating code in the wrong
-            // place.
+            // We might generate code after the current line, thus if the period is on the next line,
+            // we append it to this line. This prevents us generating code in the wrong place.
             reader.appendNextMeaningfulLineToCurrentLine();
         }
     }
@@ -362,13 +356,9 @@ public class InterpreterController {
     }
 
     /**
-     * If the current line is a numeric field, it will be added to the list of
-     * numeric fields.
-     * We need to save field names of numeric data items in the DATA DIVISION in
-     * case a test case
-     * references them. There's no way to distinguish numeric fields while reading
-     * the PROCEDURE
-     * DIVISION.
+     * If the current line is a numeric field, it will be added to the list of numeric fields.
+     * We need to save field names of numeric data items in the DATA DIVISION in case a test case
+     * references them. There's no way to distinguish numeric fields while reading the PROCEDURE DIVISION.
      */
     private void updateNumericFields(CobolLine line) {
         if (line.tokensSize() > 1) {
@@ -414,18 +404,13 @@ public class InterpreterController {
    }
 
     /**
-     * Updates the line repository with the given line, if it might have further use
-     * when testing.
-     * Lines ahead of the current one, might be peeked or even read, if the current
-     * statement spans
-     * multiple lines. If the line fits any of below it will be saved in the
-     * repository:
+     * Updates the line repository with the given line, if it might have further use when testing.
+     * Lines ahead of the current one, might be peeked or even read, if the current statement spans
+     * multiple lines. If the line fits any of below it will be saved in the repository:
      * - It is a line read under FILE CONTROL
-     * - It has a SELECT token. File identifier and corresponding FILE STATUS will
-     * be saved
+     * - It has a SELECT token. File identifier and corresponding FILE STATUS will be saved
      * - It contains a copy token
-     * - It is a file section statement (file section statements from referenced
-     * copybooks are also included)
+     * - It is a file section statement (file section statements from referenced copybooks are also included)
      * - It has an SQL statement and within le WORKING SECTION
      * 
      * @param line - current source line
@@ -462,8 +447,7 @@ public class InterpreterController {
     }
 
     /**
-     * If the given line contains a SELECT token, the file identifier will be added,
-     * waiting for
+     * If the given line contains a SELECT token, the file identifier will be added, waiting for
      * a mapping to a corresponding file status.
      * 
      * @param line - current source line
@@ -484,8 +468,7 @@ public class InterpreterController {
     }
 
     /**
-     * If the given line contains a file status token, it will be added to a map to
-     * a
+     * If the given line contains a file status token, it will be added to a map to a
      * corresponding file identifier.
      * 
      * @param line - current source line

@@ -14,30 +14,30 @@ public class Interpreter {
 
     // Source tokens from Procedure Division that begin batch I/O statements
     private static final List<String> batchFileIOVerbs = Arrays.asList(
-            "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START");
+        "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
+    );
 
-    // Used for handling source lines from copybooks that may not have the standard
-    // 80-byte length
+    // Used for handling source lines from copybooks that may not have the standard 80-byte length
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
     private static final List<Character> commentIndicators = Arrays.asList('*', '/');
 
-    // Used to find areas
+    //Used to find areas
     private static final int sequenceNumberAreaEnd = 6;
     private static final int indicatorAreaEnd = 7;
     private static final int A_AreaEnd = 11;
     private static final int B_AreaEnd = 71;
 
-    public static int getSequenceNumberAreaIndex() {
+    public static int getSequenceNumberAreaIndex(){
         return sequenceNumberAreaEnd;
     }
 
-    // TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
+    //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
     /**
      * Sets flags based on a line, to be able to know which kinds of source
      * statements to look for when reading and interpreting lines.
      *
-     * @param line  - current source line being processed
+     * @param line - current source line being processed
      * @param state - current state of flags
      * @return - the part of the program just entered or null if no part was entered
      */
@@ -146,7 +146,7 @@ public class Interpreter {
      * (b) - previous line contains just a period
      * (c) - first token on this line is a Cobol verb
      *
-     * @param currentLine        - current source line being processed
+     * @param currentLine - current source line being processed
      * @param nextMeaningfulLine - next source line that is not empty
      * @return - true if end of statement is recognized
      */
@@ -182,8 +182,7 @@ public class Interpreter {
      * This "shouldn't happen." Famous last words.
      *
      * @param line
-     * @return true if the source line is too short to be a meaningful line of code
-     *         in Cobol.
+     * @return true if the source line is too short to be a meaningful line of code in Cobol.
      */
     public static boolean isTooShortToBeMeaningful(CobolLine line) {
         return line.getUnNumberedString() == null
@@ -329,15 +328,13 @@ public class Interpreter {
     }
 
     /**
-     * As paragraph headers are not associated with any keyword, the method matches
-     * the
+     * As paragraph headers are not associated with any keyword, the method matches the
      * source line against specific attributes that makes up a paragraph header.
      *
-     * @param line     - The line to check
+     * @param line - The line to check
      * @param nextLine - The line after the line param
-     * @param state    - current state of flags
-     * @return true if the source line have all the attributes of a paragraph
-     *         header.
+     * @param state - current state of flags
+     * @return true if the source line have all the attributes of a paragraph header.
      */
     public static boolean isParagraphHeader(CobolLine line, CobolLine nextLine, State state) {
         return (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)
@@ -352,7 +349,7 @@ public class Interpreter {
      * - It has only one token
      * - The token is followed by a period on this or the next line.
      *
-     * @param line     - The line to check
+     * @param line - The line to check
      * @param nextLine - The line after the line param
      * @return true if sourceLine is of the format of a paragraph header
      */
@@ -361,7 +358,7 @@ public class Interpreter {
             if (line.tokensSize() == 1) {
                 if (line.getTrimmedString().endsWith(Constants.PERIOD) ||
                         (nextLine != null &&
-                                nextLine.getTrimmedString().equals(Constants.PERIOD)))
+                        nextLine.getTrimmedString().equals(Constants.PERIOD)))
                     return true;
             }
         }
@@ -448,8 +445,7 @@ public class Interpreter {
     }
 
     /**
-     * Checks if the last of these lines is ending the current component (SECTION,
-     * CALL, etc.)
+     * Checks if the last of these lines is ending the current component (SECTION, CALL, etc.)
      * This should be called from inside the component, as it only checks, if
      * the trimmed line ends with a period
      *

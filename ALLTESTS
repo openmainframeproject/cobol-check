@@ -1,8 +1,0 @@
-      *From file: C:\workspace\cobol-check\src\test\cobol\DB2PROG\DB2TEST.cut
-           TestSuite "Tests of DB2 includes"
-
-           TestCase "DB2 Copybook added to PRG"
-           move  "John" to FIRST-NAME
-           move  "Doe" to LAST-NAME
-           Expect FIRST-NAME to be "John"
-           Expect LAST-NAME to be "Doe"
