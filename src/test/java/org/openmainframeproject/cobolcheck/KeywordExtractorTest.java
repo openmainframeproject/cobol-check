@@ -52,6 +52,15 @@ public class KeywordExtractorTest {
         assertEquals("TO BE", tokens.get(3));
         assertEquals(4, tokens.size());
     }
+    @Test
+
+    public void parentheses_acts_as_seperator() {
+        tokens = extractor.extractTokensFrom("VARIABLE(IDX) (START:LENGTH)");
+        assertEquals("VARIABLE", tokens.get(0));
+        assertEquals("(IDX)", tokens.get(1));
+        assertEquals("(START:LENGTH)", tokens.get(2));
+        assertEquals(3, tokens.size());
+    }
 
     @Test
     public void given_the_first_word_in_a_two_word_keyword_and_the_second_token_matches_the_expected_second_word_it_knows_it_is_not_a_match() {

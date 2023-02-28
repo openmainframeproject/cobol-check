@@ -40,6 +40,7 @@ public class KeywordExtractor implements TokenExtractor {
         buffer = new StringBuilder();
         int tokenOffset = 0;
         sourceLine = sourceLine.trim();
+        char previousCharacter = SPACE;
         while (tokenOffset < sourceLine.length()) {
             char currentCharacter = sourceLine.charAt(tokenOffset);
             if (isQuote(currentCharacter)) {
@@ -58,8 +59,11 @@ public class KeywordExtractor implements TokenExtractor {
                 }
             }
             else if (currentCharacter == '(' && !openQuote){
-                openParenthesis = true;
+                if (previousCharacter != SPACE){
+                    buffer = addTokenAndClearBuffer(buffer, tokens);
+                }
                 buffer.append(currentCharacter);
+                openParenthesis = true;
             }
             else if (currentCharacter == ')' && !openQuote){
                 openParenthesis = false;
@@ -86,50 +90,56 @@ public class KeywordExtractor implements TokenExtractor {
                 }
 
                 if (currentCharacter == SPACE) {
-                    processingNumericLiteral = false;
-                    if (openQuote) {
-                        buffer.append(SPACE);
-                    } else {
-                        if (multiWordTokens.containsKey(buffer.toString().toUpperCase(Locale.ROOT))) {
-                            nextExpectedTokens = multiWordTokens.get(buffer.toString().toUpperCase(Locale.ROOT));
-                            buffer.append(SPACE);
-
-                            int startOfLookahead = tokenOffset + 1;
-                            for (String expectedToken : nextExpectedTokens) {
-                                int endOfLookahead = startOfLookahead + expectedToken.length();
-                                if (sourceLine.length() >= endOfLookahead) {
-                                    String temp = sourceLine.substring(startOfLookahead, endOfLookahead);
-                                    if (expectedToken.equalsIgnoreCase(temp)
-                                            && (endOfLookahead == sourceLine.length()
-                                            || sourceLine.charAt(endOfLookahead) == SPACE)) {
-                                        buffer.append(expectedToken);
-                                        tokenOffset += expectedToken.length() + 1;
-                                        buffer.append(SPACE);
-                                        startOfLookahead = tokenOffset + 1;
-                                    }
-                                }
-
-                            }
-                            buffer.deleteCharAt(buffer.length() - 1);
-                            buffer = addTokenAndClearBuffer(buffer, tokens);
-                            nextExpectedTokens = new ArrayList<>();
-                        } else {
-                            nextExpectedTokens = new ArrayList<>();
-                            if (buffer.length() > 0) {
-                                buffer = addTokenAndClearBuffer(buffer, tokens);
-                            }
-                        }
-                    }
+                    tokenOffset = handleEndOfWord(sourceLine, tokens, tokenOffset);
                 } else{
                     buffer.append(currentCharacter);
                 }
             }
+            previousCharacter = currentCharacter;
             tokenOffset += 1;
         }
         if (buffer.length() > 0) {
             buffer = addTokenAndClearBuffer(buffer, tokens);
         }
         return tokens;
+    }
+
+    private int handleEndOfWord(String sourceLine, List<String> tokens, int tokenOffset) {
+        processingNumericLiteral = false;
+        if (openQuote) {
+            buffer.append(SPACE);
+        } else {
+            if (multiWordTokens.containsKey(buffer.toString().toUpperCase(Locale.ROOT))) {
+                nextExpectedTokens = multiWordTokens.get(buffer.toString().toUpperCase(Locale.ROOT));
+                buffer.append(SPACE);
+
+                int startOfLookahead = tokenOffset + 1;
+                for (String expectedToken : nextExpectedTokens) {
+                    int endOfLookahead = startOfLookahead + expectedToken.length();
+                    if (sourceLine.length() >= endOfLookahead) {
+                        String temp = sourceLine.substring(startOfLookahead, endOfLookahead);
+                        if (expectedToken.equalsIgnoreCase(temp)
+                                && (endOfLookahead == sourceLine.length()
+                                || sourceLine.charAt(endOfLookahead) == SPACE)) {
+                            buffer.append(expectedToken);
+                            tokenOffset += expectedToken.length() + 1;
+                            buffer.append(SPACE);
+                            startOfLookahead = tokenOffset + 1;
+                        }
+                    }
+
+                }
+                buffer.deleteCharAt(buffer.length() - 1);
+                buffer = addTokenAndClearBuffer(buffer, tokens);
+                nextExpectedTokens = new ArrayList<>();
+            } else {
+                nextExpectedTokens = new ArrayList<>();
+                if (buffer.length() > 0) {
+                    buffer = addTokenAndClearBuffer(buffer, tokens);
+                }
+            }
+        }
+        return tokenOffset;
     }
 
     public boolean tokenListEndsDuringMultiToken(List<String> tokens){
@@ -140,6 +150,9 @@ public class KeywordExtractor implements TokenExtractor {
             return true;
 
         return false;
+    }
+    public void handleEndOfWord(){
+
     }
 
 
