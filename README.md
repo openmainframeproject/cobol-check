@@ -26,7 +26,7 @@ As of March 2022 we could use help with:
 
 ## Downloads 
 
-Version 0.2.6 pre-release is available! 
+Version 0.2.7 pre-release is available! 
 
 [//]: # (- Find the download on the project home page on the [Neo Pragma site]&#40;https://neopragma.com/projects/cobol-check/&#41;.)
 - Find distributions here: [Cobol Check Ditributions](https://github.com/openmainframeproject/cobol-check/blob/main/build/distributions).

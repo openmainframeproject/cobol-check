@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.7\] 2023-03-21 - Unreleased
+### Implemented
+- EXPECT now properly handles variable subscription without a space delimiter (EXPECT varibable(idx) TO BE 1)
+- COBOL level item 77 now handled properly 
+- More robust scanning of WORKING-STORAGE items
+- Corrected assignment of the various COBOL computational binary field types.
+
 ## \[0.2.6\] 2023-01-12 - Unreleased
 ### Implemented
 - Datastructure-verification for Working Storage has been added.

@@ -205,16 +205,19 @@ public class InterpreterController {
         reader.updateState();
         updateLineRepository(line);
 
+        List<CobolLine> currentStatement = new ArrayList<>();
         if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())){
-            reader.readTillEndOfStatement();
+            currentStatement = reader.readTillEndOfStatement();
+        } else {
+            currentStatement.add(line);
         }
-
+    
         if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)){
             updateDecimalPointIsComma(line);
         }
 
         if (reader.isFlagSet(Constants.DATA_DIVISION)){
-            this.currentDataStructure = updateCurrentDataStructure(line, currentDataStructure);
+            this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
             updateNumericFields(line);
         }
 
@@ -312,11 +315,12 @@ public class InterpreterController {
             if (!this.currentDataStructure.isEmpty()) {
                 variableNameWeWantToSave = generateVariableNameBasedOnDataStructure(this.currentDataStructure);
             }
+
             if (line.containsToken(Constants.COMP_3_VALUE)) {
                 numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
             } else {
-                if (line.containsToken(Constants.COMP_VALUE)) {
-                    numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.FLOATING_POINT);
+                if (line.containsToken(Constants.COMP_VALUE) || line.containsToken(Constants.COMP_4_VALUE) || line.containsToken(Constants.COMP_5_VALUE) || line.containsToken(Constants.BINARY)) {
+                    numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.BINARY);
                 } else {
                     int ix = 0;
                     for (String token : line.getTokens()) {

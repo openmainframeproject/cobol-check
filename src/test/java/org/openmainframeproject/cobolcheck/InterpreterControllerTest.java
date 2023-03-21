@@ -724,15 +724,20 @@ public class InterpreterControllerTest {
 
     @Test
     public void it_updates_numeric_fields() throws IOException {
-        String str1 = "       DATA DIVISION.";
-        String str2 = "       WORKING-STORAGE SECTION.";
-        String str3 = "       01  FILLER.";
-        String str4 = "           05  OUTPUT-FILE-STATUS PIC XX.";
-        String str5 = "               88  OUTPUT-OK      VALUE '00'.";
-        String str6 = "           05  WS-COUNT           PIC S9(5) COMP-3.";
-        String str7 = "           05  WS-COUNT-FORMATTED PIC ZZ,ZZ9.";
+        String str1  = "       DATA DIVISION.";
+        String str2  = "       WORKING-STORAGE SECTION.";
+        String str3  = "       01  FILLER.";
+        String str4  = "           05  OUTPUT-FILE-STATUS PIC XX.";
+        String str5  = "               88  OUTPUT-OK      VALUE '00'.";
+        String str6  = "           05.";
+        String str7  = "             08  WS-COUNT           PIC S9(5) COMP-3.";
+        String str8  = "           05  WS-DISPLAY-NUM2      PIC 9(04) OCCURS";
+        String str9  = "                         20.";
+        String str10  = "           05  TEMP-VAL                  PIC X(200) VALUE SPACES.";
+        String str11 = "       77   CHAR-CT                      PIC S9(3) COMP.";
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, null);
 
         while (interpreterController.interpretNextLine() != null){
             interpreterController.interpretNextLine();
@@ -740,6 +745,13 @@ public class InterpreterControllerTest {
 
         assertEquals("PACKED_DECIMAL",
                 interpreterController.getNumericFieldDataTypeFor("WS-COUNT").name());
+        assertEquals("DISPLAY_NUMERIC",
+                interpreterController.getNumericFieldDataTypeFor("WS-DISPLAY-NUM2").name());
+        assertEquals("ALPHANUMERIC",
+                interpreterController.getNumericFieldDataTypeFor("TEMP-VAL").name());
+        assertEquals("BINARY",
+                interpreterController.getNumericFieldDataTypeFor("CHAR-CT").name());
+
     }
 
     @Test
