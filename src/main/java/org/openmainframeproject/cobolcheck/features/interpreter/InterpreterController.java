@@ -319,7 +319,7 @@ public class InterpreterController {
             if (line.containsToken(Constants.COMP_3_VALUE)) {
                 numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
             } else {
-                if (line.containsToken(Constants.COMP_VALUE) || line.containsToken(Constants.COMP_4_VALUE) || line.containsToken(Constants.COMP_5_VALUE) || line.containsToken(Constants.BINARY)) {
+                if (containsAnyBinaryToken(line)) {
                     numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.BINARY);
                 } else {
                     int ix = 0;
@@ -337,7 +337,13 @@ public class InterpreterController {
             }
         }
     }
-
+    
+    private boolean containsAnyBinaryToken(CobolLine line) {
+        return line.containsToken(Constants.COMP_VALUE)
+         || line.containsToken(Constants.COMP_4_VALUE)
+         || line.containsToken(Constants.COMP_5_VALUE)
+         || line.containsToken(Constants.BINARY);
+    }
     /**
      * In order for us to verify wether a given field is numeric, we need to generate a key,
      * based on how the datastructure for the field is referenced.
@@ -350,7 +356,7 @@ public class InterpreterController {
         Collection<String> structureValues = descendingMap.values();
         return String.join(",",structureValues);
     }
-
+   
     /**
      * Updates the line repository with the given line, if it might have further use when testing.
      * Lines ahead of the current one, might be peeked or even read, if the current statement spans

@@ -459,13 +459,7 @@ public class Interpreter {
      */
     public static TreeMap<Integer,String> updateCurrentDataStructure(List<CobolLine> currentStatement, TreeMap<Integer, String> currentHierarchy) {
 
-        String statementString = "";
-
-        for(CobolLine loopLine: currentStatement){
-            statementString += loopLine.getTrimmedString(); 
-        }
-        statementString = statementString.trim().replace(Constants.PERIOD, "");
-        String[] statementWords = statementString.split("\\s+");
+        String[] statementWords = extractStatementWords(currentStatement);
 
         if (currentHierarchy==null) {
             currentHierarchy = new TreeMap<>();
@@ -479,23 +473,11 @@ public class Interpreter {
             lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
         }
 
-        int cobolLevelNumber;
-        try {
-            cobolLevelNumber=Integer.parseInt(statementWords[0]);
-        }
-        catch (NumberFormatException e) {
+        if (!isInteger(statementWords[0])){
             return currentHierarchy;
         }
-
-        if (cobolLevelNumber == 77){
-            cobolLevelNumber = 01;
-        }
-        String variableName = "";
-        if (statementWords.length > 1) {
-            variableName = statementWords[1];
-        } else {
-            variableName = "FILLER";
-        }
+        int cobolLevelNumber = determineCobolLevelNumber(statementWords[0]);
+        String variableName = determineVariableName(statementWords);
 
         while (lastKeyOfCurrentHierarchy > cobolLevelNumber && cobolLevelNumber > 0) {
             currentHierarchy.remove(lastKeyOfCurrentHierarchy);
@@ -507,4 +489,44 @@ public class Interpreter {
             currentHierarchy.put(cobolLevelNumber, variableName);
         return currentHierarchy;
     }
+
+    private static String determineVariableName(String[] statementWords) {
+        String variableName = "";
+        if (statementWords.length > 1) {
+            variableName = statementWords[1];
+        } else {
+            variableName = "FILLER";
+        }
+        return variableName;
+    }
+
+    private static boolean isInteger(String testString) {
+        try {
+            Integer.parseInt(testString);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static Integer determineCobolLevelNumber(String levelNumberString){
+        int cobolLevelNumber = Integer.parseInt(levelNumberString);
+        if (cobolLevelNumber == 77){
+            cobolLevelNumber = 01;
+        }
+        return cobolLevelNumber;
+    }
+
+    private static String[] extractStatementWords(List<CobolLine> currentStatement){
+    String statementString = "";
+    for(CobolLine loopLine: currentStatement){
+        statementString += loopLine.getTrimmedString(); 
+    }
+    statementString = statementString.trim().replace(Constants.PERIOD, "");
+    String[] statementWords = statementString.split("\\s+");
+    return statementWords;
+    }
 }
+
+
+
