@@ -62,7 +62,10 @@ public class NumericFields {
         String[] nameTokens = line.toUpperCase().split("(?:^|\\W)OF(?:$|\\W)|(?:^|\\W)IN(?:$|\\W)");
         Boolean found=false;
         for (String key : fieldTypes.keySet()) {
-            if (key.toUpperCase().contains(nameTokens[0])) {
+
+            String[] keyParts = key.split(",");
+
+            if (keyParts[0].equalsIgnoreCase(nameTokens[0])) {
                 int previousNameIndex = 0;
                 int currentSearchIteration = 1;
                 found = true;

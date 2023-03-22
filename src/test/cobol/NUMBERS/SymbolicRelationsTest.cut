@@ -240,3 +240,6 @@
            move -123 to ws-field-3
            expect ws-field-3 to be -123
 
+           TestCase "Variable must be 4"
+           move 4 to ws-num-occ (1)
+           expect ws-num-occ(1) to be numeric 4

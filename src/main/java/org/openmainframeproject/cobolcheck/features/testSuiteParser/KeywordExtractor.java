@@ -151,10 +151,6 @@ public class KeywordExtractor implements TokenExtractor {
 
         return false;
     }
-    public void handleEndOfWord(){
-
-    }
-
 
     /**
      * Quoted strings may be enclosed in apostrophes (single quotes) or quotation marks (double quotes).
