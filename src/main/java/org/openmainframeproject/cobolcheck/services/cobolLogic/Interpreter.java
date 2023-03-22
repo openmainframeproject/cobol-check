@@ -278,13 +278,18 @@ public class Interpreter {
                 return true;
         }
         if (state.isFlagSetFor(Constants.DATA_DIVISION)){
-            if (!line.getTrimmedString().endsWith(Constants.PERIOD)){
+            if (!Interpreter.endsInPeriod(line)){
                 return true;
             }
         }
-
-
         return false;
+    }
+
+    public static boolean lineContainsBinaryFieldDefinition(CobolLine line) {
+        return line.containsToken(Constants.COMP_VALUE)
+         || line.containsToken(Constants.COMP_4_VALUE)
+         || line.containsToken(Constants.COMP_5_VALUE)
+         || line.containsToken(Constants.BINARY);
     }
 
     public static boolean containsOnlyPeriod(CobolLine line){

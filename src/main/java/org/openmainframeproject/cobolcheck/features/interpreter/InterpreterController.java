@@ -318,8 +318,8 @@ public class InterpreterController {
 
             if (line.containsToken(Constants.COMP_3_VALUE)) {
                 numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
-            } else {
-                if (containsAnyBinaryToken(line)) {
+            } else {  
+                if (Interpreter.lineContainsBinaryFieldDefinition(line)) {
                     numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.BINARY);
                 } else {
                     int ix = 0;
@@ -338,12 +338,6 @@ public class InterpreterController {
         }
     }
     
-    private boolean containsAnyBinaryToken(CobolLine line) {
-        return line.containsToken(Constants.COMP_VALUE)
-         || line.containsToken(Constants.COMP_4_VALUE)
-         || line.containsToken(Constants.COMP_5_VALUE)
-         || line.containsToken(Constants.BINARY);
-    }
     /**
      * In order for us to verify wether a given field is numeric, we need to generate a key,
      * based on how the datastructure for the field is referenced.
