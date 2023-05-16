@@ -157,6 +157,9 @@ public class Interpreter {
         if (currentLine.getTrimmedString().endsWith(Constants.PERIOD)) {
             return true;
         }
+        if (currentLine.getTrimmedString().toUpperCase(Locale.ROOT).endsWith(Constants.END_EXEC_TOKEN)) {
+            return true;
+        }
         if (containsOnlyPeriod(nextMeaningfulLine)){
             return false;
         }

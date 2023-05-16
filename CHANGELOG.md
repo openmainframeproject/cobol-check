@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.8\] 2023-05-16 - Unreleased
+### Implemented
+- Proper handling of END-EXEC without trailing period in WORKING-STORAGE
+
 ## \[0.2.7\] 2023-03-21 - Unreleased
 ### Implemented
 - EXPECT now properly handles variable subscription without a space delimiter (EXPECT varibable(idx) TO BE 1)
