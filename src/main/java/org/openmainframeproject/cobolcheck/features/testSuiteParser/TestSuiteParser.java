@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 
 /**
@@ -22,6 +24,7 @@ public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private TestSuiteWritingStyle testSuiteWritingStyle;
     private List<String> testSuiteTokens;
+    private HashMap<String, HashSet<String>> testNamesHierarchy;
     private String currentTestSuiteLine = "";
     private int fileLineNumber = 0;
     private int fileLineIndexNumber = 0;
@@ -150,13 +153,14 @@ public class TestSuiteParser {
     private NumericFields numericFields;
 
     public TestSuiteParser(KeywordExtractor keywordExtractor, MockRepository mockRepository,
-                           BeforeAfterRepo beforeAfterRepo,
-                           TestSuiteErrorLog testSuiteErrorLog) {
+            BeforeAfterRepo beforeAfterRepo,
+            TestSuiteErrorLog testSuiteErrorLog) {
         this.keywordExtractor = keywordExtractor;
         this.mockRepository = mockRepository;
         this.beforeAfterRepo = beforeAfterRepo;
         this.testSuiteErrorLog = testSuiteErrorLog;
         testSuiteTokens = new ArrayList<>();
+        testNamesHierarchy = new HashMap<String, HashSet<String>>();
         emptyTestSuite = true;
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         initializeCobolStatement();
@@ -171,7 +175,7 @@ public class TestSuiteParser {
      *                        files.
      */
     public List<String> getParsedTestSuiteLines(BufferedReader testSuiteReader,
-                                                NumericFields numericFieldsList) {
+            NumericFields numericFieldsList) {
         List<String> parsedTestSuiteLines = new ArrayList<>();
         numericFields = numericFieldsList;
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
@@ -377,6 +381,14 @@ public class TestSuiteParser {
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
+
+                        if (testNamesHierarchy.containsKey(currentTestSuiteName)) {
+                            throw new TestSuiteAlreadyExistsException(
+                                    "A test suite with the name '" + currentTestSuiteName + "' already exists.");
+                        }
+
+                        testNamesHierarchy.put(currentTestSuiteName, new HashSet<String>());
+
                         RunInfo.addTestSuiteNameToPathMapKeyValuePair(currentTestSuiteName, currentTestSuiteRealFile);
                         addTestSuiteNamelines(currentTestSuiteName, parsedTestSuiteLines);
                         initializeCobolStatement();
@@ -384,6 +396,14 @@ public class TestSuiteParser {
                     if (expectTestcaseName) {
                         expectTestcaseName = false;
                         currentTestCaseName = testSuiteToken;
+
+                        // Throw exception if a test case with the same name already exists in the SAME
+                        // test suite.
+                        if (!testNamesHierarchy.get(currentTestCaseName).add(currentTestCaseName)) {
+                            throw new TestCaseAlreadyExistsException("A test case with the name '" + currentTestCaseName
+                                    + "' already exists in the test suite '" + currentTestSuiteName + "'");
+                        }
+
                         addTestCaseNameLines(currentTestCaseName, parsedTestSuiteLines);
                         initializeCobolStatement();
                     }
@@ -540,7 +560,7 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ONCE_KEYWORD:
-                    if (currentVerify != null){
+                    if (currentVerify != null) {
                         currentVerify.setExpectedCount("1");
                         handleEndOfVerifyStatement(parsedTestSuiteLines);
                     }
@@ -578,7 +598,7 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.QUALIFIED_FIELD_NAME:
-                    if (cobolTokenIsFieldName){
+                    if (cobolTokenIsFieldName) {
                         fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                         expectQualifiedName = true;
                     }
@@ -767,7 +787,7 @@ public class TestSuiteParser {
     }
 
     private void handleEndOfMockStatement(BufferedReader testSuiteReader, String testSuiteToken,
-                                          boolean skipCurrentToken) {
+            boolean skipCurrentToken) {
         List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken,
                 skipCurrentToken);
         testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
@@ -885,7 +905,7 @@ public class TestSuiteParser {
     void addTestCodeForAssertion(List<String> parsedTestSuiteLines, NumericFields numericFields) {
         addSetNormalOrReverseCompare(parsedTestSuiteLines);
         if (boolean88LevelCompare) {
-            if (expectNumericCompare){
+            if (expectNumericCompare) {
                 testSuiteErrorLog.logVariableTypeMismatch(Constants.NUMERIC_KEYWORD, "BOOLEAN88",
                         currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
             }
@@ -899,7 +919,7 @@ public class TestSuiteParser {
                 parsedTestSuiteLines.add(String.format(
                         COBOL_MOVE_EXPECTED_NUMERIC_LITERAL, testCodePrefix, expectedValueToCompare));
             } else {
-                if (expectNumericCompare){
+                if (expectNumericCompare) {
                     testSuiteErrorLog.logVariableTypeMismatch(Constants.NUMERIC_KEYWORD, "ALPHANUMERIC",
                             currentTestSuiteRealFile, fileLineNumber, fileLineIndexNumber);
                 }
@@ -917,7 +937,7 @@ public class TestSuiteParser {
                     testCodePrefix,
                     greaterThanComparison ? RELATION_GT
                             : lessThanComparison ? RELATION_LT
-                            : RELATION_EQ,
+                                    : RELATION_EQ,
                     Constants.TRUE));
             addFinalLines(parsedTestSuiteLines);
             greaterThanComparison = false;
@@ -1014,18 +1034,20 @@ public class TestSuiteParser {
      * @return true when the field name represents any numeric data type
      */
     boolean fieldIsANumericDataType(String fieldNameForExpect) {
-        // We want to isolate the datastructure, so we only parse the fieldname and direct referenced structure. 
+        // We want to isolate the datastructure, so we only parse the fieldname and
+        // direct referenced structure.
         if (fieldNameForExpect != null && !fieldNameForExpect.isEmpty()) {
             String[] splitFieldNameForExpect = fieldNameForExpect.split(" ");
             fieldNameForExpect = splitFieldNameForExpect[0];
-            for (int i = 1; i < splitFieldNameForExpect.length; i+=2) {
+            for (int i = 1; i < splitFieldNameForExpect.length; i += 2) {
                 if (splitFieldNameForExpect[i].toUpperCase().equals("OF") || splitFieldNameForExpect[i].equals("IN")) {
                     String inOrOf = splitFieldNameForExpect[i];
-                    String dataStructureFieldName = splitFieldNameForExpect[i+1];
+                    String dataStructureFieldName = splitFieldNameForExpect[i + 1];
                     if (dataStructureFieldName.contains("("))
-                        fieldNameForExpect += " " + inOrOf + " " + dataStructureFieldName.substring(0, dataStructureFieldName.indexOf("("));
+                        fieldNameForExpect += " " + inOrOf + " "
+                                + dataStructureFieldName.substring(0, dataStructureFieldName.indexOf("("));
                     else
-                        fieldNameForExpect += " " + splitFieldNameForExpect[i] + " " + splitFieldNameForExpect[i+1];
+                        fieldNameForExpect += " " + splitFieldNameForExpect[i] + " " + splitFieldNameForExpect[i + 1];
                 }
             }
         }
@@ -1063,7 +1085,7 @@ public class TestSuiteParser {
     }
 
     private List<String> getLinesUntilKeywordHit(BufferedReader testSuiteReader, String endingKeyword,
-                                                 String currentKey, boolean skipCurrentToken) {
+            String currentKey, boolean skipCurrentToken) {
         List<String> lines = new ArrayList<>();
         // Find the remaining tokens on the current line
         if (skipCurrentToken) {
