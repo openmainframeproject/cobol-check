@@ -291,7 +291,6 @@ public class Config {
                 DEFAULT_APPLICATION_SOURCE_DIRECTORY);
         if (sourceFolderContext != null){
             pathString = PathHelper.endWithFileSeparator(sourceFolderContext) + pathString;
-            return StringHelper.adjustPathString(pathString);
         }
         return StringHelper.adjustPathString(pathString);
     }
@@ -301,7 +300,6 @@ public class Config {
                 DEFAULT_COPY_SOURCE_DIRECTORY);
         if (sourceFolderContext != null){
             pathString = PathHelper.endWithFileSeparator(sourceFolderContext) + pathString;
-            return StringHelper.adjustPathString(pathString);
         }
         return StringHelper.adjustPathString(pathString);
     }
