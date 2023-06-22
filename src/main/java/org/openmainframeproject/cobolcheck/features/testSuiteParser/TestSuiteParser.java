@@ -76,6 +76,8 @@ public class TestSuiteParser {
     private int testCaseNumber = 0;
     private boolean expectNumericCompare;
 
+    private boolean previousLineContainsArgument = false;
+
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE = "           PERFORM %sINITIALIZE";
     private static final String COBOL_DISPLAY_TESTSUITE = "           DISPLAY \"TESTSUITE:\"";
@@ -176,6 +178,7 @@ public class TestSuiteParser {
         numericFields = numericFieldsList;
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
         while (testSuiteToken != null) {
+            
             if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
@@ -184,6 +187,7 @@ public class TestSuiteParser {
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
             }
+            
 
             boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier
                     || (expectMockArguments && !expectUsing));
@@ -195,10 +199,33 @@ public class TestSuiteParser {
                 // to next token
                 expectMockArguments = false;
                 expectUsing = false;
+                // System.out.println("TESTING");
+                // System.out.println(keyword.keywordAction());
+                // System.out.println(testSuiteToken);
                 handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+                System.out.println(testSuiteToken);
                 continue;
             }
+
+            if (!verifyInProgress && expectMockArguments
+            && CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
+                // In this case we expected cobol verbs and stop counting arguments
+                // update the keyword as fieldname was assumed
+                keyword = Keywords.getKeywordFor(testSuiteToken, false);
+                expectMockArguments = false;
+                expectUsing = false;
+                // System.out.println("TESTING");
+                // System.out.println(testSuiteToken);
+                // System.out.println(keyword.keywordAction());
+                ignoreCobolStatementAndFieldNameKeyAction = true;
+                handleEndOfMockStatement(testSuiteReader, testSuiteToken, previousLineContainsArgument);
+                testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+                previousLineContainsArgument=false;
+                continue;
+            }
+
+           
 
             if (!testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile,
                     fileLineNumber, fileLineIndexNumber)) {
@@ -318,6 +345,8 @@ public class TestSuiteParser {
                         addTestCodeForAssertion(parsedTestSuiteLines, numericFields);
                         toBeInProgress = false;
                     }
+
+
                     if (expectMockIdentifier) {
                         expectMockIdentifier = false;
                         ignoreCobolStatementAndFieldNameKeyAction = true;
@@ -345,6 +374,7 @@ public class TestSuiteParser {
                         if (!expectUsing) {
                             currentLineContainsArgument = true;
                             ignoreCobolStatementAndFieldNameKeyAction = true;
+
                             if (verifyInProgress)
                                 currentVerify.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
                             else
@@ -354,13 +384,7 @@ public class TestSuiteParser {
                             if (testSuiteToken.endsWith(","))
                                 break;
                         }
-                        // Contains no arguments or all arguments has been added
-                        expectMockArguments = false;
-                        expectUsing = false;
-                        if (!verifyInProgress) {
-                            ignoreCobolStatementAndFieldNameKeyAction = true;
-                            handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument);
-                        }
+                        previousLineContainsArgument = currentLineContainsArgument;
                     }
 
                     if (verifyInProgress) {
@@ -374,6 +398,8 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ALPHANUMERIC_LITERAL_KEYWORD:
+
+
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
@@ -618,7 +644,7 @@ public class TestSuiteParser {
                         break;
                     }
                     if (CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
-                        if (cobolStatementInProgress) {
+                        if ( cobolStatementInProgress) {
                             addUserWrittenCobolStatement(parsedTestSuiteLines);
                             initializeCobolStatement();
                         }
@@ -830,6 +856,7 @@ public class TestSuiteParser {
             outPut = ("REFERENCE " + value.replace(",", ""));
         else
             outPut = (referenceType + " " + value.replace(",", ""));
+
         return outPut;
     }
 
