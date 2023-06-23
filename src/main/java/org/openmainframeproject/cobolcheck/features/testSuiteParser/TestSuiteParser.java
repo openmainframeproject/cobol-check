@@ -76,8 +76,6 @@ public class TestSuiteParser {
     private int testCaseNumber = 0;
     private boolean expectNumericCompare;
 
-    private boolean previousLineContainsArgument = false;
-
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE = "           PERFORM %sINITIALIZE";
     private static final String COBOL_DISPLAY_TESTSUITE = "           DISPLAY \"TESTSUITE:\"";
@@ -188,10 +186,16 @@ public class TestSuiteParser {
                 continue;
             }
             
+            
 
             boolean cobolTokenIsFieldName = (expectInProgress || expectQualifiedName || expectMockIdentifier
                     || (expectMockArguments && !expectUsing));
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);
+
+
+            System.out.println("TESTING");
+            System.out.println(keyword.keywordAction());
+            System.out.println(testSuiteToken);
 
             if (!verifyInProgress && expectUsing && expectMockArguments
                     && !keyword.value().equals(Constants.USING_TOKEN)) {
@@ -199,12 +203,8 @@ public class TestSuiteParser {
                 // to next token
                 expectMockArguments = false;
                 expectUsing = false;
-                // System.out.println("TESTING");
-                // System.out.println(keyword.keywordAction());
-                // System.out.println(testSuiteToken);
                 handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
-                System.out.println(testSuiteToken);
                 continue;
             }
 
@@ -212,16 +212,12 @@ public class TestSuiteParser {
             && CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
                 // NEW: In this case we expected cobol verbs and stop counting arguments
                 // update the keyword as fieldname was assumed
-                keyword = Keywords.getKeywordFor(testSuiteToken, false);
+                // keyword = Keywords.getKeywordFor(testSuiteToken, false);
+                System.out.println("Appeared");
                 expectMockArguments = false;
                 expectUsing = false;
-                // System.out.println("TESTING");
-                // System.out.println(testSuiteToken);
-                // System.out.println(keyword.keywordAction());
-                ignoreCobolStatementAndFieldNameKeyAction=true;
-                handleEndOfMockStatement(testSuiteReader, testSuiteToken, previousLineContainsArgument);
+                handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
-                previousLineContainsArgument=false;
                 continue;
             }
 
@@ -384,7 +380,10 @@ public class TestSuiteParser {
                             if (testSuiteToken.endsWith(","))
                                 break;
                         }
-                        previousLineContainsArgument = currentLineContainsArgument;
+                        expectUsing = false;
+                        if (!verifyInProgress) {
+                            ignoreCobolStatementAndFieldNameKeyAction = true;
+                        }
                     }
 
                     if (verifyInProgress) {
