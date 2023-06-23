@@ -203,12 +203,13 @@ public class TestSuiteParser {
                 continue;
             }
 
-            if (!verifyInProgress && expectMockArguments
+            if (expectMockArguments
             && CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
                 // NEW: In this case we expected cobol verbs and stop counting arguments
                 // update the keyword as fieldname was assumed
                 // keyword = Keywords.getKeywordFor(testSuiteToken, false);
                 expectMockArguments = false;
+                expectUsing = false;
                 handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
@@ -370,8 +371,7 @@ public class TestSuiteParser {
                                 currentMock.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
 
                             currentMockArgument = "";
-                            if (testSuiteToken.endsWith(","))
-                                break;
+                            
                         }
                         expectUsing = false;
                         if (!verifyInProgress) {
