@@ -192,11 +192,6 @@ public class TestSuiteParser {
                     || (expectMockArguments && !expectUsing));
             Keyword keyword = Keywords.getKeywordFor(testSuiteToken, cobolTokenIsFieldName);
 
-
-            System.out.println("TESTING");
-            System.out.println(keyword.keywordAction());
-            System.out.println(testSuiteToken);
-
             if (!verifyInProgress && expectUsing && expectMockArguments
                     && !keyword.value().equals(Constants.USING_TOKEN)) {
                 // In this case we expected mock arguments, but got none. We end the mock and go
@@ -213,9 +208,7 @@ public class TestSuiteParser {
                 // NEW: In this case we expected cobol verbs and stop counting arguments
                 // update the keyword as fieldname was assumed
                 // keyword = Keywords.getKeywordFor(testSuiteToken, false);
-                System.out.println("Appeared");
                 expectMockArguments = false;
-                expectUsing = false;
                 handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
