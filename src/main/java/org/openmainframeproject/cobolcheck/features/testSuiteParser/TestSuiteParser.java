@@ -373,10 +373,11 @@ public class TestSuiteParser {
                             currentMockArgument = "";
                             
                         }
-                        expectUsing = false;
-                        if (!verifyInProgress) {
+                        
+                        if (expectUsing && !verifyInProgress) {
                             ignoreCobolStatementAndFieldNameKeyAction = true;
                         }
+                        expectUsing = false;
                     }
 
                     if (verifyInProgress) {
