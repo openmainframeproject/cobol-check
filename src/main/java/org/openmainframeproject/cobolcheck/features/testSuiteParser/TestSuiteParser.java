@@ -375,8 +375,7 @@ public class TestSuiteParser {
                         }else{
                             expectUsing = false;
                             expectMockArguments = false;
-                            if (expectUsing && !verifyInProgress) {
-                                System.out.println("TRIGGERED");
+                            if (!verifyInProgress) {
                                 ignoreCobolStatementAndFieldNameKeyAction = true;
                                 handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument);
                             }
