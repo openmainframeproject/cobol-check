@@ -372,11 +372,15 @@ public class TestSuiteParser {
 
                             currentMockArgument = "";
                             
-                        }
-                        
-                        if (!currentLineContainsArgument && !verifyInProgress) {
-                            ignoreCobolStatementAndFieldNameKeyAction = true;
+                        }else{
                             expectUsing = false;
+                            expectMockArguments = false;
+                            if (expectUsing && !verifyInProgress) {
+                                System.out.println("TRIGGERED");
+                                ignoreCobolStatementAndFieldNameKeyAction = true;
+                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument);
+                            }
+
                         }
                         
                     }
