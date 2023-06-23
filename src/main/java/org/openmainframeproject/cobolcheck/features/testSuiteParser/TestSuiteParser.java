@@ -374,10 +374,11 @@ public class TestSuiteParser {
                             
                         }
                         
-                        if (expectUsing && !verifyInProgress) {
+                        if (!currentLineContainsArgument && !verifyInProgress) {
                             ignoreCobolStatementAndFieldNameKeyAction = true;
+                            expectUsing = false;
                         }
-                        expectUsing = false;
+                        
                     }
 
                     if (verifyInProgress) {
