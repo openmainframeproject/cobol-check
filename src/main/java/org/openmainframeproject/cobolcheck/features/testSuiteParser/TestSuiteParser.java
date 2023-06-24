@@ -203,15 +203,20 @@ public class TestSuiteParser {
                 continue;
             }
 
-            if (expectMockArguments
-            && CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
+            if (expectMockArguments && !expectUsing 
+            && (CobolVerbs.isCobolVerb(testSuiteToken)|| testSuiteToken.equals("END-MOCK"))) {
                 // NEW: In this case we expected cobol verbs and stop counting arguments
                 // update the keyword as fieldname was assumed
                 // keyword = Keywords.getKeywordFor(testSuiteToken, false);
                 expectMockArguments = false;
                 expectUsing = false;
-                handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
-                testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+                if (!verifyInProgress) {
+                    ignoreCobolStatementAndFieldNameKeyAction = true;
+                    handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
+                }
+                if(testSuiteToken.equals("END-MOCK") ){
+                    testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+                }
                 continue;
             }
 
