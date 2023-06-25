@@ -140,7 +140,7 @@ public class ArgumentHandlerTest {
                     optionSpec);
             argumentHandler.loadArgProgramPaths();
         });
-        assertEquals("ERR030: Command line missing program argument.",
+        assertEquals("ERR030: Command line missing program argument '-p programName' .",
         ex.getMessage());
     }
 
