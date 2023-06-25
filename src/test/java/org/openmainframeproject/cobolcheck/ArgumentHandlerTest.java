@@ -133,4 +133,15 @@ public class ArgumentHandlerTest {
         });
     }
 
+    @Test
+    public void it_throws_when_program_argument_is_not_present() {
+        Throwable ex = assertThrows(CommandLineArgumentException.class, () -> {
+            ArgumentHandler argumentHandler = new ArgumentHandler(new String[] { },
+                    optionSpec);
+            argumentHandler.loadArgProgramPaths();
+        });
+        assertEquals("ERR030: Command line missing program argument.",
+        ex.getMessage());
+    }
+
 }
