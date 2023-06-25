@@ -142,6 +142,10 @@ public class ArgumentHandler {
 
     public void loadArgProgramPaths(){
         String applicationSourceDirectory = Config.getApplicationSourceDirectoryPathString();
+        if(options.isEmpty()){
+            // return error when no program is passed
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR005"));
+        }
         for (OptionKey optionKey : options.keySet()) {
             if (optionKey.shortKey.equals(Constants.PROGRAMS_OPTION) || optionKey.longKey.equals(Constants.PROGRAMS_OPTION)) {
                 String programArgs = options.get(optionKey).argumentValue;
