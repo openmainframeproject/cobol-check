@@ -144,7 +144,7 @@ public class ArgumentHandler {
         String applicationSourceDirectory = Config.getApplicationSourceDirectoryPathString();
         if(options.isEmpty()){
             // return error when no program is passed
-            throw new PossibleInternalLogicErrorException(Messages.get("ERR005"));
+            throw new CommandLineArgumentException(Messages.get("ERR030"));
         }
         for (OptionKey optionKey : options.keySet()) {
             if (optionKey.shortKey.equals(Constants.PROGRAMS_OPTION) || optionKey.longKey.equals(Constants.PROGRAMS_OPTION)) {
