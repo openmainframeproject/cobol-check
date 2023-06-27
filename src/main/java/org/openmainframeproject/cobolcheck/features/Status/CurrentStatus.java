@@ -5,7 +5,7 @@ import org.openmainframeproject.cobolcheck.services.Constants;
 public class CurrentStatus {
 
     public CurrentStatus(){
-        exitStatus = Constants.STATUS_NORMAL;
+        exitStatus = Constants.STATUS_TEST_ERROR;
     }
 
     int exitStatus;

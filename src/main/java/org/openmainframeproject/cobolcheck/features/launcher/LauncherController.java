@@ -12,6 +12,7 @@ import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
 public class LauncherController {
     private Launcher launcher;
     private ProcessOutputWriter processOutputWriter;
+    private int returnCode;
 
     public LauncherController(){
         if (Config.getRunGeneratedTest()){
@@ -44,6 +45,11 @@ public class LauncherController {
         if (processOutputWriter.writeWasSuccesful){
             Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
         }
+        this.returnCode = exitCode;
         Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));
+    }
+
+    public int getReturnCode(){
+        return this.returnCode;
     }
 }

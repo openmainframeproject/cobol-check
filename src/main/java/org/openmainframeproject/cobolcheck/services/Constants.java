@@ -14,6 +14,7 @@ public final class Constants {
 
     // File read status values
     public static final int STATUS_NORMAL = 0;
+    public static final int STATUS_TEST_ERROR = 4;
     public static final int STATUS_HALT = 8;
 
     public static final int COMMENT_SPACE_OFFSET = 7;

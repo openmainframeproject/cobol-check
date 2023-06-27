@@ -48,6 +48,10 @@ public class Initializer {
         statusController.setTestFileNames(argumentController.getKeyValue(Constants.TESTS_OPTION));
     }
 
+    public void setReturnCode(int returnCode){
+        if(returnCode==0) statusController.setExitStatusNormal();
+    }
+
     public String[] getSourceProgramNames(){
         return statusController.getSourceProgramNames();
     }

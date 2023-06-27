@@ -19,4 +19,8 @@ public class CobolTestRunner {
         programName = path.getFileName().toString();
         controller.runTestProgram(programName, isLastRun);
     }
+    
+    public int getReturnCode(){
+        return controller.getReturnCode();
+    }
 }
