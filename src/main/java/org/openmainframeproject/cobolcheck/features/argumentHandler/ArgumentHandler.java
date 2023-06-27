@@ -142,10 +142,7 @@ public class ArgumentHandler {
 
     public void loadArgProgramPaths(){
         String applicationSourceDirectory = Config.getApplicationSourceDirectoryPathString();
-        if(options.isEmpty()){
-            // return error when no program is passed
-            throw new CommandLineArgumentException(Messages.get("ERR030"));
-        }
+        boolean isProgramSpecified = false;
         for (OptionKey optionKey : options.keySet()) {
             if (optionKey.shortKey.equals(Constants.PROGRAMS_OPTION) || optionKey.longKey.equals(Constants.PROGRAMS_OPTION)) {
                 String programArgs = options.get(optionKey).argumentValue;
@@ -156,7 +153,12 @@ public class ArgumentHandler {
                     newValue += "|";
                 }
                 options.get(optionKey).argumentValue = newValue.substring(0, newValue.length()-1);
+                if(!programArgs.equals("")) isProgramSpecified = true;
             }
+        }
+        if(!isProgramSpecified){
+            // return error when no program is passed
+            throw new CommandLineArgumentException(Messages.get("ERR030"));
         }
     }
 
