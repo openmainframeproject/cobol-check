@@ -20,9 +20,10 @@ class Main {
 
             generator.prepareAndRunMerge(programName, initializer.getTestFileNames());
 
-            if (initializer.launchTestProgram())
+            if (initializer.launchTestProgram()){
                 testRunner.run(programName, initializer.isLastSourceProgram(programName));
                 initializer.setReturnCode(testRunner.getReturnCode());
+            }
 
         }
 
