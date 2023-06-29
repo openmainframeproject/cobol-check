@@ -260,7 +260,6 @@ public class MockingTest {
         String str7 = "       END-MOCK";
 
         List<String> expected = new ArrayList<>();
-        expected.add("           ");
         expected.add("           MOVE \"something\" TO this");
         expected.add("           MOVE \"something else\" TO other");
 
