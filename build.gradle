@@ -240,6 +240,12 @@ task osInfo {
     }
 }
 
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
 class BuildHelper{
     int compareFiles(String file1, String file2, boolean trimLines){
         BufferedReader reader1
