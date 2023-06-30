@@ -794,7 +794,6 @@ public class TestSuiteParser {
      *
      * @param parsedTestSuiteLines The parsed lines, that the generated lines are
      *                             appended to
-     * @return - the next token from the testSuiteReader.
      * @throws VerifyReferencesNonexistentMockException if referenced mock, does not
      *                                                  exist
      */
