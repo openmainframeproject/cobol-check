@@ -296,7 +296,7 @@ public class TestSuiteErrorLogTest {
     }
 
     @Test
-    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments() {
+    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments_1() {
         testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
         testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
         testSuite.append("       MOCK CALL 'value' USING BY CONTENT VALUE-1, VALUE-2 ONCE END-MOCK"+ Constants.NEWLINE);
@@ -312,6 +312,28 @@ public class TestSuiteErrorLogTest {
         });
 
         String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments_2() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'value' USING BY CONTENT VALUE-1, VALUE-2 VERIFY END-MOCK"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:2:13:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 2, index 13:" + Constants.NEWLINE;
+        expectedResult += "Cannot have Cobol Check keyword <VERIFY> inside a MOCK block" + Constants.NEWLINE+ Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        System.out.println("actualResult: ");
+        System.out.println(actualResult);
         assertEquals(expectedResult, actualResult);
     }
 
@@ -370,6 +392,30 @@ public class TestSuiteErrorLogTest {
 
     @Test
     public void it_catches_unexpected_keyword_after_verify() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'PROG3' END-MOCK"+ Constants.NEWLINE);
+        testSuite.append("       VERIFY CALL 'PROG3' HAPPENED ONCE"+ Constants.NEWLINE);
+        testSuite.append("       BEFORE EACH"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:5:8:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 5, index  8:" + Constants.NEWLINE;
+        expectedResult += "Following <ONCE> classified as <ONCE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification: [cobol-token, TESTSUITE, TESTCASE, MOCK, VERIFY, EXPECT]" + Constants.NEWLINE;
+        expectedResult += "Got <BEFORE EACH> classified as <BEFORE EACH>" + Constants.NEWLINE + Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_after_verify_() {
         testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
         testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
         testSuite.append("       MOCK CALL 'PROG3' END-MOCK"+ Constants.NEWLINE);
