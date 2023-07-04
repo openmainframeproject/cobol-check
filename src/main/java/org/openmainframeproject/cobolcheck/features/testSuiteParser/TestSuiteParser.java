@@ -205,9 +205,8 @@ public class TestSuiteParser {
 
             if (expectMockArguments && !expectUsing 
             && (CobolVerbs.isCobolVerb(testSuiteToken)|| testSuiteToken.equals("END-MOCK"))) {
-                // NEW: In this case we expected cobol verbs and stop counting arguments
+                // In this case we expected cobol verbs and stop mock arguments
                 // update the keyword as fieldname was assumed
-                // keyword = Keywords.getKeywordFor(testSuiteToken, false);
                 expectMockArguments = false;
                 expectUsing = false;
                 if (!verifyInProgress) {
