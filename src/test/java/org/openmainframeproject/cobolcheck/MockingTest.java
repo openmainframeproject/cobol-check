@@ -296,6 +296,46 @@ public class MockingTest {
     }
 
     @Test
+    public void call_mock_gets_correct_arguments_with_commas() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING BY CONTENT VALUE-1 VALUE-2 VALUE-3";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("CONTENT VALUE-1");
+        expected.add("REFERENCE VALUE-2");
+        expected.add("REFERENCE VALUE-3");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals(expected, mockRepository.getMocks().get(0).getArguments());
+    }
+
+    @Test
+    public void call_mock_gets_correct_arguments_with_one_comma() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING BY CONTENT VALUE-1 VALUE-2, VALUE-3";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("CONTENT VALUE-1");
+        expected.add("REFERENCE VALUE-2");
+        expected.add("REFERENCE VALUE-3");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields);
+        assertEquals(expected, mockRepository.getMocks().get(0).getArguments());
+    }
+
+    @Test
     public void mock_gets_global_scope() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       MOCK SECTION 000-START";
