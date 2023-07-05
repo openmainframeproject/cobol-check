@@ -854,5 +854,25 @@ public class InterpreterControllerTest {
         assertTrue(testsRan);
     }
 
+    @Test
+    public void it_handles_END_EXEC_without_terminating_period() throws IOException {
+        String str1  = "       DATA DIVISION.";
+        String str2  = "       WORKING-STORAGE SECTION.";
+        String str3  = "       01  FILLER.";
+        String str4  = "           05  WS-FIELD        PIC 9(04).";
+        String str5 = "           EXEC SQL";
+        String str6 = "               SQL STUFF";
+        String str7 = "           END-exec";
+        String str8 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(interpreterController.didLineJustEnter(Constants.PROCEDURE_DIVISION));
+
+    }
 
 }
