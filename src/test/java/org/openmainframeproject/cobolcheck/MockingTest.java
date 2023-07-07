@@ -296,7 +296,7 @@ public class MockingTest {
     }
 
     @Test
-    public void call_mock_gets_correct_arguments_with_commas() throws IOException {
+    public void call_mock_gets_correct_arguments_without_commas() throws IOException {
         String str1 = "       TESTSUITE \"Name of test suite\"";
         String str2 = "       TESTCASE \"Name of test case\"";
         String str3 = "       MOCK CALL 'prog1' USING BY CONTENT VALUE-1 VALUE-2 VALUE-3";
