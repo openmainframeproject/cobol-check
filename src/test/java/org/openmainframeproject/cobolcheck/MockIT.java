@@ -206,6 +206,58 @@ public class MockIT {
         assertEquals(getTrimmedList(expected4), actual);
     }
 
+    @Test
+    public void it_inserts_call_mocks_without_commas_correctly() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       000-START SECTION.";
+        String s4 = "           MOVE \"Value1\" to VALUE-1";
+        String s5 = "           EXIT SECTION.";
+        String s6 = "       100-WELCOME SECTION.";
+        String s7 = "           CALL 'prog1' USING";
+        String s8 = "               BY CONTENT VALUE-1, VALUE-2.";
+        String s9 = "           MOVE \"Hello\" to VALUE-1.";
+        String s10 = "       200-GOODBYE SECTION.";
+        String s11 = "          MOVE \"Bye\" to VALUE-1";
+        String s12 = "          CALL bogus USING VALUE-1";
+        String s13 = "";
+        String s14 = "          CALL 'prog2' USING VALUE-1";
+        String s15 = "          CALL 'prog2' USING VALUE-1.";
+        String s16 = "          .";
+        String s17 = "      * Ending with comment";
+
+        String t1 = "           TestSuite \"Mocking tests\"";
+        String t2 = "           MOCK SECTION 100-WELCOME";
+        String t3 = "               MOVE \"mock\" TO VALUE-1";
+        String t4 = "           END-MOCK";
+        String t5 = "           MOCK CALL 'prog2' USING VALUE-1";
+        String t6 = "               MOVE \"prog2\" TO VALUE-1";
+        String t7 = "           END-MOCK";
+        String t8 = "           TestCase \"Local mock overwrites global mock\"";
+        String t9 = "           MOCK SECTION 200-GOODBYE";
+        String t10 = "                MOVE \"Goodbye\" TO VALUE-1";
+        String t11 = "           END-MOCK";
+        String t12 = "           PERFORM 200-GOODBYE";
+        String t13 = "           Expect VALUE-1 to be \"Goodbye\"";
+        String t14 = "           TestCase \"Simply a test\"";
+        String t15 = "           MOCK SECTION 000-START";
+        String t16 = "           END-MOCK";
+        String t17 = "           MOCK CALL 'prog1' USING BY CONTENT VALUE-1 VALUE-2";
+        String t18 = "           END-MOCK";
+        String t19 = "           MOCK SECTION 200-GOODBYE";
+        String t20 = "           END-MOCK";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10,
+                s11, s12, s13, s14, s15, s16, s17, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                t12, t13, t14, t15, t16, t17, t18, t19, t20, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(getTrimmedList(expected4), actual);
+    }
+
     private List<String> getTrimmedList(String text){
         String[] lines = text.split(Constants.NEWLINE);
         List<String> result = new ArrayList<>();

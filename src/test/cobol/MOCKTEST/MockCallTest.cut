@@ -67,6 +67,46 @@
                 BY VALUE VALUE-2,
                 VALUE-3
                 HAPPENED 2 TIMES
+          
+          TestCase "Call mock with content reference for arguments with one comma work"
+           MOCK CALL 'PROG3' USING
+             BY CONTENT VALUE-1,
+             BY VALUE VALUE-2
+             VALUE-3
+                MOVE "content" TO VALUE-1
+                MOVE "value" TO VALUE-2
+                MOVE "reference" TO VALUE-3
+           END-MOCK
+           PERFORM 800-MAKE-CALL
+           EXPECT VALUE-1 TO BE "content"
+           EXPECT VALUE-2 TO BE "value"
+           EXPECT VALUE-3 TO BE "reference"
+           VERIFY CALL 'PROG3' USING
+                BY CONTENT VALUE-1,
+                BY VALUE VALUE-2,
+                VALUE-3
+                HAPPENED 2 TIMES
+          
+
+          TestCase "Call mock with content reference for arguments without comma work"
+           MOCK CALL 'PROG3' USING
+             BY CONTENT VALUE-1
+             BY VALUE VALUE-2
+             VALUE-3
+                MOVE "content" TO VALUE-1
+                MOVE "value" TO VALUE-2
+                MOVE "reference" TO VALUE-3
+           END-MOCK
+           PERFORM 800-MAKE-CALL
+           EXPECT VALUE-1 TO BE "content"
+           EXPECT VALUE-2 TO BE "value"
+           EXPECT VALUE-3 TO BE "reference"
+           VERIFY CALL 'PROG3' USING
+                BY CONTENT VALUE-1,
+                BY VALUE VALUE-2,
+                VALUE-3
+                HAPPENED 2 TIMES
+
 
            TestCase "Paragraph mock is called and call mock is ignored"
            MOCK CALL 'PROG3' USING
