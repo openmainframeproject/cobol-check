@@ -1,0 +1,9 @@
+           TestSuite "Test Return Code with GOBACK in MOCK "
+     
+           TestCase "Return code should be 4 (Should fail) "
+           MOCK CALL 'PROG1'
+                MOVE "Exit with return code 4" TO VALUE-1
+                GOBACK.
+           END-MOCK
+           PERFORM 000-MAKE-CALL
+           EXPECT VALUE-1 TO BE "Exit with return code 4"
