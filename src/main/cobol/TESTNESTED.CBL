@@ -1,0 +1,22 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.  TESTNESTED.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+       DATA DIVISION.
+       
+       WORKING-STORAGE SECTION.
+       01  FILLER.
+           05  ONE-DIGIT           PIC X(80).
+
+       PROCEDURE DIVISION.
+       MOCK-SECTION-WITH-ERROR SECTION.
+        EVALUATE TRUE
+            WHEN ONE-DIGIT = 1
+                MOVE 2 TO ONE-DIGIT
+            WHEN OTHER
+                MOVE 5 TO ONE-DIGIT
+        END-EVALUATE.
+        MOVE 9 TO ONE-DIGIT
+        EXIT SECTION
+        .

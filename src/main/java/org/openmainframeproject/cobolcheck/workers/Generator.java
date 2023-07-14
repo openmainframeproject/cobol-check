@@ -1,18 +1,22 @@
 package org.openmainframeproject.cobolcheck.workers;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.List;
+
 import org.openmainframeproject.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
+import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
-import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.RunInfo;
 import org.openmainframeproject.cobolcheck.services.log.Log;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * This class merges a Test Suite (a text file) with the source of the Cobol program to be tested,
@@ -29,6 +33,9 @@ public class Generator {
     private boolean workingStorageHasEnded;
 
     List<String> matchingTestDirectories;
+    
+    private String currentIdentifier;
+    private  String currentMockType;
 
     public Generator() { }
 
@@ -40,7 +47,9 @@ public class Generator {
         this.interpreter = interpreter;
         this.writerController = writerController;
         this.testSuiteParserController = testSuiteParserController;
+        this.currentMockType=null;
         mergeTestSuite();
+        
     }
 
 
@@ -88,12 +97,15 @@ public class Generator {
     private void mergeTestSuite() {
         String sourceLine;
         try {
-            while ((sourceLine = interpreter.interpretNextLine()) != null) {
+        while ((sourceLine = interpreter.interpretNextLine()) != null) {
                 processingBeforeEchoingSourceLineToOutput();
+                if(interpreter.isInsideSectionOrParagraphMockBody()){
+                    interpreter.addSectionLine();
+                }
                 sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
-
-                writeToSource(sourceLine);
-
+                if(!interpreter.isInsideSectionOrParagraphMockBody()){
+                    writeToSource(sourceLine);
+                }
                 processingAfterEchoingSourceLineToOutput();
             }
             testSuiteParserController.logUnusedMocks();
@@ -118,7 +130,6 @@ public class Generator {
         if (!workingStorageHasEnded && interpreter.isCurrentLineEndingWorkingStorageSection()) {
             if (!testSuiteParserController.hasWorkingStorageTestCodeBeenInserted()) {
                 writerController.writeLine(testSuiteParserController.getWorkingStorageHeader());
-
                 writerController.writeLines(testSuiteParserController.getWorkingStorageTestCode(
                         interpreter.getFileSectionStatements()));
             }
@@ -137,8 +148,10 @@ public class Generator {
         if (interpreter.isInsideSectionOrParagraphMockBody()){
             if (interpreter.isCurrentLineEndingSectionOrParagraph()){
                 if (interpreter.canWriteEndEvaluateBeforeCurrentLine()){
+                    writeWhenOtherSection(sourceLine);
+                    interpreter.removeSectionLines();
                     interpreter.setInsideSectionOrParagraphMockBody(false);
-                    writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
+                    return "";
                 }
                 else
                     return sourceLine.replace(".", "");
@@ -197,9 +210,14 @@ public class Generator {
             String type = interpreter.getPossibleMockType();
             List<String> arguments = interpreter.getPossibleMockArgs();
             if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
-                writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
-                if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
+                if(interpreter.isInsideSectionOrParagraphMockBody()){
+                    interpreter.addSectionLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                }else writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN)){
+                    this.currentIdentifier = identifier;
+                    this.currentMockType=interpreter.getPossibleMockType();
                     interpreter.setInsideSectionOrParagraphMockBody(true);
+                }
             }
         }
     }
@@ -210,4 +228,13 @@ public class Generator {
         writerController.closeWriter(programName);
     }
 
+    private void writeWhenOtherSection(String sourceLine)  throws IOException{
+        writerController.writeLine(String.format("               PERFORM %s-WHEN-OTHER", currentIdentifier));
+        writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
+        writerController.writeLine(sourceLine);
+        writerController.writeLine("");;
+        if(currentMockType.equals(Constants.SECTION_TOKEN)) writerController.writeLine(String.format("       %s-WHEN-OTHER SECTION.", currentIdentifier));
+        else writerController.writeLine(String.format("       %s-WHEN-OTHER.", currentIdentifier));
+        writerController.writeLines(interpreter.getSectionLines());
+    }
 }

@@ -21,6 +21,8 @@ public class CobolReader {
     private List<CobolLine> nextLines;
     private List<CobolLine> currentStatement;
     private int lineNumber;
+    private boolean isSection = false;
+    private List<String>  sectionLines;
 
     private String lineJustEneterd = null;
 
@@ -30,6 +32,7 @@ public class CobolReader {
         tokenExtractor = new StringTokenizerExtractor();
         nextLines = new ArrayList<>();
         currentStatement = new ArrayList<>();
+        sectionLines  = new ArrayList<>();
     }
 
     State getState() {return state; }
@@ -282,6 +285,26 @@ public class CobolReader {
      */
     boolean isFlagSet(String partOfProgram){
         return state.getFlags().get(partOfProgram).isSet();
+    }
+
+    void setIsSection(boolean value){
+        this.isSection=value;
+    }
+
+    boolean getIsSection(){
+        return this.isSection;
+    }
+
+    void addSectionLines(String line){
+        sectionLines.add(line);
+    }
+
+    List<String> getSectionLines(){
+        return sectionLines;
+    }
+
+    void removeSectionLines(){ 
+        sectionLines.clear();
     }
 
 
