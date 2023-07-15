@@ -295,7 +295,7 @@ public class CobolReader {
         return this.isSection;
     }
 
-    void addSectionLines(String line){
+    void addWhenOtherSectionLines(String line){
         sectionLines.add(line);
     }
 

@@ -515,14 +515,18 @@ public class InterpreterController {
         reader.removeSectionLines();
     }
 
-    public void addSectionLine(){
-        if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) reader.addSectionLines(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
-        else reader.addSectionLines(reader.getCurrentLine().getUnNumberedString());
+    public void addWhenOtherSectionLine(){
+        if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) reader.addWhenOtherSectionLines(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
+        else reader.addWhenOtherSectionLines(reader.getCurrentLine().getUnNumberedString());
     }
 
-    public void addSectionLines(List<String> lines){
+    public void addWhenOtherSectionLine(String line){
+        reader.addWhenOtherSectionLines(line);
+    }
+
+    public void addWhenOtherSectionLines(List<String> lines){
         for (String line : lines){
-            reader.addSectionLines(line);
+            reader.addWhenOtherSectionLines(line);
         }
     }
 

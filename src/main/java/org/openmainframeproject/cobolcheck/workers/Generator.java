@@ -100,7 +100,7 @@ public class Generator {
         while ((sourceLine = interpreter.interpretNextLine()) != null) {
                 processingBeforeEchoingSourceLineToOutput();
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
-                    interpreter.addSectionLine();
+                    interpreter.addWhenOtherSectionLine();
                 }
                 sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
                 if(!interpreter.isInsideSectionOrParagraphMockBody()){
@@ -211,7 +211,10 @@ public class Generator {
             List<String> arguments = interpreter.getPossibleMockArgs();
             if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
-                    interpreter.addSectionLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                    interpreter.addWhenOtherSectionLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                    if (type.equals(Constants.CALL_TOKEN)){
+                        interpreter.addWhenOtherSectionLine("            CONTINUE");
+                }
                 }else writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
                 if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN)){
                     this.currentIdentifier = identifier;

@@ -205,6 +205,7 @@ public class MockIT {
 
         assertEquals(getTrimmedList(expected4), actual);
     }
+<<<<<<< HEAD
 
     @Test
     public void it_inserts_call_mocks_without_commas_correctly() throws IOException {
@@ -258,6 +259,9 @@ public class MockIT {
         assertEquals(getTrimmedList(expected4), actual);
     }
 
+=======
+    
+>>>>>>> modify tests for when other section
     private List<String> getTrimmedList(String text){
         String[] lines = text.split(Constants.NEWLINE);
         List<String> result = new ArrayList<>();
@@ -353,10 +357,15 @@ public class MockIT {
                     "                   ALSO ANY                                                     " + Constants.NEWLINE +
                     "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
                     "           WHEN OTHER                                                           " + Constants.NEWLINE +
+                    "               PERFORM 000-START-WHEN-OTHER                                            " + Constants.NEWLINE +
+                    "            END-EVALUATE                                                         " + Constants.NEWLINE +
+                    "           .                                                                   " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       000-START-WHEN-OTHER SECTION.                                             " + Constants.NEWLINE +
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
-                    "            END-EVALUATE                                                        " + Constants.NEWLINE +
-                    "           .                                                                   "  + Constants.NEWLINE;
+                    "           .                                                                   " + Constants.NEWLINE+
+                    "                                                                                ";
 
     private String expected2 =
             "       WORKING-STORAGE SECTION.                                                 " +      Constants.NEWLINE  +
@@ -491,41 +500,56 @@ public class MockIT {
             "       000-START SECTION.                                                       " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Local mock overwrites global mock\"                     " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                           " + Constants.NEWLINE +
+            "                   ALSO \"Local mock overwrites global mock\"                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-1-1-MOCK                                          " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
-            "                    PERFORM UT-1-2-1-MOCK                                          " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO ANY                                                     " + Constants.NEWLINE +
-            "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
-            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                                           " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                                         " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-1-MOCK                                                           " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                                         " + Constants.NEWLINE +
+            "                   ALSO ANY                                                        " + Constants.NEWLINE +
+            "                    PERFORM UT-1-0-1-MOCK                                                         " + Constants.NEWLINE +
+            "           WHEN OTHER                                                         " + Constants.NEWLINE +
+            "               PERFORM 000-START-WHEN-OTHER                                            " + Constants.NEWLINE +
+            "            END-EVALUATE                                                         " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE +
+            "                                                                                 " + Constants.NEWLINE +
+            "       000-START-WHEN-OTHER SECTION.                                             " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
-            "           EXIT SECTION                                                         " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +
+            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
-            "                                                                                " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-2-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
-            "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "               PERFORM 100-WELCOME-WHEN-OTHER                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "       100-WELCOME-WHEN-OTHER SECTION.                                                          " + Constants.NEWLINE +
+            "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
-            "       200-GOODBYE SECTION                   .                                  " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "       200-GOODBYE SECTION                   .                                                    " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
-            "           MOVE \"Bye\" to VALUE-1                                                " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "          .     " + Constants.NEWLINE;
+            "               PERFORM 200-GOODBYE-WHEN-OTHER                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "          .                                                          " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "       200-GOODBYE-WHEN-OTHER SECTION.                                                           " + Constants.NEWLINE +
+            "           MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
+            "          .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE;
 
     private String expected3 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
@@ -730,14 +754,19 @@ public class MockIT {
             "       000-START SECTION.                                                       " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                           " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "               PERFORM 000-START-WHEN-OTHER                                            " + Constants.NEWLINE +
+            "            END-EVALUATE                                                         " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE +
+            "                                                                                 " + Constants.NEWLINE +
+            "       000-START-WHEN-OTHER SECTION.                                             " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
-            "           EXIT SECTION                                                        " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +
+            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -745,6 +774,11 @@ public class MockIT {
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "               PERFORM 100-WELCOME-WHEN-OTHER                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "       100-WELCOME-WHEN-OTHER SECTION.                                                          " + Constants.NEWLINE +
             "      *    CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2.                      " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -752,10 +786,10 @@ public class MockIT {
             "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
-            "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "            CONTINUE                                                        " + Constants.NEWLINE +
+            "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
             "       200-GOODBYE SECTION.                                                     " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -766,9 +800,13 @@ public class MockIT {
             "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "               PERFORM 200-GOODBYE-WHEN-OTHER                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "          .                                                          " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "       200-GOODBYE-WHEN-OTHER SECTION.                                                           " + Constants.NEWLINE +
             "          MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "      *   CALL bogus USING VALUE-1                                              " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1                                            " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
@@ -777,7 +815,7 @@ public class MockIT {
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
+            "            CONTINUE                                                        " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1.                                           " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -785,9 +823,9 @@ public class MockIT {
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "            CONTINUE                                                        " + Constants.NEWLINE +
             "          .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
             "      * Ending with comment                                                    ";
 
 }
