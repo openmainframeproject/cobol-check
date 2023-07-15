@@ -10,7 +10,7 @@
            05  ONE-DIGIT           PIC X(80).
 
        PROCEDURE DIVISION.
-       MOCK-SECTION-WITH-ERROR SECTION.
+       MOCK-SECTION-WITH-ERROR SECTION         .
         EVALUATE TRUE
             WHEN ONE-DIGIT = 1
                 MOVE 2 TO ONE-DIGIT

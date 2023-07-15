@@ -26,7 +26,6 @@ public class InterpreterController {
     private List<String> possibleMockArgs;
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
-    private List<String> sectionContent;
     private final String stubTag;
 
     public InterpreterController(BufferedReader sourceReader) {
@@ -39,7 +38,6 @@ public class InterpreterController {
         numericFields = new NumericFields();
         tokenExtractor = new StringTokenizerExtractor();
         currentDataStructure = new TreeMap<>();
-        sectionContent = new ArrayList <> ();
         stubTag = Config.getStubTag();
     }
 
