@@ -104,7 +104,7 @@
 					"comment": "Description keywords in unit tests"
 				},
 				{
-					"begin": "(?i:mock|after\\ each|before\\ each|before\\-each)",
+					"begin": "(?i:mock|after\\ each|after\\-each|before\\ each|before\\-each)",
 					"name": "constant.character.escape",
 					"patterns": [
 						{
