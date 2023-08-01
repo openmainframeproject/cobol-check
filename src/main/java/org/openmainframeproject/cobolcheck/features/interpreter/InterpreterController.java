@@ -27,6 +27,7 @@ public class InterpreterController {
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
     private final String stubTag;
+    private MockedSection mockedSection;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -39,6 +40,7 @@ public class InterpreterController {
         tokenExtractor = new StringTokenizerExtractor();
         currentDataStructure = new TreeMap<>();
         stubTag = Config.getStubTag();
+        mockedSection = new MockedSection();
     }
 
     //Getters for lists of specific source lines
@@ -506,25 +508,26 @@ public class InterpreterController {
     }
 
     public List<String> getSectionLines(){
-        return reader.getSectionLines();
+        return mockedSection.getSectionLines();
     }
 
     public void removeSectionLines(){
-        reader.removeSectionLines();
+        mockedSection.removeSectionLines();
     }
 
-    public void addWhenOtherSectionLine(){
-        if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) reader.addWhenOtherSectionLines(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
-        else reader.addWhenOtherSectionLines(reader.getCurrentLine().getUnNumberedString());
+    public void addMockedSectionLine(){
+        if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) 
+            mockedSection.addSectionLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
+        else mockedSection.addSectionLine(reader.getCurrentLine().getUnNumberedString());
     }
 
-    public void addWhenOtherSectionLine(String line){
-        reader.addWhenOtherSectionLines(line);
+    public void addMockedSectionLine(String line){
+        mockedSection.addSectionLine(line);
     }
 
-    public void addWhenOtherSectionLines(List<String> lines){
+    public void addMockedSectionLines(List<String> lines){
         for (String line : lines){
-            reader.addWhenOtherSectionLines(line);
+            mockedSection.addSectionLine(line);
         }
     }
 

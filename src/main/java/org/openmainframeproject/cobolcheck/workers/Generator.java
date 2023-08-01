@@ -99,13 +99,7 @@ public class Generator {
         try {
         while ((sourceLine = interpreter.interpretNextLine()) != null) {
                 processingBeforeEchoingSourceLineToOutput();
-                if(interpreter.isInsideSectionOrParagraphMockBody()){
-                    interpreter.addWhenOtherSectionLine();
-                }
-                sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
-                if(!interpreter.isInsideSectionOrParagraphMockBody()){
-                    writeToSource(sourceLine);
-                }
+                echoingSourceLineToOutput(sourceLine);
                 processingAfterEchoingSourceLineToOutput();
             }
             testSuiteParserController.logUnusedMocks();
@@ -148,7 +142,7 @@ public class Generator {
         if (interpreter.isInsideSectionOrParagraphMockBody()){
             if (interpreter.isCurrentLineEndingSectionOrParagraph()){
                 if (interpreter.canWriteEndEvaluateBeforeCurrentLine()){
-                    writeWhenOtherSection(sourceLine);
+                    writeWhenOtherMockedSection(sourceLine);
                     interpreter.removeSectionLines();
                     interpreter.setInsideSectionOrParagraphMockBody(false);
                     return "";
@@ -211,9 +205,9 @@ public class Generator {
             List<String> arguments = interpreter.getPossibleMockArgs();
             if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
-                    interpreter.addWhenOtherSectionLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                    interpreter.addMockedSectionLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
                     if (type.equals(Constants.CALL_TOKEN)){
-                        interpreter.addWhenOtherSectionLine("            CONTINUE");
+                        interpreter.addMockedSectionLine("            CONTINUE");
                 }
                 }else writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
                 if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN)){
@@ -231,13 +225,31 @@ public class Generator {
         writerController.closeWriter(programName);
     }
 
-    private void writeWhenOtherSection(String sourceLine)  throws IOException{
+    private void writeWhenOtherMockedSection(String sourceLine)  throws IOException{
         writerController.writeLine(String.format("               PERFORM %s-WHEN-OTHER", currentIdentifier));
         writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
         writerController.writeLine(sourceLine);
         writerController.writeLine("");;
-        if(currentMockType.equals(Constants.SECTION_TOKEN)) writerController.writeLine(String.format("       %s-WHEN-OTHER SECTION.", currentIdentifier));
+        if(currentMockType.equals(Constants.SECTION_TOKEN)) 
+            writerController.writeLine(String.format("       %s-WHEN-OTHER SECTION.", currentIdentifier));
         else writerController.writeLine(String.format("       %s-WHEN-OTHER.", currentIdentifier));
         writerController.writeLines(interpreter.getSectionLines());
+    }
+
+    private void echoingSourceLineToOutput(String sourceLine){
+        try{
+            if(interpreter.isInsideSectionOrParagraphMockBody()){
+                interpreter.addMockedSectionLine();
+            }
+            sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
+            if(!interpreter.isInsideSectionOrParagraphMockBody()){
+                writeToSource(sourceLine);
+            }
+        } catch (IOException ioEx) {
+            throw new CobolSourceCouldNotBeReadException(ioEx);
+        }
+        catch (Exception ex) {
+            throw new PossibleInternalLogicErrorException(ex);
+        }
     }
 }
