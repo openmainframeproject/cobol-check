@@ -188,13 +188,23 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let text = textDocument.getText();
 	let m: RegExpExecArray | null;
 
-	// Find unclosed delimiters of each type. 
-	//TODO: Make regex exclude keywords inside quotes.
 	//TODO: Make regex' more efficient. Somewhat slow on large files.
-	const delimiters = 
-	[[/(?<!^[0-9]{6}\* *)(?=([^']*'[^']*')*[^']*$)(?=([^"]*"[^"]*")*[^"]*$)BEFORE(-| )EACH/, /(?<!^[0-9]{6}\* *)(?=([^']*'[^']*')*[^']*$)(?=([^"]*"[^"]*")*[^"]*$)END-BEFORE/],
-	[/(?<!^[0-9]{6}\* *)(?=([^']*'[^']*')*[^']*$)(?=([^"]*"[^"]*")*[^"]*$)(?<!END-)MOCK/, /(?<!^[0-9]{6}\* *)(?=([^']*'[^']*')*[^']*$)(?=([^"]*"[^"]*")*[^"]*$)END-MOCK/],
-	[/(?<!^[0-9]{6}\* *)(?=([^']*'[^']*')*[^']*$)(?=([^"]*"[^"]*")*[^"]*$)AFTER(-| )EACH/, /(?<!^[0-9]{6}\* *)(?=([^']*'[^']*')*[^']*$)(?=([^"]*"[^"]*")*[^"]*$)END-AFTER/]];
+	type RegexPair = [RegExp, RegExp];
+
+	const sixDigitsFollowedByAsterisk = "(?<!^[0-9]{6}\\* *)";
+	const notInSingleQuotes = "(?=([^']*'[^']*')*[^']*$)";
+	const notInDoubleQuotes = "(?=([^\"']*\"[^\"']*')*[^\"']*$)";
+
+	const createRegexPair = (start: string, end: string): RegexPair => [
+		new RegExp(`${sixDigitsFollowedByAsterisk}${notInSingleQuotes}${notInDoubleQuotes}${start}`),
+		new RegExp(`${sixDigitsFollowedByAsterisk}${notInSingleQuotes}${notInDoubleQuotes}${end}`)
+	];
+
+	const delimiters: RegexPair[] = [
+		createRegexPair("BEFORE(-| )EACH", "END-BEFORE"),
+		createRegexPair("(?<!END-)MOCK", "END-MOCK"),
+		createRegexPair("AFTER(-| )EACH", "END-AFTER")
+	];
 	
 	const delimitererrors = [];
 	let error;
