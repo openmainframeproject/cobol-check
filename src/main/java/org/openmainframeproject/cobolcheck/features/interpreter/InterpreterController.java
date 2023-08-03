@@ -27,7 +27,7 @@ public class InterpreterController {
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
     private final String stubTag;
-    private MockedSection mockedSection;
+    private MockedSectionOrPargraph mockedSection;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -40,7 +40,7 @@ public class InterpreterController {
         tokenExtractor = new StringTokenizerExtractor();
         currentDataStructure = new TreeMap<>();
         stubTag = Config.getStubTag();
-        mockedSection = new MockedSection();
+        mockedSection = new MockedSectionOrPargraph();
     }
 
     //Getters for lists of specific source lines
