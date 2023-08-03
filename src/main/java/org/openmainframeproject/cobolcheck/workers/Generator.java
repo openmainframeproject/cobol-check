@@ -11,6 +11,7 @@ import org.openmainframeproject.cobolcheck.exceptions.CobolSourceCouldNotBeReadE
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
+import org.openmainframeproject.cobolcheck.features.testSuiteParser.Mock;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Constants;
@@ -226,14 +227,11 @@ public class Generator {
     }
 
     private void writeWhenOtherMockedSection(String sourceLine)  throws IOException{
-        writerController.writeLine(String.format("               PERFORM %s-WHEN-OTHER", currentIdentifier));
+        Mock mock = testSuiteParserController.getWhenOtherMock(currentMockType, interpreter.getSectionLines(), true);
+        writerController.writeLine(testSuiteParserController.generateWhenOtherMockPerformCall(mock));
         writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
         writerController.writeLine(sourceLine);
-        writerController.writeLine("");;
-        if(currentMockType.equals(Constants.SECTION_TOKEN)) 
-            writerController.writeLine(String.format("       %s-WHEN-OTHER SECTION.", currentIdentifier));
-        else writerController.writeLine(String.format("       %s-WHEN-OTHER.", currentIdentifier));
-        writerController.writeLines(interpreter.getSectionLines());
+        writerController.writeLines(testSuiteParserController.generateWhenOtherMock(mock,true));
     }
 
     private void echoingSourceLineToOutput(String sourceLine){

@@ -1159,4 +1159,15 @@ public class TestSuiteParser {
     public String getCurrentFieldName() {
         return currentFieldName;
     }
+
+    public Mock getWhenOtherMock(String type, List<String> lines, boolean withComments){
+        mockNumber += 1;
+        Mock mock = new Mock(currentTestSuiteName ,currentTestCaseName, testSuiteNumber, testCaseNumber,mockNumber);
+        mock.addLinesWithoutMoving(lines);
+        mock.setScope(MockScope.Local);
+        mock.setType(type);
+        return mock;
+
+    }
+
 }

@@ -165,4 +165,8 @@ public class Mock {
         }
         return combinedArgs.substring(0, combinedArgs.length() - 2);
     }
+
+    public void addLinesWithoutMoving(List<String> lines) {
+        this.lines.addAll(lines);
+    }
 }

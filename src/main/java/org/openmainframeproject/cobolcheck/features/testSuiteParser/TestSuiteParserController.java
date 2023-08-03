@@ -313,4 +313,19 @@ public class TestSuiteParserController {
     public void prepareNextParse() {
         Config.setDecimalPointIsCommaFromFile();
     }
+
+    public Mock getWhenOtherMock(String type, List<String> lines, boolean withComments){
+        // Local scope
+        return testSuiteParser.getWhenOtherMock(type,lines, withComments);
+    }
+
+    public String generateWhenOtherMockPerformCall(Mock mock){
+        return mockGenerator.generateWhenOtherMockPerformCall(mock);
+    }
+
+    public List<String> generateWhenOtherMock(Mock mock, boolean withComments){
+        return mockGenerator.generateWhenOtherMock(mock, withComments);
+    }
+    
+
 }
