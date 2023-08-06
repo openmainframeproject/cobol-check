@@ -227,7 +227,7 @@ public class Generator {
     }
 
     private void writeWhenOtherMockedSection(String sourceLine)  throws IOException{
-        Mock mock = testSuiteParserController.getWhenOtherMock(currentMockType, interpreter.getSectionLines(), true);
+        Mock mock = testSuiteParserController.getWhenOtherMock(currentMockType, interpreter.getSectionLines(), currentIdentifier, true);
         writerController.writeLine(testSuiteParserController.generateWhenOtherMockPerformCall(mock));
         writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
         writerController.writeLine(sourceLine);

@@ -1160,12 +1160,13 @@ public class TestSuiteParser {
         return currentFieldName;
     }
 
-    public Mock getWhenOtherMock(String type, List<String> lines, boolean withComments){
+    public Mock getWhenOtherMock(String type, List<String> lines, String itdentifier, boolean withComments){
         mockNumber += 1;
         Mock mock = new Mock(currentTestSuiteName ,currentTestCaseName, testSuiteNumber, testCaseNumber,mockNumber);
         mock.addLinesWithoutMoving(lines);
         mock.setScope(MockScope.Local);
         mock.setType(type);
+        mock.setIdentifier(itdentifier);
         return mock;
 
     }
