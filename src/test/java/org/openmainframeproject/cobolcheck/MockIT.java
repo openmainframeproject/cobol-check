@@ -203,7 +203,6 @@ public class MockIT {
 
         assertEquals(getTrimmedList(expected4), actual);
     }
-<<<<<<< HEAD
 
     @Test
     public void it_inserts_call_mocks_without_commas_correctly() throws IOException {
@@ -257,9 +256,6 @@ public class MockIT {
         assertEquals(getTrimmedList(expected4), actual);
     }
 
-=======
-    
->>>>>>> modify tests for when other section
     private List<String> getTrimmedList(String text){
         String[] lines = text.split(Constants.NEWLINE);
         List<String> result = new ArrayList<>();

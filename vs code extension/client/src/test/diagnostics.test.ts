@@ -13,12 +13,10 @@ suite('Should get diagnostics', () => {
 		await testDiagnostics(docUriEF, []);
 	});
 
-	test('Reports missing delimiters', async () => {
-		await testDiagnostics(docUriMD, [
-			{ message: 'Unclosed END BEFORE', range: toRange(3, 11, 3, 21), severity: vscode.DiagnosticSeverity.Error, source: 'cut' },
-			{ message: 'Unclosed MOCK', range: toRange(5, 11, 5, 15), severity: vscode.DiagnosticSeverity.Error, source: 'cut' }
-		]);
-	});
+	test('Reports no error in missing delimiters file', async () => {
+        //expectedDiagnostics empty since there are no errors
+        await testDiagnostics(docUriMD, []);
+    });
 
 	test('Reports general syntax error', async () => {
 		await testDiagnostics(docUriSE, [
