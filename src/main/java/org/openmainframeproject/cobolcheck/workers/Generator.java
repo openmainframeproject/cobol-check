@@ -231,6 +231,7 @@ public class Generator {
         writerController.writeLine(testSuiteParserController.generateWhenOtherMockPerformCall(mock));
         writerController.writeLines(testSuiteParserController.getEndEvaluateLine());
         writerController.writeLine(sourceLine);
+        writerController.writeLine("");
         writerController.writeLines(testSuiteParserController.generateWhenOtherMock(mock,true));
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CobolGenerator {
     private final static String SECTION_HEADER_FORMAT = "       SECTION %s.";    
-    private final static String WHEN_OTHER_SECTION_HEADER_FORMAT = "       %s SECTION .";
+    private final static String WHEN_OTHER_SECTION_HEADER_FORMAT = "       %s SECTION.";
     private final static String PARAGRAPH_HEADER_FORMAT = "       %s.";
     private final static String ENDING_PERIOD = "           .";
 
