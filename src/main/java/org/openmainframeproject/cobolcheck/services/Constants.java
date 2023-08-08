@@ -148,7 +148,11 @@ public final class Constants {
     public static final String CONTINUE_TOKEN = "CONTINUE";
     public static final String INCLUDE = "INCLUDE";
 
+    public static final String BINARY = "BINARY";
+    public static final String COMP_2_VALUE = "COMP-2";
     public static final String COMP_3_VALUE = "COMP-3";
+    public static final String COMP_4_VALUE = "COMP-4";
+    public static final String COMP_5_VALUE = "COMP-5";
     public static final String COMP_VALUE = "COMP";
     public static final String PIC_VALUE = "PIC";
     public static final String PICTURE_VALUE = "PICTURE";

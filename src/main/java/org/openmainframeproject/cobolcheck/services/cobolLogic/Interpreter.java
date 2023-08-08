@@ -157,6 +157,9 @@ public class Interpreter {
         if (currentLine.getTrimmedString().endsWith(Constants.PERIOD)) {
             return true;
         }
+        if (currentLine.getTrimmedString().toUpperCase(Locale.ROOT).endsWith(Constants.END_EXEC_TOKEN)) {
+            return true;
+        }
         if (containsOnlyPeriod(nextMeaningfulLine)) {
             return false;
         }
@@ -253,6 +256,7 @@ public class Interpreter {
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
             if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
                 return true;
+            }
         }
         return false;
     }
@@ -286,7 +290,19 @@ public class Interpreter {
             if (line.containsToken(Constants.REPLACE_TOKEN))
                 return true;
         }
+        if (state.isFlagSetFor(Constants.DATA_DIVISION)){
+            if (!Interpreter.endsInPeriod(line)){
+                return true;
+            }
+        }
         return false;
+    }
+
+    public static boolean lineContainsBinaryFieldDefinition(CobolLine line) {
+        return line.containsToken(Constants.COMP_VALUE)
+         || line.containsToken(Constants.COMP_4_VALUE)
+         || line.containsToken(Constants.COMP_5_VALUE)
+         || line.containsToken(Constants.BINARY);
     }
 
     public static boolean containsOnlyPeriod(CobolLine line) {
@@ -460,7 +476,10 @@ public class Interpreter {
      * This will make sure to add or remove any referenced field within the structure, based on
      * the level of said field within the structure.
      */
-    public static TreeMap<Integer,String> updateCurrentDataStructure(CobolLine line, TreeMap<Integer, String> currentHierarchy) {
+    public static TreeMap<Integer,String> updateCurrentDataStructure(List<CobolLine> currentStatement, TreeMap<Integer, String> currentHierarchy) {
+
+        String[] statementWords = extractStatementWords(currentStatement);
+
         if (currentHierarchy==null) {
             currentHierarchy = new TreeMap<>();
         }
@@ -472,22 +491,61 @@ public class Interpreter {
         else {
             lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
         }
-        int tokenWeWantToAdd;
-        try {
-            tokenWeWantToAdd=Integer.parseInt(line.getToken(0));
-        }
-        catch (NumberFormatException e) {
+
+        if (!isInteger(statementWords[0])){
             return currentHierarchy;
         }
-        String variableName = line.getToken(1);
-        while (lastKeyOfCurrentHierarchy > tokenWeWantToAdd && tokenWeWantToAdd > 0) {
+        int cobolLevelNumber = determineCobolLevelNumber(statementWords[0]);
+        String variableName = determineVariableName(statementWords);
+
+        while (lastKeyOfCurrentHierarchy > cobolLevelNumber && cobolLevelNumber > 0) {
             currentHierarchy.remove(lastKeyOfCurrentHierarchy);
             lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
         }
-        if (currentHierarchy.containsKey(tokenWeWantToAdd))
-            currentHierarchy.replace(tokenWeWantToAdd, variableName);
+        if (currentHierarchy.containsKey(cobolLevelNumber))
+            currentHierarchy.replace(cobolLevelNumber, variableName);
         else
-            currentHierarchy.put(tokenWeWantToAdd, variableName);
+            currentHierarchy.put(cobolLevelNumber, variableName);
         return currentHierarchy;
     }
+
+    private static String determineVariableName(String[] statementWords) {
+        String variableName = "";
+        if (statementWords.length > 1) {
+            variableName = statementWords[1];
+        } else {
+            variableName = "FILLER";
+        }
+        return variableName;
+    }
+
+    private static boolean isInteger(String testString) {
+        try {
+            Integer.parseInt(testString);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static Integer determineCobolLevelNumber(String levelNumberString){
+        int cobolLevelNumber = Integer.parseInt(levelNumberString);
+        if (cobolLevelNumber == 77){
+            cobolLevelNumber = 01;
+        }
+        return cobolLevelNumber;
+    }
+
+    private static String[] extractStatementWords(List<CobolLine> currentStatement){
+    String statementString = "";
+    for(CobolLine loopLine: currentStatement){
+        statementString += loopLine.getTrimmedString();
+    }
+    statementString = statementString.trim().replace(Constants.PERIOD, "");
+    String[] statementWords = statementString.split("\\s+");
+    return statementWords;
+    }
 }
+
+
+

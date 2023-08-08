@@ -14,7 +14,6 @@ import java.util.*;
 
 import static org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter.updateCurrentDataStructure;
 
-
 public class InterpreterController {
     private CobolReader reader;
     private LineRepository lineRepository;
@@ -27,7 +26,7 @@ public class InterpreterController {
     private List<String> extractedCopyBook;
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
-    
+
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
             throw new PossibleInternalLogicErrorException(
@@ -199,7 +198,7 @@ public class InterpreterController {
      * - List of copy tokens
      * - Numeric fields
      * If the line is part of a longer statement, the reader might read multiple lines.
-     * 
+     *
      * @return The line that was read as a string
      */
     public String interpretNextLine() {
@@ -250,15 +249,18 @@ public class InterpreterController {
      * - List mapping file identifiers to statuses
      * - List of copy tokens
      * - Numeric fields
-     * 
+     *
      * @param line - The line the update is based upon
      */
     private void updateDependencies(CobolLine line) throws IOException {
         reader.updateState();
         updateLineRepository(line);
 
+        List<CobolLine> currentStatement = new ArrayList<>();
         if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())) {
-            reader.readTillEndOfStatement();
+            currentStatement = reader.readTillEndOfStatement();
+        } else {
+            currentStatement.add(line);
         }
 
         if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)) {
@@ -266,6 +268,7 @@ public class InterpreterController {
         }
 
         if (reader.isFlagSet(Constants.DATA_DIVISION)) {
+            this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
             updateNumericFields(line);
         }
 
@@ -297,7 +300,7 @@ public class InterpreterController {
     /**
      * Updates possibleMockIdentifier, possibleMockType and possibleMockArgs
      * if a specific part of the program was just entered.
-     * 
+     *
      * @param line - The line the update is based upon
      */
     private void updatePossibleMock(CobolLine line) throws IOException {
@@ -367,11 +370,12 @@ public class InterpreterController {
             if (!this.currentDataStructure.isEmpty()) {
                 variableNameWeWantToSave = generateVariableNameBasedOnDataStructure(this.currentDataStructure);
             }
+
             if (line.containsToken(Constants.COMP_3_VALUE)) {
                 numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.PACKED_DECIMAL);
             } else {
-                if (line.containsToken(Constants.COMP_VALUE)) {
-                    numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.FLOATING_POINT);
+                if (Interpreter.lineContainsBinaryFieldDefinition(line)) {
+                    numericFields.setDataTypeOf(variableNameWeWantToSave.toUpperCase(Locale.ROOT), DataType.BINARY);
                 } else {
                     int ix = 0;
                     for (String token : line.getTokens()) {
@@ -412,7 +416,7 @@ public class InterpreterController {
      * - It contains a copy token
      * - It is a file section statement (file section statements from referenced copybooks are also included)
      * - It has an SQL statement and within le WORKING SECTION
-     * 
+     *
      * @param line - current source line
      */
     private void updateLineRepository(CobolLine line) throws IOException {
@@ -449,7 +453,7 @@ public class InterpreterController {
     /**
      * If the given line contains a SELECT token, the file identifier will be added, waiting for
      * a mapping to a corresponding file status.
-     * 
+     *
      * @param line - current source line
      */
     private void updateLineRepoBySelectToken(CobolLine line) {
@@ -470,7 +474,7 @@ public class InterpreterController {
     /**
      * If the given line contains a file status token, it will be added to a map to a
      * corresponding file identifier.
-     * 
+     *
      * @param line - current source line
      */
     private void updateLineRepoByFileStatusToken(CobolLine line) throws IOException {

@@ -239,6 +239,7 @@
            .
        ==UT==INITIALIZE.
            MOVE SPACES TO ==UT==FILE-INFORMATION
+           MOVE 4 to RETURN-CODE
 
            .
        ==UT==END.
