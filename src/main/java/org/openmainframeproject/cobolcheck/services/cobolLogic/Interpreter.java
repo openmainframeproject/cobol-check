@@ -256,7 +256,6 @@ public class Interpreter {
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
             if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
                 return true;
-            }
         }
         return false;
     }

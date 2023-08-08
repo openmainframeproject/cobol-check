@@ -207,6 +207,7 @@ public class MockIT {
         List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
 
         assertEquals(Utilities.getTrimmedList(expected4), actual);
+    }
 
     @Test
     public void it_inserts_call_mocks_without_commas_correctly() throws IOException {
