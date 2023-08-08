@@ -254,9 +254,6 @@ public class Interpreter {
             if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
                 return true;
         }
-        if (line.containsToken(Constants.LINKAGE_SECTION)) {
-                return true;
-        }
         return false;
     }
 

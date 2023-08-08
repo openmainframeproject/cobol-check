@@ -43,7 +43,7 @@ public class Config {
     public static final String LOCALE_VARIANT_CONFIG_KEY = "locale.variant";
     public static final String DEFAULT_LOCALE_CONFIG_KEY = "default.locale";
     public static final String RUN_GENERATED_TESTS_CONFIG_KEY = "cobolcheck.test.run";
-    public static final String RUN_GENERATED_TESTS_DEAFAULT = "true";
+    public static final String RUN_GENERATED_TESTS_DEFAULT = "true";
     public static final String RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX = "resolved.application.source.filename.suffix";
     public static final String APPLICATION_SOURCE_FILENAME_SUFFIX = "application.source.filename.suffix";
     public static final String RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX = "resolved.application.copybook.filename.suffix";
@@ -278,7 +278,7 @@ public class Config {
     }
 
     public static boolean getRunGeneratedTest() {
-        String value = settings.getProperty(RUN_GENERATED_TESTS_CONFIG_KEY, RUN_GENERATED_TESTS_DEAFAULT);
+        String value = settings.getProperty(RUN_GENERATED_TESTS_CONFIG_KEY, RUN_GENERATED_TESTS_DEFAULT);
         return Boolean.parseBoolean(value.trim());
     }
     private static String sourceFolderContext = null;

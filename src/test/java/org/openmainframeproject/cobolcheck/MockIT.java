@@ -9,6 +9,7 @@ import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.workers.Generator;
+import org.openmainframeproject.cobolcheck.testhelpers.Utilities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,9 +83,9 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
 
-        assertEquals(getTrimmedList(expected1), actual);
+        assertEquals(Utilities.getTrimmedList(expected1), actual);
     }
 
     @Test
@@ -127,9 +128,9 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
 
-        assertEquals(getTrimmedList(expected2), actual);
+        assertEquals(Utilities.getTrimmedList(expected2), actual);
     }
 
     @Test
@@ -150,9 +151,9 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
 
-        assertEquals(getTrimmedList(expected3), actual);
+        assertEquals(Utilities.getTrimmedList(expected3), actual);
     }
 
     @Test
@@ -203,49 +204,9 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
 
-        assertEquals(getTrimmedList(expected4), actual);
-    }
-
-    private List<String> getTrimmedList(String text){
-        String[] lines = text.split(Constants.NEWLINE);
-        List<String> result = new ArrayList<>();
-        for (String line : lines){
-            result.add(StringHelper.removeTrailingSpaces(line));
-        }
-        return result;
-    }
-
-    private String removeBoilerPlateCode(String code, List<String> boilerPlateTags){
-        boolean insideBoilerPlate = false;
-        String result = "";
-        String[] lines = code.split(Constants.NEWLINE);
-        for (String line : lines){
-            if (line.contains("*")){
-                boolean skip = false;
-                for(String tag : boilerPlateTags){
-                    if (line.contains(tag)){
-                        skip = true;
-                        if (line.contains("END")){
-                            insideBoilerPlate = false;
-                            continue;
-                        }
-                        else {
-                            insideBoilerPlate = true;
-                            continue;
-                        }
-                    }
-                }
-                if (skip){
-                    continue;
-                }
-            }
-            if (!insideBoilerPlate){
-                result += line + Constants.NEWLINE;
-            }
-        }
-        return result;
+        assertEquals(Utilities.getTrimmedList(expected4), actual);
     }
 
     private String expected1 =

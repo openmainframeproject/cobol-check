@@ -9,16 +9,15 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01  FILLER.
-           05  WS-FIELD-1           PIC X(80).
-           05  ws-Field-2           PIC X(80).
-       
-       
        EXEC SQL INCLUDE SQLCA  END-EXEC.
        EXEC SQL INCLUDE TEXEM  END-EXEC.
 
-           EXEC SQL  
-              DECLARE NAME-CUR CURSOR FOR  
+       01  FILLER.
+           05  WS-FIELD-1           PIC X(80).
+           05  ws-Field-2           PIC X(80).
+
+           EXEC SQL
+              DECLARE NAME-CUR CURSOR FOR
               SELECT FIRST_NAME, LAST_NAME FROM TEXEM
            END-EXEC.
 
