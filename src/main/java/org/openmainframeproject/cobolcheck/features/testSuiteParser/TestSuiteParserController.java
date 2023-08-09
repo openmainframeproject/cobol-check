@@ -67,6 +67,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     public boolean hasWorkingStorageTestCodeBeenInserted() {

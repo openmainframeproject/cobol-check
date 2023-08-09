@@ -9,13 +9,13 @@ public class WhenOtherGenerator {
     private final String performFormat = "                    PERFORM %s";
 
     
-    public String generateWhenOtherCall(WhenOther whenOther) {
+    String generateWhenOtherCall(WhenOther whenOther) {
         return String.format(performFormat, whenOther.getGeneratedWhenOtherIdentifier());
     }
 
     List<String> generateWhenOther(WhenOther whenOther, boolean withComments){
         List<String> lines = new ArrayList<>();
-        lines.addAll(CobolGenerator.generateCommentBlock("WhenOther block called when mocking"));
+        lines.addAll(CobolGenerator.generateCommentBlock("WhenOther block called"));
         lines.addAll(generateParagraphsForWhenOther(whenOther, withComments));
         lines.add("");
         return lines;
