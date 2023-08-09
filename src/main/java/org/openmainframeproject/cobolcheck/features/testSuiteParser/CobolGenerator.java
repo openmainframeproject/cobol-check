@@ -75,7 +75,7 @@ public class CobolGenerator {
             lines.add(getInjectEndTagComment());
     }
 
-    static List<String> generateWhenOtherMockLines(String identifier, String type, List<String> commentLines, List<String> bodyLines){
+    static List<String> generateWhenOtherLines(String identifier, String type, List<String> commentLines, List<String> bodyLines){
         List<String> lines = new ArrayList<>();
         if(type.equals(Constants.SECTION_TOKEN)) 
             lines.add(String.format(WHEN_OTHER_SECTION_HEADER_FORMAT, identifier));

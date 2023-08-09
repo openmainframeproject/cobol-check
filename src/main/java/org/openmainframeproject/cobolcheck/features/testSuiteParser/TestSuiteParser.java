@@ -75,6 +75,7 @@ public class TestSuiteParser {
     private String currentTestCaseName = Constants.EMPTY_STRING;
     private int testCaseNumber = 0;
     private boolean expectNumericCompare;
+    private int whenOtherNumber=0;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE = "           PERFORM %sINITIALIZE";
@@ -1160,14 +1161,14 @@ public class TestSuiteParser {
         return currentFieldName;
     }
 
-    public Mock getWhenOtherMock(String type, List<String> lines, String itdentifier, boolean withComments){
-        mockNumber += 1;
-        Mock mock = new Mock(currentTestSuiteName ,currentTestCaseName, testSuiteNumber, testCaseNumber,mockNumber);
-        mock.addLinesWithoutMoving(lines);
-        mock.setScope(MockScope.Local);
-        mock.setType(type);
-        mock.setIdentifier(itdentifier);
-        return mock;
+    public WhenOther getWhenOtherBlock(String type, List<String> lines, String itdentifier, boolean withComments){
+        WhenOther whenOther = new WhenOther(currentTestSuiteName ,currentTestCaseName, testSuiteNumber, testCaseNumber,whenOtherNumber);
+        whenOther.addLines(lines);
+        whenOther.setScope(MockScope.Local);
+        whenOther.setType(type);
+        whenOther.setIdentifier(itdentifier);
+        whenOtherNumber += 1;
+        return whenOther;
 
     }
 

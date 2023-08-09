@@ -27,7 +27,7 @@ public class InterpreterController {
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
     private final String stubTag;
-    private MockedSectionOrPargraph mockedSection;
+    private Block block;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -40,7 +40,7 @@ public class InterpreterController {
         tokenExtractor = new StringTokenizerExtractor();
         currentDataStructure = new TreeMap<>();
         stubTag = Config.getStubTag();
-        mockedSection = new MockedSectionOrPargraph();
+        block = new Block();
     }
 
     //Getters for lists of specific source lines
@@ -507,27 +507,27 @@ public class InterpreterController {
         possibleMockType = null;
     }
 
-    public List<String> getSectionLines(){
-        return mockedSection.getSectionLines();
+    public List<String> getBlockLines(){
+        return block.getLines();
     }
 
-    public void removeSectionLines(){
-        mockedSection.removeSectionLines();
+    public void removeBlockLines(){
+        block.removeLines();
     }
 
-    public void addMockedSectionLine(){
+    public void addBlockLine(){
         if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) 
-            mockedSection.addSectionLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
-        else mockedSection.addSectionLine(reader.getCurrentLine().getUnNumberedString());
+            block.addLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
+        else block.addLine(reader.getCurrentLine().getUnNumberedString());
     }
 
-    public void addMockedSectionLine(String line){
-        mockedSection.addSectionLine(line);
+    public void addBlockLine(String line){
+        block.addLine(line);
     }
 
-    public void addMockedSectionLines(List<String> lines){
+    public void addBlockLines(List<String> lines){
         for (String line : lines){
-            mockedSection.addSectionLine(line);
+            block.addLine(line);
         }
     }
 

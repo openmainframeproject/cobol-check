@@ -21,6 +21,7 @@ public class TestSuiteParserController {
     private BeforeAfterRepo beforeAfterRepo;
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
+    private WhenOtherGenerator whenOtherGenerator;
 
     private TestSuiteErrorLog testSuiteErrorLog;
 
@@ -54,6 +55,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getTestCodePrefix();
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     //Used for testing only
@@ -314,17 +316,15 @@ public class TestSuiteParserController {
         Config.setDecimalPointIsCommaFromFile();
     }
 
-    public Mock getWhenOtherMock(String type, List<String> lines, String identifier, boolean withComments){
-        // Local scope
-        return testSuiteParser.getWhenOtherMock(type,lines, identifier, withComments);
-    }
-
-    public String generateWhenOtherMockPerformCall(Mock mock){
-        return mockGenerator.generateWhenOtherMockPerformCall(mock);
-    }
-
-    public List<String> generateWhenOtherMock(Mock mock, boolean withComments){
-        return mockGenerator.generateWhenOtherMock(mock, withComments);
+    public List<String> generateWhenOtherBlock(String type, List<String> blocklines, String sourceLine, String identifier, boolean withComments)  throws IOException{
+        List<String> lines = new ArrayList<>();
+        WhenOther whenOther = testSuiteParser.getWhenOtherBlock(type, blocklines, identifier, true);
+        lines.add(whenOtherGenerator.generateWhenOtherCall(whenOther));
+        lines.addAll(this.getEndEvaluateLine());
+        lines.add(sourceLine);
+        lines.add("");
+        lines.addAll(whenOtherGenerator.generateWhenOther(whenOther, withComments));
+        return lines;
     }
     
 

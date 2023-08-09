@@ -156,36 +156,6 @@ public class MockGenerator {
         body.addAll(mock.getLines());
         return CobolGenerator.generateParagraphLines(mock.getGeneratedMockIdentifier(), comments, body);
     }
-
-    /**Generates the lines for Paragraphs based on mocks,
-     * for each mock in a given list.
-     * @param mocks - The mocks to generate Paragraphs for
-     * @return The generated lines
-     */
-    List<String> generateWhenOtherMock(Mock mock, boolean withComments){
-        List<String> lines = new ArrayList<>();
-        lines.addAll(CobolGenerator.generateCommentBlock("Paragraphs called when mocking"));
-        lines.addAll(generateParagraphsForWhenOtherMock(mock, withComments));
-        lines.add("");
-        return lines;
-    }
-
-    String generateWhenOtherMockPerformCall(Mock mock){
-        return String.format(performFormat, mock.getGeneratedMockIdentifier());
-    }
-
-    private List<String> generateParagraphsForWhenOtherMock(Mock mock, boolean withComment){
-        List<String> comments = new ArrayList<>();
-        if (withComment){
-            for (String line : mock.getCommentText()){
-                comments.add(StringHelper.commentOutLine(line));
-            }
-        }
-        List<String> body = new ArrayList<>();
-        body.addAll(mock.getLines());
-        return CobolGenerator.generateWhenOtherMockLines(mock.getGeneratedMockIdentifier(),mock.getType(), comments, body);
-    }
-
     
 
 }
