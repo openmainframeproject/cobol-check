@@ -357,13 +357,11 @@ public class MockIT {
                     "           .                                                                   " + Constants.NEWLINE +
                     "                                                                              " + Constants.NEWLINE +
                     "      *****************************************************************     " + Constants.NEWLINE +
-                    "      *WhenOther block called                                        " + Constants.NEWLINE +
+                    "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
                     "      *****************************************************************     " + Constants.NEWLINE +
                     "       UT-1-0-0-WO SECTION.                                                 " + Constants.NEWLINE +
                     "      *****************************************************************     " + Constants.NEWLINE +
-                    "      *When other block of: SECTION: 000-START                                        " + Constants.NEWLINE +
-                    "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-                    "      *In testcase:                                        " + Constants.NEWLINE +
+                    "      *WhenOther of: SECTION: 000-START                                        " + Constants.NEWLINE +
                     "      *****************************************************************     " + Constants.NEWLINE +
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
@@ -520,13 +518,11 @@ public class MockIT {
             "           .                                                                   " + Constants.NEWLINE +
             "                                                                                 " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *WhenOther block called                                        " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "       UT-1-2-0-WO SECTION.                                             " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *When other block of: SECTION: 000-START                                        " + Constants.NEWLINE +
-            "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-            "      *In testcase: \"Simply a test\"                                       " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 000-START                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
             "           EXIT SECTION.                                                        " + Constants.NEWLINE +
@@ -547,13 +543,11 @@ public class MockIT {
             "           .                                                           " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *WhenOther block called                                        " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "       UT-1-2-1-WO SECTION.                                                          " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *When other block of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
-            "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-            "      *In testcase: \"Simply a test\"                                       " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
@@ -572,13 +566,11 @@ public class MockIT {
             "          .                                                          " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *WhenOther block called                                        " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "       UT-1-2-2-WO SECTION.                                                           " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *When other block of: SECTION: 200-GOODBYE                                        " + Constants.NEWLINE +
-            "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-            "      *In testcase: \"Simply a test\"                                       " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 200-GOODBYE                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "          .                                                                    " + Constants.NEWLINE +
@@ -798,13 +790,11 @@ public class MockIT {
             "           .                                                                   " + Constants.NEWLINE +
             "                                                                                 " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *WhenOther block called                                        " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "       UT-1-2-0-WO SECTION.                                             " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *When other block of: SECTION: 000-START                                        " + Constants.NEWLINE +
-            "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-            "      *In testcase: \"Simply a test\"                                        " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 000-START                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
             "           EXIT SECTION.                                                        " + Constants.NEWLINE +
@@ -824,13 +814,11 @@ public class MockIT {
             "           .                                                           " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *WhenOther block called                                        " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "       UT-1-2-1-WO SECTION.                                                          " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *When other block of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
-            "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-            "      *In testcase: \"Simply a test\"                                       " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "      *    CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2.                      " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
@@ -860,13 +848,11 @@ public class MockIT {
             "          .                                                          " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *WhenOther block called                                        " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "       UT-1-2-2-WO SECTION.                                                           " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *When other block of: SECTION: 200-GOODBYE                                        " + Constants.NEWLINE +
-            "      *In testsuite: \"Mocking tests\"                                        " + Constants.NEWLINE +
-            "      *In testcase: \"Simply a test\"                                       " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 200-GOODBYE                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
             "          MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "      *   CALL bogus USING VALUE-1                                              " + Constants.NEWLINE +

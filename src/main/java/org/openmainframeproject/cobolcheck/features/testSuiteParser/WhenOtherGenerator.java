@@ -15,7 +15,7 @@ public class WhenOtherGenerator {
 
     List<String> generateWhenOther(WhenOther whenOther, boolean withComments){
         List<String> lines = new ArrayList<>();
-        lines.addAll(CobolGenerator.generateCommentBlock("WhenOther block called"));
+        lines.addAll(CobolGenerator.generateCommentBlock("WhenOther Paragraph or Section called"));
         lines.addAll(generateParagraphsForWhenOther(whenOther, withComments));
         lines.add("");
         return lines;
