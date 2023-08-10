@@ -27,7 +27,7 @@ public class InterpreterController {
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
     private final String stubTag;
-    private Block block;
+    private SectionOrParagraph sectionOrParagraph;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -40,7 +40,7 @@ public class InterpreterController {
         tokenExtractor = new StringTokenizerExtractor();
         currentDataStructure = new TreeMap<>();
         stubTag = Config.getStubTag();
-        block = new Block();
+        sectionOrParagraph = new SectionOrParagraph();
     }
 
     //Getters for lists of specific source lines
@@ -507,27 +507,27 @@ public class InterpreterController {
         possibleMockType = null;
     }
 
-    public List<String> getBlockLines(){
-        return block.getLines();
+    public List<String> getSectionOrParagraphLines(){
+        return sectionOrParagraph.getLines();
     }
 
-    public void removeBlockLines(){
-        block.removeLines();
+    public void removeSectionOrParagraphLines(){
+        sectionOrParagraph.removeLines();
     }
 
-    public void addBlockLine(){
+    public void addSectionOrParagraphLine(){
         if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) 
-            block.addLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
-        else block.addLine(reader.getCurrentLine().getUnNumberedString());
+            sectionOrParagraph.addLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
+        else sectionOrParagraph.addLine(reader.getCurrentLine().getUnNumberedString());
     }
 
-    public void addBlockLine(String line){
-        block.addLine(line);
+    public void addSectionOrParagraphLine(String line){
+        sectionOrParagraph.addLine(line);
     }
 
-    public void addBlockLines(List<String> lines){
+    public void addSectionOrParagraphLines(List<String> lines){
         for (String line : lines){
-            block.addLine(line);
+            sectionOrParagraph.addLine(line);
         }
     }
 

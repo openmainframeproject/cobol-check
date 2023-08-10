@@ -143,8 +143,8 @@ public class Generator {
         if (interpreter.isInsideSectionOrParagraphMockBody()){
             if (interpreter.isCurrentLineEndingSectionOrParagraph()){
                 if (interpreter.canWriteEndEvaluateBeforeCurrentLine()){
-                    writeWhenOtherBlock(sourceLine);
-                    interpreter.removeBlockLines();
+                    writeWhenOtherSectionOrParagraph(sourceLine);
+                    interpreter.removeSectionOrParagraphLines();
                     interpreter.setInsideSectionOrParagraphMockBody(false);
                     return "";
                 }
@@ -206,9 +206,9 @@ public class Generator {
             List<String> arguments = interpreter.getPossibleMockArgs();
             if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
-                    interpreter.addBlockLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                    interpreter.addSectionOrParagraphLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
                     if (type.equals(Constants.CALL_TOKEN)){
-                        interpreter.addBlockLine("            CONTINUE");
+                        interpreter.addSectionOrParagraphLine("            CONTINUE");
                 }
                 }else writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
                 if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN)){
@@ -226,14 +226,14 @@ public class Generator {
         writerController.closeWriter(programName);
     }
 
-    private void writeWhenOtherBlock(String sourceLine)  throws IOException{
-        writerController.writeLines(testSuiteParserController.generateWhenOtherBlock(currentMockType, interpreter.getBlockLines(), sourceLine, currentIdentifier, true));
+    private void writeWhenOtherSectionOrParagraph(String sourceLine)  throws IOException{
+        writerController.writeLines(testSuiteParserController.generateWhenOtherSectionOrParagraph(currentMockType, interpreter.getSectionOrParagraphLines(), sourceLine, currentIdentifier, true));
     }
 
     private void echoingSourceLineToOutput(String sourceLine){
         try{
             if(interpreter.isInsideSectionOrParagraphMockBody()){
-                interpreter.addBlockLine();
+                interpreter.addSectionOrParagraphLine();
             }
             sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
             if(!interpreter.isInsideSectionOrParagraphMockBody()){

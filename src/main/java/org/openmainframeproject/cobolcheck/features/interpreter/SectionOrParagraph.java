@@ -3,11 +3,11 @@ package org.openmainframeproject.cobolcheck.features.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Block {
+public class SectionOrParagraph {
 
     private List<String> lines;
 
-    public Block(){
+    public SectionOrParagraph(){
         lines  = new ArrayList<>();
     }
 
