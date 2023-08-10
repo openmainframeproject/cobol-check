@@ -67,6 +67,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     public boolean hasWorkingStorageTestCodeBeenInserted() {
@@ -316,9 +317,9 @@ public class TestSuiteParserController {
         Config.setDecimalPointIsCommaFromFile();
     }
 
-    public List<String> generateWhenOtherBlock(String type, List<String> blocklines, String sourceLine, String identifier, boolean withComments)  throws IOException{
+    public List<String> generateWhenOtherSectionOrParagraph(String type, List<String> sectionOrParagraphlines, String sourceLine, String identifier, boolean withComments)  throws IOException{
         List<String> lines = new ArrayList<>();
-        WhenOther whenOther = testSuiteParser.getWhenOtherBlock(type, blocklines, identifier, true);
+        WhenOther whenOther = testSuiteParser.getWhenOtherSectionOrParagraph(type, sectionOrParagraphlines, identifier, true);
         lines.add(whenOtherGenerator.generateWhenOtherCall(whenOther));
         lines.addAll(this.getEndEvaluateLine());
         lines.add(sourceLine);

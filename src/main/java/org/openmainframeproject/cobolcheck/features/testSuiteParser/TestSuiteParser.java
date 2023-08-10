@@ -1161,10 +1161,9 @@ public class TestSuiteParser {
         return currentFieldName;
     }
 
-    public WhenOther getWhenOtherBlock(String type, List<String> lines, String itdentifier, boolean withComments){
-        WhenOther whenOther = new WhenOther(currentTestSuiteName ,currentTestCaseName, testSuiteNumber, testCaseNumber,whenOtherNumber);
+    public WhenOther getWhenOtherSectionOrParagraph(String type, List<String> lines, String itdentifier, boolean withComments){
+        WhenOther whenOther = new WhenOther(testSuiteNumber, testCaseNumber, whenOtherNumber);
         whenOther.addLines(lines);
-        whenOther.setScope(MockScope.Local);
         whenOther.setType(type);
         whenOther.setIdentifier(itdentifier);
         whenOtherNumber += 1;
