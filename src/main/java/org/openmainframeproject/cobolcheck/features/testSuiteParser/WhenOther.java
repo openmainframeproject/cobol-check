@@ -12,17 +12,12 @@ public class WhenOther {
     private String identifier;
     private String type;
     private List<String> lines;
-    private MockScope scope;
-    private String testSuiteName;
-    private String testCaseName;
     private int testSuiteNumber;
     private int testCaseNumber;
     private int mockNumber;
 
 
-    public WhenOther(String testSuiteName, String testCaseName, int testSuiteNumber, int testCaseNumber, int mockNumber) {
-        this.testSuiteName = testSuiteName;
-        this.testCaseName = testCaseName;
+    public WhenOther(int testSuiteNumber, int testCaseNumber, int mockNumber) {
         this.testSuiteNumber = testSuiteNumber;
         this.testCaseNumber = testCaseNumber;
         this.mockNumber = mockNumber;
@@ -39,10 +34,6 @@ public class WhenOther {
 
     public void addLines(List<String> lines) {
         this.lines.addAll(lines);
-    }
-
-    public void setScope(MockScope scope) {
-        this.scope = scope;
     }
 
     public void setType(String type) {
@@ -65,11 +56,7 @@ public class WhenOther {
     public List<String> getCommentText(){
         List<String> newLines = new ArrayList<>();
         newLines.add("      *****************************************************************");
-        newLines.add( "When other block of: " + type + ": " + identifier);
-        newLines.add("In testsuite: " + testSuiteName);
-        if (scope == MockScope.Local){
-            newLines.add("In testcase: " + testCaseName);
-        }
+        newLines.add( "WhenOther of: " + type + ": " + identifier);
         newLines.add("      *****************************************************************");
         return newLines;
 
