@@ -284,5 +284,4 @@ public class CobolReader {
         return state.getFlags().get(partOfProgram).isSet();
     }
 
-
 }

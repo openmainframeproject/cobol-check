@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.CobolSourceCouldNotBeReadE
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Messages;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
@@ -25,6 +26,8 @@ public class InterpreterController {
     private List<String> possibleMockArgs;
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
+    private final String stubTag;
+    private SectionOrParagraph sectionOrParagraph;
 
     public InterpreterController(BufferedReader sourceReader) {
         if (sourceReader == null) {
@@ -36,6 +39,8 @@ public class InterpreterController {
         numericFields = new NumericFields();
         tokenExtractor = new StringTokenizerExtractor();
         currentDataStructure = new TreeMap<>();
+        stubTag = Config.getStubTag();
+        sectionOrParagraph = new SectionOrParagraph();
     }
 
     //Getters for lists of specific source lines
@@ -177,8 +182,6 @@ public class InterpreterController {
         } catch (IOException ex){
             throw new CobolSourceCouldNotBeReadException(ex);
         }
-
-        //Current line might change from when it was originally read
         return reader.getCurrentLine().getUnNumberedString();
     }
 
@@ -209,7 +212,7 @@ public class InterpreterController {
         if (Interpreter.shouldLineBeReadAsStatement(line, reader.getState())){
             currentStatement = reader.readTillEndOfStatement();
         } else {
-            currentStatement.add(line);
+             currentStatement.add(line);
         }
     
         if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)){
@@ -284,8 +287,9 @@ public class InterpreterController {
     private void updatePossibleStub(CobolLine line) throws IOException {
         if (Interpreter.shouldLineBeStubbed(line, reader.getState())) {
             String stubEndToken = Interpreter.getStubEndToken(line, reader.getState());
-            if (stubEndToken != null)
+            if (stubEndToken != null) {
                 reader.readTillHitToken(stubEndToken, false);
+            }
         }
     }
 
@@ -502,4 +506,30 @@ public class InterpreterController {
         possibleMockIdentifier = null;
         possibleMockType = null;
     }
+
+    public List<String> getSectionOrParagraphLines(){
+        return sectionOrParagraph.getLines();
+    }
+
+    public void removeSectionOrParagraphLines(){
+        sectionOrParagraph.removeLines();
+    }
+
+    public void addSectionOrParagraphLine(){
+        if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) 
+            sectionOrParagraph.addLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
+        else sectionOrParagraph.addLine(reader.getCurrentLine().getUnNumberedString());
+    }
+
+    public void addSectionOrParagraphLine(String line){
+        sectionOrParagraph.addLine(line);
+    }
+
+    public void addSectionOrParagraphLines(List<String> lines){
+        for (String line : lines){
+            sectionOrParagraph.addLine(line);
+        }
+    }
+
+   
 }
