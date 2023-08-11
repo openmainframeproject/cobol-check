@@ -75,6 +75,7 @@ public class TestSuiteParser {
     private String currentTestCaseName = Constants.EMPTY_STRING;
     private int testCaseNumber = 0;
     private boolean expectNumericCompare;
+    private int whenOtherNumber=0;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE = "           PERFORM %sINITIALIZE";
@@ -1159,4 +1160,15 @@ public class TestSuiteParser {
     public String getCurrentFieldName() {
         return currentFieldName;
     }
+
+    public WhenOther getWhenOtherSectionOrParagraph(String type, List<String> lines, String itdentifier, boolean withComments){
+        WhenOther whenOther = new WhenOther(testSuiteNumber, testCaseNumber, whenOtherNumber);
+        whenOther.addLines(lines);
+        whenOther.setType(type);
+        whenOther.setIdentifier(itdentifier);
+        whenOtherNumber += 1;
+        return whenOther;
+
+    }
+
 }
