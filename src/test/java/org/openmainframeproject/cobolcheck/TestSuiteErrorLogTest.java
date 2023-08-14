@@ -586,4 +586,5 @@ public class TestSuiteErrorLogTest {
         String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);
     }
+
 }

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteConcatenator;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.services.Config;
-import org.openmainframeproject.cobolcheck.services.Constants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -12,7 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

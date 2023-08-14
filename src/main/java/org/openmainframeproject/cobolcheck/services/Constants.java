@@ -146,6 +146,7 @@ public final class Constants {
     public static final String EXEC_CICS_TOKEN = "EXEC CICS";
     public static final String END_EXEC_TOKEN = "END-EXEC";
     public static final String CONTINUE_TOKEN = "CONTINUE";
+    public static final String INCLUDE = "INCLUDE";
 
     public static final String BINARY = "BINARY";
     public static final String COMP_2_VALUE = "COMP-2";

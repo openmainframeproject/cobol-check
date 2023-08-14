@@ -172,10 +172,15 @@ public class Generator {
                     writerController.writeLines(interpreter.getCurrentStatement());
                 }
             }
-
             else {
-                if (interpreter.shouldCurrentLineBeStubbed()){
-                    writerController.writeStubbedLine(sourceLine);
+                if (interpreter.shouldCurrentLineBeStubbed()) {
+                    if(interpreter.isReading(Constants.WORKING_STORAGE_SECTION)) {
+                        writerController.writeStubbedLine(interpreter.getCurrentLineAsStatement().getUnNumberedString());
+                        if (!interpreter.getFileSectionStatements().isEmpty())
+                            writerController.writeLines(interpreter.getFileSectionStatements());
+                    }
+                    else 
+                        writerController.writeStubbedLine(sourceLine);
                 }
                 else {
                     writerController.writeLine(sourceLine);

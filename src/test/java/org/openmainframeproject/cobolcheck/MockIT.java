@@ -7,7 +7,9 @@ import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.workers.Generator;
+import org.openmainframeproject.cobolcheck.testhelpers.Utilities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,7 @@ public class MockIT {
     private BufferedReader mockedParserReader;
     private InterpreterController interpreterController;
     private BufferedReader mockedInterpreterReader;
+    private Interpreter interpreter;
     private CobolWriter cobolWriter;
     private WriterController writerController;
     private Writer writer;
@@ -77,12 +80,12 @@ public class MockIT {
 
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
         Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, null);
-        
+
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-        assertEquals(getTrimmedList(expected1), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected1), actual);
     }
 
     @Test
@@ -125,8 +128,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-        assertEquals(getTrimmedList(expected2), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected2), actual);
     }
 
     @Test
@@ -147,9 +150,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-
-        assertEquals(getTrimmedList(expected3), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected3), actual);
     }
 
     @Test
@@ -200,9 +202,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-
-        assertEquals(getTrimmedList(expected4), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected4), actual);
     }
 
     @Test
@@ -253,48 +254,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-        assertEquals(getTrimmedList(expected4), actual);
-    }
-
-    private List<String> getTrimmedList(String text){
-        String[] lines = text.split(Constants.NEWLINE);
-        List<String> result = new ArrayList<>();
-        for (String line : lines){
-            result.add(StringHelper.removeTrailingSpaces(line));
-        }
-        return result;
-    }
-
-    private String removeBoilerPlateCode(String code, List<String> boilerPlateTags){
-        boolean insideBoilerPlate = false;
-        String result = "";
-        String[] lines = code.split(Constants.NEWLINE);
-        for (String line : lines){
-            if (line.contains("*")){
-                boolean skip = false;
-                for(String tag : boilerPlateTags){
-                    if (line.contains(tag)){
-                        skip = true;
-                        if (line.contains("END")){
-                            insideBoilerPlate = false;
-                            continue;
-                        }
-                        else {
-                            insideBoilerPlate = true;
-                            continue;
-                        }
-                    }
-                }
-                if (skip){
-                    continue;
-                }
-            }
-            if (!insideBoilerPlate){
-                result += line + Constants.NEWLINE;
-            }
-        }
-        return result;
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected4), actual);
     }
 
     private String expected1 =
