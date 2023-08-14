@@ -139,3 +139,14 @@
            END-MOCK
            PERFORM 600-MAKE-CALL
            EXPECT VALUE-1 TO BE "Global PROG1"
+
+
+           TestCase "CALL MOCK using parameters with IN are recognized correctly"
+           MOVE SPACES TO OUTPUT-VALUE
+           MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
+                                    BOOK-PARAM in COBOL-STRUCTURE,
+                                    OUTPUT-PARAM.
+                MOVE "MOCKED" TO OUTPUT-VALUE
+           END-MOCK
+           PERFORM 610-MAKE-CALL-STRUCTURE
+           EXPECT OUTPUT-VALUE TO BE "MOCKED"

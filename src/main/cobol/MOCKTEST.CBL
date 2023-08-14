@@ -14,6 +14,11 @@
            05  VALUE-3           PIC X(80).
            05  TEMP              PIC X(80).
 
+       01  Book-structure.
+            05 action-value     pic x(1).
+            05 book-value       pic x(1).
+            05 output-value     pic x(12).
+
        PROCEDURE DIVISION.
 
        000-START SECTION.
@@ -88,6 +93,17 @@
            MOVE "arg1" to VALUE-1
            MOVE "arg2" to VALUE-2
            CALL 'PROG1'
+           .
+
+       610-MAKE-CALL-VALUE-IN-STRUCTURE.
+           MOVE "1" to ACTION-PARAM
+           MOVE "2" to BOOK-PARAM
+           MOVE "3" to OUTPUT-VALUE
+           CALL 'MYCOBOL' USING ACTION-PARAM,
+                                BOOK-PARAM IN BOOK-STRUCTURE,
+                                OUTPUT-PARAM
+           END-CALL
+           MOVE OUTPUT-PARAM TO VALUE-1
            .
 
        700-MAKE-CALL.

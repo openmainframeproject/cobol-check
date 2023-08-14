@@ -305,7 +305,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:3:60:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 60:" + Constants.NEWLINE;
         expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
-        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
         expectedResult += "Got < ONCE> classified as <  ONCE>" + Constants.NEWLINE+ Constants.NEWLINE;
         expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
@@ -332,7 +332,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:3:60:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 60:" + Constants.NEWLINE;
         expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
-        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
         expectedResult += "Got <VERIFY> classified as <VERIFY>" + Constants.NEWLINE+ Constants.NEWLINE;
         expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
@@ -359,7 +359,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:3:59:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 59:" + Constants.NEWLINE;
         expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
-        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
         expectedResult += "Got < ONCE> classified as <  ONCE>" + Constants.NEWLINE+ Constants.NEWLINE;
         expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
@@ -386,7 +386,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:3:59:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 59:" + Constants.NEWLINE;
         expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
-        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
         expectedResult += "Got <VERIFY> classified as <VERIFY>" + Constants.NEWLINE+ Constants.NEWLINE;
         expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
@@ -441,7 +441,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:3:25:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 25:" + Constants.NEWLINE;
         expectedResult += "Following <MOVE> classified as <fieldname>" + Constants.NEWLINE;
-        expectedResult += "Expected classification in the context of VERIFY: [fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING, HAPPENED, NEVER HAPPENED]" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of VERIFY: [fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING, HAPPENED, qualified-field-name, NEVER HAPPENED]" + Constants.NEWLINE;
         expectedResult += "Got <'PROG3'> classified as <alphanumeric-literal>" + Constants.NEWLINE + Constants.NEWLINE;
         expectedResult += "RUNTIME ERROR in file: null:3:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index  8:" + Constants.NEWLINE;
