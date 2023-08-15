@@ -646,7 +646,7 @@ public class TestSuiteParser {
                     if (cobolTokenIsFieldName){
                         fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                         expectQualifiedName = true;
-                        summizedTokensForArgument += Constants.SPACE + testSuiteToken;
+                        summizedTokensForArgument += Constants.SPACE + Constants.IN_KEYWORD;
                         lastAddedTokenToArgumentIsQualifier = true;
                     }
 
