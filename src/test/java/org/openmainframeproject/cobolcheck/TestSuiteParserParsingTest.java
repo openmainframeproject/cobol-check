@@ -1,5 +1,7 @@
 package org.openmainframeproject.cobolcheck;
 
+import org.openmainframeproject.cobolcheck.exceptions.TestSuiteAlreadyExistsException;
+import org.openmainframeproject.cobolcheck.exceptions.TestCaseAlreadyExistsException;
 import org.openmainframeproject.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
@@ -55,6 +57,29 @@ public class TestSuiteParserParsingTest {
         testSuite = new StringBuilder();
         cobolWriter = new CobolWriter(mockTestProgramSource);
         numericFields = new NumericFields();
+    }
+    
+    @Test 
+    public void multiple_testsuites_with_same_name_exists_for_a_program() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTSUITE \"Name of test suite\"";
+        
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, null);
+
+        Throwable ex = assertThrows(TestSuiteAlreadyExistsException.class, () -> testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields));
+        assertEquals("ERR031: A test suite with the name \"Name of test suite\" already exists.", ex.getMessage());
+    }
+
+    @Test 
+    public void multiple_testcases_with_same_name_exists_for_a_testsuite() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       TESTCASE \"Name of test case\"";
+        
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, null);
+
+        Throwable ex = assertThrows(TestCaseAlreadyExistsException.class, () -> testSuiteParser.getParsedTestSuiteLines(mockedReader, numericFields));
+        assertEquals("ERR032: A test case with the name \"Name of test case\" already exists in the test suite \"Name of test suite\".", ex.getMessage());
     }
 
     @Test
