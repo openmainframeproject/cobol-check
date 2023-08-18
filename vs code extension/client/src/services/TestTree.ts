@@ -1,19 +1,27 @@
 import { TextDecoder } from 'util';
 import * as vscode from 'vscode';
 import { parseMarkdown } from './CobolCheckInputParser';
+import internal = require('stream');
+import { integer } from 'vscode-languageclient';
 
 const textDecoder = new TextDecoder('utf-8');
 
 export type MarkdownTestData = TestFile | TestHeading | TestCase;
 
+// only for the root files
 export const testData = new WeakMap<vscode.TestItem, MarkdownTestData>();
 
 let generationCounter = 0;
 
-export const getContentFromFilesystem = async (uri: vscode.Uri) => {
+export const getContentFromFilesystem = async (uri: vscode.Uri, isFile) => {
 	try {
-		const rawContent = await vscode.workspace.fs.readFile(uri);
-		return textDecoder.decode(rawContent);
+		// vscode.workspace.fs.readDirectory
+		if(isFile){
+			const rawContent = await vscode.workspace.fs.readFile(uri);
+			return textDecoder.decode(rawContent);
+		}
+		return null
+		
 	} catch (e) {
 		console.warn(`Error providing tests for ${uri.fsPath}`, e);
 		return '';
@@ -25,9 +33,11 @@ export class TestFile {
 
 	public async updateFromDisk(controller: vscode.TestController, item: vscode.TestItem) {
 		try {
-			const content = await getContentFromFilesystem(item.uri!);
-			item.error = undefined;
-			this.updateFromContents(controller, content, item);
+			if(item.children.size==0){
+				var content= await getContentFromFilesystem(item.uri!, (item.children.size==0));
+				item.error = undefined;
+				this.updateFromContents(controller, content, item, item.children.size);
+			}
 		} catch (e) {
 			item.error = (e as Error).stack;
 		}
@@ -37,7 +47,7 @@ export class TestFile {
 	 * Parses the tests from the input text, and updates the tests contained
 	 * by this file to be those from the text,
 	 */
-	public updateFromContents(controller: vscode.TestController, content: string, item: vscode.TestItem) {
+	public updateFromContents(controller: vscode.TestController, content: string, item: vscode.TestItem, fileDepth: integer) {
 		const ancestors = [{ item, children: [] as vscode.TestItem[] }];
 		const thisGeneration = generationCounter++;
 		this.didResolve = true;
@@ -48,14 +58,12 @@ export class TestFile {
 				finished.item.children.replace(finished.children);
 			}
 		};
-
+		
 		parseMarkdown(content, {
 			onTest: (range, label) => {
 				const parent = ancestors[ancestors.length - 1];
 				const data = new TestCase(label);
 				const id = `${item.uri}/${data.getLabel()}`;
-
-
 				const tcase = controller.createTestItem(id, data.getLabel(), item.uri);
 				testData.set(tcase, data);
 				tcase.range = range;
@@ -66,7 +74,6 @@ export class TestFile {
 				ascend(depth);
 				const parent = ancestors[ancestors.length - 1];
 				const id = `${item.uri}/${name}`;
-
 				const thead = controller.createTestItem(id, name, item.uri);
 				thead.range = range;
 				testData.set(thead, new TestHeading(thisGeneration));
@@ -75,12 +82,24 @@ export class TestFile {
 			},
 		});
 
-		ascend(0); // finish and assign children for all remaining items
+		ascend(fileDepth)
+		// if(isFile) ascend(1)
+		// else ascend(0) // finish and assign children for all remaining items
 	}
+
+	
+
 }
 
 export class TestHeading {
-	constructor(public generation: number) { }
+	constructor(public generation: number) { 
+	}
+	async run(item: vscode.TestItem, options: vscode.TestRun): Promise<void> {
+		const start = Date.now();
+		await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+		const duration = Date.now() - start;
+		options.passed(item, duration);
+	}
 }
 
 type Operator = '+' | '-' | '*' | '/';
@@ -127,3 +146,4 @@ export class TestCase {
 	// 	}
 	// }
 }
+

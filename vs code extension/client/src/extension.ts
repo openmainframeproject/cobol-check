@@ -15,7 +15,7 @@ import { startCutLanguageClientServer, stopCutLanguageClientServer } from './ser
 import { ResultWebView } from './services/ResultWebView';
 import { handleCobolCheckOut } from './Helpers/ExtensionHelper';
 import path = require('path');
-import { getContentFromFilesystem, MarkdownTestData, TestCase, testData, TestFile } from "./services/testTree";
+import { getContentFromFilesystem, MarkdownTestData, TestCase, testData, TestFile, TestHeading } from "./services/TestTree";
 
 
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
@@ -91,52 +91,62 @@ export function activate(context: ExtensionContext) {
 			return startTestRun(request);
 		}
 
-		const l = fileChangedEmitter.event(uri => startTestRun(
+		const l = fileChangedEmitter.event(uri => {
+			
+			return startTestRun(
+			
 			new vscode.TestRunRequest2(
 				[getOrCreateFile(ctrl, uri).file],
 				undefined,
 				request.profile,
 				true
 			),
-		));
+		)});
 		cancellation.onCancellationRequested(() => l.dispose());
 	};
 
 	const startTestRun = (request: vscode.TestRunRequest) => {
-		const queue: { test: vscode.TestItem; data: TestCase }[] = [];
+		const queue: { test: vscode.TestItem; data: TestCase | TestHeading  }[] = [];
 		const run = ctrl.createTestRun(request);
 		// map of file uris to statements on each line:
 		const coveredLines = new Map</* file uri */ string, (vscode.StatementCoverage | undefined)[]>();
 
 		const discoverTests = async (tests: Iterable<vscode.TestItem>) => {
-			for (const test of tests) {
-				if (request.exclude?.includes(test)) {
-					continue;
-				}
-
-				const data = testData.get(test);
-				if (data instanceof TestCase) {
-					run.enqueued(test);
-					queue.push({ test, data });
-				} else {
-					if (data instanceof TestFile && !data.didResolve) {
-						await data.updateFromDisk(ctrl, test);
+			if(tests){
+				for (const test of tests) {
+					if (request.exclude?.includes(test)) {
+						continue;
 					}
 
-					await discoverTests(gatherTestItems(test.children));
-				}
+					const data = testData.get(test);
+					if (data instanceof TestCase 
+						|| (data instanceof TestHeading && test.children.size==0)
+						) {
+						run.enqueued(test);
+						queue.push({ test, data });
+					} else {
+						if (data instanceof TestFile ) {
+							await data.updateFromDisk(ctrl, test);
+						}
 
-				if (test.uri && !coveredLines.has(test.uri.toString())) {
-					try {
-						const lines = (await getContentFromFilesystem(test.uri)).split('\n');
-						coveredLines.set(
-							test.uri.toString(),
-							lines.map((lineText, lineNo) =>
-								lineText.trim().length ? new vscode.StatementCoverage(0, new vscode.Position(lineNo, 0)) : undefined
-							)
-						);
-					} catch {
-						// ignored
+						await discoverTests(gatherTestItems(test));
+					}
+
+					if (test.uri && !coveredLines.has(test.uri.toString())) {
+						try {
+							const lines = (await getContentFromFilesystem(test.uri,true))
+							if(lines!=""){
+								const lineArr = lines.split('\n');
+								coveredLines.set(
+									test.uri.toString(),
+									lineArr.map((lineText, lineNo) =>
+										lineText.trim().length ? new vscode.StatementCoverage(0, new vscode.Position(lineNo, 0)) : undefined
+									)
+								);
+							}
+						} catch {
+							// ignored
+						}
 					}
 				}
 			}
@@ -151,7 +161,7 @@ export function activate(context: ExtensionContext) {
 					run.started(test);
 					await data.run(test, run);
 				}
-
+				
 				const lineNo = test.range!.start.line;
 				const fileCoverage = coveredLines.get(test.uri!.toString());
 				if (fileCoverage) {
@@ -160,7 +170,6 @@ export function activate(context: ExtensionContext) {
 
 				run.appendOutput(`Completed ${test.id}\r\n`);
 			}
-
 			run.end();
 		};
 
@@ -180,7 +189,7 @@ export function activate(context: ExtensionContext) {
 			},
 		};
 
-		discoverTests(request.include ?? gatherTestItems(ctrl.items)).then(runTestQueue);
+		discoverTests(request.include ?? gatherTestItemsFromCollection(ctrl.items)).then(runTestQueue);
 	};
 
 	ctrl.refreshHandler = async () => {
@@ -205,7 +214,6 @@ export function activate(context: ExtensionContext) {
 		if (e.uri.scheme !== 'file') {
 			return;
 		}
-
 		if (!e.uri.path.endsWith('.cut')) {
 			return;
 		}
@@ -228,26 +236,108 @@ export function deactivate() {
 	stopCutLanguageClientServer();
 }
 
+function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
+	
+	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
+	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
+	const rootUri = rootDir+dirArr[0]
+	let tmpUri = vscode.Uri.file(rootUri);
+	
+	var file :vscode.TestItem = null; 
+	controller.createTestItem
+	var data = null
+	if(!controller.items.get(rootUri)){ 
+		file = controller.createTestItem(rootUri, dirArr[0], tmpUri);
+		controller.items.add(file);
+		data = new TestFile()
+		testData.set(file, data);
+		file.canResolveChildren = true;
+	}
+	else{ 
+		file = controller.items.get(rootUri)
+		data = testData.get(file)
+	}
+
+	
+	var prevFile: vscode.TestItem = file
+	var tmpDir = rootUri
+
+	for(var i =1;i<dirArr.length;i++){
+		tmpDir = tmpDir + "/" + dirArr[i]
+		const existing = file.children.get(tmpDir);
+		if(!existing){
+			tmpUri = vscode.Uri.file(tmpDir);
+			const tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
+			const tmpData = new TestFile();
+			testData.set(tmpFile, tmpData);
+			tmpFile.canResolveChildren = true;
+
+			// add to existing tree structure
+			prevFile.children.add(tmpFile)
+			
+			prevFile=tmpFile;
+		}else{
+			prevFile = existing;
+		}
+	}
+	return {file,data};
+}
+
+function getDirItem( controller:vscode.TestController, uri: vscode.Uri){
+	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
+	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
+	
+	var tmpDir = rootDir+dirArr[0];
+
+	var existing :vscode.TestItem = controller.items.get(tmpDir);
+
+	if(!existing) return null
+
+	for(var i = 1; i<dirArr.length ;i++){
+		tmpDir = tmpDir + "/" + dirArr[i];
+		existing = existing.children.get(tmpDir);
+		if(!existing) return null
+	}
+	return existing;
+}
+
 // Functions for activating tests
 function getOrCreateFile(controller: vscode.TestController, uri: vscode.Uri) {
-	const existing = controller.items.get(uri.toString());
+	const existing = getDirItem(controller,uri);
 	if (existing) {
 		return { file: existing, data: testData.get(existing) as TestFile };
 	}
-
-	const file = controller.createTestItem(uri.toString(), uri.path.split('/').pop()!, uri);
-	controller.items.add(file);
-
-	const data = new TestFile();
-	testData.set(file, data);
-
-	file.canResolveChildren = true;
-	return { file, data };
+	return createDirItems(controller,uri);
 }
 
-function gatherTestItems(collection: vscode.TestItemCollection) {
-	const items: vscode.TestItem[] = [];
-	collection.forEach(item => items.push(item));
+function gatherTestItems(test: vscode.TestItem) {
+	// testHeading
+	const data : MarkdownTestData = testData.get(test)
+	var items: vscode.TestItem[] = [];
+	if(data instanceof TestFile){
+		test.children.forEach(item => {items=items.concat(gatherTestItems(item))});
+		return items;
+	}
+	else if(data instanceof TestHeading && !test.children){
+		items.push(test)
+		return items;
+	}else if(data instanceof TestHeading && test.children){
+		test.children.forEach(item => items.push(item));
+		return items;
+	}
+	else if(data instanceof TestCase){
+		items.push(test);
+		return items;
+	}
+	return items;
+
+}
+
+function gatherTestItemsFromCollection(collection: vscode.TestItemCollection) {
+	var items: vscode.TestItem[] = [];
+	collection.forEach(item => {
+		items = items.concat(gatherTestItems(item))
+	});
 	return items;
 }
 
@@ -270,6 +360,7 @@ async function findInitialFiles(controller: vscode.TestController, pattern: vsco
 
 function startWatchingWorkspace(controller: vscode.TestController, fileChangedEmitter: vscode.EventEmitter<vscode.Uri> ) {
 	return getWorkspaceTestPatterns().map(({ workspaceFolder, pattern }) => {
+		
 		const watcher = vscode.workspace.createFileSystemWatcher(pattern);
 
 		watcher.onDidCreate(uri => {
