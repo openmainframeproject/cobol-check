@@ -125,14 +125,15 @@ export function activate(context: ExtensionContext) {
 						run.enqueued(test);
 						queue.push({ test, data });
 					} else {
-						if (data instanceof TestFile ) {
+						if (data instanceof TestFile  ) {
 							await data.updateFromDisk(ctrl, test);
 						}
 
 						await discoverTests(gatherTestItems(test));
 					}
-
-					if (test.uri && !coveredLines.has(test.uri.toString())) {
+					if(data instanceof TestFile && test.children.size!=0 )
+					{
+						if (test.uri && !coveredLines.has(test.uri.toString())) {
 						try {
 							const lines = (await getContentFromFilesystem(test.uri,true))
 							if(lines!=""){
@@ -144,8 +145,9 @@ export function activate(context: ExtensionContext) {
 									)
 								);
 							}
-						} catch {
-							// ignored
+							} catch {
+								// ignored
+							}
 						}
 					}
 				}
@@ -257,18 +259,21 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 		file = controller.items.get(rootUri)
 		data = testData.get(file)
 	}
+	if(dirArr.length==1) return {file,data};
 
 	
 	var prevFile: vscode.TestItem = file
 	var tmpDir = rootUri
+	var tmpFile = null
+	var tmpData = null
 
 	for(var i =1;i<dirArr.length;i++){
-		tmpDir = tmpDir + "/" + dirArr[i]
-		const existing = file.children.get(tmpDir);
+		const existing = prevFile.children.get(tmpDir);
+		
 		if(!existing){
 			tmpUri = vscode.Uri.file(tmpDir);
-			const tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
-			const tmpData = new TestFile();
+			tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
+			tmpData = new TestFile();
 			testData.set(tmpFile, tmpData);
 			tmpFile.canResolveChildren = true;
 
@@ -277,10 +282,11 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 			
 			prevFile=tmpFile;
 		}else{
+			
 			prevFile = existing;
 		}
 	}
-	return {file,data};
+	return {tmpFile,tmpData};
 }
 
 function getDirItem( controller:vscode.TestController, uri: vscode.Uri){
@@ -316,18 +322,14 @@ function gatherTestItems(test: vscode.TestItem) {
 	var items: vscode.TestItem[] = [];
 	if(data instanceof TestFile){
 		test.children.forEach(item => {items=items.concat(gatherTestItems(item))});
-		return items;
 	}
-	else if(data instanceof TestHeading && !test.children){
+	else if(data instanceof TestHeading && test.children.size==0){
 		items.push(test)
-		return items;
-	}else if(data instanceof TestHeading && test.children){
+	}else if(data instanceof TestHeading ){
 		test.children.forEach(item => items.push(item));
-		return items;
 	}
 	else if(data instanceof TestCase){
 		items.push(test);
-		return items;
 	}
 	return items;
 
