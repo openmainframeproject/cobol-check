@@ -125,13 +125,14 @@ export function activate(context: ExtensionContext) {
 						run.enqueued(test);
 						queue.push({ test, data });
 					} else {
-						if (data instanceof TestFile  ) {
+						if (data instanceof TestFile ) {
 							await data.updateFromDisk(ctrl, test);
 						}
 
 						await discoverTests(gatherTestItems(test));
+						
 					}
-					if(data instanceof TestFile && test.children.size!=0 )
+					if(!(data instanceof TestFile) || !data.isDirectory(test.uri.fsPath))
 					{
 						if (test.uri && !coveredLines.has(test.uri.toString())) {
 						try {
@@ -251,9 +252,10 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 	if(!controller.items.get(rootUri)){ 
 		file = controller.createTestItem(rootUri, dirArr[0], tmpUri);
 		controller.items.add(file);
-		data = new TestFile()
-		testData.set(file, data);
+		data = new TestFile();
 		file.canResolveChildren = true;
+		testData.set(file, data);
+		
 	}
 	else{ 
 		file = controller.items.get(rootUri)
@@ -266,17 +268,17 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 	var tmpDir = rootUri
 	var tmpFile = null
 	var tmpData = null
-
 	for(var i =1;i<dirArr.length;i++){
+		tmpDir = tmpDir + "/" + dirArr[i]
+		
 		const existing = prevFile.children.get(tmpDir);
 		
 		if(!existing){
 			tmpUri = vscode.Uri.file(tmpDir);
 			tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
 			tmpData = new TestFile();
-			testData.set(tmpFile, tmpData);
 			tmpFile.canResolveChildren = true;
-
+			testData.set(tmpFile, tmpData);
 			// add to existing tree structure
 			prevFile.children.add(tmpFile)
 			

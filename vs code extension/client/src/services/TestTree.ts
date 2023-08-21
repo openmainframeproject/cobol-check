@@ -33,11 +33,19 @@ export class TestFile {
 
 	public async updateFromDisk(controller: vscode.TestController, item: vscode.TestItem) {
 		try {
-			if(item.children.size==0){
+			if(!this.isDirectory(item.uri.fsPath)){
 				var content= await getContentFromFilesystem(item.uri!, (item.children.size==0));
 				item.error = undefined;
 				this.updateFromContents(controller, content, item, item.children.size);
+				
+			}else{
+				for (const nestedItem of item.children) {
+					const data =  testData.get(nestedItem[1]); 
+					if(data instanceof TestFile){
+						await this.updateFromDisk(controller,nestedItem[1] )
+					}
 			}
+		}
 		} catch (e) {
 			item.error = (e as Error).stack;
 		}
@@ -87,6 +95,12 @@ export class TestFile {
 		// else ascend(0) // finish and assign children for all remaining items
 	}
 
+
+	public isDirectory(fileName:string){
+		if(fileName.includes(".cut")) return false
+		else return true
+	}
+
 	
 
 }
@@ -120,7 +134,7 @@ export class TestCase {
 
 	async run(item: vscode.TestItem, options: vscode.TestRun): Promise<void> {
 		const start = Date.now();
-		await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+		await new Promise(resolve => setTimeout(resolve, 1 + Math.random() * 1));
 		const duration = Date.now() - start;
 		options.passed(item, duration);
 
