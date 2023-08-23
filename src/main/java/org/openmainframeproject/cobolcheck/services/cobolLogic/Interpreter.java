@@ -164,6 +164,12 @@ public class Interpreter {
             return false;
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
+             if (currentLine.containsToken(Constants.CALL_TOKEN)) {
+                if (nextMeaningfulLine.getTokens().get(0).equals("ON") ||
+                        nextMeaningfulLine.getTokens().get(0).equals("PERFORM")) {
+                    return false;
+                }
+            }
             return true;
         }
 
