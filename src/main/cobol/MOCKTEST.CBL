@@ -1,6 +1,6 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID.  MOCKTEST.
-      /****************************************************************
+      *****************************************************************
       * Program to exercise different mock statements and edge cases.
       *****************************************************************
        ENVIRONMENT DIVISION.
@@ -24,25 +24,21 @@
        000-START SECTION.
            MOVE "Value1" to VALUE-1
            MOVE "Value2" to VALUE-2
-      /
            PERFORM 100-WELCOME
            PERFORM 200-GOODBYE
-      /
            PERFORM 300-CHANGE-1
            PERFORM 400-CHANGE-2
            PERFORM 500-SWITCH
            PERFORM 999-END
            EXIT SECTION.
-      /**********************
+
        100-WELCOME SECTION
            .
            MOVE "Hello" to VALUE-1
            MOVE "Hi" to VALUE-2
               EXIT SECTION
               .
-      /*************************
-      *    KALD KTOMHDR, HENT OP
-      **************************
+
        200-GOODBYE SECTION.
       * Comment for testing purposes
            MOVE "Bye" to VALUE-1
@@ -61,9 +57,6 @@
            WHEN OTHER
               EXIT PARAGRAPH
            END-EVALUATE.
-      /*************************
-      *    KALD KTOMHDR, HENT OP
-      **************************
 
        400-CHANGE-2 SECTION
           .
@@ -76,9 +69,6 @@
               EXIT SECTION
            END-EVALUATE
           .
-      /*************************
-      *    KALD KTOMHDR, HENT OP
-      **************************
 
        410-PLACEHOLDER SECTION.
            CONTINUE

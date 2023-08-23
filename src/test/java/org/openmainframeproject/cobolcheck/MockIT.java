@@ -7,7 +7,9 @@ import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.workers.Generator;
+import org.openmainframeproject.cobolcheck.testhelpers.Utilities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,7 @@ public class MockIT {
     private BufferedReader mockedParserReader;
     private InterpreterController interpreterController;
     private BufferedReader mockedInterpreterReader;
+    private Interpreter interpreter;
     private CobolWriter cobolWriter;
     private WriterController writerController;
     private Writer writer;
@@ -78,11 +81,11 @@ public class MockIT {
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
         Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, null);
 
+
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-
-        assertEquals(getTrimmedList(expected1), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected1), actual);
     }
 
     @Test
@@ -125,9 +128,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-
-        assertEquals(getTrimmedList(expected2), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected2), actual);
     }
 
     @Test
@@ -148,9 +150,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-
-        assertEquals(getTrimmedList(expected3), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected3), actual);
     }
 
     @Test
@@ -201,9 +202,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-
-        assertEquals(getTrimmedList(expected4), actual);
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected4), actual);
     }
 
     @Test
@@ -254,48 +254,8 @@ public class MockIT {
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
-        List<String> actual = getTrimmedList(removeBoilerPlateCode(writer.toString(), boilerPlateTags));
-        assertEquals(getTrimmedList(expected4), actual);
-    }
-
-    private List<String> getTrimmedList(String text){
-        String[] lines = text.split(Constants.NEWLINE);
-        List<String> result = new ArrayList<>();
-        for (String line : lines){
-            result.add(StringHelper.removeTrailingSpaces(line));
-        }
-        return result;
-    }
-
-    private String removeBoilerPlateCode(String code, List<String> boilerPlateTags){
-        boolean insideBoilerPlate = false;
-        String result = "";
-        String[] lines = code.split(Constants.NEWLINE);
-        for (String line : lines){
-            if (line.contains("*")){
-                boolean skip = false;
-                for(String tag : boilerPlateTags){
-                    if (line.contains(tag)){
-                        skip = true;
-                        if (line.contains("END")){
-                            insideBoilerPlate = false;
-                            continue;
-                        }
-                        else {
-                            insideBoilerPlate = true;
-                            continue;
-                        }
-                    }
-                }
-                if (skip){
-                    continue;
-                }
-            }
-            if (!insideBoilerPlate){
-                result += line + Constants.NEWLINE;
-            }
-        }
-        return result;
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        assertEquals(Utilities.getTrimmedList(expected4), actual);
     }
 
     private String expected1 =
@@ -353,10 +313,23 @@ public class MockIT {
                     "                   ALSO ANY                                                     " + Constants.NEWLINE +
                     "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
                     "           WHEN OTHER                                                           " + Constants.NEWLINE +
+                    "                    PERFORM UT-1-0-0-WO                                           " + Constants.NEWLINE +
+                    "            END-EVALUATE                                                         " + Constants.NEWLINE +
+                    "           .                                                                   " + Constants.NEWLINE +
+                    "                                                                              " + Constants.NEWLINE +
+                    "      *****************************************************************     " + Constants.NEWLINE +
+                    "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+                    "      *****************************************************************     " + Constants.NEWLINE +
+                    "       UT-1-0-0-WO SECTION.                                                 " + Constants.NEWLINE +
+                    "      *****************************************************************     " + Constants.NEWLINE +
+                    "      *WhenOther of: SECTION: 000-START                                        " + Constants.NEWLINE +
+                    "      *****************************************************************     " + Constants.NEWLINE +
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
-                    "            END-EVALUATE                                                        " + Constants.NEWLINE +
-                    "           .                                                                   "  + Constants.NEWLINE;
+                    "           .                                                                   " + Constants.NEWLINE+
+                    "           .                                                                   " + Constants.NEWLINE+
+                    "                                                                              " + Constants.NEWLINE+
+                    "                                                                                "+ Constants.NEWLINE;
 
     private String expected2 =
             "       WORKING-STORAGE SECTION.                                                 " +      Constants.NEWLINE  +
@@ -491,41 +464,80 @@ public class MockIT {
             "       000-START SECTION.                                                       " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Local mock overwrites global mock\"                     " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                           " + Constants.NEWLINE +
+            "                   ALSO \"Local mock overwrites global mock\"                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-1-1-MOCK                                          " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
-            "                    PERFORM UT-1-2-1-MOCK                                          " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO ANY                                                     " + Constants.NEWLINE +
-            "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
-            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                                           " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                                         " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-1-MOCK                                                           " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                                         " + Constants.NEWLINE +
+            "                   ALSO ANY                                                        " + Constants.NEWLINE +
+            "                    PERFORM UT-1-0-1-MOCK                                                         " + Constants.NEWLINE +
+            "           WHEN OTHER                                                         " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-0-WO                                            " + Constants.NEWLINE +
+            "            END-EVALUATE                                                         " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE +
+            "                                                                                 " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "       UT-1-2-0-WO SECTION.                                             " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 000-START                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
-            "           EXIT SECTION                                                         " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +
+            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE+
+            "           .                                                                   " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
-            "                                                                                " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-2-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
-            "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-1-WO                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "       UT-1-2-1-WO SECTION.                                                          " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
-            "       200-GOODBYE SECTION                   .                                  " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
+            "       200-GOODBYE SECTION                   .                                                    " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
-            "           MOVE \"Bye\" to VALUE-1                                                " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "          .     " + Constants.NEWLINE;
+            "                    PERFORM UT-1-2-2-WO                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "          .                                                          " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "       UT-1-2-2-WO SECTION.                                                           " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 200-GOODBYE                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "           MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
+            "          .                                                                    " + Constants.NEWLINE +
+            "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE;
 
     private String expected3 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
@@ -730,14 +742,27 @@ public class MockIT {
             "       000-START SECTION.                                                       " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
-            "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
-            "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
+            "                WHEN \"Mocking tests\"                                           " + Constants.NEWLINE +
+            "                   ALSO \"Simply a test\"                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-0-WO                                            " + Constants.NEWLINE +
+            "            END-EVALUATE                                                         " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE +
+            "                                                                                 " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "       UT-1-2-0-WO SECTION.                                             " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 000-START                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
-            "           EXIT SECTION                                                        " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +
+            "           EXIT SECTION.                                                        " + Constants.NEWLINE +
+            "           .                                                                   " + Constants.NEWLINE+
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -745,6 +770,17 @@ public class MockIT {
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-1-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-1-WO                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "       UT-1-2-1-WO SECTION.                                                          " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
             "      *    CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2.                      " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -752,10 +788,12 @@ public class MockIT {
             "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
-            "           MOVE \"Hello\" to VALUE-1                                              " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "            CONTINUE                                                        " + Constants.NEWLINE +
+            "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "                                                                                " + Constants.NEWLINE+
             "       200-GOODBYE SECTION.                                                     " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -766,9 +804,19 @@ public class MockIT {
             "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                    PERFORM UT-1-2-2-WO                                                           " + Constants.NEWLINE +
+            "            END-EVALUATE                                                           " + Constants.NEWLINE +
+            "          .                                                          " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE+
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther Paragraph or Section called                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "       UT-1-2-2-WO SECTION.                                                           " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
+            "      *WhenOther of: SECTION: 200-GOODBYE                                        " + Constants.NEWLINE +
+            "      *****************************************************************     " + Constants.NEWLINE +
             "          MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "      *   CALL bogus USING VALUE-1                                              " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1                                            " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
@@ -777,7 +825,7 @@ public class MockIT {
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
+            "            CONTINUE                                                        " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1.                                           " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
@@ -785,9 +833,11 @@ public class MockIT {
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-2-MOCK                                          " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
-            "            CONTINUE                                                            " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "            CONTINUE                                                        " + Constants.NEWLINE +
             "          .                                                                    " + Constants.NEWLINE +
+            "           .                                                           " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
             "      * Ending with comment                                                    ";
 
 }

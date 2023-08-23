@@ -116,7 +116,7 @@ public abstract class Formatter {
             }
 
             else if (line.trim().toUpperCase(Locale.ROOT).startsWith(passKeyword) ||
-                    line.trim().toUpperCase(Locale.ROOT).startsWith(failPrefixKeyword + " " + failKeyword)){
+                line.trim().toUpperCase(Locale.ROOT).startsWith(failPrefixKeyword + " " + failKeyword)){
                 try{
                     setTestCaseValues(line);
                 } catch (PossibleInternalLogicErrorException e){

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Parses the concatenated test suite and writes Cobol test code to the output
@@ -22,6 +24,7 @@ public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private TestSuiteWritingStyle testSuiteWritingStyle;
     private List<String> testSuiteTokens;
+    private HashMap<String, HashSet<String>> testNamesHierarchy;
     private String currentTestSuiteLine = "";
     private int fileLineNumber = 0;
     private int fileLineIndexNumber = 0;
@@ -75,6 +78,7 @@ public class TestSuiteParser {
     private String currentTestCaseName = Constants.EMPTY_STRING;
     private int testCaseNumber = 0;
     private boolean expectNumericCompare;
+    private int whenOtherNumber=0;
 
     // Lines inserted into the test program
     private static final String COBOL_PERFORM_INITIALIZE = "           PERFORM %sINITIALIZE";
@@ -157,6 +161,7 @@ public class TestSuiteParser {
         this.beforeAfterRepo = beforeAfterRepo;
         this.testSuiteErrorLog = testSuiteErrorLog;
         testSuiteTokens = new ArrayList<>();
+        testNamesHierarchy = new HashMap<String, HashSet<String>>();
         emptyTestSuite = true;
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         initializeCobolStatement();
@@ -180,7 +185,6 @@ public class TestSuiteParser {
         String parseDataUsingForSummizedTokens = Constants.EMPTY_STRING;
 
         while (testSuiteToken != null) {
-            
             if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
             }
@@ -432,6 +436,10 @@ public class TestSuiteParser {
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
                         currentTestSuiteName = testSuiteToken;
+                        if (testNamesHierarchy.containsKey(currentTestSuiteName)) {
+                            throw new TestSuiteAlreadyExistsException(Messages.get("ERR031", currentTestSuiteName));
+                        }
+                        testNamesHierarchy.put(currentTestSuiteName, new HashSet<String>());
                         RunInfo.addTestSuiteNameToPathMapKeyValuePair(currentTestSuiteName, currentTestSuiteRealFile);
                         addTestSuiteNamelines(currentTestSuiteName, parsedTestSuiteLines);
                         initializeCobolStatement();
@@ -439,6 +447,16 @@ public class TestSuiteParser {
                     if (expectTestcaseName) {
                         expectTestcaseName = false;
                         currentTestCaseName = testSuiteToken;
+                        HashSet<String> testCaseSet = testNamesHierarchy.get(currentTestSuiteName);
+                        if (testCaseSet != null) {
+                            if(testCaseSet.contains(currentTestCaseName)) {
+                                throw new TestCaseAlreadyExistsException(Messages.get("ERR032", currentTestCaseName,
+                                    currentTestSuiteName));
+                            }
+                            else {
+                                testCaseSet.add(currentTestCaseName);
+                            }
+                        }
                         addTestCaseNameLines(currentTestCaseName, parsedTestSuiteLines);
                         initializeCobolStatement();
                     }
@@ -1225,4 +1243,15 @@ public class TestSuiteParser {
     public String getCurrentFieldName() {
         return currentFieldName;
     }
+
+    public WhenOther getWhenOtherSectionOrParagraph(String type, List<String> lines, String itdentifier, boolean withComments){
+        WhenOther whenOther = new WhenOther(testSuiteNumber, testCaseNumber, whenOtherNumber);
+        whenOther.addLines(lines);
+        whenOther.setType(type);
+        whenOther.setIdentifier(itdentifier);
+        whenOtherNumber += 1;
+        return whenOther;
+
+    }
+
 }

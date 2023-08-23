@@ -1,4 +1,4 @@
-      *From file: C:\Udvikler\Workspace\cobol-check-main\src\test\cobol\GREETING\GreetingByType.cut
+      *From file: C:\Users\bdutnp\github\cobol-check\src\test\cobol\GREETING\GreetingByType.cut
            TESTSUITE
            "Greeting returns the appropriate message based on message type"
 

@@ -15,7 +15,7 @@ public class Interpreter {
 
     // Source tokens from Procedure Division that begin batch I/O statements
     private static final List<String> batchFileIOVerbs = Arrays.asList(
-            "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
+        "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
     );
 
     // Used for handling source lines from copybooks that may not have the standard 80-byte length
@@ -29,12 +29,11 @@ public class Interpreter {
     private static final int A_AreaEnd = 11;
     private static final int B_AreaEnd = 71;
 
-    public static int getSequenceNumberAreaIndex() {
+    public static int getSequenceNumberAreaIndex(){
         return sequenceNumberAreaEnd;
     }
 
     //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
-
     /**
      * Sets flags based on a line, to be able to know which kinds of source
      * statements to look for when reading and interpreting lines.
@@ -43,7 +42,7 @@ public class Interpreter {
      * @param state - current state of flags
      * @return - the part of the program just entered or null if no part was entered
      */
-    public static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state) {
+    public static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state){
         String partOfProgram = null;
         if (line.containsToken(Constants.IDENTIFICATION_DIVISION)) {
             state.setFlagFor(Constants.IDENTIFICATION_DIVISION);
@@ -65,7 +64,7 @@ public class Interpreter {
             state.setFlagFor(Constants.INPUT_OUTPUT_SECTION);
             partOfProgram = Constants.INPUT_OUTPUT_SECTION;
         }
-        if (line.containsToken(Constants.FILE_CONTROL)) {
+        if (line.containsToken(Constants.FILE_CONTROL)){
             state.setFlagFor(Constants.FILE_CONTROL);
             partOfProgram = Constants.FILE_CONTROL;
         }
@@ -148,12 +147,12 @@ public class Interpreter {
      * (b) - previous line contains just a period
      * (c) - first token on this line is a Cobol verb
      *
-     * @param currentLine        - current source line being processed
+     * @param currentLine - current source line being processed
      * @param nextMeaningfulLine - next source line that is not empty
      * @return - true if end of statement is recognized
      */
     public static boolean isEndOfStatement(CobolLine currentLine, CobolLine nextMeaningfulLine) {
-        if (nextMeaningfulLine == null) {
+        if (nextMeaningfulLine == null){
             return true;
         }
         if (currentLine.getTrimmedString().endsWith(Constants.PERIOD)) {
@@ -162,7 +161,7 @@ public class Interpreter {
         if (currentLine.getTrimmedString().toUpperCase(Locale.ROOT).endsWith(Constants.END_EXEC_TOKEN)) {
             return true;
         }
-        if (containsOnlyPeriod(nextMeaningfulLine)) {
+        if (containsOnlyPeriod(nextMeaningfulLine)){
             return false;
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
@@ -176,7 +175,7 @@ public class Interpreter {
         if (currentLine == null || nextLine == null || lineFollowingNext == null)
             return true;
 
-        if (endsInPeriod(currentLine) || containsOnlyPeriod(currentLine)) {
+        if (endsInPeriod(currentLine) || containsOnlyPeriod(currentLine)){
             return (isSectionHeader(nextLine, state) || isParagraphHeader(nextLine, lineFollowingNext, state));
         }
         return false;
@@ -204,7 +203,7 @@ public class Interpreter {
         return commentIndicators.contains(line.charAt(commentIndicatorOffset));
     }
 
-    public static boolean isMeaningful(CobolLine line) {
+    public static boolean isMeaningful(CobolLine line){
         return line != null && !isEmpty(line) && !isComment(line) && !isTooShortToBeMeaningful(line);
     }
 
@@ -212,7 +211,7 @@ public class Interpreter {
      * @param line
      * @return true if the source line is empty
      */
-    public static boolean isEmpty(CobolLine line) {
+    public static boolean isEmpty(CobolLine line){
         return line.tokensSize() == 0 && !containsOnlyPeriod(line);
     }
 
@@ -253,6 +252,11 @@ public class Interpreter {
                 return true;
             }
         }
+        if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -264,6 +268,11 @@ public class Interpreter {
     public static String getStubEndToken(CobolLine line, State state) {
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)) {
             if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN)) {
+                return Constants.END_EXEC_TOKEN;
+            }
+        }
+        if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN)) {
                 return Constants.END_EXEC_TOKEN;
             }
         }
@@ -315,7 +324,6 @@ public class Interpreter {
     private static boolean isBatchFileIOStatement(List<String> tokens, String ioVerb) {
         return tokens.contains(ioVerb);
     }
-
 
     public static String getSectionOrParagraphName(CobolLine line) {
         if (line.tokensSize() > 0) {
@@ -420,21 +428,22 @@ public class Interpreter {
      * @param line - the line to get the area for
      * @return the beginning area of the source line.
      */
-    public static Area getBeginningArea(CobolLine line, boolean ignoreSequenceArea) {
+    public static Area getBeginningArea(CobolLine line, boolean ignoreSequenceArea){
         if (isTooShortToBeMeaningful(line) ||
-                (ignoreSequenceArea && line.getUnNumberedString().length() <= sequenceNumberAreaEnd + 1)) {
+                (ignoreSequenceArea && line.getUnNumberedString().length() <= sequenceNumberAreaEnd + 1)){
             return Area.NONE;
         }
         char[] characters;
         int index = 0;
-        if (ignoreSequenceArea) {
+        if (ignoreSequenceArea){
             characters = line.getUnNumberedString().toCharArray();
             index = sequenceNumberAreaEnd;
-        } else {
+        }
+        else{
             characters = line.getOriginalString().toCharArray();
         }
 
-        while (characters[index] == ' ') {
+        while (characters[index] == ' '){
             index++;
         }
 

@@ -1,0 +1,10 @@
+            TestSuite "Test Nested"
+
+            TestCase "Test Nested"
+            MOVE 5 TO ONE-DIGIT
+            MOCK SECTION MOCK-SECTION-WITH-ERROR  MOVE 3 TO ONE-DIGIT
+            END-MOCK
+            PERFORM MOCK-SECTION-WITH-ERROR
+            EXPECT ONE-DIGIT TO BE 3
+
+            
