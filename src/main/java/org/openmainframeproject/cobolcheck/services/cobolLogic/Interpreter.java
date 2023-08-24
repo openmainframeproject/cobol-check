@@ -14,30 +14,30 @@ public class Interpreter {
 
     // Source tokens from Procedure Division that begin batch I/O statements
     private static final List<String> batchFileIOVerbs = Arrays.asList(
-        "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START"
-    );
+            "OPEN", "CLOSE", "READ", "WRITE", "REWRITE", "DELETE", "START");
 
-    // Used for handling source lines from copybooks that may not have the standard 80-byte length
+    // Used for handling source lines from copybooks that may not have the standard
+    // 80-byte length
     private static final int minimumMeaningfulSourceLineLength = 7;
     private static final int commentIndicatorOffset = 6;
     private static final List<Character> commentIndicators = Arrays.asList('*', '/');
 
-    //Used to find areas
+    // Used to find areas
     private static final int sequenceNumberAreaEnd = 6;
     private static final int indicatorAreaEnd = 7;
     private static final int A_AreaEnd = 11;
     private static final int B_AreaEnd = 71;
 
-    public static int getSequenceNumberAreaIndex(){
+    public static int getSequenceNumberAreaIndex() {
         return sequenceNumberAreaEnd;
     }
 
-    //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
+    // TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
     /**
      * Sets flags based on a line, to be able to know which kinds of source
      * statements to look for when reading and interpreting lines.
      *
-     * @param line - current source line being processed
+     * @param line  - current source line being processed
      * @param state - current state of flags
      * @return - the part of the program just entered or null if no part was entered
      */
@@ -146,7 +146,7 @@ public class Interpreter {
      * (b) - previous line contains just a period
      * (c) - first token on this line is a Cobol verb
      *
-     * @param currentLine - current source line being processed
+     * @param currentLine        - current source line being processed
      * @param nextMeaningfulLine - next source line that is not empty
      * @return - true if end of statement is recognized
      */
@@ -162,6 +162,27 @@ public class Interpreter {
         }
         if (containsOnlyPeriod(nextMeaningfulLine)) {
             return false;
+        }
+        if (currentLine.containsToken(Constants.CALL_TOKEN)) {
+            List<String> currentTokens = currentLine.getTokens();
+            int callTokenCount = 0, endCallTokenCount = 0;
+            for (String token : currentTokens) {
+                if (token.equals(Constants.CALL_TOKEN)) {
+                    callTokenCount++;
+                }
+                if (token.equals(Constants.END_CALL_TOKEN)) {
+                    endCallTokenCount++;
+                }
+            }
+            if (callTokenCount == endCallTokenCount) {
+                return true;
+            }
+            if (nextMeaningfulLine.containsToken("ON")) {
+                return false;
+            }
+            if (currentLine.containsToken("ON")) {
+                return false;
+            }
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
             return true;
@@ -185,7 +206,8 @@ public class Interpreter {
      * This "shouldn't happen." Famous last words.
      *
      * @param line
-     * @return true if the source line is too short to be a meaningful line of code in Cobol.
+     * @return true if the source line is too short to be a meaningful line of code
+     *         in Cobol.
      */
     public static boolean isTooShortToBeMeaningful(CobolLine line) {
         return line.getUnNumberedString() == null
@@ -254,7 +276,8 @@ public class Interpreter {
             }
         }
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
-            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE)
+                    || line.containsToken(Constants.END_EXEC_TOKEN))
                 return true;
         }
         return false;
@@ -289,8 +312,8 @@ public class Interpreter {
             if (line.containsToken(Constants.REPLACE_TOKEN))
                 return true;
         }
-        if (state.isFlagSetFor(Constants.DATA_DIVISION)){
-            if (!Interpreter.endsInPeriod(line)){
+        if (state.isFlagSetFor(Constants.DATA_DIVISION)) {
+            if (!Interpreter.endsInPeriod(line)) {
                 return true;
             }
         }
@@ -299,9 +322,9 @@ public class Interpreter {
 
     public static boolean lineContainsBinaryFieldDefinition(CobolLine line) {
         return line.containsToken(Constants.COMP_VALUE)
-         || line.containsToken(Constants.COMP_4_VALUE)
-         || line.containsToken(Constants.COMP_5_VALUE)
-         || line.containsToken(Constants.BINARY);
+                || line.containsToken(Constants.COMP_4_VALUE)
+                || line.containsToken(Constants.COMP_5_VALUE)
+                || line.containsToken(Constants.BINARY);
     }
 
     public static boolean containsOnlyPeriod(CobolLine line) {
@@ -340,13 +363,15 @@ public class Interpreter {
     }
 
     /**
-     * As paragraph headers are not associated with any keyword, the method matches the
+     * As paragraph headers are not associated with any keyword, the method matches
+     * the
      * source line against specific attributes that makes up a paragraph header.
      *
-     * @param line - The line to check
+     * @param line     - The line to check
      * @param nextLine - The line after the line param
-     * @param state - current state of flags
-     * @return true if the source line have all the attributes of a paragraph header.
+     * @param state    - current state of flags
+     * @return true if the source line have all the attributes of a paragraph
+     *         header.
      */
     public static boolean isParagraphHeader(CobolLine line, CobolLine nextLine, State state) {
         return (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)
@@ -361,7 +386,7 @@ public class Interpreter {
      * - It has only one token
      * - The token is followed by a period on this or the next line.
      *
-     * @param line - The line to check
+     * @param line     - The line to check
      * @param nextLine - The line after the line param
      * @return true if sourceLine is of the format of a paragraph header
      */
@@ -370,7 +395,7 @@ public class Interpreter {
             if (line.tokensSize() == 1) {
                 if (line.getTrimmedString().endsWith(Constants.PERIOD) ||
                         (nextLine != null &&
-                        nextLine.getTrimmedString().equals(Constants.PERIOD)))
+                                nextLine.getTrimmedString().equals(Constants.PERIOD)))
                     return true;
             }
         }
@@ -457,7 +482,8 @@ public class Interpreter {
     }
 
     /**
-     * Checks if the last of these lines is ending the current component (SECTION, CALL, etc.)
+     * Checks if the last of these lines is ending the current component (SECTION,
+     * CALL, etc.)
      * This should be called from inside the component, as it only checks, if
      * the trimmed line ends with a period
      *
@@ -469,29 +495,32 @@ public class Interpreter {
     }
 
     /**
-     * Depending on the line that is being interpreted, we want to make sure that we update 
-     * the current datastructure. This structure is based on the lines we have read so far in 
+     * Depending on the line that is being interpreted, we want to make sure that we
+     * update
+     * the current datastructure. This structure is based on the lines we have read
+     * so far in
      * working storage.
-     * This will make sure to add or remove any referenced field within the structure, based on
+     * This will make sure to add or remove any referenced field within the
+     * structure, based on
      * the level of said field within the structure.
      */
-    public static TreeMap<Integer,String> updateCurrentDataStructure(List<CobolLine> currentStatement, TreeMap<Integer, String> currentHierarchy) {
+    public static TreeMap<Integer, String> updateCurrentDataStructure(List<CobolLine> currentStatement,
+            TreeMap<Integer, String> currentHierarchy) {
 
         String[] statementWords = extractStatementWords(currentStatement);
 
-        if (currentHierarchy==null) {
+        if (currentHierarchy == null) {
             currentHierarchy = new TreeMap<>();
         }
 
         int lastKeyOfCurrentHierarchy;
         if (currentHierarchy.isEmpty()) {
-            lastKeyOfCurrentHierarchy=0;
-        }
-        else {
+            lastKeyOfCurrentHierarchy = 0;
+        } else {
             lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
         }
 
-        if (!isInteger(statementWords[0])){
+        if (!isInteger(statementWords[0])) {
             return currentHierarchy;
         }
         int cobolLevelNumber = determineCobolLevelNumber(statementWords[0]);
@@ -527,24 +556,21 @@ public class Interpreter {
         }
     }
 
-    private static Integer determineCobolLevelNumber(String levelNumberString){
+    private static Integer determineCobolLevelNumber(String levelNumberString) {
         int cobolLevelNumber = Integer.parseInt(levelNumberString);
-        if (cobolLevelNumber == 77){
+        if (cobolLevelNumber == 77) {
             cobolLevelNumber = 01;
         }
         return cobolLevelNumber;
     }
 
-    private static String[] extractStatementWords(List<CobolLine> currentStatement){
-    String statementString = "";
-    for(CobolLine loopLine: currentStatement){
-        statementString += loopLine.getTrimmedString();
-    }
-    statementString = statementString.trim().replace(Constants.PERIOD, "");
-    String[] statementWords = statementString.split("\\s+");
-    return statementWords;
+    private static String[] extractStatementWords(List<CobolLine> currentStatement) {
+        String statementString = "";
+        for (CobolLine loopLine : currentStatement) {
+            statementString += loopLine.getTrimmedString();
+        }
+        statementString = statementString.trim().replace(Constants.PERIOD, "");
+        String[] statementWords = statementString.split("\\s+");
+        return statementWords;
     }
 }
-
-
-
