@@ -15,8 +15,8 @@ public class CobolReader {
     private State state;
     private TokenExtractor tokenExtractor;
 
-    private CobolLine prevoiusLine;
-    private CobolLine prevoiusMeaningfulLine;
+    private CobolLine previousLine;
+    private CobolLine previousMeaningfulLine;
     private CobolLine currentLine;
     private List<CobolLine> nextLines;
     private List<CobolLine> currentStatement;
@@ -34,8 +34,8 @@ public class CobolReader {
 
     State getState() {return state; }
     CobolLine getCurrentLine() { return currentLine; }
-    CobolLine getPrevoiusLine() { return prevoiusLine; }
-    CobolLine getPrevoiusMeaningfulLine() { return prevoiusMeaningfulLine; }
+    CobolLine getPreviousLine() { return previousLine; }
+    CobolLine getPreviousMeaningfulLine() { return previousMeaningfulLine; }
     List<CobolLine> getCurrentStatement(){ return currentStatement; }
 
     public String getLineJustEntered() { return lineJustEneterd; }
@@ -53,7 +53,7 @@ public class CobolReader {
         currentStatement = null;
         lineNumber++;
         if (!nextLines.isEmpty()){
-            prevoiusLine = currentLine;
+            previousLine = currentLine;
             setPreviousMeaningfulLine();
             currentLine = nextLines.get(0);
             nextLines.remove(0);
@@ -63,7 +63,7 @@ public class CobolReader {
         if (line == null){
             return null;
         }
-        prevoiusLine = currentLine;
+        previousLine = currentLine;
         setPreviousMeaningfulLine();
         currentLine = new CobolLine(line, tokenExtractor);
         return currentLine;
@@ -79,7 +79,7 @@ public class CobolReader {
 
     private void setPreviousMeaningfulLine(){
         if (Interpreter.isMeaningful(currentLine))
-            prevoiusMeaningfulLine = currentLine;
+            previousMeaningfulLine = currentLine;
     }
 
     /**
