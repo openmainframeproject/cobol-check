@@ -335,7 +335,7 @@ public class InterpreterController {
                 && Interpreter.containsOnlyPeriod(nextLine)) {
             // We might generate code after the current line, thus if the period is on the next line,
             // we append it to this line. This prevents us generating code in the wrong place.
-            reader.appendNextMeaningfulLineToCurrentLine();
+            reader.appendNextMeaningfulLineToCurrentLine(true);
         }
     }
 

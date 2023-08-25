@@ -23,6 +23,7 @@ public class CobolReader {
     private int lineNumber;
 
     private String lineJustEneterd = null;
+    private final int maxLineLength = 72;
 
     public CobolReader(BufferedReader sourceReader) {
         reader = sourceReader;
@@ -71,8 +72,10 @@ public class CobolReader {
 
     //Will potentially make interpretation easier (not used)
     CobolLine readStatementAsOneLine() throws IOException {
-        while (!Interpreter.isEndOfStatement(currentLine, peekNextMeaningfulLine())){
-            appendNextMeaningfulLineToCurrentLine();
+        Boolean isFirstTime = true;
+        while (!Interpreter.isEndOfStatement(currentLine, peekNextMeaningfulLine())) {
+            appendNextMeaningfulLineToCurrentLine(isFirstTime);
+            isFirstTime = false;
         }
         return currentLine;
     }
@@ -95,7 +98,7 @@ public class CobolReader {
         reader.close();
     }
 
-    CobolLine appendNextMeaningfulLineToCurrentLine() throws IOException{
+    CobolLine appendNextMeaningfulLineToCurrentLine(Boolean isFirstTime) throws IOException{
         List<CobolLine> statementLines = new ArrayList<>();
         CobolLine nextMeaningfulLine = peekNextMeaningfulLine();
         if (Interpreter.containsOnlyPeriod(nextMeaningfulLine)){
@@ -103,8 +106,18 @@ public class CobolReader {
                     nextMeaningfulLine.getTrimmedString(), tokenExtractor);
         }
         else {
-            currentLine = new CobolLine(currentLine.getUnNumberedString() + " " +
-                    nextMeaningfulLine.getTrimmedString(), tokenExtractor);
+            int requiredSpaces = 0;
+            if(isFirstTime)
+                requiredSpaces = maxLineLength - currentLine.getUnNumberedString().length();
+            else
+                requiredSpaces = maxLineLength - 
+                    (currentLine.getUnNumberedString().length() - previousLine.getUnNumberedString().length());
+            previousLine = new CobolLine(currentLine.getOriginalString() + " ".repeat(requiredSpaces), tokenExtractor);
+            currentLine = new CobolLine(
+                        currentLine.getUnNumberedString() + 
+                            " ".repeat(requiredSpaces) +
+                            nextMeaningfulLine.getUnNumberedString(), 
+                        tokenExtractor);
         }
 
         nextLines.remove(nextLines.size() - 1);

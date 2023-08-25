@@ -781,7 +781,8 @@ public class MockIT {
             "      *****************************************************************     " + Constants.NEWLINE +
             "      *WhenOther of: SECTION: 100-WELCOME                                        " + Constants.NEWLINE +
             "      *****************************************************************     " + Constants.NEWLINE +
-            "      *    CALL 'prog1' USING BY CONTENT VALUE-1, VALUE-2.                      " + Constants.NEWLINE +
+            "      *    CALL 'prog1' USING                                                   " + Constants.NEWLINE +
+            "      *        BY CONTENT VALUE-1, VALUE-2.                                     " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +
             "                   ALSO UT-TEST-CASE-NAME                                       " + Constants.NEWLINE +
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
