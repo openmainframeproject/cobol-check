@@ -113,9 +113,9 @@ public class writerTest {
                 "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong, that it needs to be multiple lines.";
         String expectedLine1 = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo        ";
         expectedLine1 += Constants.NEWLINE;
-        String expectedLine2 = "      * oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        String expectedLine2 = "      *oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooon        ";
         expectedLine2 += Constants.NEWLINE;
-        String expectedLine3 = "      * ng, that it needs to be multiple lines.                                 ";
+        String expectedLine3 = "      *g, that it needs to be multiple lines.                                   ";
         expectedLine3 += Constants.NEWLINE;
         writerController.writeCommentedLine(originalText);
         assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
@@ -127,9 +127,9 @@ public class writerTest {
                 "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong, that it needs to be multiple lines.";
         String expectedLine1 = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo        ";
         expectedLine1 += Constants.NEWLINE;
-        String expectedLine2 = "      * oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        String expectedLine2 = "      *oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooon        ";
         expectedLine2 += Constants.NEWLINE;
-        String expectedLine3 = "      * ng, that it needs to be multiple lines.                                 ";
+        String expectedLine3 = "      *g, that it needs to be multiple lines.                                   ";
         expectedLine3 += Constants.NEWLINE;
         writerController.writeCommentedLine(originalText);
         assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
@@ -141,9 +141,9 @@ public class writerTest {
                 "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong, that it needs to be multiple lines.";
         String expectedLine1 = "      * This comment is so loooooooooooooooooooooooooooooooooooooooooooo        ";
         expectedLine1 += Constants.NEWLINE;
-        String expectedLine2 = "      * oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo        ";
+        String expectedLine2 = "      *oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooon        ";
         expectedLine2 += Constants.NEWLINE;
-        String expectedLine3 = "      * ng, that it needs to be multiple lines.                                 ";
+        String expectedLine3 = "      *g, that it needs to be multiple lines.                                   ";
         expectedLine3 += Constants.NEWLINE;
         writerController.writeLine(originalText);
         assertEquals(expectedLine1 + expectedLine2 + expectedLine3, writer.toString());
