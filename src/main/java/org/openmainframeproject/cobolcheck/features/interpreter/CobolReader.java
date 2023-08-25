@@ -106,16 +106,20 @@ public class CobolReader {
                     nextMeaningfulLine.getTrimmedString(), tokenExtractor);
         }
         else {
-            int requiredSpaces = 0;
+            int requiredSpacesToFillCurrentLine = 0;
             if(isFirstTime)
-                requiredSpaces = maxLineLength - currentLine.getUnNumberedString().length();
+                requiredSpacesToFillCurrentLine = maxLineLength - currentLine.getUnNumberedString().length();
             else
-                requiredSpaces = maxLineLength - 
+                requiredSpacesToFillCurrentLine = maxLineLength - 
                     (currentLine.getUnNumberedString().length() - previousLine.getUnNumberedString().length());
-            previousLine = new CobolLine(currentLine.getOriginalString() + " ".repeat(requiredSpaces), tokenExtractor);
+            StringBuilder spacesToFillCurrentLine = new StringBuilder();
+            for (int i = 0; i < requiredSpacesToFillCurrentLine; i++) {
+                spacesToFillCurrentLine.append(" ");
+            }
+            previousLine = new CobolLine(currentLine.getOriginalString() + spacesToFillCurrentLine.toString(), tokenExtractor);
             currentLine = new CobolLine(
                         currentLine.getUnNumberedString() + 
-                            " ".repeat(requiredSpaces) +
+                            spacesToFillCurrentLine.toString() +
                             nextMeaningfulLine.getUnNumberedString(), 
                         tokenExtractor);
         }
