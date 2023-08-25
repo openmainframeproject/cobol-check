@@ -21,7 +21,7 @@ import { getContentFromFilesystem, MarkdownTestData, TestCase, testData, TestFil
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
 let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
 let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
-let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.5.jar');
+let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.8.jar');
 
 let lastCurrentFile = null;
 let cutLanguageRunning = false;
@@ -48,7 +48,15 @@ export function activate(context: ExtensionContext) {
 
 			//Getting arguments to run
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
-			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir);
+			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, vscode.window.activeTextEditor.document.uri.fsPath);
+			// console.log("externalVsCodeInstallationDir")
+			// console.log(externalVsCodeInstallationDir)
+			// console.log("configPath")
+			// console.log(configPath)
+			// console.log("applicationSourceDir")
+			// console.log(applicationSourceDir)
+			// console.log("argument")
+			// console.log(argument)
 			if (argument === null) return;
 
 			progress.report({ message: 'Running tests' })
@@ -106,7 +114,7 @@ export function activate(context: ExtensionContext) {
 	};
 
 	const startTestRun = (request: vscode.TestRunRequest) => {
-		const queue: { test: vscode.TestItem; data: TestCase | TestHeading  }[] = [];
+		const queue: { test: vscode.TestItem; data: MarkdownTestData  }[] = [];
 		const run = ctrl.createTestRun(request);
 		// map of file uris to statements on each line:
 		const coveredLines = new Map</* file uri */ string, (vscode.StatementCoverage | undefined)[]>();
@@ -120,19 +128,23 @@ export function activate(context: ExtensionContext) {
 
 					const data = testData.get(test);
 					if (data instanceof TestCase 
-						|| (data instanceof TestHeading && test.children.size==0)
+						|| (data instanceof TestFile  )
+						|| (data instanceof TestHeading && test.children.size==0
+						)
 						) {
 						run.enqueued(test);
 						queue.push({ test, data });
-					} else {
-						if (data instanceof TestFile ) {
-							await data.updateFromDisk(ctrl, test);
-						}
-
-						await discoverTests(gatherTestItems(test));
-						
 					}
-					if(!(data instanceof TestFile) || !data.isDirectory(test.uri.fsPath))
+					// else {
+					// 	if (data instanceof TestFile && data.isDirectory(test.uri.fsPath)) {
+					// 		// await data.updateFromDisk(ctrl, test);
+					// 		await discoverTests(gatherTestItems(test));
+					// 	}
+
+					// 	// await discoverTests(gatherTestItems(test));
+						
+					// }
+					if(!(data instanceof TestFile) || !data.getIsDirectory())
 					{
 						if (test.uri && !coveredLines.has(test.uri.toString())) {
 						try {
@@ -165,10 +177,12 @@ export function activate(context: ExtensionContext) {
 					await data.run(test, run);
 				}
 				
-				const lineNo = test.range!.start.line;
-				const fileCoverage = coveredLines.get(test.uri!.toString());
-				if (fileCoverage) {
-					fileCoverage[lineNo]!.executionCount++;
+				if(!( data instanceof TestFile)){
+					const lineNo = test.range!.start.line;
+					const fileCoverage = coveredLines.get(test.uri!.toString());
+					if (fileCoverage) {
+						fileCoverage[lineNo]!.executionCount++;
+					}
 				}
 
 				run.appendOutput(`Completed ${test.id}\r\n`);
@@ -252,7 +266,7 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 	if(!controller.items.get(rootUri)){ 
 		file = controller.createTestItem(rootUri, dirArr[0], tmpUri);
 		controller.items.add(file);
-		data = new TestFile();
+		data = new TestFile(rootUri);
 		file.canResolveChildren = true;
 		testData.set(file, data);
 		
@@ -276,7 +290,7 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 		if(!existing){
 			tmpUri = vscode.Uri.file(tmpDir);
 			tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
-			tmpData = new TestFile();
+			tmpData = new TestFile(tmpDir);
 			tmpFile.canResolveChildren = true;
 			testData.set(tmpFile, tmpData);
 			// add to existing tree structure
@@ -323,7 +337,7 @@ function gatherTestItems(test: vscode.TestItem) {
 	const data : MarkdownTestData = testData.get(test)
 	var items: vscode.TestItem[] = [];
 	if(data instanceof TestFile){
-		test.children.forEach(item => {items=items.concat(gatherTestItems(item))});
+		items.push(test)
 	}
 	else if(data instanceof TestHeading && test.children.size==0){
 		items.push(test)

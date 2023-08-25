@@ -21,6 +21,13 @@ export async function handleCobolCheckOut(output : CobParser.CobolCheckOutputPar
 				resolve(true);
 				break;
 
+			case CobParser.OutputState.TestFailed:
+				testResultFile = appendPath(vsCodeInstallDir, await getConfigurationValueFor(configPath, 'test.results.file'));
+				htmlResult = await getTextFromFile(testResultFile + '.html');
+				showWebWiev('Test Results - ' + getCurrentProgramName(), htmlResult)
+				resolve(false);
+				break;
+
 			case CobParser.OutputState.SyntaxWarnings:
 				testResultFile = appendPath(vsCodeInstallDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 				htmlResult = await getTextFromFile(testResultFile + '.html');
@@ -81,4 +88,35 @@ function showWebWiev(title: string, html : string){
 		panel.title = title;
 		panel.webview.html = html;
 	}
+}
+
+
+export async function handleCobolCheckOutput(output : CobParser.CobolCheckOutputParser) : Promise<boolean>{
+	return new Promise(async resolve => {
+		switch(output.state){
+			case CobParser.OutputState.NoIssues:
+				resolve(true)
+
+			case CobParser.OutputState.TestFailed:
+				resolve(false)
+				
+			case CobParser.OutputState.SyntaxWarnings:
+				resolve(false)
+
+			case CobParser.OutputState.SyntaxError:
+				resolve(false)
+
+			case CobParser.OutputState.JavaException:
+				resolve(false)
+
+			case CobParser.OutputState.CmdError:
+				resolve(false)
+
+			case CobParser.OutputState.CobolCompilerError:
+				resolve(false)
+				
+			default:
+				resolve(false)
+		}
+	});
 }

@@ -11,23 +11,42 @@ let currentPlatform = getOS();
 
 let currentProgramName : string = null;
 
-export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : string, configPath : string, sourceDir : string) : string {
-	let currentFile = vscode.window.activeTextEditor.document.uri.fsPath;
+let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
+
+
+export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : string, configPath : string, sourceDir : string, filePath:string) : string {
+	// let currentFile = vscode.window.activeTextEditor.document.uri.fsPath;
 	
 	//Getting the source path
 	const srcFolderName = getRootFolder(sourceDir);
-	const srcFolderContext : string = getSourceFolderContextPath(currentFile, srcFolderName);
-	if (srcFolderContext === null) return null;
+	const srcFolderContext : string = getSourceFolderContextPath(filePath, srcFolderName);
 	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
 	LOGGER.log("Found source folder path: " + cobolSourcePath, LOGGER.INFO)
-
-	//Getting program name based on current context
-	let programPath : string = getCobolProgramPathForGivenContext(currentFile, cobolSourcePath);
+	let programPath : string = getCobolProgramPathForGivenContext(filePath, cobolSourcePath);
 	if (programPath === null) return null;
 	let programName : string = getFileName(programPath, false);
 	currentProgramName = programName;
 	LOGGER.log("Found source program name: " + programName, LOGGER.INFO)
+	let cutName = getCutName(filePath);
+	return '-p ' + programName + ' -t '+ cutName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
+	'-r "' + vsCodeInstallPath + '"'; 
+	
+}
 
+export function getCobolCheckRunArgumentsBasedOnCurrentDirectory(vsCodeInstallPath : string, configPath : string, sourceDir : string, filePath:string) : string {
+
+	const srcFolderName = getRootFolder(sourceDir);
+	const srcFolderContext : string = getSourceFolderContextPath(filePath, srcFolderName);
+	
+
+	if (srcFolderContext === null) return null;
+	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
+	LOGGER.log("Found source folder path: " + cobolSourcePath, LOGGER.INFO)
+	//Getting program name based on current context
+	
+	let programName : string = filePath.split("/").pop();
+	currentProgramName = programName;
+	LOGGER.log("Found source directory name: " + programName, LOGGER.INFO)
 	return '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
 	'-r "' + vsCodeInstallPath + '"';
 }
@@ -49,8 +68,11 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 		LOGGER.log("Running Cobol Check with arguments: " + commandLineArgs, LOGGER.INFO)
 		try{
 			var exec = require('child_process').exec;
+			// 			var tmpStr = "cd /Users/issac/Documents/GitHub/cobol-check/vs-code-extension/Cobol-check && "
+			const testPath = appendPath(externalVsCodeInstallationDir, "Cobol-check");
+			var tmpStr = "cd " + testPath + " && "
 			//Run Cobol Check jar with arguments
-			var child = exec(executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
+			var child = exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
 				if(error !== null){
 					LOGGER.log("*** COBOL CHECK ERROR: " + error, LOGGER.ERROR);
 				}
@@ -132,6 +154,12 @@ export function getFileName(path : string, includeExtension : boolean) : string{
 	}
 }
 
+export function getCutName(path : string) : string{
+	const name = path.split("/").pop()
+	if(!name.endsWith(".cut")) return null
+	return name;
+}
+
 export function getFileExtension(path : string) : string{
 	let programName : string = getFileName(path, true);
 	let fileExtensionIndex = programName.indexOf('.');
@@ -193,7 +221,7 @@ function getOS() {
 	return platform;
   }
 
-  function getFileSeperatorForOS(platform : string){
+function getFileSeperatorForOS(platform : string){
 	  if (platform === windowsPlatform) return '\\';
 	  else return '/';
   }

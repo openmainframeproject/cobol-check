@@ -7,7 +7,8 @@ export enum OutputState {
 	SyntaxError,
 	JavaException,
 	CmdError,
-	CobolCompilerError
+	CobolCompilerError,
+	TestFailed
   }
 
 
@@ -18,6 +19,7 @@ export class CobolCheckOutputParser{
 
 	private compilerInfoTag:string = "INF009:"
 	private compilerReturnCode1:string = "ended with exit code 1."
+	private compilerReturnCode4:string = "ended with exit code 4."
 	private syntaxErrorToken:string = "SYNTAX ERROR in file:";
 	private runTimeErrorToken:string = "RUNTIME ERROR in file:";
 	private warningToken:string = "WARNING in file:";
@@ -40,6 +42,8 @@ export class CobolCheckOutputParser{
 				line = line.trim();
 				if (line.includes(this.compilerInfoTag) && line.endsWith(this.compilerReturnCode1)){
 					this.state = OutputState.CobolCompilerError;
+				}else if (line.includes(this.compilerInfoTag) && line.endsWith(this.compilerReturnCode4)){
+					this.state = OutputState.TestFailed;
 				}
 			}
 		}
@@ -59,7 +63,7 @@ export class CobolCheckOutputParser{
 				if (line.startsWith(this.testSuiteToken)){
 					reachedTestResults = true;
 					if (this.state !== OutputState.SyntaxWarnings)
-						this.state = OutputState.NoIssues;
+						if(this.state!=OutputState.TestFailed) this.state = OutputState.NoIssues;
 				}
 				if (this.state === OutputState.SyntaxError || this.state === OutputState.SyntaxWarnings){
 					if (!reachedTestResults)
