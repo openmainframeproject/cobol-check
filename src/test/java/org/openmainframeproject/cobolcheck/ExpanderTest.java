@@ -89,6 +89,125 @@ public class ExpanderTest {
         assertEquals(Utilities.getTrimmedList(expected1), actual);
     }
 
+    
+    @Test
+    public void it_inserts_code_correctly_when_call_has_exception_handling_with_end_call_terminator()
+            throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       CALL \"PROGRAM\" USING VALUE-1";
+        String s4 = "           ON EXCEPTION";
+        String s5 = "           PERFORM 100-WELCOME";
+        String s6 = "       END-CALL.";
+
+        String t1 = "           TestSuite \"test\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities
+                .getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(Utilities.getTrimmedList(expected2), actual);
+    }
+
+    @Test
+    public void it_inserts_code_correctly_when_call_has_exception_handling_with_period_terminator() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       CALL \"PROGRAM\" USING VALUE-1";
+        String s4 = "           ON EXCEPTION";
+        String s5 = "           PERFORM 100-WELCOME";
+        String s6 = "       .";
+
+        String t1 = "           TestSuite \"test\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities
+                .getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(Utilities.getTrimmedList(expected3), actual);
+    }
+
+    @Test
+    public void it_inserts_code_correctly_when_call_has_different_exception_handling()
+            throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       CALL \"PROGRAM\" USING VALUE-1";
+        String s4 = "           ON EXCEPTION";
+        String s5 = "           DISPLAY \"HELLO WORLD\"";
+        String s6 = "       .";
+
+        String t1 = "           TestSuite \"test\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities
+                .getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(Utilities.getTrimmedList(expected4), actual);
+    }
+
+    @Test
+    public void it_inserts_code_correctly_when_call_has_a_new_call_as_exception_handling()
+            throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       CALL \"PROGRAM\" USING VALUE-1";
+        String s4 = "           ON EXCEPTION";
+        String s5 = "           CALL \"PROGRAM2\" USING VALUE-1";
+        String s6 = "           ON EXCEPTION";
+        String s7 = "           DISPLAY \"HELLO WORLD\"";
+        String s8 = "           END-CALL";
+        String s9 = "       END-CALL";
+        String s10 = "      DISPLAY \"NO COMMENTS\"";
+
+        String t1 = "           TestSuite \"test\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities
+                .getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(Utilities.getTrimmedList(expected5), actual);
+    }
+
+    @Test
+    public void it_inserts_code_correctly_when_each_call_in_series_has_an_exception_handling()
+            throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       PROCEDURE DIVISION.";
+        String s3 = "       CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION";
+        String s4 = "           DISPLAY \"ERROR\".";
+        String s5 = "       CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION";
+        String s6 = "           DISPLAY \"ERROR\".";
+
+        String t1 = "           TestSuite \"test\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities
+                .getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(Utilities.getTrimmedList(expected6), actual);
+    }
+
     private String expected1 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
                     "      *EXEC SQL INCLUDE TEXEM  END-EXEC.                                       " + Constants.NEWLINE +
@@ -140,6 +259,194 @@ public class ExpanderTest {
                     "           MOVE \"Value1\" to WS-FIELD-1                                        " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
                     "           .                                                                    "  + Constants.NEWLINE;
+    private String expected2 = 
+                    "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                       " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"test\" =============*                                      " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+                    "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
+                    "           MOVE \"test\"                                                          " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
+                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
+                    "      *    PERFORM 100-WELCOME                                                  " + Constants.NEWLINE +
+                    "      *END-CALL.                                                                  " + Constants.NEWLINE +
+                    "            CONTINUE                                                            " + Constants.NEWLINE +
+                    "           .                                                                    ";
+            
+    private String expected3 = 
+                    "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                       " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"test\" =============*                                      " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+                    "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
+                    "           MOVE \"test\"                                                          " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
+                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
+                    "      *    PERFORM 100-WELCOME.                                                 " + Constants.NEWLINE +
+                    "            CONTINUE                                                            " + Constants.NEWLINE +
+                    "           .                                                                    ";
+            
+    private String expected4 = 
+                    "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                       " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"test\" =============*                                      " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+                    "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
+                    "           MOVE \"test\"                                                          " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE + 
+                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE + 
+                    "      *    DISPLAY \"HELLO WORLD\".                                             " + Constants.NEWLINE +
+                    "            CONTINUE                                                            " + Constants.NEWLINE +
+                    "           .                                                                    ";
+            
+    private String expected5 = 
+                    "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                       " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"test\" =============*                                      " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+                    "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
+                    "           MOVE \"test\"                                                          " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                 " + Constants.NEWLINE +
+                    "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
+                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE + 
+                    "      *    CALL \"PROGRAM2\" USING VALUE-1                                      " + Constants.NEWLINE +
+                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
+                    "      *    DISPLAY \"HELLO WORLD\"                                              " + Constants.NEWLINE +
+                    "      *    END-CALL                                                             " + Constants.NEWLINE + 
+                    "      *END-CALL                                                                 " + Constants.NEWLINE +
+                    "            CONTINUE                                                            " + Constants.NEWLINE +
+                    "      DISPLAY \"NO COMMENTS\"                                                   " + Constants.NEWLINE;
+    
+    private String expected6 =
+                    "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"test\" =============*                                    " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                               " + Constants.NEWLINE +
+                    "           DISPLAY \"test\"                                                     " + Constants.NEWLINE +
+                    "           MOVE \"test\"                                                        " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
+                    "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
+                    "            CONTINUE                                                            " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
+                    "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
+                    "            CONTINUE                                                            " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE;
+
 }
 
 
