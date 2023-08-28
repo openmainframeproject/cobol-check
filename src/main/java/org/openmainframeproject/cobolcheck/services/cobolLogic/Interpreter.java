@@ -163,6 +163,27 @@ public class Interpreter {
         if (containsOnlyPeriod(nextMeaningfulLine)) {
             return false;
         }
+        if (currentLine.containsToken(Constants.CALL_TOKEN)) {
+            List<String> currentTokens = currentLine.getTokens();
+            int callTokenCount = 0, endCallTokenCount = 0;
+            for (String token : currentTokens) {
+                if (token.equals(Constants.CALL_TOKEN)) {
+                    callTokenCount++;
+                }
+                if (token.equals(Constants.END_CALL_TOKEN)) {
+                    endCallTokenCount++;
+                }
+            }
+            if (callTokenCount == endCallTokenCount) {
+                return true;
+            }
+            if (nextMeaningfulLine.containsToken("ON")) {
+                return false;
+            }
+            if (currentLine.containsToken("ON")) {
+                return false;
+            }
+        }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
             return true;
         }
@@ -386,7 +407,8 @@ public class Interpreter {
             int usingIndex = line.getTokenIndexOf(Constants.USING_TOKEN);
 
             for (int i = usingIndex + 1; i < line.tokensSize(); i++) {
-                if (line.getToken(i).toUpperCase(Locale.ROOT).equals(Constants.END_CALL_TOKEN))
+                if (line.getToken(i).toUpperCase(Locale.ROOT).equals(Constants.END_CALL_TOKEN) ||
+                    line.getToken(i).toUpperCase(Locale.ROOT).equals("ON"))
                     break;
                 if (argumentReferences.contains(line.getToken(i).toUpperCase(Locale.ROOT))) {
                     currentArgumentReference = line.getToken(i).toUpperCase();

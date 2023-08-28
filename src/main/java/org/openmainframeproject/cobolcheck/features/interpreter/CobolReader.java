@@ -15,14 +15,15 @@ public class CobolReader {
     private State state;
     private TokenExtractor tokenExtractor;
 
-    private CobolLine prevoiusLine;
-    private CobolLine prevoiusMeaningfulLine;
+    private CobolLine previousLine;
+    private CobolLine previousMeaningfulLine;
     private CobolLine currentLine;
     private List<CobolLine> nextLines;
     private List<CobolLine> currentStatement;
     private int lineNumber;
 
     private String lineJustEneterd = null;
+    private final int maxLineLength = 72;
 
     public CobolReader(BufferedReader sourceReader) {
         reader = sourceReader;
@@ -34,8 +35,8 @@ public class CobolReader {
 
     State getState() {return state; }
     CobolLine getCurrentLine() { return currentLine; }
-    CobolLine getPrevoiusLine() { return prevoiusLine; }
-    CobolLine getPrevoiusMeaningfulLine() { return prevoiusMeaningfulLine; }
+    CobolLine getPreviousLine() { return previousLine; }
+    CobolLine getPreviousMeaningfulLine() { return previousMeaningfulLine; }
     List<CobolLine> getCurrentStatement(){ return currentStatement; }
 
     public String getLineJustEntered() { return lineJustEneterd; }
@@ -53,7 +54,7 @@ public class CobolReader {
         currentStatement = null;
         lineNumber++;
         if (!nextLines.isEmpty()){
-            prevoiusLine = currentLine;
+            previousLine = currentLine;
             setPreviousMeaningfulLine();
             currentLine = nextLines.get(0);
             nextLines.remove(0);
@@ -63,7 +64,7 @@ public class CobolReader {
         if (line == null){
             return null;
         }
-        prevoiusLine = currentLine;
+        previousLine = currentLine;
         setPreviousMeaningfulLine();
         currentLine = new CobolLine(line, tokenExtractor);
         return currentLine;
@@ -71,15 +72,17 @@ public class CobolReader {
 
     //Will potentially make interpretation easier (not used)
     CobolLine readStatementAsOneLine() throws IOException {
-        while (!Interpreter.isEndOfStatement(currentLine, peekNextMeaningfulLine())){
-            appendNextMeaningfulLineToCurrentLine();
+        Boolean isFirstTime = true;
+        while (!Interpreter.isEndOfStatement(currentLine, peekNextMeaningfulLine())) {
+            appendNextMeaningfulLineToCurrentLine(isFirstTime);
+            isFirstTime = false;
         }
         return currentLine;
     }
 
     private void setPreviousMeaningfulLine(){
         if (Interpreter.isMeaningful(currentLine))
-            prevoiusMeaningfulLine = currentLine;
+            previousMeaningfulLine = currentLine;
     }
 
     /**
@@ -95,7 +98,7 @@ public class CobolReader {
         reader.close();
     }
 
-    CobolLine appendNextMeaningfulLineToCurrentLine() throws IOException{
+    CobolLine appendNextMeaningfulLineToCurrentLine(Boolean isFirstTime) throws IOException{
         List<CobolLine> statementLines = new ArrayList<>();
         CobolLine nextMeaningfulLine = peekNextMeaningfulLine();
         if (Interpreter.containsOnlyPeriod(nextMeaningfulLine)){
@@ -103,8 +106,22 @@ public class CobolReader {
                     nextMeaningfulLine.getTrimmedString(), tokenExtractor);
         }
         else {
-            currentLine = new CobolLine(currentLine.getUnNumberedString() + " " +
-                    nextMeaningfulLine.getTrimmedString(), tokenExtractor);
+            int requiredSpacesToFillCurrentLine = 0;
+            if(isFirstTime)
+                requiredSpacesToFillCurrentLine = maxLineLength - currentLine.getUnNumberedString().length();
+            else
+                requiredSpacesToFillCurrentLine = maxLineLength - 
+                    (currentLine.getUnNumberedString().length() - previousLine.getUnNumberedString().length());
+            StringBuilder spacesToFillCurrentLine = new StringBuilder();
+            for (int i = 0; i < requiredSpacesToFillCurrentLine; i++) {
+                spacesToFillCurrentLine.append(" ");
+            }
+            previousLine = new CobolLine(currentLine.getOriginalString() + spacesToFillCurrentLine.toString(), tokenExtractor);
+            currentLine = new CobolLine(
+                        currentLine.getUnNumberedString() + 
+                            spacesToFillCurrentLine.toString() +
+                            nextMeaningfulLine.getUnNumberedString(), 
+                        tokenExtractor);
         }
 
         nextLines.remove(nextLines.size() - 1);
