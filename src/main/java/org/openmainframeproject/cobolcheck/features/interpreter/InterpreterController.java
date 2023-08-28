@@ -274,6 +274,7 @@ public class InterpreterController {
 
         if (reader.isFlagSet(Constants.DATA_DIVISION)) {
             this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
+            line = line.convertCobolLinesToCobolLine(currentStatement);
             updateNumericFields(line);
         }
 

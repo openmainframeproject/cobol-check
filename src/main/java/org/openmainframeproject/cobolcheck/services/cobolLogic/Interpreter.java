@@ -537,8 +537,18 @@ public class Interpreter {
 
     private static String[] extractStatementWords(List<CobolLine> currentStatement){
     String statementString = "";
-    for(CobolLine loopLine: currentStatement){
-        statementString += loopLine.getTrimmedString();
+    boolean[] isContinuationLine = new boolean[currentStatement.size()];
+    Arrays.fill(isContinuationLine, false);
+    for(int i = 1; i < currentStatement.size(); ++i) {
+        if(currentStatement.get(i).getTrimmedString().startsWith("-")){
+            isContinuationLine[i] = true;
+        }
+    }    
+    for(int i = 0; i < currentStatement.size(); ++i){
+        statementString += currentStatement.get(i).getTrimmedString();
+        if(!isContinuationLine[i]){
+            statementString += " ";
+        }
     }
     statementString = statementString.trim().replace(Constants.PERIOD, "");
     String[] statementWords = statementString.split("\\s+");
