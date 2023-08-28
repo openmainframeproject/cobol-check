@@ -170,12 +170,13 @@
                 MOVE "worked" TO VALUE-1
            END-MOCK
            MOCK CALL 'PROGRAM2' USING VALUE-1
-                MOVE "worked" TO VALUE-1
+                MOVE "notworked" TO VALUE-1
            END-MOCK
            MOVE 'TEST' TO VALUE-1
            PERFORM 1200-MAKE-CALL
            EXPECT VALUE-1 TO BE "worked"
-
+           VERIFY CALL 'PROGRAM' USING VALUE-1 HAPPENED ONCE
+           VERIFY CALL 'PROGRAM2' USING VALUE-1 NEVER HAPPENED
 
            TestCase "Mock of calls in series with exception handling works"
            MOCK CALL 'PROGRAM' USING VALUE-1
@@ -184,3 +185,4 @@
            MOVE 'TEST' TO VALUE-1
            PERFORM 1300-MAKE-CALL
            EXPECT VALUE-1 TO BE "worked"
+           VERIFY CALL 'PROGRAM' USING VALUE-1 HAPPENED 2 TIMES
