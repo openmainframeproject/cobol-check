@@ -22,7 +22,7 @@ public class CobolReader {
     private List<CobolLine> currentStatement;
     private int lineNumber;
 
-    private String lineJustEneterd = null;
+    private String lineJustEntered = null;
     private final int maxLineLength = 72;
 
     public CobolReader(BufferedReader sourceReader) {
@@ -39,7 +39,7 @@ public class CobolReader {
     CobolLine getPreviousMeaningfulLine() { return previousMeaningfulLine; }
     List<CobolLine> getCurrentStatement(){ return currentStatement; }
 
-    public String getLineJustEntered() { return lineJustEneterd; }
+    public String getLineJustEntered() { return lineJustEntered; }
     boolean hasStatementBeenRead(){ return currentStatement != null; }
     int getLineNumber() { return lineNumber; }
 
@@ -91,7 +91,7 @@ public class CobolReader {
      */
     void updateState() throws IOException {
         CobolLine nextLine = peekNextMeaningfulLine();
-        lineJustEneterd = Interpreter.setFlagsForCurrentLine(currentLine, nextLine, state);
+        lineJustEntered = Interpreter.setFlagsForCurrentLine(currentLine, nextLine, state);
     }
 
     void close() throws IOException {
