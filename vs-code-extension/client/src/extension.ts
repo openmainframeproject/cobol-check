@@ -9,7 +9,7 @@
 import * as vscode from 'vscode';
 import { workspace, ExtensionContext, window} from 'vscode';
 import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, setConfiguration } from './services/CobolCheckConfiguration';
-import { appendPath, getCobolCheckRunArgumentsBasedOnCurrentFile, getCobolProgramPathForGivenContext, getCurrentProgramName, getFileName, getTextFromFile, getRootFolder, getSourceFolderContextPath, runCobolCheck } from './services/CobolCheckLauncher';
+import { appendPath, getCobolCheckRunArgumentsBasedOnCurrentFile, getCobolProgramPathForGivenContext, getCurrentProgramName, getFileName, getTextFromFile, getRootFolder, getSourceFolderContextPath, runCobolCheck, getIsInsideTestSuiteDirectory1 } from './services/CobolCheckLauncher';
 
 import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
 import { ResultWebView } from './services/ResultWebView';
@@ -23,11 +23,9 @@ let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.p
 let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
 let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.8.jar');
 
-let lastCurrentFile = null;
-let cutLanguageRunning = false;
 
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
 	startCutLanguageClientServer(context);
 
 	const provider = new ResultWebView(context.extensionUri);
@@ -49,14 +47,6 @@ export function activate(context: ExtensionContext) {
 			//Getting arguments to run
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
 			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, vscode.window.activeTextEditor.document.uri.fsPath);
-			// console.log("externalVsCodeInstallationDir")
-			// console.log(externalVsCodeInstallationDir)
-			// console.log("configPath")
-			// console.log(configPath)
-			// console.log("applicationSourceDir")
-			// console.log(applicationSourceDir)
-			// console.log("argument")
-			// console.log(argument)
 			if (argument === null) return;
 
 			progress.report({ message: 'Running tests' })
@@ -99,12 +89,12 @@ export function activate(context: ExtensionContext) {
 			return startTestRun(request);
 		}
 
-		const l = fileChangedEmitter.event(uri => {
-			
+		const l = fileChangedEmitter.event(async uri => {
+			const res = await getOrCreateFile(ctrl, uri)
 			return startTestRun(
 			
 			new vscode.TestRunRequest2(
-				[getOrCreateFile(ctrl, uri).file],
+				[res.file],
 				undefined,
 				request.profile,
 				true
@@ -128,22 +118,16 @@ export function activate(context: ExtensionContext) {
 
 					const data = testData.get(test);
 					if (data instanceof TestCase 
-						|| (data instanceof TestFile  )
-						|| (data instanceof TestHeading && test.children.size==0
-						)
+						|| (data instanceof TestFile && (!data.getIsInsideTestSuiteDirectory() || data.getIsTestSuiteDirectory())  )
+						|| (data instanceof TestHeading && test.children.size==0)
 						) {
 						run.enqueued(test);
 						queue.push({ test, data });
 					}
-					// else {
-					// 	if (data instanceof TestFile && data.isDirectory(test.uri.fsPath)) {
-					// 		// await data.updateFromDisk(ctrl, test);
-					// 		await discoverTests(gatherTestItems(test));
-					// 	}
+					else if (data instanceof TestFile && data.getIsInsideTestSuiteDirectory()){
+						await discoverTests(gatherTestItems(test))
+					}
 
-					// 	// await discoverTests(gatherTestItems(test));
-						
-					// }
 					if(!(data instanceof TestFile) || !data.getIsDirectory())
 					{
 						if (test.uri && !coveredLines.has(test.uri.toString())) {
@@ -177,7 +161,7 @@ export function activate(context: ExtensionContext) {
 					await data.run(test, run);
 				}
 				
-				if(!( data instanceof TestFile)){
+				if(!(data instanceof TestFile)){
 					const lineNo = test.range!.start.line;
 					const fileCoverage = coveredLines.get(test.uri!.toString());
 					if (fileCoverage) {
@@ -220,14 +204,13 @@ export function activate(context: ExtensionContext) {
 			context.subscriptions.push(...startWatchingWorkspace(ctrl, fileChangedEmitter));
 			return;
 		}
-
 		const data = testData.get(item);
 		if (data instanceof TestFile) {
 			await data.updateFromDisk(ctrl, item);
 		}
 	};
 
-	function updateNodeForDocument(e: vscode.TextDocument) {
+	async function updateNodeForDocument(e: vscode.TextDocument) {
 		if (e.uri.scheme !== 'file') {
 			return;
 		}
@@ -235,12 +218,12 @@ export function activate(context: ExtensionContext) {
 			return;
 		}
 
-		const { file, data } = getOrCreateFile(ctrl, e.uri);
+		const { file, data } = await getOrCreateFile(ctrl, e.uri);
 		data.updateFromContents(ctrl, e.getText(), file);
 	}
 
 	for (const document of vscode.workspace.textDocuments) {
-		updateNodeForDocument(document);
+		await updateNodeForDocument(document);
 	}
 
 	context.subscriptions.push(
@@ -253,52 +236,71 @@ export function deactivate() {
 	stopCutLanguageClientServer();
 }
 
-function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
+
+async function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 	
+	// if it is inside test suite directory e.g. src/test is inside src/test/cobol
+	var isInsideTestSuite: boolean = await getIsInsideTestSuiteDirectory1(uri.fsPath)
+	// TODO: Windows may not work
 	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
 	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
 	const rootUri = rootDir+dirArr[0]
+
 	let tmpUri = vscode.Uri.file(rootUri);
-	
 	var file :vscode.TestItem = null; 
-	controller.createTestItem
 	var data = null
+
 	if(!controller.items.get(rootUri)){ 
 		file = controller.createTestItem(rootUri, dirArr[0], tmpUri);
 		controller.items.add(file);
-		data = new TestFile(rootUri);
+		data = new TestFile();
+		data.setDirectoryDetails(rootUri)
 		file.canResolveChildren = true;
 		testData.set(file, data);
-		
+		if(isInsideTestSuite) data.setIsInsideTestSuiteDirectory(true)
 	}
 	else{ 
 		file = controller.items.get(rootUri)
 		data = testData.get(file)
+		if(isInsideTestSuite) data.setIsInsideTestSuiteDirectory(true)
 	}
 	if(dirArr.length==1) return {file,data};
 
-	
 	var prevFile: vscode.TestItem = file
 	var tmpDir = rootUri
 	var tmpFile = null
 	var tmpData = null
+
 	for(var i =1;i<dirArr.length;i++){
+		// TODO: Windows may not work
 		tmpDir = tmpDir + "/" + dirArr[i]
-		
 		const existing = prevFile.children.get(tmpDir);
 		
 		if(!existing){
 			tmpUri = vscode.Uri.file(tmpDir);
 			tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
-			tmpData = new TestFile(tmpDir);
+			tmpData = new TestFile();
+			await tmpData.setDirectoryDetails(tmpDir)
+
+			
 			tmpFile.canResolveChildren = true;
 			testData.set(tmpFile, tmpData);
 			// add to existing tree structure
 			prevFile.children.add(tmpFile)
+
 			
+			if(isInsideTestSuite && tmpData instanceof TestFile){
+				tmpData.setIsInsideTestSuiteDirectory(true)
+				if(tmpData.getIsTestSuiteDirectory()){
+					isInsideTestSuite=false
+				}
+			}
 			prevFile=tmpFile;
 		}else{
-			
+			const tmpData = testData.get(existing)
+			if(tmpData instanceof TestFile && tmpData.getIsTestSuiteDirectory()){
+				isInsideTestSuite=false
+			}
 			prevFile = existing;
 		}
 	}
@@ -306,16 +308,17 @@ function createDirItems( controller:vscode.TestController, uri: vscode.Uri){
 }
 
 function getDirItem( controller:vscode.TestController, uri: vscode.Uri){
+	// TODO: Windows may not work
 	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
 	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
 	
 	var tmpDir = rootDir+dirArr[0];
 
 	var existing :vscode.TestItem = controller.items.get(tmpDir);
-
 	if(!existing) return null
 
 	for(var i = 1; i<dirArr.length ;i++){
+		// TODO: Windows may not work
 		tmpDir = tmpDir + "/" + dirArr[i];
 		existing = existing.children.get(tmpDir);
 		if(!existing) return null
@@ -324,19 +327,24 @@ function getDirItem( controller:vscode.TestController, uri: vscode.Uri){
 }
 
 // Functions for activating tests
-function getOrCreateFile(controller: vscode.TestController, uri: vscode.Uri) {
+async function getOrCreateFile(controller: vscode.TestController, uri: vscode.Uri) {
 	const existing = getDirItem(controller,uri);
 	if (existing) {
 		return { file: existing, data: testData.get(existing) as TestFile };
 	}
-	return createDirItems(controller,uri);
+	const res = await createDirItems(controller,uri);
+	return res
 }
 
 function gatherTestItems(test: vscode.TestItem) {
 	// testHeading
 	const data : MarkdownTestData = testData.get(test)
 	var items: vscode.TestItem[] = [];
-	if(data instanceof TestFile){
+	
+	if(data instanceof TestFile && data.getIsInsideTestSuiteDirectory() && ! data.getIsTestSuiteDirectory() ){
+		test.children.forEach(item => items=items.concat(gatherTestItems(item)));
+	}
+	else if(data instanceof TestFile){
 		items.push(test)
 	}
 	else if(data instanceof TestHeading && test.children.size==0){
@@ -372,7 +380,7 @@ function getWorkspaceTestPatterns() {
 
 async function findInitialFiles(controller: vscode.TestController, pattern: vscode.GlobPattern) {
 	for (const file of await vscode.workspace.findFiles(pattern)) {
-		getOrCreateFile(controller, file);
+		await getOrCreateFile(controller, file);
 	}
 }
 
@@ -386,7 +394,7 @@ function startWatchingWorkspace(controller: vscode.TestController, fileChangedEm
 			fileChangedEmitter.fire(uri);
 		});
 		watcher.onDidChange(async uri => {
-			const { file, data } = getOrCreateFile(controller, uri);
+			const { file, data } = await getOrCreateFile(controller, uri);
 			if (data.didResolve) {
 				await data.updateFromDisk(controller, file);
 			}

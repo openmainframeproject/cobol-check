@@ -1,0 +1,66 @@
+           TestSuite "Tests of alphanumeric expectations"
+
+           TestCase "Equality with an alphanumeric literal using TO BE"
+           move "value1" to ws-field-1
+           Expect ws-field-1 to be "value1"
+
+           TestCase "Equality with an alphanumeric literal using TO EQUAL"
+           move "value2" to ws-field-1
+           Expect ws-field-1 to equal "value2"
+
+           TestCase "Equality with an alphanumeric literal using '='"
+           move "value3" to ws-field-1
+           Expect ws-field-1 = "value3"
+
+           TestCase "Equality with an alphanumeric literal and reference modification"
+           move "Hello, World!" to ws-field-2
+           Expect ws-field-2(8:5) to be "World"
+
+           TestCase "Non-equality with an alphanumeric literal using TO BE"
+           move "value4" to ws-field-1
+           Expect ws-field-1 not to be "value1"
+
+           TestCase "Non-equality with an alphanumeric literal using TO EQUAL"
+           move "value5" to ws-field-1
+           Expect ws-field-1 not to equal "value1"
+
+           TestCase "Non-equality with an alphanumeric literal using '!='"
+           move "value6" to ws-field-1
+           Expect ws-field-1 != "value1"
+
+           TestCase "Non-equality with an alphanumeric literal and reference modification"
+           move "Hello, World!" to ws-field-2
+           Expect ws-field-2(8:6) not to be "World"
+
+           TestCase "Greater-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-1 > "Alpha"
+
+           TestCase "Less-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-2 < "Beta"
+
+           TestCase "Not greater-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-2 not > "Beta"
+
+           TestCase "Not less-than sign with an alphanumeric literal"
+           move "Beta" to ws-field-1
+           move "Alpha" to ws-field-2
+           Expect ws-field-1 not < "Alpha"
+
+           TestCase "Display numeric"
+           move 6 to ws-display-numeric
+           expect ws-display-numeric to be 6
+
+           TestCase "Variable must be SPACE"
+           move space to ws-field-1
+           expect ws-field-1 to be space
+
+           TestCase "Variable must be SPACES"
+           move spaces to ws-field-1
+           expect ws-field-1 to be spaces
+           

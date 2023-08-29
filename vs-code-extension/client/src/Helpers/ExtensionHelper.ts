@@ -15,6 +15,7 @@ export async function handleCobolCheckOut(output : CobParser.CobolCheckOutputPar
 		let htmlResult:string = "";
 		switch(output.state){
 			case CobParser.OutputState.NoIssues:
+				console.log("NO ISSUES")
 				testResultFile = appendPath(vsCodeInstallDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 				htmlResult = await getTextFromFile(testResultFile + '.html');
 				showWebWiev('Test Results - ' + getCurrentProgramName(), htmlResult)
@@ -22,6 +23,7 @@ export async function handleCobolCheckOut(output : CobParser.CobolCheckOutputPar
 				break;
 
 			case CobParser.OutputState.TestFailed:
+				console.log("TEST FAILES")
 				testResultFile = appendPath(vsCodeInstallDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 				htmlResult = await getTextFromFile(testResultFile + '.html');
 				showWebWiev('Test Results - ' + getCurrentProgramName(), htmlResult)
@@ -29,6 +31,7 @@ export async function handleCobolCheckOut(output : CobParser.CobolCheckOutputPar
 				break;
 
 			case CobParser.OutputState.SyntaxWarnings:
+				console.log("SYNTAX WARNINGS")
 				testResultFile = appendPath(vsCodeInstallDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 				htmlResult = await getTextFromFile(testResultFile + '.html');
 				let warningSpan:string = getFormattedHtmlSpan(output.outputText.substring(0, output.outputText.length - 2), true)
@@ -40,6 +43,7 @@ export async function handleCobolCheckOut(output : CobParser.CobolCheckOutputPar
 				break;
 
 			case CobParser.OutputState.SyntaxError:
+				console.log("SYNTAX ERROR")
 				vscode.window.showErrorMessage("Cobol Check stopped due to Syntax error(s) in one or more test suites");
 				showWebWiev('Test Results - ' + getCurrentProgramName(), parseAsHtmlDocument(output.outputText, true))
 				resolve(false);
@@ -91,6 +95,7 @@ function showWebWiev(title: string, html : string){
 }
 
 
+// Not used
 export async function handleCobolCheckOutput(output : CobParser.CobolCheckOutputParser) : Promise<boolean>{
 	return new Promise(async resolve => {
 		switch(output.state){
