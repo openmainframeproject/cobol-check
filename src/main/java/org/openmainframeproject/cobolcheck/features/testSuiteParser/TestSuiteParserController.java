@@ -7,11 +7,15 @@ import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
+import org.openmainframeproject.cobolcheck.workers.Generator;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TestSuiteParserController {
 
@@ -239,6 +243,10 @@ public class TestSuiteParserController {
         return mockRepository.mockExistsFor(identifier, type, arguments);
     }
 
+    public boolean mockExistsFor(String identifier, String type, List<String> arguments, String testSuiteName, String testCaseName) {
+        return mockRepository.mockExistsFor(identifier, type, arguments, testSuiteName, testCaseName);
+    }
+
     /**Generates the lines for 'Evaluate when' to perform the correct generated SECTION
      * for a specific identifier.
      * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
@@ -270,6 +278,24 @@ public class TestSuiteParserController {
 
     public void logUnusedMocks(){
         testSuiteErrorLog.logUnusedMocks(mockRepository.getMocks());
+    }
+
+    public void logUnMockedCalls(HashMap<String, List<Generator.MockableComponent>> mockableComponents) {
+        HashMap<Map.Entry<String, String>, HashSet<String>> performParaOrSectionInTestCase = testSuiteParser.getPerformParaOrSectionFromTestCase();
+        for (Map.Entry<Map.Entry<String, String>, HashSet<String>> testCaseEntry : performParaOrSectionInTestCase.entrySet()) {
+            String testSuiteName = testCaseEntry.getKey().getKey();
+            String testCaseName = testCaseEntry.getKey().getValue();
+            for (String paragraphOrSectionIdentifier : testCaseEntry.getValue()) {
+                if (mockExistsFor(paragraphOrSectionIdentifier, "PARAGRAPH", new ArrayList<>(), testSuiteName, testCaseName) || 
+                    mockExistsFor(paragraphOrSectionIdentifier, "SECTION", new ArrayList<>(), testSuiteName, testCaseName))
+                        continue;
+                for(Generator.MockableComponent mockableComponent : mockableComponents.get(paragraphOrSectionIdentifier)){
+                    if(!mockExistsFor(mockableComponent.getIdentifier(), mockableComponent.getType(), mockableComponent.getArguments(), testSuiteName, testCaseName)){
+                        testSuiteErrorLog.logUnMockedCalls(testSuiteName, testCaseName, mockableComponent.getCurrentLineNumber());
+                    }
+                }
+            }
+        }
     }
 
     /**
