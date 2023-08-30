@@ -1,15 +1,18 @@
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.exceptions.*;
+import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import org.openmainframeproject.cobolcheck.services.*;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -24,6 +27,7 @@ public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private TestSuiteWritingStyle testSuiteWritingStyle;
     private List<String> testSuiteTokens;
+    private HashMap<Map.Entry<String, String>, HashSet<String>> performParaOrSectionInTestCase;
     private HashMap<String, HashSet<String>> testNamesHierarchy;
     private String currentTestSuiteLine = "";
     private int fileLineNumber = 0;
@@ -162,6 +166,7 @@ public class TestSuiteParser {
         this.testSuiteErrorLog = testSuiteErrorLog;
         testSuiteTokens = new ArrayList<>();
         testNamesHierarchy = new HashMap<String, HashSet<String>>();
+        performParaOrSectionInTestCase = new HashMap<Map.Entry<String, String>, HashSet<String>>();
         emptyTestSuite = true;
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
         initializeCobolStatement();
@@ -661,6 +666,24 @@ public class TestSuiteParser {
                     if (ignoreCobolStatementAndFieldNameKeyAction) {
                         ignoreCobolStatementAndFieldNameKeyAction = false;
                         break;
+                    }
+                    if (cobolStatementInProgress) {
+                        TokenExtractor tokenExtractor = new StringTokenizerExtractor();
+                        List<String> currentCobolStatementTokens = tokenExtractor.extractTokensFrom(getCobolStatement());
+                        Boolean isPerform = false;
+                        for(String currentToken : currentCobolStatementTokens) {
+                            if(currentToken.equalsIgnoreCase("PERFORM")) {
+                                isPerform = true;
+                                break;
+                            }
+                        }
+                        if(isPerform) {
+                            Map.Entry<String, String> currentTestSuiteTestCaseName = new AbstractMap.SimpleEntry<>(currentTestSuiteName, currentTestCaseName);
+                            if(!performParaOrSectionInTestCase.containsKey(currentTestSuiteTestCaseName)) {
+                                performParaOrSectionInTestCase.put(currentTestSuiteTestCaseName, new HashSet<String>());
+                            }
+                            performParaOrSectionInTestCase.get(currentTestSuiteTestCaseName).add(testSuiteToken);
+                        }
                     }
                     if (CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
                         if ( cobolStatementInProgress) {
@@ -1176,6 +1199,10 @@ public class TestSuiteParser {
 
     public String getCurrentFieldName() {
         return currentFieldName;
+    }
+
+    public HashMap<Map.Entry<String, String>, HashSet<String>> getPerformParaOrSectionFromTestCase() {
+        return performParaOrSectionInTestCase;
     }
 
     public WhenOther getWhenOtherSectionOrParagraph(String type, List<String> lines, String itdentifier, boolean withComments){
