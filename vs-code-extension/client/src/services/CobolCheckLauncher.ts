@@ -87,9 +87,9 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 		LOGGER.log("Running Cobol Check with arguments: " + commandLineArgs, LOGGER.INFO)
 		try{
 			var exec = require('child_process').exec;
-			// 			var tmpStr = "cd /Users/issac/Documents/GitHub/cobol-check/vs-code-extension/Cobol-check && "
 			const testPath = appendPath(externalVsCodeInstallationDir, "Cobol-check");
-			var tmpStr = "cd " + testPath + " && "
+			// fix for MacOS
+			const tmpStr = "cd " + testPath + " && "
 			//Run Cobol Check jar with arguments
 			var child = exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
 				if(error !== null){
@@ -174,7 +174,8 @@ export function getFileName(path : string, includeExtension : boolean) : string{
 }
 
 export function getCutName(path : string) : string{
-	const name = path.split("/").pop()
+
+	const name = path.split(getFileSeperatorForOS(currentPlatform)).pop()
 	if(!name.endsWith(".cut")) return null
 	return name;
 }
@@ -224,7 +225,7 @@ export function appendPath(path1 : string, path2 : string){
 	return adjustPath(path1) + getFileSeperatorForOS(currentPlatform) + adjustPath(path2);
 }
 
-function getOS() {
+export function getOS() {
 	var platform = process.platform;
 	var	macosPlatformTag = 'darwin'
 	var	windowsPlatformTag = 'win32'
@@ -246,7 +247,7 @@ export async function getIsInsideTestSuiteDirectory1(input: string): Promise<boo
 	else return false
 }
 
-function getFileSeperatorForOS(platform : string){
+export function getFileSeperatorForOS(platform : string){
 	  if (platform === windowsPlatform) return '\\';
 	  else return '/';
   }

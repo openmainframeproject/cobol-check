@@ -16,7 +16,6 @@ let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/b
 
 export type MarkdownTestData = TestFile | TestHeading | TestCase;
 
-// only for the root files
 export const testData = new WeakMap<vscode.TestItem, MarkdownTestData>();
 
 let generationCounter = 0;
@@ -42,10 +41,8 @@ export class TestFile {
 	private isDirectory:boolean;
 	private isInsideTestSuiteDirectory:boolean;
 	private isTestSuiteDirectory:boolean;
-	// private isbeforeTestSuiteDirectory:boolean;
 
 	constructor() {
-		// this.setDirectoryDetails(path) 
 	}
 	
 
@@ -98,7 +95,6 @@ export class TestFile {
 
 			onHeading: (range, name, depth) => {
 				ascend(depth);
-				
 				const parent = ancestors[ancestors.length - 1];
 				const id = `${item.uri}/${name}`;
 				const thead = controller.createTestItem(id, name, item.uri);
@@ -130,10 +126,12 @@ export class TestFile {
 	}
 
 	public getIsInsideTestSuiteDirectory(){
+		// if it is inside test suite directory e.g. src/test is inside src/test/cobol
 		return this.isInsideTestSuiteDirectory;
 	}
 
 	public getIsTestSuiteDirectory(){
+		// If it is test suite directory
 		return this.isTestSuiteDirectory;
 	}
 
@@ -142,8 +140,10 @@ export class TestFile {
 	}
 
 
-
 	async run(item: vscode.TestItem, options: vscode.TestRun): Promise<void> {
+
+		const start = Date.now();
+		
 		let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
 		let argument : string;
 		const data = testData.get(item);
@@ -161,7 +161,7 @@ export class TestFile {
 				argument = getCobolCheckRunArgumentsBasedOnCurrentDirectory(externalVsCodeInstallationDir, configPath, applicationSourceDir, item.uri.fsPath );
 			}
 		}
-		const start = Date.now();
+		
 		let output = await runCobolCheck(cobolCheckJarPath, argument)
 		const result = await handleCobolCheckOut(output,externalVsCodeInstallationDir,configPath);
 		const duration = Date.now() - start;
@@ -169,7 +169,7 @@ export class TestFile {
 		if(result) options.passed(item, duration);
 		else{
 			// TODO: identify message  
-			const message = vscode.TestMessage.diff(`Expected ${item.label}`, String("1"), String("0"));
+			const message = vscode.TestMessage.diff(`Expected ${item.label}`, String(""), String("0"));
 			options.failed(item, message, duration)
 		} 
 	}
@@ -186,13 +186,13 @@ export class TestHeading {
 	constructor(
 		public generation: number,
 		private content: string
-		) { 
-	}
+		) {}
+		
 	async run(item: vscode.TestItem, options: vscode.TestRun): Promise<void> {
 		const start = Date.now();
 		await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
 		const duration = Date.now() - start;
-		// const message = vscode.TestMessage.diff(`Expected ${item.label}`, String("123"), String("This should not run"));
+		// const message = vscode.TestMessage.diff(`Expected ${item.label}`, String(""), String("This should not run"));
 		// options.failed(item, message ,duration);
 		options.passed(item, duration);
 	}
@@ -212,7 +212,7 @@ export class TestCase {
 		const start = Date.now();
 		await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
 		const duration = Date.now() - start;
-		// const message = vscode.TestMessage.diff(`Expected ${item.label}`, String("123"), String("This should not run"));
+		// const message = vscode.TestMessage.diff(`Expected ${item.label}`, String(""), String("This should not run"));
 		// options.failed(item, message ,duration);
 		options.passed(item, duration);
 	}
