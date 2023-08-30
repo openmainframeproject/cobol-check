@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
+import org.openmainframeproject.cobolcheck.exceptions.UnMockedCallStatementException;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
@@ -145,6 +146,21 @@ public class TestSuiteErrorLog {
                         "any construct in the source code" + Constants.NEWLINE + Constants.NEWLINE;
                 outputError(error);
             }
+        }
+    }
+
+    public void logUnMockedCalls(String testSuiteName, String testCaseName, int currentCallLineNumber) {
+        String alertType = Config.getString(Constants.COBOLCHECK_UNMOCKCALL_ALERTTYPE_CONFIG_KEY, "false");
+        String testCaseNameToDisplay = (testCaseName.equals("")) ? "global test case" : "testcase " + testCaseName;
+        if(alertType.equalsIgnoreCase("TRUE")) {
+            throw new UnMockedCallStatementException(
+                Messages.get("ERR033", String.valueOf(currentCallLineNumber), testCaseNameToDisplay, testSuiteName)
+            );
+        }
+        else {
+            Log.warn(
+                Messages.get("WRN009",String.valueOf(currentCallLineNumber), testCaseNameToDisplay, testSuiteName)
+            );
         }
     }
 
