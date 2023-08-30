@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openmainframeproject.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
@@ -32,6 +34,8 @@ public class Generator {
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
     private boolean workingStorageHasEnded;
+    private HashMap<String, List<MockableComponent>> mockableComponentsHierarchy;
+    private String mockableComponentsHierarchyLastElementIdentifier = Constants.EMPTY_STRING;
 
     List<String> matchingTestDirectories;
     
@@ -48,6 +52,7 @@ public class Generator {
         this.interpreter = interpreter;
         this.writerController = writerController;
         this.testSuiteParserController = testSuiteParserController;
+        this.mockableComponentsHierarchy = new HashMap<>();
         this.currentMockType=null;
         mergeTestSuite();
         
@@ -65,6 +70,7 @@ public class Generator {
     public void prepareAndRunMerge(String programName, String testFileNames) {
         RunInfo.setCurrentProgramName(new File(programName).getName());
         RunInfo.setCurrentProgramPath(new File(programName).getAbsolutePath());
+        this.mockableComponentsHierarchy = new HashMap<>();
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
         for (String matchingDirectory : matchingTestDirectories) {
 
@@ -103,6 +109,7 @@ public class Generator {
                 echoingSourceLineToOutput(sourceLine);
                 processingAfterEchoingSourceLineToOutput();
             }
+            testSuiteParserController.logUnMockedCalls(mockableComponentsHierarchy);
             testSuiteParserController.logUnusedMocks();
             testSuiteParserController.prepareNextParse();
         } catch (IOException ioEx) {
@@ -209,6 +216,14 @@ public class Generator {
             String identifier = interpreter.getPossibleMockIdentifier();
             String type = interpreter.getPossibleMockType();
             List<String> arguments = interpreter.getPossibleMockArgs();
+            MockableComponent mockableComponent = new MockableComponent(identifier, type, arguments, interpreter.getCurrentLineNumber());
+            if (type.equalsIgnoreCase(Constants.CALL_TOKEN) && !mockableComponentsHierarchy.isEmpty()) {
+                mockableComponentsHierarchy.get(mockableComponentsHierarchyLastElementIdentifier).add(mockableComponent);
+            }
+            if(type.equalsIgnoreCase(Constants.PARAGRAPH_TOKEN) || type.equalsIgnoreCase(Constants.SECTION_TOKEN)) {
+                mockableComponentsHierarchyLastElementIdentifier = identifier;
+                mockableComponentsHierarchy.put(identifier, new ArrayList<MockableComponent>());
+            }
             if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
                     interpreter.addSectionOrParagraphLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
@@ -249,6 +264,35 @@ public class Generator {
         }
         catch (Exception ex) {
             throw new PossibleInternalLogicErrorException(ex);
+        }
+    }
+    public static class MockableComponent {
+        private String identifier;
+        private String type;
+        private List<String> arguments;
+        private int currentLineNumber;
+
+        public MockableComponent(String identifier, String type, List<String> arguments, int currentLineNumber) {
+            this.identifier = identifier;
+            this.type = type;
+            this.arguments = arguments;
+            this.currentLineNumber = currentLineNumber;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public List<String> getArguments() {
+            return arguments;
+        }
+
+        public int getCurrentLineNumber() {
+            return currentLineNumber;
         }
     }
 }
