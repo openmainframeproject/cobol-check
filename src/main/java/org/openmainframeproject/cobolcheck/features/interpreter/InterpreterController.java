@@ -83,6 +83,10 @@ public class InterpreterController {
         return reader.readStatementAsOneLine();
     }
 
+    public int getCurrentLineNumber() {
+        return reader.getLineNumber();
+    }
+
     // Getting info from reader
     public boolean hasStatementBeenRead() {
         return reader.hasStatementBeenRead();
