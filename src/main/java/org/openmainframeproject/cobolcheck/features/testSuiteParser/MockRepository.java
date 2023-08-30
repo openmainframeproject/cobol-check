@@ -35,6 +35,25 @@ public class MockRepository {
         return false;
     }
 
+    public boolean mockExistsFor(String identifier, String type, List<String> arguments, String testSuiteName, String testCaseName) {
+        for (Mock mock: mocks) {
+            if (mock.getIdentifier().equalsIgnoreCase(identifier) && mock.getType().equals(type)
+                    && mock.getArguments().equals(arguments)){
+                if (mock.getScope() == MockScope.Local){
+                    if (mock.getTestSuiteName().equals(testSuiteName) && mock.getTestCaseName().equals(testCaseName)){
+                        return true;
+                    }
+                }
+                if (mock.getScope() == MockScope.Global){
+                    if (mock.getTestSuiteName().equals(testSuiteName)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public Mock getMockFor(String identifier, String type, String testSuite, String testCase, List<String> arguments){
         List<Mock> globalMocks = new ArrayList<>();
         for (Mock mock: mocks) {
