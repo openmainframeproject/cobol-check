@@ -100,6 +100,7 @@ public final class Constants {
     public static final String DEFAULT_TEST_PROGRAM_NAME = "CC$$99.CBL";
     public static final String PROCESS_CONFIG_KEY = ".process";
     public static final String COBOLCHECK_PREFIX_CONFIG_KEY = "cobolcheck.prefix";
+    public static final String COBOLCHECK_UNMOCKCALL_ALERTTYPE_CONFIG_KEY = "cobolcheck.unmock.call.alerttype.error";
     public static final String DEFAULT_COBOLCHECK_PREFIX = "UT-";
     public static final String TEST_CODE_PREFIX_PLACEHOLDER = "==UT==";
 
