@@ -241,7 +241,8 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 	// Create TestFile for each directory
 
 	var isInsideTestSuite: boolean = await getIsInsideTestSuiteDirectory1(uri.fsPath)
-	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split(getFileSeperatorForOS(currentPlatform))
+	// const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split(getFileSeperatorForOS(currentPlatform))
+	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
 	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
 	const rootUri = rootDir+dirArr[0]
 
@@ -271,7 +272,8 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 	var tmpData = null
 
 	for(var i =1;i<dirArr.length;i++){
-		tmpDir = tmpDir + getFileSeperatorForOS(currentPlatform) + dirArr[i]
+		// tmpDir = tmpDir + getFileSeperatorForOS(currentPlatform) + dirArr[i]
+		tmpDir = tmpDir + "/"+ dirArr[i]
 		const existing = prevFile.children.get(tmpDir);
 		
 		if(!existing){
@@ -305,7 +307,8 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 }
 
 function getDirectoryItems( controller:vscode.TestController, uri: vscode.Uri){ 
-	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split(getFileSeperatorForOS(currentPlatform))
+	// const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split(getFileSeperatorForOS(currentPlatform))
+	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
 	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
 	
 	var tmpDir = rootDir+dirArr[0];
@@ -314,7 +317,8 @@ function getDirectoryItems( controller:vscode.TestController, uri: vscode.Uri){
 	if(!existing) return null
 
 	for(var i = 1; i<dirArr.length ;i++){
-		tmpDir = tmpDir +getFileSeperatorForOS(currentPlatform) + dirArr[i];
+		// tmpDir = tmpDir +getFileSeperatorForOS(currentPlatform) + dirArr[i];
+		tmpDir = tmpDir + "/" + dirArr[i];
 		existing = existing.children.get(tmpDir);
 		if(!existing) return null
 	}

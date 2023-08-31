@@ -175,7 +175,8 @@ export function getFileName(path : string, includeExtension : boolean) : string{
 
 export function getCutName(path : string) : string{
 
-	const name = path.split(getFileSeperatorForOS(currentPlatform)).pop()
+	// const name = path.split(getFileSeperatorForOS(currentPlatform)).pop()
+	const name = path.split("/").pop()
 	if(!name.endsWith(".cut")) return null
 	return name;
 }
