@@ -289,9 +289,11 @@ public class TestSuiteParserController {
                 if (mockExistsFor(paragraphOrSectionIdentifier, "PARAGRAPH", new ArrayList<>(), testSuiteName, testCaseName) || 
                     mockExistsFor(paragraphOrSectionIdentifier, "SECTION", new ArrayList<>(), testSuiteName, testCaseName))
                         continue;
-                for(Generator.MockableComponent mockableComponent : mockableComponents.get(paragraphOrSectionIdentifier)){
-                    if(!mockExistsFor(mockableComponent.getIdentifier(), mockableComponent.getType(), mockableComponent.getArguments(), testSuiteName, testCaseName)){
-                        testSuiteErrorLog.logUnMockedCalls(testSuiteName, testCaseName, mockableComponent.getCurrentLineNumber());
+                if(mockableComponents.containsKey(paragraphOrSectionIdentifier)) {
+                    for(Generator.MockableComponent mockableComponent : mockableComponents.get(paragraphOrSectionIdentifier)){
+                        if(!mockExistsFor(mockableComponent.getIdentifier(), mockableComponent.getType(), mockableComponent.getArguments(), testSuiteName, testCaseName)){
+                            testSuiteErrorLog.logUnMockedCalls(testSuiteName, testCaseName, mockableComponent.getCurrentLineNumber());
+                        }
                     }
                 }
             }
