@@ -6,22 +6,38 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import org.openmainframeproject.cobolcheck.exceptions.TestCaseAlreadyExistsException;
 import org.openmainframeproject.cobolcheck.exceptions.TestSuiteSyntaxException;
+import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
+import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
+import org.openmainframeproject.cobolcheck.workers.Generator;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestSuiteErrorLogTest {
+    private Generator generator;
+    private TestSuiteParserController testSuiteParserController;
+    private BufferedReader mockedParserReader;
+    private InterpreterController interpreterController;
+    private BufferedReader mockedInterpreterReader;
+    private WriterController writerController;
+    private Writer writer;
     private TestSuiteParser testSuiteParser;
     private BufferedReader mockedReader;
     private StringBuilder testSuite;
@@ -42,6 +58,16 @@ public class TestSuiteErrorLogTest {
 
     @BeforeEach
     void commonSetup() {
+        mockedInterpreterReader = Mockito.mock(BufferedReader.class);
+        interpreterController = new InterpreterController(mockedInterpreterReader);
+
+        writer = new StringWriter();
+        cobolWriter = new CobolWriter(writer);
+        writerController = new WriterController(cobolWriter);
+
+        mockedParserReader = Mockito.mock(BufferedReader.class);
+        testSuiteParserController = new TestSuiteParserController(mockedParserReader);
+
         mockRepository = new MockRepository();
         beforeAfterRepo = new BeforeAfterRepo();
         testSuiteErrorLog = new TestSuiteErrorLog();
@@ -58,6 +84,95 @@ public class TestSuiteErrorLogTest {
         ContextHandler.forceContextExit();
     }
 
+    @Test
+    public void it_catches_unmocked_calls_from_paragraph() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       01  FILLER.";
+        String s3 = "          05  VALUE-1           PIC X(80).";
+        String s4 = "       PROCEDURE DIVISION.";
+        String s5 = "       100-MAKE-CALL.";
+        String s6 = "           CALL 'PROG'";
+        String s7 = "           .";
+
+        String t1 = "           TestSuite \"Sample TestSuite\"";
+        String t2 = "           TestCase \"Sample TestCase\"";
+        String t3 = "           PERFORM 100-MAKE-CALL";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, null);
+
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> new Generator(interpreterController, writerController, testSuiteParserController));
+        assertTrue(ex.getMessage().contains("ERR033: Call Statement in Line 6 of the source code is not mocked in testcase \"Sample TestCase\" of testSuite \"Sample TestSuite\"."));
+    }
+
+    @Test
+    public void it_catches_unmocked_calls_from_section() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       01  FILLER.";
+        String s3 = "          05  VALUE-1           PIC X(80).";
+        String s4 = "       PROCEDURE DIVISION.";
+        String s5 = "       100-MAKE-CALL SECTION.";
+        String s6 = "           CALL 'PROG'";
+        String s7 = "           .";
+
+        String t1 = "           TestSuite \"Sample TestSuite\"";
+        String t2 = "           TestCase \"Sample TestCase\"";
+        String t3 = "           PERFORM 100-MAKE-CALL";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, null);
+
+        Throwable ex = assertThrows(PossibleInternalLogicErrorException.class, () -> new Generator(interpreterController, writerController, testSuiteParserController));
+        assertTrue(ex.getMessage().contains("ERR033: Call Statement in Line 6 of the source code is not mocked in testcase \"Sample TestCase\" of testSuite \"Sample TestSuite\"."));
+    }
+
+    @Test
+    public void calls_are_considered_mocked_in_mocked_paragraph() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       01  FILLER.";
+        String s3 = "          05  VALUE-1           PIC X(80).";
+        String s4 = "       PROCEDURE DIVISION.";
+        String s5 = "       100-MAKE-CALL.";
+        String s6 = "           CALL 'PROG'";
+        String s7 = "           .";
+
+        String t1 = "           TestSuite \"Sample TestSuite\"";
+        String t2 = "           TestCase \"Sample TestCase\"";
+        String t3 = "           MOCK PARAGRAPH 100-MAKE-CALL";
+        String t4 = "               MOVE \"From mocked paragraph\" TO VALUE-1";
+        String t5 = "           END-MOCK";
+        String t6 = "           PERFORM 100-MAKE-CALL";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, t5, t6, null);
+
+        assertDoesNotThrow(() -> new Generator(interpreterController, writerController, testSuiteParserController));
+    }
+
+    @Test
+    public void calls_are_considered_mocked_in_mocked_section() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       01  FILLER.";
+        String s3 = "          05  VALUE-1           PIC X(80).";
+        String s4 = "       PROCEDURE DIVISION.";
+        String s5 = "       100-MAKE-CALL SECTION.";
+        String s6 = "           CALL 'PROG'";
+        String s7 = "           .";
+
+        String t1 = "           TestSuite \"Sample TestSuite\"";
+        String t2 = "           TestCase \"Sample TestCase\"";
+        String t3 = "           MOCK SECTION 100-MAKE-CALL";
+        String t4 = "               MOVE \"From mocked paragraph\" TO VALUE-1";
+        String t5 = "           END-MOCK";
+        String t6 = "           PERFORM 100-MAKE-CALL";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, t5, t6, null);
+
+        assertDoesNotThrow(() -> new Generator(interpreterController, writerController, testSuiteParserController));
+    }
+
+    
     @Test
     public void it_catches_unexpected_keyword() {
         testSuite.append("       TESTSUITE VERIFY");
