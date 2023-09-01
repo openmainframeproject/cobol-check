@@ -151,7 +151,7 @@ public class TestSuiteErrorLog {
 
     public void logUnMockedCalls(String testSuiteName, String testCaseName, int currentCallLineNumber) {
         String alertType = Config.getString(Constants.COBOLCHECK_UNMOCKCALL_ALERTTYPE_CONFIG_KEY, "false");
-        String testCaseNameToDisplay = (testCaseName.equals("")) ? "global test case" : "testcase " + testCaseName;
+        String testCaseNameToDisplay = (testCaseName.equals("")) ? "global testcase" : "testcase " + testCaseName;
         if(alertType.equalsIgnoreCase("TRUE")) {
             throw new UnMockedCallStatementException(
                 Messages.get("ERR033", String.valueOf(currentCallLineNumber), testCaseNameToDisplay, testSuiteName)
