@@ -2,12 +2,12 @@ package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.exceptions.TestSuiteCouldNotBeReadException;
+import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
-import org.openmainframeproject.cobolcheck.workers.Generator;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -280,7 +280,7 @@ public class TestSuiteParserController {
         testSuiteErrorLog.logUnusedMocks(mockRepository.getMocks());
     }
 
-    public void logUnMockedCalls(HashMap<String, List<Generator.MockableComponent>> mockableComponents) {
+    public void logUnMockedCalls(HashMap<String, List<InterpreterController.MockableComponent>> mockableComponents) {
         HashMap<Map.Entry<String, String>, HashSet<String>> performParaOrSectionInTestCase = testSuiteParser.getPerformParaOrSectionFromTestCase();
         for (Map.Entry<Map.Entry<String, String>, HashSet<String>> testCaseEntry : performParaOrSectionInTestCase.entrySet()) {
             String testSuiteName = testCaseEntry.getKey().getKey();
@@ -290,7 +290,7 @@ public class TestSuiteParserController {
                     mockExistsFor(paragraphOrSectionIdentifier, "SECTION", new ArrayList<>(), testSuiteName, testCaseName))
                         continue;
                 if(mockableComponents.containsKey(paragraphOrSectionIdentifier)) {
-                    for(Generator.MockableComponent mockableComponent : mockableComponents.get(paragraphOrSectionIdentifier)){
+                    for(InterpreterController.MockableComponent mockableComponent : mockableComponents.get(paragraphOrSectionIdentifier)){
                         if(!mockExistsFor(mockableComponent.getIdentifier(), mockableComponent.getType(), mockableComponent.getArguments(), testSuiteName, testCaseName)){
                             testSuiteErrorLog.logUnMockedCalls(testSuiteName, testCaseName, mockableComponent.getCurrentLineNumber());
                         }

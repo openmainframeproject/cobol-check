@@ -606,5 +606,34 @@ public class InterpreterController {
         }
     }
 
+    public static class MockableComponent {
+        private String identifier;
+        private String type;
+        private List<String> arguments;
+        private int currentLineNumber;
+
+        public MockableComponent(String identifier, String type, List<String> arguments, int currentLineNumber) {
+            this.identifier = identifier;
+            this.type = type;
+            this.arguments = arguments;
+            this.currentLineNumber = currentLineNumber;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public List<String> getArguments() {
+            return arguments;
+        }
+
+        public int getCurrentLineNumber() {
+            return currentLineNumber;
+        }
+    }
 
 }

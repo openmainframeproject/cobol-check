@@ -34,7 +34,7 @@ public class Generator {
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
     private boolean workingStorageHasEnded;
-    private HashMap<String, List<MockableComponent>> mockableComponentsHierarchy;
+    private HashMap<String, List<InterpreterController.MockableComponent>> mockableComponentsHierarchy;
     private String mockableComponentsHierarchyLastElementIdentifier = Constants.EMPTY_STRING;
 
     List<String> matchingTestDirectories;
@@ -216,13 +216,13 @@ public class Generator {
             String identifier = interpreter.getPossibleMockIdentifier();
             String type = interpreter.getPossibleMockType();
             List<String> arguments = interpreter.getPossibleMockArgs();
-            MockableComponent mockableComponent = new MockableComponent(identifier, type, arguments, interpreter.getCurrentLineNumber());
+            InterpreterController.MockableComponent mockableComponent = new InterpreterController.MockableComponent(identifier, type, arguments, interpreter.getCurrentLineNumber());
             if (type.equalsIgnoreCase(Constants.CALL_TOKEN) && !mockableComponentsHierarchy.isEmpty()) {
                 mockableComponentsHierarchy.get(mockableComponentsHierarchyLastElementIdentifier).add(mockableComponent);
             }
             if(type.equalsIgnoreCase(Constants.PARAGRAPH_TOKEN) || type.equalsIgnoreCase(Constants.SECTION_TOKEN)) {
                 mockableComponentsHierarchyLastElementIdentifier = identifier;
-                mockableComponentsHierarchy.put(identifier, new ArrayList<MockableComponent>());
+                mockableComponentsHierarchy.put(identifier, new ArrayList<InterpreterController.MockableComponent>());
             }
             if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
@@ -264,35 +264,6 @@ public class Generator {
         }
         catch (Exception ex) {
             throw new PossibleInternalLogicErrorException(ex);
-        }
-    }
-    public static class MockableComponent {
-        private String identifier;
-        private String type;
-        private List<String> arguments;
-        private int currentLineNumber;
-
-        public MockableComponent(String identifier, String type, List<String> arguments, int currentLineNumber) {
-            this.identifier = identifier;
-            this.type = type;
-            this.arguments = arguments;
-            this.currentLineNumber = currentLineNumber;
-        }
-
-        public String getIdentifier() {
-            return identifier;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public List<String> getArguments() {
-            return arguments;
-        }
-
-        public int getCurrentLineNumber() {
-            return currentLineNumber;
         }
     }
 }
