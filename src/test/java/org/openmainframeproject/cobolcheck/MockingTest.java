@@ -949,8 +949,195 @@ public class MockingTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void CALL_MOCK_param_is_qualified_single() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'prog1' USING VALUE-1 IN LS-STORAGE";
+        String str4 = "          MOVE \"something\" TO this";
+        String str5 = "          MOVE \"something else\" TO other";
+        String str6 = "       END-MOCK";
 
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                   ALSO \"Name of test case\"");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
 
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'prog1'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE"));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void CALL_MOCK_param_is_qualified_two_but_one() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'PGM1' USING VALUE-1 IN LS-STORAGE,";
+        String str4 = "                        ONE-REGULAR";
+        String str5 = "          MOVE \"something\" TO this";
+        String str6 = "          MOVE \"something else\" TO other";
+        String str7 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                   ALSO \"Name of test case\"");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'PGM1'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE ONE-REGULAR"));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void CALL_MOCK_param_is_qualified_three() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'PROGRAM' USING VALUE-1 IN LS-STORAGE,";
+        String str4 = "                        VALUE-TWO IN LS-STORAGE,";
+        String str5 = "                        VALUE-THREE IN WS-STORAGE";
+        String str6 = "          MOVE \"something\" TO this";
+        String str7 = "          MOVE \"something else\" TO other";
+        String str8 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                   ALSO \"Name of test case\"");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'PROGRAM'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE VALUE-TWO IN LS-STORAGE","REFERENCE VALUE-THREE IN WS-STORAGE"));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void CALL_MOCK_param_three_is_qualified_three_is_not() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'PROGRAM' USING VALUE-1 IN LS-STORAGE,";
+        String str4 = "                        VALUE-TWO IN LS-STORAGE,";
+        String str5 = "                        VALUE-TWO-STORAGE,";
+        String str6 = "                        VALUE-THREE IN WS-STORAGE";
+        String str7 = "                        VALUE-THREE-STORAGE";
+        String str8 = "                        WS-VALUE-THREE";
+        String str9 = "          MOVE \"something\" TO this";
+        String str10 = "          MOVE \"something else\" TO other";
+        String str11 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                   ALSO \"Name of test case\"");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8,str9,str10,str11, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'PROGRAM'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE VALUE-TWO IN LS-STORAGE","REFERENCE VALUE-TWO-STORAGE",
+                        "REFERENCE VALUE-THREE IN WS-STORAGE","REFERENCE VALUE-THREE-STORAGE","REFERENCE WS-VALUE-THREE"));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void CALL_MOCK_param_six_is_qualified() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'AMGRAM' USING VALUE-1 IN L-STORAGE,";
+        String str4 = "                        VALUE-2 IN L-STORAGE,";
+        String str5 = "                        VALUE-3 IN L-STORAGE,";
+        String str6 = "                        VALUE-4 IN L-STORAGE,";
+        String str7 = "                        VALUE-5 IN L-STORAGE,";
+        String str8 = "                        VALUE-6 IN L-STORAGE,";
+        String str9 = "          MOVE \"something\" TO this";
+        String str10 = "          MOVE \"something else\" TO other";
+        String str11 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                   ALSO \"Name of test case\"");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8,str9,str10,str11, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'AMGRAM'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN L-STORAGE","REFERENCE VALUE-2 IN L-STORAGE","REFERENCE VALUE-3 IN L-STORAGE","REFERENCE VALUE-4 IN L-STORAGE","REFERENCE VALUE-5 IN L-STORAGE",
+                        "REFERENCE VALUE-6 IN L-STORAGE"));
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void CALL_MOCK_param_five_is_qualified_six_is_not() throws IOException {
+        String str1 = "       TESTSUITE \"Name of test suite\"";
+        String str2 = "       TESTCASE \"Name of test case\"";
+        String str3 = "       MOCK CALL 'PROGRAM' USING VALUE-1 IN L-STORAGE,";
+        String str4 = "                        VALUE-2 IN L-STORAGE,";
+        String str5 = "                        VALUE-3 IN L-STORAGE,";
+        String str6 = "                        VALUE-4 IN L-STORAGE,";
+        String str7 = "                        VALUE-5 IN L-STORAGE,";
+        String str8 = "                        VALUE-11,";
+        String str9 = "                        VALUE-12,";
+        String str10 = "                        VALUE-13,";
+        String str11 = "                        VALUE-14,";
+        String str12 = "                        VALUE-15,";
+        String str13 = "                        VALUE-16";
+        String str14 = "          MOVE \"something\" TO this";
+        String str15 = "          MOVE \"something else\" TO other";
+        String str16 = "       END-MOCK";
+
+        List<String> expected = new ArrayList<>();
+        expected.add("            EVALUATE UT-TEST-SUITE-NAME");
+        expected.add("                   ALSO UT-TEST-CASE-NAME");
+        expected.add("                WHEN \"Name of test suite\"");
+        expected.add("                   ALSO \"Name of test case\"");
+        expected.add("                    PERFORM UT-1-1-1-MOCK");
+        expected.add("            END-EVALUATE");
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8,str9,str10,str11,str12,str13,str14,str15,str16, null);
+
+        testSuiteParserController.parseTestSuites(numericFields);
+        testSuiteParserController.getProcedureDivisionTestCode();
+
+        List<String> actual = testSuiteParserController.generateMockPerformCalls("'PROGRAM'",
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN L-STORAGE","REFERENCE VALUE-2 IN L-STORAGE","REFERENCE VALUE-3 IN L-STORAGE","REFERENCE VALUE-4 IN L-STORAGE","REFERENCE VALUE-5 IN L-STORAGE",
+                        "REFERENCE VALUE-11","REFERENCE VALUE-12","REFERENCE VALUE-13","REFERENCE VALUE-14","REFERENCE VALUE-15","REFERENCE VALUE-16"));
+        assertEquals(expected, actual);
+    }
 
 
 

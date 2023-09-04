@@ -512,6 +512,35 @@ public class TestSuiteParserParsingTest {
 
 
     @Test
+    public void verify_can_attach_to_call_mock_with_one_qualified_argument() {
+        testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
+        testSuite.append("       TESTCASE \"qualified_arguments\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this in this-place");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this in this-place");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        List<String> actualResult = new ArrayList<>();
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
     public void verify_can_attach_to_call_mock_with_qualified_arguments() {
         testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
         testSuite.append("       TESTCASE \"qualified_arguments\"");
