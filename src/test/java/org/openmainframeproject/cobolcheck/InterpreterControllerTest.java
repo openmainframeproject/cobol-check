@@ -730,19 +730,19 @@ public class InterpreterControllerTest {
         String str4  = "           05  OUTPUT-FILE-STATUS PIC XX.";
         String str5  = "               88  OUTPUT-OK      VALUE '00'.";
         String str6  = "           05.";
-        String str7  = "             08  WS-COUNT           PIC S9(5) COMP-3.";
-        String str8  = "           05  WS-DISPLAY-NUM2      PIC 9(04) OCCURS";
-        String str9  = "                         20.";
-        String str10  = "           05  TEMP-VAL                  PIC X(200) VALUE SPACES.";
-        String str11 = "       77   CHAR-CT                      PIC S9(3) COMP.";
+        String str7  = "             08  WS-COUNT   ";        
+        String str8 = "                      PIC S9(5) COMP-3.";
+        String str9  = "           05  WS-DISPLAY-NUM2      PIC 9(04) OCCURS";
+        String str10  = "                         20.";
+        String str11  = "           05  TEMP-VAL                  PIC X(200) VALUE SPACES.";
+        String str12 = "       77   CHAR-CT                      PIC S9(3) COMP.";
 
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, str12, null);
 
         while (interpreterController.interpretNextLine() != null){
             interpreterController.interpretNextLine();
         }
-
         assertEquals("PACKED_DECIMAL",
                 interpreterController.getNumericFieldDataTypeFor("WS-COUNT").name());
         assertEquals("DISPLAY_NUMERIC",

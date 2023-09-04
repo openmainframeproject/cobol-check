@@ -116,6 +116,45 @@
               BY VALUE VALUE-2,
               VALUE-3
           CALL 'PROG3' USING VALUE-1.
+          
+       900-MAKE-CALL.
+           CALL 'PROGRAM' USING VALUE-1
+           ON EXCEPTION
+           PERFORM 100-WELCOME
+           END-CALL.
+
+       1000-MAKE-CALL.
+           CALL 'PROGRAM' USING VALUE-1
+           ON EXCEPTION
+           PERFORM 100-WELCOME
+           .
+
+       1100-MAKE-CALL.
+           CALL 'PROGRAM' USING VALUE-1
+           ON EXCEPTION
+           CALL 'PROGRAM2' USING VALUE-1
+           ON EXCEPTION 
+           DISPLAY "EXCEPTION INSIDE ERROR HANDLING"
+           END-CALL
+           END-CALL.
+       
+       1200-MAKE-CALL.
+           CALL 'PROGRAM' USING VALUE-1
+           ON EXCEPTION
+           CALL 'PROGRAM2' USING VALUE-1
+           ON EXCEPTION 
+           DISPLAY "EXCEPTION IN INNER ERROR HANDLING"
+           .
+       
+       1300-MAKE-CALL.
+           CALL 'PROGRAM' USING VALUE-1
+           ON EXCEPTION 
+           DISPLAY "EXCEPTION IN OUTER ERROR HANDLING"
+           END-CALL
+           CALL 'PROGRAM' USING VALUE-1
+           ON EXCEPTION    
+           DISPLAY "EXCEPTION IN INNER ERROR HANDLING"
+           .
 
        999-END.
            GOBACK

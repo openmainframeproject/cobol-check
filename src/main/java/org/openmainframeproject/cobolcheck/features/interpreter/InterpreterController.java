@@ -274,6 +274,7 @@ public class InterpreterController {
 
         if (reader.isFlagSet(Constants.DATA_DIVISION)) {
             this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
+            line = line.convertCobolLinesToCobolLine(currentStatement);
             updateNumericFields(line);
         }
 
@@ -335,7 +336,7 @@ public class InterpreterController {
                 && Interpreter.containsOnlyPeriod(nextLine)) {
             // We might generate code after the current line, thus if the period is on the next line,
             // we append it to this line. This prevents us generating code in the wrong place.
-            reader.appendNextMeaningfulLineToCurrentLine();
+            reader.appendNextMeaningfulLineToCurrentLine(true);
         }
     }
 

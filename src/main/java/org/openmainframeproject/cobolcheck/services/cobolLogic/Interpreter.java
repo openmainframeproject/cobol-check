@@ -38,11 +38,11 @@ public class Interpreter {
      * Sets flags based on a line, to be able to know which kinds of source
      * statements to look for when reading and interpreting lines.
      *
-     * @param line  - current source line being processed
+     * @param line - current source line being processed
      * @param state - current state of flags
      * @return - the part of the program just entered or null if no part was entered
      */
-    public static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state){
+    public static String setFlagsForCurrentLine(CobolLine line, CobolLine nextLine, State state) {
         String partOfProgram = null;
         if (line.containsToken(Constants.IDENTIFICATION_DIVISION)) {
             state.setFlagFor(Constants.IDENTIFICATION_DIVISION);
@@ -64,7 +64,7 @@ public class Interpreter {
             state.setFlagFor(Constants.INPUT_OUTPUT_SECTION);
             partOfProgram = Constants.INPUT_OUTPUT_SECTION;
         }
-        if (line.containsToken(Constants.FILE_CONTROL)){
+        if (line.containsToken(Constants.FILE_CONTROL)) {
             state.setFlagFor(Constants.FILE_CONTROL);
             partOfProgram = Constants.FILE_CONTROL;
         }
@@ -152,7 +152,7 @@ public class Interpreter {
      * @return - true if end of statement is recognized
      */
     public static boolean isEndOfStatement(CobolLine currentLine, CobolLine nextMeaningfulLine) {
-        if (nextMeaningfulLine == null){
+        if (nextMeaningfulLine == null) {
             return true;
         }
         if (currentLine.getTrimmedString().endsWith(Constants.PERIOD)) {
@@ -161,8 +161,29 @@ public class Interpreter {
         if (currentLine.getTrimmedString().toUpperCase(Locale.ROOT).endsWith(Constants.END_EXEC_TOKEN)) {
             return true;
         }
-        if (containsOnlyPeriod(nextMeaningfulLine)){
+        if (containsOnlyPeriod(nextMeaningfulLine)) {
             return false;
+        }
+        if (currentLine.containsToken(Constants.CALL_TOKEN)) {
+            List<String> currentTokens = currentLine.getTokens();
+            int callTokenCount = 0, endCallTokenCount = 0;
+            for (String token : currentTokens) {
+                if (token.equals(Constants.CALL_TOKEN)) {
+                    callTokenCount++;
+                }
+                if (token.equals(Constants.END_CALL_TOKEN)) {
+                    endCallTokenCount++;
+                }
+            }
+            if (callTokenCount == endCallTokenCount) {
+                return true;
+            }
+            if (nextMeaningfulLine.containsToken("ON")) {
+                return false;
+            }
+            if (currentLine.containsToken("ON")) {
+                return false;
+            }
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
             return true;
@@ -171,11 +192,12 @@ public class Interpreter {
         return false;
     }
 
-    public static boolean lineEndsParagraphOrSection(CobolLine currentLine, CobolLine nextLine, CobolLine lineFollowingNext, State state) {
+    public static boolean lineEndsParagraphOrSection(CobolLine currentLine, CobolLine nextLine,
+            CobolLine lineFollowingNext, State state) {
         if (currentLine == null || nextLine == null || lineFollowingNext == null)
             return true;
 
-        if (endsInPeriod(currentLine) || containsOnlyPeriod(currentLine)){
+        if (endsInPeriod(currentLine) || containsOnlyPeriod(currentLine)) {
             return (isSectionHeader(nextLine, state) || isParagraphHeader(nextLine, lineFollowingNext, state));
         }
         return false;
@@ -188,7 +210,8 @@ public class Interpreter {
      * @return true if the source line is too short to be a meaningful line of code in Cobol.
      */
     public static boolean isTooShortToBeMeaningful(CobolLine line) {
-        return line.getUnNumberedString() == null || line.getUnNumberedString().length() < minimumMeaningfulSourceLineLength;
+        return line.getUnNumberedString() == null
+                || line.getUnNumberedString().length() < minimumMeaningfulSourceLineLength;
     }
 
     /**
@@ -203,7 +226,7 @@ public class Interpreter {
         return commentIndicators.contains(line.charAt(commentIndicatorOffset));
     }
 
-    public static boolean isMeaningful(CobolLine line){
+    public static boolean isMeaningful(CobolLine line) {
         return line != null && !isEmpty(line) && !isComment(line) && !isTooShortToBeMeaningful(line);
     }
 
@@ -211,7 +234,7 @@ public class Interpreter {
      * @param line
      * @return true if the source line is empty
      */
-    public static boolean isEmpty(CobolLine line){
+    public static boolean isEmpty(CobolLine line) {
         return line.tokensSize() == 0 && !containsOnlyPeriod(line);
     }
 
@@ -253,9 +276,8 @@ public class Interpreter {
             }
         }
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
-            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN)) {
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
                 return true;
-            }
         }
         return false;
     }
@@ -289,8 +311,8 @@ public class Interpreter {
             if (line.containsToken(Constants.REPLACE_TOKEN))
                 return true;
         }
-        if (state.isFlagSetFor(Constants.DATA_DIVISION)) {
-            if (!Interpreter.endsInPeriod(line)) {
+        if (state.isFlagSetFor(Constants.DATA_DIVISION)){
+            if (!Interpreter.endsInPeriod(line)){
                 return true;
             }
         }
@@ -299,9 +321,9 @@ public class Interpreter {
 
     public static boolean lineContainsBinaryFieldDefinition(CobolLine line) {
         return line.containsToken(Constants.COMP_VALUE)
-                || line.containsToken(Constants.COMP_4_VALUE)
-                || line.containsToken(Constants.COMP_5_VALUE)
-                || line.containsToken(Constants.BINARY);
+         || line.containsToken(Constants.COMP_4_VALUE)
+         || line.containsToken(Constants.COMP_5_VALUE)
+         || line.containsToken(Constants.BINARY);
     }
 
     public static boolean containsOnlyPeriod(CobolLine line) {
@@ -343,9 +365,9 @@ public class Interpreter {
      * As paragraph headers are not associated with any keyword, the method matches the
      * source line against specific attributes that makes up a paragraph header.
      *
-     * @param line     - The line to check
+     * @param line - The line to check
      * @param nextLine - The line after the line param
-     * @param state    - current state of flags
+     * @param state - current state of flags
      * @return true if the source line have all the attributes of a paragraph header.
      */
     public static boolean isParagraphHeader(CobolLine line, CobolLine nextLine, State state) {
@@ -361,7 +383,7 @@ public class Interpreter {
      * - It has only one token
      * - The token is followed by a period on this or the next line.
      *
-     * @param line     - The line to check
+     * @param line - The line to check
      * @param nextLine - The line after the line param
      * @return true if sourceLine is of the format of a paragraph header
      */
@@ -370,7 +392,7 @@ public class Interpreter {
             if (line.tokensSize() == 1) {
                 if (line.getTrimmedString().endsWith(Constants.PERIOD) ||
                         (nextLine != null &&
-                                nextLine.getTrimmedString().equals(Constants.PERIOD)))
+                        nextLine.getTrimmedString().equals(Constants.PERIOD)))
                     return true;
             }
         }
@@ -389,7 +411,8 @@ public class Interpreter {
             int usingIndex = line.getTokenIndexOf(Constants.USING_TOKEN);
             int i = usingIndex + 1;
             while (i < line.tokensSize()) {
-                if (line.getToken(i).toUpperCase(Locale.ROOT).equals(Constants.END_CALL_TOKEN))
+                if (line.getToken(i).toUpperCase(Locale.ROOT).equals(Constants.END_CALL_TOKEN) ||
+                    line.getToken(i).toUpperCase(Locale.ROOT).equals("ON"))
                     break;
                 if (argumentReferences.contains(line.getToken(i).toUpperCase(Locale.ROOT))) {
                     currentArgumentReference = line.getToken(i).toUpperCase();
@@ -428,29 +451,32 @@ public class Interpreter {
      * @param line - the line to get the area for
      * @return the beginning area of the source line.
      */
-    public static Area getBeginningArea(CobolLine line, boolean ignoreSequenceArea){
+    public static Area getBeginningArea(CobolLine line, boolean ignoreSequenceArea) {
         if (isTooShortToBeMeaningful(line) ||
-                (ignoreSequenceArea && line.getUnNumberedString().length() <= sequenceNumberAreaEnd + 1)){
+                (ignoreSequenceArea && line.getUnNumberedString().length() <= sequenceNumberAreaEnd + 1)) {
             return Area.NONE;
         }
         char[] characters;
         int index = 0;
-        if (ignoreSequenceArea){
+        if (ignoreSequenceArea) {
             characters = line.getUnNumberedString().toCharArray();
             index = sequenceNumberAreaEnd;
-        }
-        else{
+        } else {
             characters = line.getOriginalString().toCharArray();
         }
 
-        while (characters[index] == ' '){
+        while (characters[index] == ' ') {
             index++;
         }
 
-        if (index < sequenceNumberAreaEnd) return Area.SEQUENCE_NUMBER;
-        if (index == indicatorAreaEnd - 1) return Area.INDICATOR;
-        if (index < A_AreaEnd) return Area.A;
-        if (index < B_AreaEnd) return Area.B;
+        if (index < sequenceNumberAreaEnd)
+            return Area.SEQUENCE_NUMBER;
+        if (index == indicatorAreaEnd - 1)
+            return Area.INDICATOR;
+        if (index < A_AreaEnd)
+            return Area.A;
+        if (index < B_AreaEnd)
+            return Area.B;
 
         return Area.NONE;
     }
@@ -486,28 +512,29 @@ public class Interpreter {
     }
 
     /**
-     * Depending on the line that is being interpreted, we want to make sure that we update
-     * the current datastructure. This structure is based on the lines we have read so far in
+     * Depending on the line that is being interpreted, we want to make sure that we update 
+     * the current datastructure. This structure is based on the lines we have read so far in 
      * working storage.
      * This will make sure to add or remove any referenced field within the structure, based on
      * the level of said field within the structure.
      */
-    public static TreeMap<Integer, String> updateCurrentDataStructure(List<CobolLine> currentStatement, TreeMap<Integer, String> currentHierarchy) {
+    public static TreeMap<Integer,String> updateCurrentDataStructure(List<CobolLine> currentStatement, TreeMap<Integer, String> currentHierarchy) {
 
         String[] statementWords = extractStatementWords(currentStatement);
 
-        if (currentHierarchy == null) {
+        if (currentHierarchy==null) {
             currentHierarchy = new TreeMap<>();
         }
 
         int lastKeyOfCurrentHierarchy;
         if (currentHierarchy.isEmpty()) {
-            lastKeyOfCurrentHierarchy = 0;
-        } else {
+            lastKeyOfCurrentHierarchy=0;
+        }
+        else {
             lastKeyOfCurrentHierarchy = currentHierarchy.lastKey();
         }
 
-        if (!isInteger(statementWords[0])) {
+        if (!isInteger(statementWords[0])){
             return currentHierarchy;
         }
         int cobolLevelNumber = determineCobolLevelNumber(statementWords[0]);
@@ -543,9 +570,9 @@ public class Interpreter {
         }
     }
 
-    private static Integer determineCobolLevelNumber(String levelNumberString) {
+    private static Integer determineCobolLevelNumber(String levelNumberString){
         int cobolLevelNumber = Integer.parseInt(levelNumberString);
-        if (cobolLevelNumber == 77) {
+        if (cobolLevelNumber == 77){
             cobolLevelNumber = 01;
         }
         return cobolLevelNumber;
@@ -553,8 +580,17 @@ public class Interpreter {
 
     private static String[] extractStatementWords(List<CobolLine> currentStatement) {
         String statementString = "";
-        for (CobolLine loopLine : currentStatement) {
-            statementString += loopLine.getTrimmedString();
+        boolean[] isContinuationLine = new boolean[currentStatement.size()];
+    Arrays.fill(isContinuationLine, false);for (int i = 1; i < currentStatement.size(); ++i) {
+        if(currentStatement.get(i).getTrimmedString().startsWith("-")){
+            isContinuationLine[i] = true;
+        }
+    }
+    for(int i = 0; i < currentStatement.size(); ++i) {
+            statementString += currentStatement.get(i).getTrimmedString();
+        if(!isContinuationLine[i]){
+            statementString += " ";
+        }
         }
         statementString = statementString.trim().replace(Constants.PERIOD, "");
         String[] statementWords = statementString.split("\\s+");
