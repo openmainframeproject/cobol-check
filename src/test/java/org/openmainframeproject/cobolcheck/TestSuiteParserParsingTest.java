@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck;
 
+import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.exceptions.TestSuiteAlreadyExistsException;
 import org.openmainframeproject.cobolcheck.exceptions.TestCaseAlreadyExistsException;
 import org.openmainframeproject.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
@@ -590,18 +591,13 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
         expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
         expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
-        try {
-            testSuiteParser.getParsedTestSuiteLines(
-                    new BufferedReader(new StringReader(testSuite.toString())),numericFields);
-            List<String> actualResult = new ArrayList<>();
 
-            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING);
-            // the following assert must not be performed!
-            fail("An exception should have been thrown :(");
-        } catch (VerifyReferencesNonexistentMockException mockException) {
-            assertNotNull(mockException);
-            assertTrue(mockException.getMessage().indexOf("nonexistent mock")>0);
-        }
+        Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
+            List<String> actualResult = new ArrayList<>();
+            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING); });
+
+        assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
 
     @Test
@@ -625,18 +621,13 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
         expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
         expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
-        try {
-            testSuiteParser.getParsedTestSuiteLines(
-                    new BufferedReader(new StringReader(testSuite.toString())),numericFields);
-            List<String> actualResult = new ArrayList<>();
 
-            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING);
-            // the following assert must not be performed!
-            fail("An exception should have been thrown :(");
-        } catch (VerifyReferencesNonexistentMockException mockException) {
-            assertNotNull(mockException);
-            assertTrue(mockException.getMessage().indexOf("nonexistent mock")>0);
-        }
+        Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
+            List<String> actualResult = new ArrayList<>();
+            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING); });
+
+        assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
 
 
@@ -661,18 +652,13 @@ public class TestSuiteParserParsingTest {
         expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
         expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
         expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
-        try {
-            testSuiteParser.getParsedTestSuiteLines(
-                    new BufferedReader(new StringReader(testSuite.toString())),numericFields);
-            List<String> actualResult = new ArrayList<>();
 
-            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING);
-            // the following assert must not be performed!
-            fail("An exception should have been thrown :(");
-        } catch (VerifyReferencesNonexistentMockException mockException) {
-            assertNotNull(mockException);
-            assertTrue(mockException.getMessage().indexOf("nonexistent mock")>0);
-        }
+        Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
+            List<String> actualResult = new ArrayList<>();
+            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING); });
+
+        assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
 
     @Test
