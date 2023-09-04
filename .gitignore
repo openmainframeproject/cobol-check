@@ -14,7 +14,7 @@ LAUNCHTESTT
 CC##*
 
 # project specific
-
+testsuites/concatenatedTestsuites
 *.hprof
 envvars
 target/
