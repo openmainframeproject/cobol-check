@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck;
 
+import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.exceptions.TestSuiteAlreadyExistsException;
 import org.openmainframeproject.cobolcheck.exceptions.TestCaseAlreadyExistsException;
 import org.openmainframeproject.cobolcheck.exceptions.VerifyReferencesNonexistentMockException;
@@ -265,7 +266,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -293,7 +294,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -320,7 +321,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -346,7 +347,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -372,7 +373,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -398,7 +399,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -423,7 +424,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedFirstLine, actualResult.get(0));
     }
 
@@ -450,7 +451,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -477,7 +478,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -485,13 +486,13 @@ public class TestSuiteParserParsingTest {
     public void verify_can_attach_to_call_mock_with_arguments() {
         testSuite.append("       TESTSUITE \"Name of test suite\"");
         testSuite.append("       TESTCASE \"Name of test case\"");
-        testSuite.append("       MOCK CALL 'PROG1' USING this, BY CONTENT other");
+        testSuite.append("       MOCK CALL 'PROG1' USING this-default, BY CONTENT other-by-content");
         testSuite.append("          MOVE \"something\" TO this");
         testSuite.append("          MOVE \"something else\" TO other");
         testSuite.append("       END-MOCK");
         testSuite.append("       PERFORM 000-START");
         testSuite.append("       VERIFY CALL 'PROG1' USING");
-        testSuite.append("             this, BY CONTENT other");
+        testSuite.append("             this-default, BY CONTENT other-by-content");
         testSuite.append("             HAPPENED ONCE");
 
         List<String> expectedResult = new ArrayList<>();
@@ -506,8 +507,158 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
+    }
+
+
+    @Test
+    public void verify_can_attach_to_call_mock_with_one_qualified_argument() {
+        testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
+        testSuite.append("       TESTCASE \"qualified_arguments\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this in this-place");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this in this-place");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        List<String> actualResult = new ArrayList<>();
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void verify_can_attach_to_call_mock_with_qualified_arguments() {
+        testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
+        testSuite.append("       TESTCASE \"qualified_arguments\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this in this-place, BY CONTENT other in this-place");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this in this-place, BY CONTENT other in this-place");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+        testSuiteParser.getParsedTestSuiteLines(
+                new BufferedReader(new StringReader(testSuite.toString())),
+                numericFields);
+        List<String> actualResult = new ArrayList<>();
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void verify_missing_call_mock_with_qualified_arguments() {
+        testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
+        testSuite.append("       TESTCASE \"qualified_arguments\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this in this-place, BY CONTENT other in this-place");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this in new-place, BY CONTENT other in new-place");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+
+        Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
+            List<String> actualResult = new ArrayList<>();
+            testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker()); });
+
+        assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
+    }
+
+    @Test
+    public void verify_missing_call_mock_with_qualified_arguments_2() {
+        testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
+        testSuite.append("       TESTCASE \"qualified_arguments\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this in this-place, BY CONTENT other in this-place");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this in this-place, BY CONTENT other in this-place new-surprise-var");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+
+        Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
+            List<String> actualResult = new ArrayList<>();
+            testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker()); });
+
+        assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
+    }
+
+
+    @Test
+    public void verify_call_mock_with_qualified_arguments_mixed() {
+        testSuite.append("       TESTSUITE \"call_mock_with_arguments\"");
+        testSuite.append("       TESTCASE \"qualified_arguments and not qualified\"");
+        testSuite.append("       MOCK CALL 'PROG1' USING this in this-place, BY CONTENT other in this-place last-one");
+        testSuite.append("          MOVE \"something\" TO this");
+        testSuite.append("          MOVE \"something else\" TO other");
+        testSuite.append("       END-MOCK");
+        testSuite.append("       PERFORM 000-START");
+        testSuite.append("       VERIFY CALL 'PROG1' USING");
+        testSuite.append("             this in new-place BY CONTENT other in new-place last-one");
+        testSuite.append("             HAPPENED ONCE");
+
+        List<String> expectedResult = new ArrayList<>();
+        expectedResult.add("           MOVE 1 TO UT-1-1-1-MOCK-EXPECTED");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-COUNT TO UT-ACTUAL-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-EXPECTED TO UT-EXPECTED-ACCESSES");
+        expectedResult.add("           MOVE UT-1-1-1-MOCK-NAME TO UT-MOCK-OPERATION");
+        expectedResult.add("           SET UT-VERIFY-EXACT TO TRUE");
+        expectedResult.add("           ADD 1 TO UT-TEST-CASE-COUNT");
+        expectedResult.add("           PERFORM UT-ASSERT-ACCESSES");
+
+        Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
+            List<String> actualResult = new ArrayList<>();
+            testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker()); });
+
+        assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
 
     @Test
@@ -740,7 +891,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -769,5 +920,11 @@ public class TestSuiteParserParsingTest {
 
         assertEquals(expectedStartTag, actualResult.get(0));
         assertEquals(expectedEndTag, actualResult.get(actualResult.size() - 1));
+    }
+
+    @Test
+    public void test_stop_method() throws IOException {
+        assertTrue(testSuiteParser.containStopValue("string,"));
+        assertFalse(testSuiteParser.containStopValue("string"));
     }
 }

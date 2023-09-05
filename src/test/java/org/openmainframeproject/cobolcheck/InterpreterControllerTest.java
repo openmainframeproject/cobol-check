@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InterpreterControllerTest {
     InterpreterController interpreterController;
     BufferedReader mockedReader;
+    String[] nullArray = null;
 
     @BeforeAll
     public static void setup(){
@@ -119,7 +120,7 @@ public class InterpreterControllerTest {
         expected.add("       CBL OPT(0), RULES(LAXPERF)");
         expected.add("       IDENTIFICATION DIVISION.");
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1,nullArray);
 
         String line = "";
         boolean assertHappened = false;
@@ -197,7 +198,7 @@ public class InterpreterControllerTest {
 
         String expected = "       CBL OPT(1), OPT(0), RULES(LAXPERF)";
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1,nullArray);
 
         String line = "";
         boolean assertHappened = false;
@@ -221,7 +222,7 @@ public class InterpreterControllerTest {
 
         String expected = "       IDENTIFICATION DIVISION.";
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1,nullArray);
 
         String line = "";
         boolean assertHappened = false;

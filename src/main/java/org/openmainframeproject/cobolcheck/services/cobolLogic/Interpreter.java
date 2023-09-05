@@ -11,6 +11,7 @@ import java.util.*;
  */
 
 public class Interpreter {
+    private static final String SPACE = " ";
 
     // Source tokens from Procedure Division that begin batch I/O statements
     private static final List<String> batchFileIOVerbs = Arrays.asList(
@@ -399,25 +400,45 @@ public class Interpreter {
     }
 
     public static List<String> getUsingArgs(CobolLine line) {
+
         List<String> arguments = new ArrayList<>();
         List<String> argumentReferences = Arrays.asList(Constants.BY_REFERENCE_TOKEN,
                 Constants.BY_CONTENT_TOKEN, Constants.BY_VALUE_TOKEN);
+        List<String> qualifyReference = Arrays.asList(Constants.IN_KEYWORD, Constants.OF_KEYWORD);
+
         String currentArgumentReference = Constants.BY_REFERENCE_TOKEN;
         if (line.containsToken(Constants.USING_TOKEN)) {
             int usingIndex = line.getTokenIndexOf(Constants.USING_TOKEN);
-
-            for (int i = usingIndex + 1; i < line.tokensSize(); i++) {
+            int i = usingIndex + 1;
+            while (i < line.tokensSize()) {
                 if (line.getToken(i).toUpperCase(Locale.ROOT).equals(Constants.END_CALL_TOKEN) ||
                     line.getToken(i).toUpperCase(Locale.ROOT).equals("ON"))
                     break;
                 if (argumentReferences.contains(line.getToken(i).toUpperCase(Locale.ROOT))) {
                     currentArgumentReference = line.getToken(i).toUpperCase();
+                    i++;
                     continue;
                 }
 
                 currentArgumentReference = currentArgumentReference.replace("BY ", "");
-                arguments.add(currentArgumentReference + " " + line.getToken(i).replace(",", ""));
+
+                String newArgument = currentArgumentReference + SPACE + line.getToken(i);
+
+                // if there is more tokens (2 or more), it may be a qualifier for the argument
+                int minimumTokensLeft = 2;
+                if (i < (line.tokensSize() - minimumTokensLeft)) {
+                    // if 'next' token is a qualifier token, add this AND next (type? add here) token
+                    if (qualifyReference.contains(line.getToken(i + 1).toUpperCase(Locale.ROOT))) {
+                        // the token is qualified, add
+                        newArgument = newArgument + SPACE +
+                                line.getToken(i + 1).toUpperCase() + SPACE +
+                                line.getToken(i + 2).toUpperCase();
+                        i += 2;
+                    }
+                }
+                arguments.add(newArgument.replace(",",""));
                 currentArgumentReference = Constants.BY_REFERENCE_TOKEN;
+                i++;
             }
         }
         return arguments;
@@ -557,24 +578,26 @@ public class Interpreter {
         return cobolLevelNumber;
     }
 
-    private static String[] extractStatementWords(List<CobolLine> currentStatement){
-    String statementString = "";
-    boolean[] isContinuationLine = new boolean[currentStatement.size()];
-    Arrays.fill(isContinuationLine, false);
-    for(int i = 1; i < currentStatement.size(); ++i) {
-        if(currentStatement.get(i).getTrimmedString().startsWith("-")){
-            isContinuationLine[i] = true;
+    private static String[] extractStatementWords(List<CobolLine> currentStatement) {
+        String statementString = "";
+        boolean[] isContinuationLine = new boolean[currentStatement.size()];
+        Arrays.fill(isContinuationLine, false);
+        for (int i = 1; i < currentStatement.size(); ++i) {
+            if (currentStatement.get(i).getTrimmedString().startsWith("-")) {
+                isContinuationLine[i] = true;
+            }
         }
-    }    
-    for(int i = 0; i < currentStatement.size(); ++i){
-        statementString += currentStatement.get(i).getTrimmedString();
-        if(!isContinuationLine[i]){
-            statementString += " ";
+
+        for(int i = 0; i < currentStatement.size(); ++i) {
+            statementString += currentStatement.get(i).getTrimmedString();
+            if(!isContinuationLine[i]){
+                statementString += " ";
+            }
         }
-    }
-    statementString = statementString.trim().replace(Constants.PERIOD, "");
-    String[] statementWords = statementString.split("\\s+");
-    return statementWords;
+
+        statementString = statementString.trim().replace(Constants.PERIOD, "");
+        String[] statementWords = statementString.split("\\s+");
+        return statementWords;
     }
 }
 

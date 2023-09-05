@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.TransferQueue;
 
 /**
  * Parses the concatenated test suite and writes Cobol test code to the output
@@ -40,7 +41,7 @@ public class TestSuiteParser {
     // Used for mocking
     MockRepository mockRepository;
     private Mock currentMock;
-    private String currentMockArgument = "";
+    private String parsingDataUsing = "";
     private int mockNumber;
     private boolean expectMockIdentifier;
     boolean expectUsing;
@@ -180,6 +181,8 @@ public class TestSuiteParser {
         List<String> parsedTestSuiteLines = new ArrayList<>();
         numericFields = numericFieldsList;
         String testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
+        TokenTracker tracker = new TokenTracker();
+
         while (testSuiteToken != null) {
             if (!testSuiteToken.startsWith(Constants.QUOTE) && !testSuiteToken.startsWith(Constants.APOSTROPHE)) {
                 testSuiteToken = testSuiteToken.toUpperCase(Locale.ROOT);
@@ -202,7 +205,9 @@ public class TestSuiteParser {
                 // to next token
                 expectMockArguments = false;
                 expectUsing = false;
-                handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
+
+                handleEndOfMockStatement(testSuiteReader, testSuiteToken, false, tracker);
+                tracker.reset();
                 testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 continue;
             }
@@ -215,15 +220,14 @@ public class TestSuiteParser {
                 expectUsing = false;
                 if (!verifyInProgress) {
                     ignoreCobolStatementAndFieldNameKeyAction = true;
-                    handleEndOfMockStatement(testSuiteReader, testSuiteToken, false);
+
+                    handleEndOfMockStatement(testSuiteReader, testSuiteToken, false, tracker);
                 }
                 if(testSuiteToken.equals("END-MOCK") ){
                     testSuiteToken = getNextTokenFromTestSuite(testSuiteReader);
                 }
                 continue;
             }
-
-           
 
             if (!testSuiteErrorLog.checkExpectedTokenSyntax(keyword, testSuiteToken, currentTestSuiteRealFile,
                     fileLineNumber, fileLineIndexNumber)) {
@@ -344,7 +348,6 @@ public class TestSuiteParser {
                         toBeInProgress = false;
                     }
 
-
                     if (expectMockIdentifier) {
                         expectMockIdentifier = false;
                         ignoreCobolStatementAndFieldNameKeyAction = true;
@@ -355,7 +358,8 @@ public class TestSuiteParser {
                             }
                             currentMock.setIdentifier(testSuiteToken);
                             if (!expectMockArguments) {
-                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true);
+
+                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true, tracker);
                             }
                         } else {
                             if (currentVerify.getType().equals(Constants.CALL_TOKEN)) {
@@ -373,23 +377,38 @@ public class TestSuiteParser {
                             currentLineContainsArgument = true;
                             ignoreCobolStatementAndFieldNameKeyAction = true;
 
-                            if (verifyInProgress)
-                                currentVerify.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
-                            else
-                                currentMock.addArgument(getCallArgument(currentMockArgument, testSuiteToken));
+                            if (tracker.lastAddedTokenToArgumentIsQualifier) {
+                                // add field to the current mock argument
+                                tracker.summizedTokensForArgument += Constants.SPACE + testSuiteToken.replace(",","");
+                                tracker.lastAddedTokenToArgumentIsQualifier = false;
+                            } else {
+                                if (tracker.summizedTokensForArgument != Constants.EMPTY_STRING) {
+                                    //We have something to add
+                                    if (verifyInProgress) {
+                                        currentVerify.addArgument(getCallArgument(tracker.parseDataUsingForSummizedTokens, tracker.summizedTokensForArgument));
+                                    }
+                                    else {
+                                        currentMock.addArgument(getCallArgument(tracker.parseDataUsingForSummizedTokens, tracker.summizedTokensForArgument));
+                                    }
+                                    tracker.reset();
+                                }
+                                // if we are putting the variable name into summized and not a qualifier, we save the parse-data-as value
+                                if (tracker.summizedTokensForArgument == Constants.EMPTY_STRING) {
+                                    tracker.parseDataUsingForSummizedTokens = parsingDataUsing;
+                                    parsingDataUsing = Constants.EMPTY_STRING;
+                                }
+                                tracker.summizedTokensForArgument = testSuiteToken.replace(",","");
+                            }
 
-                            currentMockArgument = "";
-                            
                         }else{
                             expectUsing = false;
                             expectMockArguments = false;
                             if (!verifyInProgress) {
                                 ignoreCobolStatementAndFieldNameKeyAction = true;
-                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument);
-                            }
 
+                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, currentLineContainsArgument, tracker);
+                            }
                         }
-                        
                     }
 
                     if (verifyInProgress) {
@@ -403,7 +422,6 @@ public class TestSuiteParser {
                     break;
 
                 case Constants.ALPHANUMERIC_LITERAL_KEYWORD:
-
 
                     if (expectTestsuiteName) {
                         expectTestsuiteName = false;
@@ -440,8 +458,9 @@ public class TestSuiteParser {
                                 expectMockArguments = true;
                             }
                             currentMock.setIdentifier(testSuiteToken);
+
                             if (!expectMockArguments) {
-                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true);
+                                handleEndOfMockStatement(testSuiteReader, testSuiteToken, true, tracker);
                             }
                         } else {
                             if (currentVerify.getType().equals(Constants.CALL_TOKEN)) {
@@ -557,8 +576,9 @@ public class TestSuiteParser {
                 case Constants.BY_REFERENCE_TOKEN:
                 case Constants.BY_CONTENT_TOKEN:
                 case Constants.BY_VALUE_TOKEN:
-                    if (expectMockArguments)
-                        currentMockArgument = testSuiteToken.toUpperCase().replace("BY ", "");
+                    if (expectMockArguments) {
+                        parsingDataUsing = testSuiteToken.toUpperCase().replace("BY ", "");
+                    }
                     break;
 
                 case Constants.VERIFY_KEYWORD:
@@ -577,7 +597,7 @@ public class TestSuiteParser {
                 case Constants.NEVER_HAPPENED_KEYWORD:
                     expectMockArguments = false;
                     currentVerify.expectExact("0");
-                    handleEndOfVerifyStatement(parsedTestSuiteLines);
+                    handleEndOfVerifyStatement(parsedTestSuiteLines, tracker);
                     break;
 
                 case Constants.HAPPENED_KEYWORD:
@@ -587,7 +607,7 @@ public class TestSuiteParser {
                 case Constants.ONCE_KEYWORD:
                     if (currentVerify != null){
                         currentVerify.setExpectedCount("1");
-                        handleEndOfVerifyStatement(parsedTestSuiteLines);
+                        handleEndOfVerifyStatement(parsedTestSuiteLines, tracker);
                     }
                     break;
 
@@ -607,7 +627,8 @@ public class TestSuiteParser {
 
                 case Constants.TIME_KEYWORD:
                 case Constants.TIMES_KEYWORD:
-                    handleEndOfVerifyStatement(parsedTestSuiteLines);
+                    handleEndOfVerifyStatement(parsedTestSuiteLines, tracker);
+
                     break;
 
                 case Constants.TO_BE_KEYWORD:
@@ -626,6 +647,8 @@ public class TestSuiteParser {
                     if (cobolTokenIsFieldName){
                         fieldNameForExpect += Constants.SPACE + testSuiteToken + Constants.SPACE;
                         expectQualifiedName = true;
+                        tracker.summizedTokensForArgument += Constants.SPACE + Constants.IN_KEYWORD;
+                        tracker.lastAddedTokenToArgumentIsQualifier = true;
                     }
 
                     else
@@ -697,6 +720,17 @@ public class TestSuiteParser {
             addPerformAfterEachLine(parsedTestSuiteLines);
         }
         return parsedTestSuiteLines;
+    }
+
+    /**
+     * Tells you the token is the last of a set
+     * @param testSuiteToken
+     * @return
+     */
+    public boolean containStopValue(String testSuiteToken) {
+        if (testSuiteToken.contains(",")) return true;
+
+        return false;
     }
 
     private List<String> removeToken(List<String> lines, String token) {
@@ -812,7 +846,14 @@ public class TestSuiteParser {
     }
 
     private void handleEndOfMockStatement(BufferedReader testSuiteReader, String testSuiteToken,
-                                          boolean skipCurrentToken) {
+                                          boolean skipCurrentToken,TokenTracker tracker) {
+        // First add any arguments, not yet added to currentMock
+        if (tracker.summizedTokensForArgument != Constants.EMPTY_STRING) {
+            //We have something to add to the Mock
+            currentMock.addArgument(getCallArgument(tracker.parseDataUsingForSummizedTokens, tracker.summizedTokensForArgument));
+            tracker.reset();
+        }
+
         List<String> mockLines = getLinesUntilKeywordHit(testSuiteReader, Constants.ENDMOCK_KEYWORD, testSuiteToken,
                 skipCurrentToken);
         testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
@@ -843,7 +884,14 @@ public class TestSuiteParser {
      * @throws VerifyReferencesNonexistentMockException if referenced mock, does not
      *                                                  exist
      */
-    public void handleEndOfVerifyStatement(List<String> parsedTestSuiteLines) {
+    public void handleEndOfVerifyStatement(List<String> parsedTestSuiteLines, TokenTracker tracker) {
+        // First add any arguments, not yet added to currentMock
+        if (tracker.summizedTokensForArgument != Constants.EMPTY_STRING) {
+            //We have something to add to the Mock
+            currentVerify.addArgument(getCallArgument(tracker.parseDataUsingForSummizedTokens, tracker.summizedTokensForArgument));
+            tracker.reset();
+        }
+
         verifyInProgress = false;
         currentVerify.setAttachedMock(mockRepository.getMockFor(currentVerify.getIdentifier(), currentVerify.getType(),
                 currentTestSuiteName, currentTestCaseName, currentVerify.getArguments()));

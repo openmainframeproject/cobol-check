@@ -141,7 +141,7 @@
            EXPECT VALUE-1 TO BE "Global PROG1"
 
            TestCase "Mock of call with exception handling works"
-           MOCK CALL 'PROGRAM' USING 
+           MOCK CALL 'PROGRAM' USING
              VALUE-1
                 MOVE "worked" TO VALUE-1
            END-MOCK
@@ -186,3 +186,13 @@
            PERFORM 1300-MAKE-CALL
            EXPECT VALUE-1 TO BE "worked"
            VERIFY CALL 'PROGRAM' USING VALUE-1 HAPPENED 2 TIMES
+
+           TestCase "CALL MOCK using parameters with IN are recognized correctly"
+           MOVE SPACES TO OUTPUT-VALUE
+           MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
+                                    BOOK-PARAM in COBOL-STRUCTURE,
+                                    OUTPUT-PARAM.
+                MOVE "MOCKED" TO OUTPUT-VALUE
+           END-MOCK
+           PERFORM 610-MAKE-CALL-STRUCTURE
+           EXPECT OUTPUT-VALUE TO BE "MOCKED"
