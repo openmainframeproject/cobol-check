@@ -266,7 +266,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -294,7 +294,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -321,7 +321,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -347,7 +347,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -373,7 +373,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -399,7 +399,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -424,7 +424,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedFirstLine, actualResult.get(0));
     }
 
@@ -451,7 +451,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -478,7 +478,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -507,7 +507,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -537,7 +537,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -566,7 +566,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -595,7 +595,7 @@ public class TestSuiteParserParsingTest {
         Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
             List<String> actualResult = new ArrayList<>();
-            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING); });
+            testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker()); });
 
         assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
@@ -625,7 +625,7 @@ public class TestSuiteParserParsingTest {
         Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
             List<String> actualResult = new ArrayList<>();
-            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING); });
+            testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker()); });
 
         assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
@@ -656,7 +656,7 @@ public class TestSuiteParserParsingTest {
         Throwable ex = assertThrows(VerifyReferencesNonexistentMockException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),numericFields);
             List<String> actualResult = new ArrayList<>();
-            testSuiteParser.handleEndOfVerifyStatement(actualResult, Constants.EMPTY_STRING, Constants.EMPTY_STRING); });
+            testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker()); });
 
         assertTrue(ex.getMessage().indexOf("nonexistent mock")>-1);
     }
@@ -891,7 +891,7 @@ public class TestSuiteParserParsingTest {
                 new BufferedReader(new StringReader(testSuite.toString())),
                 numericFields);
         List<String> actualResult = new ArrayList<>();
-        testSuiteParser.handleEndOfVerifyStatement(actualResult,Constants.EMPTY_STRING,Constants.EMPTY_STRING);
+        testSuiteParser.handleEndOfVerifyStatement(actualResult,new TokenTracker());
         assertEquals(expectedResult, actualResult);
     }
 
