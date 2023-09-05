@@ -37,6 +37,8 @@ public class ExpanderTest {
 
     private List<String> boilerPLateWS;
     private List<String> boilerPLateDP;
+    private String[] nullArray = null;
+
     List<String> boilerPlateTags = Arrays.asList("* CCHECKWS.CPY", "* CCHECKPARAGRAPHSPD.CPY", "* CCHECKRESULTPD.CPY");
 
     @BeforeAll
@@ -103,7 +105,7 @@ public class ExpanderTest {
         String t1 = "           TestSuite \"test\"";
 
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
-        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1,nullArray);
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
@@ -125,7 +127,7 @@ public class ExpanderTest {
         String t1 = "           TestSuite \"test\"";
 
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
-        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1,nullArray);
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
@@ -148,7 +150,7 @@ public class ExpanderTest {
         String t1 = "           TestSuite \"test\"";
 
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
-        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1,nullArray);
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
@@ -175,7 +177,7 @@ public class ExpanderTest {
         String t1 = "           TestSuite \"test\"";
 
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, null);
-        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1,nullArray);
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
@@ -198,7 +200,7 @@ public class ExpanderTest {
         String t1 = "           TestSuite \"test\"";
 
         Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, null);
-        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1,nullArray);
 
         generator = new Generator(interpreterController, writerController, testSuiteParserController);
 
