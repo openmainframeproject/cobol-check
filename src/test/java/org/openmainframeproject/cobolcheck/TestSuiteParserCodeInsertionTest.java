@@ -8,6 +8,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -274,11 +275,13 @@ public class TestSuiteParserCodeInsertionTest {
         String expected2 = "           DISPLAY \"Test Suite Name\"";
         String expected3 = "           MOVE \"Test Suite Name\"";
         String expected4 = "               TO UT-TEST-SUITE-NAME";
+        String expected5 = "           SET UT-UNMOCK-FAILED TO 0";
         expectedResult.add(expected);
         expectedResult.add(expected1);
         expectedResult.add(expected2);
         expectedResult.add(expected3);
         expectedResult.add(expected4);
+        expectedResult.add(expected5);
 
         testSuiteParser.addTestSuiteNamelines("\"Test Suite Name\"", actualResult);
         assertEquals(expectedResult, actualResult);
@@ -295,6 +298,7 @@ public class TestSuiteParserCodeInsertionTest {
         String expected5 = "           MOVE \"Test Case Name\"";
         String expected6 = "               TO UT-TEST-CASE-NAME";
         String expected7 = "           PERFORM UT-INITIALIZE-MOCK-COUNT";
+        String expected8 = "           SET UT-UNMOCK-FAILED TO 0";
         expectedResult.add(expected1);
         expectedResult.add(expected2);
         expectedResult.add(expected3);
@@ -302,6 +306,7 @@ public class TestSuiteParserCodeInsertionTest {
         expectedResult.add(expected5);
         expectedResult.add(expected6);
         expectedResult.add(expected7);
+        expectedResult.add(expected8);
 
         testSuiteParser.addTestCaseNameLines("\"Test Case Name\"", actualResult);
         assertEquals(expectedResult, actualResult);
