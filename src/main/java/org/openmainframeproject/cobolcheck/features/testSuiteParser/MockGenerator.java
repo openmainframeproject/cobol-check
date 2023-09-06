@@ -6,6 +6,7 @@ import org.openmainframeproject.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
 public class MockGenerator {
 
@@ -14,6 +15,8 @@ public class MockGenerator {
     private final String performFormat = "                    PERFORM %s";
     private final String endEvaluateLine = "            END-EVALUATE";
     private final String continueLine = "            CONTINUE";
+
+    private final String setErrorToTrue = "                    MOVE 1 TO %sUNMOCK-FAILED";
 
     private final String countMockInitialWSHeader = "       01  %sMOCKS-GENERATED.";
     private final String initializeMockCountParagraphHeader = "       %sINITIALIZE-MOCK-COUNT.";
@@ -90,7 +93,7 @@ public class MockGenerator {
      * @param mocks - All mocks in all tests
      * @return The generated lines
      */
-    List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments, List<Mock> mocks){
+    List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments, List<Mock> mocks, HashSet<Test> tests){
         EvaluationGenerator evaluationGenerator = new EvaluationGenerator(String.format(testSuiteIdentifier, Config.getTestCodePrefix()),
                 String.format(testCaseIdentifier, Config.getTestCodePrefix()));
         List<Mock> globalMocks = new ArrayList<>();
@@ -104,6 +107,14 @@ public class MockGenerator {
                 if (mock.getScope() == MockScope.Local){
                     String line = String.format(performFormat, mock.getGeneratedMockIdentifier());
                     evaluationGenerator.addEvaluationItem(line, mock.getTestSuiteName(), mock.getTestCaseName());
+                    if(tests != null) {
+                        for(Test test : tests) {
+                            if(mock.getTestCaseName().equals(test.getTestCaseName()) && mock.getTestSuiteName().equals(test.getTestSuiteName()) && mock.getTestCaseNumber() == test.getTestCaseNumber() && mock.getTestSuiteNumber() == test.getTestSuiteNumber() && mock.getScope() == test.getScope()) {
+                                tests.remove(test);
+                                break;
+                            }
+                        }
+                    }
                     mock.markAsUsed();
                 }
                 if (mock.getScope() == MockScope.Global){
@@ -115,7 +126,27 @@ public class MockGenerator {
         for (Mock mock : globalMocks){
             String line = String.format(performFormat, mock.getGeneratedMockIdentifier());
             evaluationGenerator.addEvaluationItem(line, mock.getTestSuiteName(), "ANY");
+            if(tests != null) {
+                for(Test test : tests) {
+                    if(mock.getTestCaseName().equals(test.getTestCaseName()) && mock.getTestSuiteName().equals(test.getTestSuiteName()) && mock.getTestCaseNumber() == test.getTestCaseNumber() && mock.getTestSuiteNumber() == test.getTestSuiteNumber() && mock.getScope() == test.getScope()) {
+                        tests.remove(test);
+                        break;
+                    }
+                }
+            }
             mock.markAsUsed();
+        }
+        String shouldTestsWithUnmockCallsFail = Config.getString(Constants.TESTS_WITH_UNMOCKCALLS_FAIL_CONFIG_KEY, "true");
+        if(tests != null && !tests.isEmpty() && shouldTestsWithUnmockCallsFail.equals("true")) {
+            for(Test test: tests) {
+                String line = String.format(setErrorToTrue, Config.getTestCodePrefix());
+                if (test.getScope() == MockScope.Local){
+                    evaluationGenerator.addEvaluationItem(line, test.getTestSuiteName(), test.getTestCaseName());
+                }
+                if (test.getScope() == MockScope.Global){
+                    evaluationGenerator.addEvaluationItem(line, test.getTestSuiteName(), "ANY");
+                }    
+            }
         }
         if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
             return evaluationGenerator.getEvaluationLines(true, new ArrayList<>(), false);
