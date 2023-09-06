@@ -5,10 +5,14 @@
       *****************************************************************
            MOVE ==UT==TEST-CASE-COUNT TO ==UT==TEST-CASE-NUMBER
            PERFORM ==UT==COMPARE
-           IF ==UT==COMPARE-PASSED
-               PERFORM ==UT==DISPLAY-PASSED
+           IF ==UT==UNMOCK-FAILED = 0
+               IF ==UT==COMPARE-PASSED 
+                   PERFORM ==UT==DISPLAY-PASSED
+               ELSE 
+                   PERFORM ==UT==DISPLAY-FAILED
+               END-IF
            ELSE 
-               PERFORM ==UT==DISPLAY-FAILED
+               PERFORM ==UT==DISPLAY-MOCK-FAILED
            END-IF
            .
 
@@ -136,6 +140,14 @@
            MOVE 4 TO ==UT==RETCODE
            .
 
+       ==UT==DISPLAY-MOCK-FAILED.
+              ADD 1 TO ==UT==NUMBER-FAILED
+              DISPLAY ==UT==FAILED 
+                     ==UT==TEST-CASE-NUMBER '. ' 
+                     ==UT==TEST-CASE-NAME
+              DISPLAY " SOME CALLS WERE NOT MOCKED."
+              .
+
        ==UT==ASSERT-ACCESSES.
       *****************************************************************
       * COMPARE THE NUMBER OF ACCESSES TO A MOCK WITH THE EXPECTED
@@ -180,49 +192,51 @@
            MOVE FUNCTION TRIM(==UT==ACTUAL-ACCESSES-FMT) 
               TO ==UT==ACTUAL-ACCESSES-DISP
               
-
-
-           IF ==UT==VERIFY-PASSED
-               ADD 1 TO ==UT==NUMBER-PASSED
-               STRING
-                    ==UT==PASSED   DELIMITED BY SIZE
-                    ==UT==TEST-CASE-NUMBER '. ' DELIMITED BY SIZE
-                    'VERIFY ' ==UT==LABEL-VERIFY-COMPARE DELIMITED BY '  '
-                    ' ' DELIMITED BY SIZE
-                    ==UT==EXPECTED-ACCESSES-DISP DELIMITED BY SPACE
-                    ' ' DELIMITED BY SIZE
-                    ==UT==LABEL-EXPECTED-ACCESS ' ' DELIMITED BY SIZE
-                    'TO ' ==UT==MOCK-OPERATION DELIMITED BY SIZE
-                   INTO ==UT==DISPLAY-MESSAGE
-               END-STRING
-               DISPLAY ==UT==DISPLAY-MESSAGE
-
-           ELSE
-               ADD 1 TO ==UT==NUMBER-FAILED
-               MOVE SPACES TO ==UT==DISPLAY-MESSAGE
-               STRING
-                   ==UT==FAILED                      DELIMITED BY SIZE
-                   ==UT==TEST-CASE-NUMBER            DELIMITED BY SIZE
-                   '. VERIFY ACCESSES TO '        DELIMITED BY SIZE
-                   ==UT==MOCK-OPERATION           DELIMITED BY SIZE
-                   INTO ==UT==DISPLAY-MESSAGE
-               END-STRING
-               DISPLAY ==UT==DISPLAY-MESSAGE
-               MOVE SPACES TO ==UT==DISPLAY-MESSAGE
-               STRING
-                   '   EXPECTED '                 DELIMITED BY SIZE
-                   ==UT==LABEL-VERIFY-COMPARE DELIMITED BY '  '
-                   ' ' DELIMITED BY SIZE
-                   ==UT==EXPECTED-ACCESSES-DISP       DELIMITED BY SPACE
-                   ' '                          DELIMITED BY SIZE
-                   ==UT==LABEL-EXPECTED-ACCESS       DELIMITED BY SPACE
-                   ', WAS '                       DELIMITED BY SIZE
-                   ==UT==ACTUAL-ACCESSES-DISP         DELIMITED BY SIZE
-                   INTO ==UT==DISPLAY-MESSAGE
-               END-STRING
-               DISPLAY ==UT==DISPLAY-MESSAGE
-               MOVE 4 TO ==UT==RETCODE
-           END-IF              
+           IF ==UT==UNMOCK-FAILED = 0
+               IF ==UT==VERIFY-PASSED
+                   ADD 1 TO ==UT==NUMBER-PASSED
+                   STRING
+                        ==UT==PASSED   DELIMITED BY SIZE
+                        ==UT==TEST-CASE-NUMBER '. ' DELIMITED BY SIZE
+                        'VERIFY ' ==UT==LABEL-VERIFY-COMPARE DELIMITED BY '  '
+                        ' ' DELIMITED BY SIZE
+                        ==UT==EXPECTED-ACCESSES-DISP DELIMITED BY SPACE
+                        ' ' DELIMITED BY SIZE
+                        ==UT==LABEL-EXPECTED-ACCESS ' ' DELIMITED BY SIZE
+                        'TO ' ==UT==MOCK-OPERATION DELIMITED BY SIZE
+                       INTO ==UT==DISPLAY-MESSAGE
+                   END-STRING
+                   DISPLAY ==UT==DISPLAY-MESSAGE
+    
+               ELSE
+                   ADD 1 TO ==UT==NUMBER-FAILED
+                   MOVE SPACES TO ==UT==DISPLAY-MESSAGE
+                   STRING
+                       ==UT==FAILED                   DELIMITED BY SIZE
+                       ==UT==TEST-CASE-NUMBER         DELIMITED BY SIZE
+                       '. VERIFY ACCESSES TO '        DELIMITED BY SIZE
+                       ==UT==MOCK-OPERATION           DELIMITED BY SIZE
+                       INTO ==UT==DISPLAY-MESSAGE
+                   END-STRING
+                   DISPLAY ==UT==DISPLAY-MESSAGE
+                   MOVE SPACES TO ==UT==DISPLAY-MESSAGE
+                   STRING
+                       '   EXPECTED '                 DELIMITED BY SIZE
+                       ==UT==LABEL-VERIFY-COMPARE DELIMITED BY '  '
+                       ' ' DELIMITED BY SIZE
+                       ==UT==EXPECTED-ACCESSES-DISP   DELIMITED BY SPACE
+                       ' '                          DELIMITED BY SIZE
+                       ==UT==LABEL-EXPECTED-ACCESS    DELIMITED BY SPACE
+                       ', WAS '                       DELIMITED BY SIZE
+                       ==UT==ACTUAL-ACCESSES-DISP     DELIMITED BY SIZE
+                       INTO ==UT==DISPLAY-MESSAGE
+                   END-STRING
+                   DISPLAY ==UT==DISPLAY-MESSAGE
+                   MOVE 4 TO ==UT==RETCODE
+               END-IF
+           ELSE 
+               PERFORM ==UT==DISPLAY-MOCK-FAILED 
+           END-IF         
            .
 
        ==UT==LOOKUP-FILE.

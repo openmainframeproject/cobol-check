@@ -68,6 +68,7 @@
            05  ==UT==NUMBER-FAILED          PIC 9(4)   VALUE ZERO COMP.
            05  ==UT==EXPECTED-TRIM          PIC S9(5) COMP-3 VALUE ZERO.
            05  ==UT==ACTUAL-TRIM            PIC S9(5) COMP-3 VALUE ZERO.
+           05  ==UT==UNMOCK-FAILED          PIC 9(1)   VALUE ZERO COMP.
        01  ==UT==MOCKS.
            05  FILLER                    PIC X(01) VALUE SPACES.
                88  ==UT==MOCK-FOUND                   VALUE 'Y'.
