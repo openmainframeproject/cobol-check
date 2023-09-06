@@ -10,6 +10,7 @@ import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -244,8 +245,8 @@ public class TestSuiteParserController {
      * @param identifier - The identifier of the SECTION, PARAGRAPH etc. that is mocked.
      * @return The generated lines
      */
-    public List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments){
-        List<String> lines = mockGenerator.generateMockPerformCalls(identifier, type, arguments, mockRepository.getMocks());
+    public List<String> generateMockPerformCalls(String identifier, String type, List<String> arguments, HashSet<Test> tests) {
+        List<String> lines = mockGenerator.generateMockPerformCalls(identifier, type, arguments, mockRepository.getMocks(), tests);
         CobolGenerator.addStartAndEndTags(lines);
         return lines;
     }
@@ -326,6 +327,10 @@ public class TestSuiteParserController {
         lines.add("");
         lines.addAll(whenOtherGenerator.generateWhenOther(whenOther, withComments));
         return lines;
+    }
+
+    public HashSet<Test> getTestsContainingParaOrSectionHierarchy(String identifier) {
+        return testSuiteParser.getTestsContainingParaOrSectionHierarchy().get(identifier);
     }
     
 
