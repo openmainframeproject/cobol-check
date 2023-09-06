@@ -94,6 +94,7 @@ public final class Constants {
     public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL");
 
     // Configuration key values
+    public static final String TESTS_WITH_UNMOCKCALLS_FAIL_CONFIG_KEY = "cobolcheck.test.unmockcall.fail";
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
     public static final String DEFAULT_CONCATENATED_TEST_SUITES_PATH = "./ALLTESTS";
     public static final String TEST_PROGRAM_NAME_CONFIG_KEY = "cobolcheck.test.program.name";
