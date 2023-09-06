@@ -272,6 +272,7 @@ public class MockIT {
                     "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
                     "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
@@ -361,6 +362,7 @@ public class MockIT {
             "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
             "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+            "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
             "      *-------- \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
             "           MOVE SPACES                                                          " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
@@ -368,6 +370,7 @@ public class MockIT {
             "           MOVE \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
             "            PERFORM 000-START                                                   " + Constants.NEWLINE +
             "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
             "           SET UT-NORMAL-COMPARE TO TRUE                                        " + Constants.NEWLINE +
@@ -387,6 +390,7 @@ public class MockIT {
             "           MOVE \"Simply a test\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
             "           MOVE SPACES                                                          " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
@@ -548,6 +552,7 @@ public class MockIT {
                     "           DISPLAY \"No mocks\"                                                   " + Constants.NEWLINE +
                     "           MOVE \"No mocks\"                                                      " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "      *-------- \"My testCase\"                                                   " + Constants.NEWLINE +
                     "           MOVE SPACES                                                          " + Constants.NEWLINE +
                     "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
@@ -555,6 +560,7 @@ public class MockIT {
                     "           MOVE \"My testCase\"                                                   " + Constants.NEWLINE +
                     "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
                     "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
                     "           SET UT-NORMAL-COMPARE TO TRUE                                        " + Constants.NEWLINE +
                     "           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                  " + Constants.NEWLINE +
@@ -626,6 +632,7 @@ public class MockIT {
             "           DISPLAY \"Mocking tests\"                                              " + Constants.NEWLINE +
             "           MOVE \"Mocking tests\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+            "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
             "      *-------- \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
             "           MOVE SPACES                                                          " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
@@ -633,6 +640,7 @@ public class MockIT {
             "           MOVE \"Local mock overwrites global mock\"                             " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
             "            PERFORM 200-GOODBYE                                                 " + Constants.NEWLINE +
             "           ADD 1 TO UT-TEST-CASE-COUNT                                          " + Constants.NEWLINE +
             "           SET UT-NORMAL-COMPARE TO TRUE                                        " + Constants.NEWLINE +
@@ -652,6 +660,7 @@ public class MockIT {
             "           MOVE \"Simply a test\"                                                 " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-INITIALIZE-MOCK-COUNT                                     " + Constants.NEWLINE +
+            "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
             "           MOVE SPACES                                                          " + Constants.NEWLINE +
             "               TO UT-TEST-CASE-NAME                                             " + Constants.NEWLINE +
             "           PERFORM UT-AFTER-EACH                                                " + Constants.NEWLINE +
@@ -818,6 +827,7 @@ public class MockIT {
             "      *****************************************************************     " + Constants.NEWLINE +
             "          MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "      *   CALL bogus USING VALUE-1                                              " + Constants.NEWLINE +
+            "            CONTINUE                                                           " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1                                            " + Constants.NEWLINE +
             "            EVALUATE UT-TEST-SUITE-NAME                                         " + Constants.NEWLINE +

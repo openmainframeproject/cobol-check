@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.List;
 
 import org.openmainframeproject.cobolcheck.exceptions.CobolSourceCouldNotBeReadException;
@@ -12,6 +13,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.Mock;
+import org.openmainframeproject.cobolcheck.features.testSuiteParser.Test;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Constants;
@@ -34,6 +36,7 @@ public class Generator {
     private boolean workingStorageHasEnded;
 
     List<String> matchingTestDirectories;
+    HashSet<Test> testsInCurrentParaOrSection;
     
     private String currentIdentifier;
     private  String currentMockType;
@@ -209,13 +212,16 @@ public class Generator {
             String identifier = interpreter.getPossibleMockIdentifier();
             String type = interpreter.getPossibleMockType();
             List<String> arguments = interpreter.getPossibleMockArgs();
-            if (testSuiteParserController.mockExistsFor(identifier, type, arguments)){
+            if(type == "PARAGRAPH" || type == "SECTION") {
+                testsInCurrentParaOrSection = testSuiteParserController.getTestsContainingParaOrSectionHierarchy(identifier);
+            }
+            if (testSuiteParserController.mockExistsFor(identifier, type, arguments) || (testsInCurrentParaOrSection != null && type.equals("CALL"))) {
                 if(interpreter.isInsideSectionOrParagraphMockBody()){
-                    interpreter.addSectionOrParagraphLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                    interpreter.addSectionOrParagraphLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments, testsInCurrentParaOrSection));
                     if (type.equals(Constants.CALL_TOKEN)){
                         interpreter.addSectionOrParagraphLine("            CONTINUE");
                 }
-                }else writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments));
+                }else writerController.writeLines(testSuiteParserController.generateMockPerformCalls(identifier, type, arguments, testsInCurrentParaOrSection));
                 if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN)){
                     this.currentIdentifier = identifier;
                     this.currentMockType=interpreter.getPossibleMockType();

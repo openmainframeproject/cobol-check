@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -688,7 +689,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START",
-                Constants.SECTION_TOKEN, new ArrayList<>());
+                Constants.SECTION_TOKEN, new ArrayList<>(), new HashSet<>());
 
         assertEquals(expected, actual);
     }
@@ -716,7 +717,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START",
-                Constants.SECTION_TOKEN, new ArrayList<>());
+                Constants.SECTION_TOKEN, new ArrayList<>(), new HashSet<>());
 
         assertEquals(expected, actual);
     }
@@ -744,7 +745,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'prog1'",
-                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1"));
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1"), new HashSet<>());
 
         assertEquals(expected, actual);
     }
@@ -810,9 +811,9 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual1 = testSuiteParserController.generateMockPerformCalls("000-START",
-                Constants.SECTION_TOKEN, new ArrayList<>());
+                Constants.SECTION_TOKEN, new ArrayList<>(), new HashSet<>());
         List<String> actual2 = testSuiteParserController.generateMockPerformCalls("100-START",
-                Constants.SECTION_TOKEN, new ArrayList<>());
+                Constants.SECTION_TOKEN, new ArrayList<>(), new HashSet<>());
 
         assertEquals(expected1, actual1);
         assertEquals(expected2, actual2);
@@ -832,7 +833,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("000-START",
-                Constants.SECTION_TOKEN, new ArrayList<>());
+                Constants.SECTION_TOKEN, new ArrayList<>(), new HashSet<>());
 
         assertTrue(actual.isEmpty());
     }
@@ -972,7 +973,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'prog1'",
-                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE"));
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE"), new HashSet<>());
 
         assertEquals(expected, actual);
     }
@@ -1001,7 +1002,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'PGM1'",
-                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE ONE-REGULAR"));
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE ONE-REGULAR"), new HashSet<>());
 
         assertEquals(expected, actual);
     }
@@ -1031,7 +1032,7 @@ public class MockingTest {
         testSuiteParserController.getProcedureDivisionTestCode();
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'PROGRAM'",
-                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE VALUE-TWO IN LS-STORAGE","REFERENCE VALUE-THREE IN WS-STORAGE"));
+                Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE VALUE-TWO IN LS-STORAGE","REFERENCE VALUE-THREE IN WS-STORAGE"), new HashSet<>());
 
         assertEquals(expected, actual);
     }
@@ -1065,7 +1066,7 @@ public class MockingTest {
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'PROGRAM'",
                 Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN LS-STORAGE","REFERENCE VALUE-TWO IN LS-STORAGE","REFERENCE VALUE-TWO-STORAGE",
-                        "REFERENCE VALUE-THREE IN WS-STORAGE","REFERENCE VALUE-THREE-STORAGE","REFERENCE WS-VALUE-THREE"));
+                        "REFERENCE VALUE-THREE IN WS-STORAGE","REFERENCE VALUE-THREE-STORAGE","REFERENCE WS-VALUE-THREE"), new HashSet<>());
         assertEquals(expected, actual);
     }
 
@@ -1098,7 +1099,7 @@ public class MockingTest {
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'AMGRAM'",
                 Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN L-STORAGE","REFERENCE VALUE-2 IN L-STORAGE","REFERENCE VALUE-3 IN L-STORAGE","REFERENCE VALUE-4 IN L-STORAGE","REFERENCE VALUE-5 IN L-STORAGE",
-                        "REFERENCE VALUE-6 IN L-STORAGE"));
+                        "REFERENCE VALUE-6 IN L-STORAGE"), new HashSet<>());
         assertEquals(expected, actual);
     }
     @Test
@@ -1135,7 +1136,7 @@ public class MockingTest {
 
         List<String> actual = testSuiteParserController.generateMockPerformCalls("'PROGRAM'",
                 Constants.CALL_TOKEN, Arrays.asList("REFERENCE VALUE-1 IN L-STORAGE","REFERENCE VALUE-2 IN L-STORAGE","REFERENCE VALUE-3 IN L-STORAGE","REFERENCE VALUE-4 IN L-STORAGE","REFERENCE VALUE-5 IN L-STORAGE",
-                        "REFERENCE VALUE-11","REFERENCE VALUE-12","REFERENCE VALUE-13","REFERENCE VALUE-14","REFERENCE VALUE-15","REFERENCE VALUE-16"));
+                        "REFERENCE VALUE-11","REFERENCE VALUE-12","REFERENCE VALUE-13","REFERENCE VALUE-14","REFERENCE VALUE-15","REFERENCE VALUE-16"), new HashSet<>());
         assertEquals(expected, actual);
     }
 

@@ -227,6 +227,7 @@ public class ExpanderTest {
                     "           DISPLAY \"Basic test\"                                              " + Constants.NEWLINE +
                     "           MOVE \"Basic test\"                                                 " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "            PERFORM 000-START                                                  " + Constants.NEWLINE +
                     "           ADD 1 TO UT-TEST-CASE-COUNT                                         " + Constants.NEWLINE +
                     "           SET UT-NORMAL-COMPARE TO TRUE                                       " + Constants.NEWLINE +
@@ -270,6 +271,7 @@ public class ExpanderTest {
                     "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
                     "           MOVE \"test\"                                                          " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
@@ -307,6 +309,7 @@ public class ExpanderTest {
                     "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
                     "           MOVE \"test\"                                                          " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
@@ -343,6 +346,7 @@ public class ExpanderTest {
                     "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
                     "           MOVE \"test\"                                                          " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
@@ -379,6 +383,7 @@ public class ExpanderTest {
                     "           DISPLAY \"test\"                                                       " + Constants.NEWLINE +
                     "           MOVE \"test\"                                                          " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
@@ -419,6 +424,7 @@ public class ExpanderTest {
                     "           DISPLAY \"test\"                                                     " + Constants.NEWLINE +
                     "           MOVE \"test\"                                                        " + Constants.NEWLINE +
                     "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "           SET UT-UNMOCK-FAILED TO 0                                           " + Constants.NEWLINE +
                     "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
