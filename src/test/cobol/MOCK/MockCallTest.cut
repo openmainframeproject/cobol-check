@@ -30,3 +30,28 @@
                                        OUTPUT-VALUE
                   HAPPENED ONCE
            .
+
+           TestCase "fail if some calls are not mocked (should fail)"
+           PERFORM 600-MAKE-CALL
+           EXPECT VALUE-1 TO BE "arg1"
+
+           TestCase "fail if some calls are not mocked and uses expect keyword (should fail)"
+           MOCK CALL 'PROG2'
+                  MOVE "arg1" TO VALUE-1
+           END-MOCK
+           PERFORM 600-MAKE-CALL
+           VERIFY CALL 'PROG2' NEVER HAPPENED
+
+           TestCase "fail if any of the calls are not mocked (should fail)"
+           MOCK CALL 'PROG3' USING VALUE-1
+                  MOVE "arg3" TO VALUE-1
+           END-MOCK
+           PERFORM 800-MAKE-CALL
+           EXPECT VALUE-1 TO BE "arg3"
+
+           TestCase "handles mocked paragraph correctly"
+           MOCK PARAGRAPH 600-MAKE-CALL
+                  MOVE "MOCKED PARA" TO VALUE-1
+           END-MOCK
+           PERFORM 600-MAKE-CALL
+           EXPECT VALUE-1 TO BE "MOCKED PARA"
