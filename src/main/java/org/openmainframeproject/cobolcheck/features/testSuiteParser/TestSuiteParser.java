@@ -2,6 +2,7 @@ package org.openmainframeproject.cobolcheck.features.testSuiteParser;
 
 import org.openmainframeproject.cobolcheck.exceptions.*;
 import org.openmainframeproject.cobolcheck.services.*;
+import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
@@ -25,6 +26,7 @@ public class TestSuiteParser {
     private final KeywordExtractor keywordExtractor;
     private TestSuiteWritingStyle testSuiteWritingStyle;
     private List<String> testSuiteTokens;
+    private HashMap<Test, HashSet<String>> performParaOrSectionInTestCase;
     private HashMap<String, HashSet<String>> testNamesHierarchy;
     private String currentTestSuiteLine = "";
     private int fileLineNumber = 0;
@@ -92,6 +94,7 @@ public class TestSuiteParser {
     private static final String COBOL_PERFORM_BEFORE = "           PERFORM %sBEFORE-EACH";
     private static final String COBOL_PERFORM_INITIALIZE_MOCK_COUNT = "           PERFORM %sINITIALIZE-MOCK-COUNT";
     private static final String COBOL_INCREMENT_TEST_CASE_COUNT = "           ADD 1 TO %sTEST-CASE-COUNT";
+    private static final String COBOL_REINITIALIZE_UNMOCKED_VARIABLE = "           SET %sUNMOCK-FAILED TO 0";
 
     /**
      * Example: This will look like:
@@ -162,6 +165,7 @@ public class TestSuiteParser {
         this.beforeAfterRepo = beforeAfterRepo;
         this.testSuiteErrorLog = testSuiteErrorLog;
         testSuiteTokens = new ArrayList<>();
+        performParaOrSectionInTestCase = new HashMap<Test, HashSet<String>>();
         testNamesHierarchy = new HashMap<String, HashSet<String>>();
         emptyTestSuite = true;
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
@@ -685,6 +689,21 @@ public class TestSuiteParser {
                         ignoreCobolStatementAndFieldNameKeyAction = false;
                         break;
                     }
+                    if (cobolStatementInProgress) {
+                        TokenExtractor tokenExtractor = new StringTokenizerExtractor();
+                        List<String> currentCobolStatementTokens = tokenExtractor.extractTokensFrom(getCobolStatement());
+                        Boolean isPerform = false;
+                        if(currentCobolStatementTokens.get(currentCobolStatementTokens.size() - 1).equalsIgnoreCase("PERFORM")) {
+                            isPerform = true;
+                        }
+                        if(isPerform) {
+                            Test test = new Test(testSuiteNumber, currentTestSuiteName, testCaseNumber, currentTestCaseName);
+                            if(!performParaOrSectionInTestCase.containsKey(test)) {
+                                performParaOrSectionInTestCase.put(test, new HashSet<String>());
+                            }
+                            performParaOrSectionInTestCase.get(test).add(testSuiteToken);
+                        }
+                    }
                     if (CobolVerbs.isStartOrEndCobolVerb(testSuiteToken)) {
                         if ( cobolStatementInProgress) {
                             addUserWrittenCobolStatement(parsedTestSuiteLines);
@@ -939,13 +958,13 @@ public class TestSuiteParser {
     public void addTestSuiteNamelines(String testSuiteName, List<String> parsedTestSuiteLines) {
         if (testSuiteNumber != 0)
             addPerformAfterEachLine(parsedTestSuiteLines);
-
         parsedTestSuiteLines.add("      *============= " + testSuiteName + " =============*");
 
         parsedTestSuiteLines.add(COBOL_DISPLAY_TESTSUITE);
         parsedTestSuiteLines.add(String.format(COBOL_DISPLAY_NAME, testSuiteName));
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTSUITE_NAME_1, testSuiteName));
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTSUITE_NAME_2, testCodePrefix));
+        addReInitializeUnMockedVariableLine(parsedTestSuiteLines);
     }
 
     public void addTestCaseNameLines(String testCaseName, List<String> parsedTestSuiteLines) {
@@ -957,7 +976,12 @@ public class TestSuiteParser {
 
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_1, testCaseName));
         parsedTestSuiteLines.add(String.format(COBOL_STORE_TESTCASE_NAME_2, testCodePrefix));
-        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_INITIALIZE_MOCK_COUNT, testCodePrefix));
+        parsedTestSuiteLines.add(String.format(COBOL_PERFORM_INITIALIZE_MOCK_COUNT, testCodePrefix));        
+        addReInitializeUnMockedVariableLine(parsedTestSuiteLines);
+    }
+
+    public void addReInitializeUnMockedVariableLine(List<String> parsedTestSuiteLines) {
+        parsedTestSuiteLines.add(String.format(COBOL_REINITIALIZE_UNMOCKED_VARIABLE, testCodePrefix));
     }
 
     public void addPerformBeforeEachLine(List<String> parsedTestSuiteLines) {
@@ -1236,4 +1260,16 @@ public class TestSuiteParser {
 
     }
 
+    public HashMap<String, HashSet<Test>> getTestsContainingParaOrSectionHierarchy() {
+        HashMap<String, HashSet<Test>> testsContainingParaOrSectionHierarchy = new HashMap<>();
+        for (Test test : performParaOrSectionInTestCase.keySet()) {
+            for (String paraOrSection : performParaOrSectionInTestCase.get(test)) {
+                if (!testsContainingParaOrSectionHierarchy.containsKey(paraOrSection)) {
+                    testsContainingParaOrSectionHierarchy.put(paraOrSection, new HashSet<Test>());
+                }
+                testsContainingParaOrSectionHierarchy.get(paraOrSection).add(test);
+            }
+        }
+        return testsContainingParaOrSectionHierarchy;
+    }
 }
