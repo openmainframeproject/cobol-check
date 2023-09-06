@@ -100,6 +100,14 @@ public class Mock {
         return isUsed;
     }
 
+    public int getTestSuiteNumber() {
+        return testSuiteNumber;
+    }
+
+    public int getTestCaseNumber() {
+        return testCaseNumber;
+    }
+    
     public String getTestSuiteName() {
         return testSuiteName;
     }
