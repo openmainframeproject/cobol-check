@@ -12,6 +12,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.Mock;
+import org.openmainframeproject.cobolcheck.features.testSuiteParser.MockGenerator;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Constants;
@@ -221,6 +222,9 @@ public class Generator {
                     this.currentMockType=interpreter.getPossibleMockType();
                     interpreter.setInsideSectionOrParagraphMockBody(true);
                 }
+            }
+            else if (type == Constants.CALL_TOKEN) {
+                writerController.writeLine(MockGenerator.performUnMockPara);  
             }
         }
     }
