@@ -250,6 +250,13 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -284,6 +291,13 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -295,6 +309,7 @@ public class ExpanderTest {
                     "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
                     "      *    PERFORM 100-WELCOME                                                  " + Constants.NEWLINE +
                     "      *END-CALL.                                                                  " + Constants.NEWLINE +
+                    "                    PERFORM PROCESS-UNMOCK-CALL                                             " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
             
@@ -321,6 +336,13 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -331,6 +353,7 @@ public class ExpanderTest {
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
                     "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
                     "      *    PERFORM 100-WELCOME.                                                 " + Constants.NEWLINE +
+                    "                    PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
             
@@ -357,6 +380,13 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -367,6 +397,7 @@ public class ExpanderTest {
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE + 
                     "      *    ON EXCEPTION                                                         " + Constants.NEWLINE + 
                     "      *    DISPLAY \"HELLO WORLD\".                                             " + Constants.NEWLINE +
+                    "                    PERFORM PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
             
@@ -393,6 +424,13 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -407,6 +445,7 @@ public class ExpanderTest {
                     "      *    DISPLAY \"HELLO WORLD\"                                              " + Constants.NEWLINE +
                     "      *    END-CALL                                                             " + Constants.NEWLINE + 
                     "      *END-CALL                                                                 " + Constants.NEWLINE +
+                    "                    PERFORM PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "      DISPLAY \"NO COMMENTS\"                                                   " + Constants.NEWLINE;
     
@@ -433,6 +472,13 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -442,10 +488,12 @@ public class ExpanderTest {
                     "                                                                                " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
                     "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
+                    "                    PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +   
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
                     "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
+                    "                    PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE;
 

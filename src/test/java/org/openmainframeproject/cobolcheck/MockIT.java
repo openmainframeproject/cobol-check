@@ -286,6 +286,13 @@ public class MockIT {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -403,6 +410,13 @@ public class MockIT {
             "      *****************************************************************         " + Constants.NEWLINE +
             "           CONTINUE                                                             " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+            "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+            "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+            "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+            "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+            "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
             "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
@@ -580,6 +594,13 @@ public class MockIT {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
+                    "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
@@ -668,6 +689,13 @@ public class MockIT {
             "      *****************************************************************         " + Constants.NEWLINE +
             "           CONTINUE                                                             " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
+            "                                                                                " + Constants.NEWLINE +
+            "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+            "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+            "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+            "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+            "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+            "      -    \"test has control over input data\".                                " + Constants.NEWLINE +                                
             "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
@@ -788,7 +816,9 @@ public class MockIT {
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
             "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-2-MOCK                                          " + Constants.NEWLINE +
-            "            END-EVALUATE                                                        " + Constants.NEWLINE +
+            "           WHEN OTHER                                                             " + Constants.NEWLINE +
+            "                    PERFORM PROCESS-UNMOCK-CALL                                   " + Constants.NEWLINE +
+            "            END-EVALUATE                                                          " + Constants.NEWLINE +
             "            CONTINUE                                                        " + Constants.NEWLINE +
             "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
@@ -805,6 +835,7 @@ public class MockIT {
             "                   ALSO \"Simply a test\"                                         " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-3-MOCK                                          " + Constants.NEWLINE +
             "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                    PERFORM PROCESS-UNMOCK-CALL                                    " + Constants.NEWLINE +
             "                    PERFORM UT-1-2-2-WO                                                           " + Constants.NEWLINE +
             "            END-EVALUATE                                                           " + Constants.NEWLINE +
             "          .                                                          " + Constants.NEWLINE +
@@ -825,6 +856,8 @@ public class MockIT {
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-2-MOCK                                          " + Constants.NEWLINE +
+            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                    PERFORM PROCESS-UNMOCK-CALL                                    " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "            CONTINUE                                                        " + Constants.NEWLINE +
             "      *   CALL 'prog2' USING VALUE-1.                                           " + Constants.NEWLINE +
@@ -833,6 +866,8 @@ public class MockIT {
             "                WHEN \"Mocking tests\"                                            " + Constants.NEWLINE +
             "                   ALSO ANY                                                     " + Constants.NEWLINE +
             "                    PERFORM UT-1-0-2-MOCK                                          " + Constants.NEWLINE +
+            "           WHEN OTHER                                                           " + Constants.NEWLINE +
+            "                    PERFORM PROCESS-UNMOCK-CALL                                    " + Constants.NEWLINE +
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "            CONTINUE                                                        " + Constants.NEWLINE +
             "          .                                                                    " + Constants.NEWLINE +
