@@ -96,6 +96,10 @@ public class Config {
         setCopybookFilenameSuffix();
     }
 
+    public static void changeProperty(String propertyName, String newValue) {
+        settings.setProperty(propertyName, newValue);
+    }
+
     public static String getString(String key) {
         return getString(key, Constants.EMPTY_STRING);
     }
