@@ -123,8 +123,11 @@ public class MockGenerator {
         if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
             return evaluationGenerator.getEvaluationLines(true, new ArrayList<>(), false);
 
-        else
+        else if(type.equals(Constants.CALL_TOKEN))
             return evaluationGenerator.getEvaluationLines(true, Arrays.asList(performUnMockPara), true);
+        
+        else 
+            return evaluationGenerator.getEvaluationLines(false, null, true);      
     }
 
     String getEndEvaluateLine() {

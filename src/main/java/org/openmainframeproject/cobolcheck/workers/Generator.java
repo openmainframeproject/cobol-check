@@ -224,7 +224,13 @@ public class Generator {
                 }
             }
             else if (type == Constants.CALL_TOKEN) {
-                writerController.writeLine(MockGenerator.performUnMockPara);  
+                String formattedPerformUnMockParaStatement = MockGenerator.performUnMockPara.substring(9);
+                if(!interpreter.isInsideSectionOrParagraphMockBody()) {
+                    writerController.writeLine(formattedPerformUnMockParaStatement);  
+                }
+                else {
+                    interpreter.addSectionOrParagraphLine(formattedPerformUnMockParaStatement);
+                }
             }
         }
     }
