@@ -30,6 +30,7 @@ public class Config {
     public static final String INJECT_END_TAG_CONFIG_KEY = "cobolcheck.injectedCodeTag.end";
     public static final String STUB_COMMENT_TAG = "cobolcheck.stub.comment.tag";
     public static final String GENERATED_CODE_PATH = "cobolcheck.test.program.path";
+    public static final String DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY = "cobolcheck.test.unmockcall.display";
     public static final String TESTSUITEPARSER_ERROR_LOG_PATH = "testsuite.parser.error.log.path";
     public static final String TESTSUITEPARSER_ERROR_LOG_NAME = "testsuite.parser.error.log.name";
     public static final String IO_ENCODING_LINUX_KEY = "cobolcheck.file.encoding.linux";
@@ -93,6 +94,10 @@ public class Config {
 
         setApplicationFilenameSuffixes();
         setCopybookFilenameSuffix();
+    }
+
+    public static void changeProperty(String propertyName, String newValue) {
+        settings.setProperty(propertyName, newValue);
     }
 
     public static String getString(String key) {
@@ -334,6 +339,11 @@ public class Config {
     public static List<String> getGnuCOBOLCompileOptions() {
         setGnuCOBOLCompileOptions();
         return (List<String>)settings.get(RESOLVED_GNUCOBOL_COMPILE_OPTIONS);
+    }
+
+    public static Boolean getDisplayUnMockedCalls() {
+        String value = settings.getProperty(DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY, "false");
+        return Boolean.parseBoolean(value.trim());
     }
 
     public static void setGnuCOBOLCompileOptions() {

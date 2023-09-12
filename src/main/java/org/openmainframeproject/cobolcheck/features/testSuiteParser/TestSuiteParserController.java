@@ -185,6 +185,7 @@ public class TestSuiteParserController {
         lines.add("");
         lines.addAll(generateAfterParagraph());
         lines.add("");
+        lines.addAll(generateCobolLinesForUnmockedCalls());
         lines.addAll(generateBeforeAfterBranchParagraphs(true));
         lines.addAll(generateMockCountInitializer());
         lines.add("");
@@ -233,6 +234,25 @@ public class TestSuiteParserController {
      */
     public List<String> generateBeforeAfterBranchParagraphs(boolean withComments){
         return beforeAfterRepo.getAllBranchingParagraphs(withComments);
+    }
+
+    public List<String> generateCobolLinesForUnmockedCalls() {
+        List<String> cobolLines = new ArrayList<>();
+        cobolLines.add("       PROCESS-UNMOCK-CALL.");
+        if(Config.getDisplayUnMockedCalls()) {
+            String line1 = "           Add 1 to %sNUMBER-UNMOCK-CALL";
+            String line2 = "           display \"Call not mocked in testcase \" %1$sTEST-CASE-NAME \" in testsuite \" %1$sTEST-SUITE-NAME";
+            String line3 = "           display \"All used calls should be mocked, to ensure the unit test has control over input data\"";
+        
+            String testCodePrefix = Config.getTestCodePrefix();
+            cobolLines.add(String.format(line1, testCodePrefix));
+            cobolLines.add(String.format(line2, testCodePrefix));
+            cobolLines.add(line3);
+        }
+        cobolLines.add("           CONTINUE");
+        cobolLines.add("           .");
+        cobolLines.add("");
+        return cobolLines;
     }
 
     public boolean mockExistsFor(String identifier, String type, List<String> arguments){
