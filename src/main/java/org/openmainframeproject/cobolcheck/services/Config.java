@@ -342,7 +342,7 @@ public class Config {
     }
 
     public static Boolean getDisplayUnMockedCalls() {
-        String value = settings.getProperty(DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY, "true");
+        String value = settings.getProperty(DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY, "false");
         return Boolean.parseBoolean(value.trim());
     }
 
