@@ -555,6 +555,8 @@ public class TestSuiteParser {
 
                 case Constants.MOCK_TYPE:
                     expectMockIdentifier = true;
+                    tracker.reset();
+
                     // TODO: REMOVE PARA
                     if (testSuiteToken.equals(Constants.PARA_TOKEN)) {
                         testSuiteToken = Constants.PARAGRAPH_TOKEN;

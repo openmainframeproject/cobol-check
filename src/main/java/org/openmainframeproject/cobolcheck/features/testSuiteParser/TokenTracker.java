@@ -18,4 +18,10 @@ public class TokenTracker {
         this.summizedTokensForArgument = Constants.EMPTY_STRING;
         this.parseDataUsingForSummizedTokens = Constants.EMPTY_STRING;
     }
+
+    public String toString() {
+            return "TokenTracker: summizedTokensForArgument: '" + summizedTokensForArgument +
+            "', parseDataUsingForSummizedTokens: '" + parseDataUsingForSummizedTokens +
+            "', lastAddedTokenToArgumentIsQualifier: '" + lastAddedTokenToArgumentIsQualifier + "'";
+    }
 }
