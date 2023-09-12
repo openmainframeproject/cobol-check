@@ -555,6 +555,8 @@ public class TestSuiteParser {
 
                 case Constants.MOCK_TYPE:
                     expectMockIdentifier = true;
+                    tracker.reset();
+
                     // TODO: REMOVE PARA
                     if (testSuiteToken.equals(Constants.PARA_TOKEN)) {
                         testSuiteToken = Constants.PARAGRAPH_TOKEN;
@@ -850,6 +852,7 @@ public class TestSuiteParser {
         // First add any arguments, not yet added to currentMock
         if (tracker.summizedTokensForArgument != Constants.EMPTY_STRING) {
             //We have something to add to the Mock
+            System.out.println("#debug#-(handleEndOfMockStatement)" + tracker.toString());
             currentMock.addArgument(getCallArgument(tracker.parseDataUsingForSummizedTokens, tracker.summizedTokensForArgument));
             tracker.reset();
         }
