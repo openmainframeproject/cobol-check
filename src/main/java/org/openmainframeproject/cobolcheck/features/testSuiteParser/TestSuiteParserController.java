@@ -249,7 +249,8 @@ public class TestSuiteParserController {
             cobolLines.add(String.format(line2, testCodePrefix));
             cobolLines.add(line3);
         }
-        cobolLines.add("       .");
+        cobolLines.add("           CONTINUE");
+        cobolLines.add("           .");
         cobolLines.add("");
         return cobolLines;
     }
