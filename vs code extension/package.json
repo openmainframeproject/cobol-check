@@ -10,6 +10,14 @@
     "description": "Extension for running unit tests in Cobol",
     "version": "0.4.1",
     "icon": "images/cobol-check-logo-small.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/openmainframeproject/cobol-check"
+    },
+    "bugs": {
+        "url": "https://github.com/openmainframeproject/cobol-check/issues",
+    },
+    "license": "MIT",
     "engines": {
         "vscode": "^1.46.0"
     },
