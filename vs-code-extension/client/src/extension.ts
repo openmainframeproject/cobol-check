@@ -241,10 +241,13 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 	// Create TestFile for each directory
 
 	var isInsideTestSuite: boolean = await getIsInsideTestSuiteDirectory1(uri.fsPath)
-	// const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split(getFileSeperatorForOS(currentPlatform))
-	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
-	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
-	const rootUri = rootDir+dirArr[0]
+	const directory = vscode.workspace.asRelativePath(uri.fsPath)
+	let splitChar = '/'
+	if(!directory.includes(splitChar))
+		splitChar = '\\'
+	const dirArr = directory.split(splitChar);
+	const rootDir = vscode.workspace.getWorkspaceFolder(uri).uri.fsPath;
+	const rootUri = rootDir + '/' + dirArr[0]
 
 	let tmpUri = vscode.Uri.file(rootUri);
 	var file :vscode.TestItem = null; 
@@ -272,8 +275,7 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 	var tmpData = null
 
 	for(var i =1;i<dirArr.length;i++){
-		// tmpDir = tmpDir + getFileSeperatorForOS(currentPlatform) + dirArr[i]
-		tmpDir = tmpDir + "/"+ dirArr[i]
+		tmpDir = tmpDir + '/' + dirArr[i]
 		const existing = prevFile.children.get(tmpDir);
 		
 		if(!existing){
@@ -307,18 +309,20 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 }
 
 function getDirectoryItems( controller:vscode.TestController, uri: vscode.Uri){ 
-	// const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split(getFileSeperatorForOS(currentPlatform))
-	const dirArr = vscode.workspace.asRelativePath(uri.fsPath).split("/")
-	const rootDir = uri.fsPath.replace(vscode.workspace.asRelativePath(uri.fsPath),"")
+	const directory = vscode.workspace.asRelativePath(uri.fsPath)
+	let splitChar = '/';
+	if(!directory.includes(splitChar))
+		splitChar = '\\';
+	const dirArr = directory.split(splitChar);
+	const rootDir = vscode.workspace.getWorkspaceFolder(uri).uri.fsPath;
 	
-	var tmpDir = rootDir+dirArr[0];
+	var tmpDir = rootDir + '/' + dirArr[0];
 
 	var existing :vscode.TestItem = controller.items.get(tmpDir);
 	if(!existing) return null
 
 	for(var i = 1; i<dirArr.length ;i++){
-		// tmpDir = tmpDir +getFileSeperatorForOS(currentPlatform) + dirArr[i];
-		tmpDir = tmpDir + "/" + dirArr[i];
+		tmpDir = tmpDir + '/' + dirArr[i];
 		existing = existing.children.get(tmpDir);
 		if(!existing) return null
 	}
@@ -406,6 +410,3 @@ function startWatchingWorkspace(controller: vscode.TestController, fileChangedEm
 		return watcher;
 	});
 }
-
-
-

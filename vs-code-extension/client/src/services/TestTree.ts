@@ -53,14 +53,15 @@ export class TestFile {
 				item.error = undefined;
 				this.updateFromContents(controller, content, item, item.children.size);
 				
-			}else{
+			}
+			else {
 				for (const nestedItem of item.children) {
 					const data =  testData.get(nestedItem[1]); 
 					if(data instanceof TestFile){
 						await this.updateFromDisk(controller,nestedItem[1] )
 					}
+				}
 			}
-		}
 		} catch (e) {
 			item.error = (e as Error).stack;
 		}
