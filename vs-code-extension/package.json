@@ -18,26 +18,7 @@
     ],
     "main": "./client/out/extension",
     "contributes": {
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "cobol-check",
-                    "title": "Cobol Check",
-                    "icon": "images/cobol-check-logo-white-small.png"
-                }
-            ]
-        },
-        "views": {
-            "cobol-check": [
-                {
-                    "type": "webview",
-                    "id": "cobolcheck-result",
-                    "name": "Results"
-                }
-            ]
-        },
-        "languages": [
-            {
+        "languages": [            {
                 "id": "cut",
                 "aliases": [
                     "COBOL unit test",

@@ -12,7 +12,6 @@ import { getConfigurationMap, getConfigurationValueFor, resetConfigurations, set
 import { appendPath, getCobolCheckRunArgumentsBasedOnCurrentFile, getCobolProgramPathForGivenContext, getCurrentProgramName, getFileName, getTextFromFile, getRootFolder, getSourceFolderContextPath, runCobolCheck, getIsInsideTestSuiteDirectory1, getOS, getFileSeperatorForOS } from './services/CobolCheckLauncher';
 
 import { startCutLanguageClientServer, stopCutLanguageClientServer } from './services/cutLanguageClientServerSetup';
-import { ResultWebView } from './services/ResultWebView';
 import { handleCobolCheckOut } from './Helpers/ExtensionHelper';
 import path = require('path');
 import { getContentFromFilesystem, MarkdownTestData, TestCase, testData, TestFile, TestHeading } from "./services/TestTree";
@@ -28,15 +27,11 @@ let currentPlatform = getOS();
 export async function activate(context: ExtensionContext) {
 	startCutLanguageClientServer(context);
 
-	const provider = new ResultWebView(context.extensionUri);
 	const ctrl = vscode.tests.createTestController('CobolCheckController', 'Cobol Check');
 	context.subscriptions.push(ctrl);
 
 	const fileChangedEmitter = new vscode.EventEmitter<vscode.Uri>();
 	
-	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(ResultWebView.viewType, provider));
-
 	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', () => {
 		//Setting loader
 		vscode.window.withProgress({location: vscode.ProgressLocation.Notification, cancellable: true, title: 'Cobol Check running:'}, 
