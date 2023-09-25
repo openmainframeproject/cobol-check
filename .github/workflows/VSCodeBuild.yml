@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./vs code extension
+        working-directory: ./vs-code-extension
     environment: production
     steps:
     - uses: actions/checkout@v2
