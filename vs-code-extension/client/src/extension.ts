@@ -273,7 +273,14 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 		tmpDir = tmpDir + '/' + dirArr[i]
 		const existing = prevFile.children.get(tmpDir);
 		
-		if(!existing){
+		if(existing){
+			const tmpData = testData.get(existing)
+			if(tmpData instanceof TestFile && tmpData.getIsTestSuiteDirectory()){
+				isInsideTestSuite=false
+			}
+			prevFile = existing;
+		}
+		else{
 			tmpUri = vscode.Uri.file(tmpDir);
 			tmpFile = controller.createTestItem(tmpDir, dirArr[i], tmpUri);
 			tmpData = new TestFile();
@@ -292,12 +299,6 @@ async function createDirectoryItems( controller:vscode.TestController, uri: vsco
 				}
 			}
 			prevFile=tmpFile;
-		}else{
-			const tmpData = testData.get(existing)
-			if(tmpData instanceof TestFile && tmpData.getIsTestSuiteDirectory()){
-				isInsideTestSuite=false
-			}
-			prevFile = existing;
 		}
 	}
 	return {tmpFile,tmpData};

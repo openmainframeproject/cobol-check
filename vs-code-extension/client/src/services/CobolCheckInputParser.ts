@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 
 const testCaseRegex = /^\s*(TESTCASE)\s*(.*)/i;
-// const testRegex = /^\s*(Expect)\s*(.*)\s*(not?)\s(>|<|to\s*be)\s*(.*)\s*/i;
 const testSuiteRegex = /^\s*(TESTSUITE)\s*(.*)/i;
 
 export const parseMarkdown = (text: string, events: {

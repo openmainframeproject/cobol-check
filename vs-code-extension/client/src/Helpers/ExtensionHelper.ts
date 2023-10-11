@@ -23,7 +23,7 @@ export async function handleCobolCheckOut(output : CobParser.CobolCheckOutputPar
 				break;
 
 			case CobParser.OutputState.TestFailed:
-				console.log("TEST FAILES")
+				console.log("TEST FAILED")
 				testResultFile = appendPath(vsCodeInstallDir, await getConfigurationValueFor(configPath, 'test.results.file'));
 				htmlResult = await getTextFromFile(testResultFile + '.html');
 				showWebWiev('Test Results - ' + getCurrentProgramName(), htmlResult)
