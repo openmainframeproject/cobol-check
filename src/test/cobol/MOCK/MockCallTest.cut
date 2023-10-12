@@ -1,0 +1,32 @@
+      * Test for mocking call statements
+
+            TestSuite "validate call mocking"
+           TestCase "parameters with IN are recognized correctly"
+           MOVE SPACES TO OUTPUT-VALUE
+           MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
+                                    BOOK-PARAM in COBOL-STRUCTURE,
+                                    OUTPUT-VALUE.
+                MOVE "MOCKED" TO OUTPUT-VALUE
+           END-MOCK
+           PERFORM 610-CALL-WITH-STRUCTURE
+           EXPECT OUTPUT-VALUE TO BE "MOCKED"
+           VERIFY CALL 'MYCOBOL' USING ACTION-PARAM,
+                                       BOOK-PARAM in COBOL-STRUCTURE,
+                                       OUTPUT-VALUE
+                  HAPPENED ONCE
+           
+           TestCase "parameters with OF are recognized correctly"
+           MOVE SPACES TO OUTPUT-VALUE
+           MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
+                                    BOOK-PARAM OF COBOL-STRUCTURE,
+                                    OUTPUT-VALUE.
+                MOVE "MOCKED" TO OUTPUT-VALUE
+           END-MOCK
+           PERFORM 610-CALL-WITH-STRUCTURE
+           EXPECT OUTPUT-VALUE TO BE "MOCKED"
+
+           VERIFY CALL 'MYCOBOL' USING ACTION-PARAM,
+                                       BOOK-PARAM in COBOL-STRUCTURE,
+                                       OUTPUT-VALUE
+                  HAPPENED ONCE
+           .

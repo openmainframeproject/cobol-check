@@ -5,6 +5,7 @@ import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MockGenerator {
@@ -14,6 +15,8 @@ public class MockGenerator {
     private final String performFormat = "                    PERFORM %s";
     private final String endEvaluateLine = "            END-EVALUATE";
     private final String continueLine = "            CONTINUE";
+
+    public final static String performUnMockPara = "                    PERFORM PROCESS-UNMOCK-CALL";
 
     private final String countMockInitialWSHeader = "       01  %sMOCKS-GENERATED.";
     private final String initializeMockCountParagraphHeader = "       %sINITIALIZE-MOCK-COUNT.";
@@ -120,8 +123,11 @@ public class MockGenerator {
         if (type.equals(Constants.SECTION_TOKEN) || type.equals(Constants.PARAGRAPH_TOKEN))
             return evaluationGenerator.getEvaluationLines(true, new ArrayList<>(), false);
 
-        else
-            return evaluationGenerator.getEvaluationLines(false, null, true);
+        else if(type.equals(Constants.CALL_TOKEN))
+            return evaluationGenerator.getEvaluationLines(true, Arrays.asList(performUnMockPara), true);
+        
+        else 
+            return evaluationGenerator.getEvaluationLines(false, null, true);      
     }
 
     String getEndEvaluateLine() {
@@ -156,4 +162,6 @@ public class MockGenerator {
         body.addAll(mock.getLines());
         return CobolGenerator.generateParagraphLines(mock.getGeneratedMockIdentifier(), comments, body);
     }
+    
+
 }

@@ -1,5 +1,7 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic;
 
+import org.openmainframeproject.cobolcheck.features.interpreter.StringTokenizerExtractor;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -110,5 +112,14 @@ public class CobolLine {
             return originalLine;
         else
             return "      " + originalLine.substring(index);
+    }
+
+    public CobolLine convertCobolLinesToCobolLine(List<CobolLine> cobolLines) {
+        String line = "";
+        for (CobolLine cobolLine : cobolLines){
+            line += cobolLine.getUnNumberedString();
+        }
+        TokenExtractor tokenExtractor = new StringTokenizerExtractor();
+        return new CobolLine(line, tokenExtractor);
     }
 }

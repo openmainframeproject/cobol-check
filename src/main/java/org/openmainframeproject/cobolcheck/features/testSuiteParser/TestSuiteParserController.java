@@ -21,6 +21,7 @@ public class TestSuiteParserController {
     private BeforeAfterRepo beforeAfterRepo;
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
+    private WhenOtherGenerator whenOtherGenerator;
 
     private TestSuiteErrorLog testSuiteErrorLog;
 
@@ -54,6 +55,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getTestCodePrefix();
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     //Used for testing only
@@ -65,6 +67,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     public boolean hasWorkingStorageTestCodeBeenInserted() {
@@ -182,6 +185,7 @@ public class TestSuiteParserController {
         lines.add("");
         lines.addAll(generateAfterParagraph());
         lines.add("");
+        lines.addAll(generateCobolLinesForUnmockedCalls());
         lines.addAll(generateBeforeAfterBranchParagraphs(true));
         lines.addAll(generateMockCountInitializer());
         lines.add("");
@@ -230,6 +234,25 @@ public class TestSuiteParserController {
      */
     public List<String> generateBeforeAfterBranchParagraphs(boolean withComments){
         return beforeAfterRepo.getAllBranchingParagraphs(withComments);
+    }
+
+    public List<String> generateCobolLinesForUnmockedCalls() {
+        List<String> cobolLines = new ArrayList<>();
+        cobolLines.add("       PROCESS-UNMOCK-CALL.");
+        if(Config.getDisplayUnMockedCalls()) {
+            String line1 = "           Add 1 to %sNUMBER-UNMOCK-CALL";
+            String line2 = "           display \"Call not mocked in testcase \" %1$sTEST-CASE-NAME \" in testsuite \" %1$sTEST-SUITE-NAME";
+            String line3 = "           display \"All used calls should be mocked, to ensure the unit test has control over input data\"";
+        
+            String testCodePrefix = Config.getTestCodePrefix();
+            cobolLines.add(String.format(line1, testCodePrefix));
+            cobolLines.add(String.format(line2, testCodePrefix));
+            cobolLines.add(line3);
+        }
+        cobolLines.add("           CONTINUE");
+        cobolLines.add("           .");
+        cobolLines.add("");
+        return cobolLines;
     }
 
     public boolean mockExistsFor(String identifier, String type, List<String> arguments){
@@ -313,4 +336,17 @@ public class TestSuiteParserController {
     public void prepareNextParse() {
         Config.setDecimalPointIsCommaFromFile();
     }
+
+    public List<String> generateWhenOtherSectionOrParagraph(String type, List<String> sectionOrParagraphlines, String sourceLine, String identifier, boolean withComments)  throws IOException{
+        List<String> lines = new ArrayList<>();
+        WhenOther whenOther = testSuiteParser.getWhenOtherSectionOrParagraph(type, sectionOrParagraphlines, identifier, true);
+        lines.add(whenOtherGenerator.generateWhenOtherCall(whenOther));
+        lines.addAll(this.getEndEvaluateLine());
+        lines.add(sourceLine);
+        lines.add("");
+        lines.addAll(whenOtherGenerator.generateWhenOther(whenOther, withComments));
+        return lines;
+    }
+    
+
 }

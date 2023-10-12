@@ -1,0 +1,52 @@
+TESTSUITE 'DETERMINE AGE FROM CPR NUMBER.'
+
+*> one global mock on a paragraph
+MOCK PARA 310-SKIP-CURRENT-NUMERIC
+     MOVE 66 TO NUMERIC-3 in NUMERIC-fields
+END-MOCK
+
+*> one global mock on a section
+MOCK SECTION 220-MOVE-TEXT-TO-3
+     MOVE 'mocked move' TO TEXT-3
+END-MOCK
+
+TESTCASE 'not mocked section'
+MOVE '12345678901' TO TEXT-1
+PERFORM 210-MOVE-TEXT-TO-2
+EXPECT TEXT-2 IN TEXT-FIELDS TO BE '12345678901'
+
+TESTCASE 'locally mocked section'
+*> local mock of a section
+MOCK SECTION 210-MOVE-TEXT-TO-2
+     MOVE 'Got mocked' to text-2
+END-MOCK
+
+MOVE '010100-0001' TO TEXT-1
+PERFORM 210-MOVE-TEXT-TO-2
+EXPECT TEXT-2 IN TEXT-FIELDS to be 'Got mocked'
+
+TESTCASE 'not mocked paragraph'
+MOVE 200 TO NUMERIC-1
+PERFORM 100-compute-value
+EXPECT NUMERIC-3 in NUMERIC-fields TO BE numeric -300
+
+TESTCASE 'locally mocked paragraph'
+*> local mock of a paragraph
+MOCK PARA 300-FETCH-CURRENT-NUMERIC
+     MOVE 15 TO NUMERIC-2 in NUMERIC-fields
+END-MOCK
+
+MOVE 20 TO NUMERIC-1
+PERFORM 100-compute-value
+EXPECT NUMERIC-3 in NUMERIC-fields TO BE numeric 5
+
+TESTCASE 'global mocked section'
+move "test this" to text-1
+perform 220-MOVE-TEXT-TO-3
+expect TEXT-3 in text-fields to be 'mocked move'
+
+TESTCASE 'global mocked paragraph'
+move "" to text-1
+perform 310-SKIP-CURRENT-NUMERIC
+expect NUMERIC-3 in NUMERIC-fields to be NUMERIC 66
+           .
