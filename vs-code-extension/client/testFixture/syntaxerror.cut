@@ -1,0 +1,9 @@
+           TESTSUITE 'Test AARM503 sections'
+		     TESTSUITE 'Test AARM504 sections'         
+           BEFORE-EACH
+           MOV 0 TO STATU-KD IN AARM503-PARM
+           END-BEFORE
+           
+           MOCK SECTION 911-PUT-HARD-ERROR
+           CONTINUE
+           END-MOCK

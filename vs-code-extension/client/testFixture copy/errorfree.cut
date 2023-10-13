@@ -1,5 +1,10 @@
            TESTSUITE 'Test AARM503 sections'
            
+           TestCase "Equality with an alphanumeric literal using TO BE"
+           move "value1" to ws-field-1
+           Expect ws-field-1 to be "value1"
+
+
            BEFORE-EACH
            MOVE 0 TO STATU-KD IN AARM503-PARM
            END-BEFORE

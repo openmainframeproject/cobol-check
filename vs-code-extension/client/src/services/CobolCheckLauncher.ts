@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { integer } from 'vscode-languageclient';
 import * as LOGGER from '../utils/Logger'
 import * as CobParser from './CobolCheckOutputParser'
+import { getConfigurationValueFor } from './CobolCheckConfiguration';
 
 const windowsPlatform = 'Windows';
 const macPlatform = 'MacOS';
@@ -11,23 +12,60 @@ let currentPlatform = getOS();
 
 let currentProgramName : string = null;
 
-export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : string, configPath : string, sourceDir : string) : string {
-	let currentFile = vscode.window.activeTextEditor.document.uri.fsPath;
+let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
+let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
+
+
+export function getCobolCheckRunArgumentsBasedOnCurrentFile(vsCodeInstallPath : string, configPath : string, sourceDir : string, filePath:string) : string {
+	// let currentFile = vscode.window.activeTextEditor.document.uri.fsPath;
 	
 	//Getting the source path
 	const srcFolderName = getRootFolder(sourceDir);
-	const srcFolderContext : string = getSourceFolderContextPath(currentFile, srcFolderName);
-	if (srcFolderContext === null) return null;
+	const srcFolderContext : string = getSourceFolderContextPath(filePath, srcFolderName);
 	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
 	LOGGER.log("Found source folder path: " + cobolSourcePath, LOGGER.INFO)
-
-	//Getting program name based on current context
-	let programPath : string = getCobolProgramPathForGivenContext(currentFile, cobolSourcePath);
+	let programPath : string = getCobolProgramPathForGivenContext(filePath, cobolSourcePath);
 	if (programPath === null) return null;
 	let programName : string = getFileName(programPath, false);
 	currentProgramName = programName;
 	LOGGER.log("Found source program name: " + programName, LOGGER.INFO)
+	let cutName = getCutName(filePath);
+	return '-p ' + programName + ' -t '+ cutName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
+	'-r "' + vsCodeInstallPath + '"'; 
+	
+}
 
+export function getCobolCheckRunArgumentsBasedOnCurrentDirectory(vsCodeInstallPath : string, configPath : string, sourceDir : string, filePath:string) : string {
+
+	const srcFolderName = getRootFolder(sourceDir);
+	const srcFolderContext : string = getSourceFolderContextPath(filePath, srcFolderName);
+
+	if (srcFolderContext === null) return null;
+	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
+	LOGGER.log("Found source folder path: " + cobolSourcePath, LOGGER.INFO)
+	//Getting program name based on current context
+	let programName : string = getFileName(filePath, false);
+	currentProgramName = programName;
+	LOGGER.log("Found source directory name: " + programName, LOGGER.INFO)
+	return '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
+	'-r "' + vsCodeInstallPath + '"';
+}
+
+export function getCobolCheckRunArgumentsBasedOnSuiteDirectory(vsCodeInstallPath : string, configPath : string, sourceDir : string, testFilesPaths:string[]) : string {
+
+	
+	const srcFolderName = getRootFolder(sourceDir);
+	const srcFolderContext : string = getSourceFolderContextPath(testFilesPaths[0], srcFolderName);
+	if (srcFolderContext === null) return null;
+	const cobolSourcePath = appendPath(srcFolderContext, sourceDir);
+
+	LOGGER.log("Found source folder path: " + cobolSourcePath, LOGGER.INFO)
+	//Getting program name based on current context
+	
+	let programName: string = testFilesPaths.map(item => getFileName(item, false)).join(' ');
+	currentProgramName = programName;
+
+	LOGGER.log("Found source directory name: " + programName, LOGGER.INFO)
 	return '-p ' + programName + ' -c "' + configPath + '" -s "' + srcFolderContext + '" ' +
 	'-r "' + vsCodeInstallPath + '"';
 }
@@ -49,8 +87,11 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 		LOGGER.log("Running Cobol Check with arguments: " + commandLineArgs, LOGGER.INFO)
 		try{
 			var exec = require('child_process').exec;
+			const testPath = appendPath(externalVsCodeInstallationDir, "Cobol-check");
+			// fix for MacOS
+			const tmpStr = "cd " + testPath + " && "
 			//Run Cobol Check jar with arguments
-			var child = exec(executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
+			var child = exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
 				if(error !== null){
 					LOGGER.log("*** COBOL CHECK ERROR: " + error, LOGGER.ERROR);
 				}
@@ -132,6 +173,17 @@ export function getFileName(path : string, includeExtension : boolean) : string{
 	}
 }
 
+export function getCutName(path : string) : string{
+
+	// const name = path.split(getFileSeperatorForOS(currentPlatform)).pop()
+	let splitChar = '/';
+	if(!path.includes(splitChar))
+		splitChar = '\\'
+	const name = path.split(splitChar).pop()
+	if(!name.endsWith(".cut")) return null
+	return name;
+}
+
 export function getFileExtension(path : string) : string{
 	let programName : string = getFileName(path, true);
 	let fileExtensionIndex = programName.indexOf('.');
@@ -177,7 +229,7 @@ export function appendPath(path1 : string, path2 : string){
 	return adjustPath(path1) + getFileSeperatorForOS(currentPlatform) + adjustPath(path2);
 }
 
-function getOS() {
+export function getOS() {
 	var platform = process.platform;
 	var	macosPlatformTag = 'darwin'
 	var	windowsPlatformTag = 'win32'
@@ -193,7 +245,13 @@ function getOS() {
 	return platform;
   }
 
-  function getFileSeperatorForOS(platform : string){
+export async function getIsInsideTestSuiteDirectory1(input: string): Promise<boolean>{
+	let testSuiteDir = await getConfigurationValueFor(configPath, 'test.suite.directory');
+	if(input.includes(testSuiteDir)) return true
+	else return false
+}
+
+export function getFileSeperatorForOS(platform : string){
 	  if (platform === windowsPlatform) return '\\';
 	  else return '/';
   }

@@ -33,7 +33,18 @@ vs code extension/**/node_modules
 vs code extension/**/client/server
 vs code extension/**/.vscode-test
 vs code extension/**/Jenkinsfile
+vs code extension/Cobol-check/output/testResults.html
+# Below is made bu ./gradlew prepareDistribution!vs code extension/Cobol-check/bin/*
 
+vs-code-extension/**/package-lock.json
+vs-code-extension/**/out
+vs-code-extension/**/node_modules
+vs-code-extension/**/client/server
+vs-code-extension/**/.vscode-test
+vs-code-extension/**/Jenkinsfile
+vs-code-extension/Cobol-check/output/testResults.html
+# Below is made bu ./gradlew prepareDistribution
+!vs-code-extension/Cobol-check/bin/*
 
 # Java-related gitignore entries from: https://gist.github.com/dedunumax/54e82214715e35439227
 ##############################
@@ -66,7 +77,6 @@ buildNumber.properties
 ## Gradle
 ##############################
 bin/*
-!vs code extension/Cobol-check/bin/*
 build/*
 !build/distributions/
 .gradle

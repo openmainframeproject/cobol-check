@@ -3,7 +3,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'vs code extension/**'
+      - 'vs-code-extension/**'
 
 name: Deploy Extension
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./vs code extension
+        working-directory: ./vs-code-extension
     environment: production
     steps:
       - uses: actions/checkout@v3
@@ -24,4 +24,4 @@ jobs:
         with:
           pat: ${{ secrets.VS_CODE_EXTENTION_SECRET }}
           registryUrl: https://marketplace.visualstudio.com
-          packagePath: ./vs code extension
+          packagePath: ./vs-code-extension

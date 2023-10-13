@@ -11,6 +11,9 @@
 	"dependencies": {
 		"vscode-languageclient": "^7.0.0"
 	},
+	"activationEvents": [
+		"workspaceContains:*.cut"
+	],
 	"devDependencies": {
 		"@types/glob": "^7.1.4",
 		"@types/node": "^15.12.2",
