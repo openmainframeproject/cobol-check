@@ -238,7 +238,7 @@ public class TestSuiteParserController {
 
     public List<String> generateCobolLinesForUnmockedCalls() {
         List<String> cobolLines = new ArrayList<>();
-        cobolLines.add("       PROCESS-UNMOCK-CALL.");
+        cobolLines.add("       UT-PROCESS-UNMOCK-CALL.");
         if(Config.getDisplayUnMockedCalls()) {
             String line1 = "           Add 1 to %sNUMBER-UNMOCK-CALL";
             String line2 = "           display \"Call not mocked in testcase \" %1$sTEST-CASE-NAME \" in testsuite \" %1$sTEST-SUITE-NAME";

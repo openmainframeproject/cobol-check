@@ -737,7 +737,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -967,7 +967,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
@@ -998,7 +998,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
@@ -1030,7 +1030,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8, null);
@@ -1065,7 +1065,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8,str9,str10,str11, null);
@@ -1100,7 +1100,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8,str9,str10,str11, null);
@@ -1139,7 +1139,7 @@ public class MockingTest {
         expected.add("                   ALSO \"Name of test case\"");
         expected.add("                    PERFORM UT-1-1-1-MOCK");
         expected.add("           WHEN OTHER");
-        expected.add("                    PERFORM PROCESS-UNMOCK-CALL");
+        expected.add("                    PERFORM UT-PROCESS-UNMOCK-CALL");
         expected.add("            END-EVALUATE");
 
         Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7,str8,str9,str10,str11,str12,str13,str14,str15,str16, null);
