@@ -15,7 +15,7 @@
         "url": "https://github.com/openmainframeproject/cobol-check"
     },
     "bugs": {
-        "url": "https://github.com/openmainframeproject/cobol-check/issues",
+        "url": "https://github.com/openmainframeproject/cobol-check/issues"
     },
     "license": "MIT",
     "engines": {
