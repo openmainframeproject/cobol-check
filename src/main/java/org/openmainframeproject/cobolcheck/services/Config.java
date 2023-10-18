@@ -394,6 +394,9 @@ public class Config {
             if (path.startsWith(".") && path.length() > 0){
                 path = path.substring(1);
             }
+            if (path.length() > 0 && (path.startsWith("/") || path.substring(1,3).equals(":\\") || path.substring(1,3).equals(":/"))){
+                return StringHelper.adjustPathString(path);
+            }
             return StringHelper.adjustPathString(PathHelper.endWithFileSeparator(runDirectory) + path);
         }
         return StringHelper.adjustPathString(path);
