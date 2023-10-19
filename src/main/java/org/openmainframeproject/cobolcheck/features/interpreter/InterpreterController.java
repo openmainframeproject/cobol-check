@@ -452,6 +452,9 @@ public class InterpreterController {
             extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
             for (int i = 0; i < extractedCopyBook.size(); i++) {
                 CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
+                List<CobolLine> currentStatement = new ArrayList<>();
+                currentStatement.add(cobolLine);
+                this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
                 updateNumericFields(cobolLine);
             }
         }
