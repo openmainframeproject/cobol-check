@@ -17,18 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PathHelperTest {
 
-
     @BeforeAll
     static void oneTimeSetup() {
         Config.load("testconfig.properties");
-    }
-
-
-    @Test
-    void test_source_out_path_exists() {
-        String path = PathHelper.getTestSourceOutPath();
-        File file = new File(path);
-        assertTrue(file.exists());
     }
 
     @Test

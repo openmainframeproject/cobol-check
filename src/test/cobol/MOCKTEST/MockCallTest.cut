@@ -139,3 +139,60 @@
            END-MOCK
            PERFORM 600-MAKE-CALL
            EXPECT VALUE-1 TO BE "Global PROG1"
+
+           TestCase "Mock of call with exception handling works"
+           MOCK CALL 'PROGRAM' USING
+             VALUE-1
+                MOVE "worked" TO VALUE-1
+           END-MOCK
+           MOVE 'TEST' TO VALUE-1
+           PERFORM 900-MAKE-CALL
+           EXPECT VALUE-1 TO BE "worked"
+
+           TestCase "Mock of call with exception handling ending with period works"
+           MOCK CALL 'PROGRAM' USING VALUE-1
+                MOVE "worked" TO VALUE-1
+           END-MOCK
+           MOVE 'TEST' TO VALUE-1
+           PERFORM 1000-MAKE-CALL
+           EXPECT VALUE-1 TO BE "worked"
+
+           TestCase "Mock of call with a new call as exception handling works"
+           MOCK CALL 'PROGRAM' USING VALUE-1
+                MOVE "worked" TO VALUE-1
+           END-MOCK
+           MOVE 'TEST' TO VALUE-1
+           PERFORM 1100-MAKE-CALL
+           EXPECT VALUE-1 TO BE "worked"
+
+           TestCase "Mock of call with a new call as exception handling ending with period works"
+           MOCK CALL 'PROGRAM' USING VALUE-1
+                MOVE "worked" TO VALUE-1
+           END-MOCK
+           MOCK CALL 'PROGRAM2' USING VALUE-1
+                MOVE "notworked" TO VALUE-1
+           END-MOCK
+           MOVE 'TEST' TO VALUE-1
+           PERFORM 1200-MAKE-CALL
+           EXPECT VALUE-1 TO BE "worked"
+           VERIFY CALL 'PROGRAM' USING VALUE-1 HAPPENED ONCE
+           VERIFY CALL 'PROGRAM2' USING VALUE-1 NEVER HAPPENED
+
+           TestCase "Mock of calls in series with exception handling works"
+           MOCK CALL 'PROGRAM' USING VALUE-1
+                MOVE "worked" TO VALUE-1
+           END-MOCK
+           MOVE 'TEST' TO VALUE-1
+           PERFORM 1300-MAKE-CALL
+           EXPECT VALUE-1 TO BE "worked"
+           VERIFY CALL 'PROGRAM' USING VALUE-1 HAPPENED 2 TIMES
+
+           TestCase "CALL MOCK using parameters with IN are recognized correctly"
+           MOVE SPACES TO OUTPUT-VALUE
+           MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
+                                    BOOK-PARAM in COBOL-STRUCTURE,
+                                    OUTPUT-PARAM.
+                MOVE "MOCKED" TO OUTPUT-VALUE
+           END-MOCK
+           PERFORM 610-MAKE-CALL-STRUCTURE
+           EXPECT OUTPUT-VALUE TO BE "MOCKED"

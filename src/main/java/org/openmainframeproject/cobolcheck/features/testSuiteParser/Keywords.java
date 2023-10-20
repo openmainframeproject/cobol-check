@@ -65,6 +65,7 @@ public class Keywords {
                                     Constants.FIELDNAME_KEYWORD,
                                     Constants.BY_REFERENCE_TOKEN,
                                     Constants.BY_CONTENT_TOKEN,
+                                    Constants.QUALIFIED_FIELD_NAME,
                                     Constants.BY_VALUE_TOKEN,
                                     Constants.USING_TOKEN)
                             );
@@ -92,6 +93,7 @@ public class Keywords {
                                     Constants.BY_VALUE_TOKEN,
                                     Constants.USING_TOKEN,
                                     Constants.HAPPENED_KEYWORD,
+                                    Constants.QUALIFIED_FIELD_NAME,
                                     Constants.NEVER_HAPPENED_KEYWORD)
                             );
                         }},
@@ -443,6 +445,12 @@ public class Keywords {
                         Arrays.asList(Constants.COBOL_TOKEN, Constants.FIELDNAME_KEYWORD),
                         new HashMap<String, List<String>>() {{
                             put(Constants.EXPECT_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
+                            put(Constants.MOCK_KEYWORD, Arrays.asList(
+                                    Constants.FIELDNAME_KEYWORD)
+                            );
+                            put(Constants.VERIFY_KEYWORD, Arrays.asList(
                                     Constants.FIELDNAME_KEYWORD)
                             );
                         }},

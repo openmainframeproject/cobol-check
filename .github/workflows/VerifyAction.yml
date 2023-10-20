@@ -1,11 +1,8 @@
 name: VerifyAction
 
 on:
-  push:
-    branches:
-      - '*'
   pull_request:
-    branches: [ main ]
+    branches: [ main,Developer ]
 
 jobs:
   build:
@@ -17,9 +14,9 @@ jobs:
         java-version: [8, 11]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java-version }}
           distribution: 'adopt'

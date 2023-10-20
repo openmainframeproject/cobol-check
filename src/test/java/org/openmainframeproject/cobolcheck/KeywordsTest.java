@@ -221,6 +221,7 @@ public class KeywordsTest {
                         Constants.FIELDNAME_KEYWORD,
                         Constants.BY_REFERENCE_TOKEN,
                         Constants.BY_CONTENT_TOKEN,
+                        Constants.QUALIFIED_FIELD_NAME,
                         Constants.BY_VALUE_TOKEN,
                         Constants.USING_TOKEN),
                 keyword.getValidNextKeys(Constants.MOCK_KEYWORD));
@@ -235,6 +236,7 @@ public class KeywordsTest {
                         Constants.BY_VALUE_TOKEN,
                         Constants.USING_TOKEN,
                         Constants.HAPPENED_KEYWORD,
+                        Constants.QUALIFIED_FIELD_NAME,
                         Constants.NEVER_HAPPENED_KEYWORD),
                 keyword.getValidNextKeys(Constants.VERIFY_KEYWORD));
     }
