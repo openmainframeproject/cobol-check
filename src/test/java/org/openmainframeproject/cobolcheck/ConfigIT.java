@@ -102,7 +102,7 @@ public class ConfigIT {
     @Test
     public void it_returns_list_of_specified_application_copybook_filename_suffixes() {
         Config.load("testconfig.properties");
-        List<String> expected = new ArrayList(Arrays.asList( ".CBL", ".cbl", ".COB", ".cob" ));
+        List<String> expected = new ArrayList(Arrays.asList( ".CBL", ".cbl", ".COB", ".cob", ".CPY", ".cpy"));
         assertEquals(expected, Config.getCopybookFilenameSuffixes());
     }
 }
