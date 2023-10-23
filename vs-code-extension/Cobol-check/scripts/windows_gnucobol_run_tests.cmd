@@ -1,9 +1,10 @@
 @echo off
-:: Windows - compile and execute a test Cobol program
-::
-::  Assumptions:
-::
-:: GnuCOBOL 2.2 or later is installed and on the path.
-:: Its executable or alias or symlink is named "cobc".
-
-cobc -xj %* && %~n1
+rem Windows - compile and execute a test Cobol program
+rem
+rem  Assumptions:
+rem
+rem GnuCOBOL 3.+ is installed and on the path. Its executable or alias or symlink is named "cobc".
+%~d1
+cd %~p1
+cobc -xj %* 
+%~n1
