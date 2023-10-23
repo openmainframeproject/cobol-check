@@ -133,6 +133,8 @@ public class Generator {
             workingStorageHasEnded = true;
         }
         if (interpreter.didLineJustEnter(Constants.PROCEDURE_DIVISION) && interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)){
+            if (!interpreter.getFileSectionStatements().isEmpty()) 
+                writerController.writeLines(interpreter.getFileSectionStatements());
             writerController.stopStoringLines();
             testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());
@@ -177,8 +179,6 @@ public class Generator {
                 if (interpreter.shouldCurrentLineBeStubbed()) {
                     if(interpreter.isReading(Constants.WORKING_STORAGE_SECTION)) {
                         writerController.writeStubbedLine(interpreter.getCurrentLineAsStatement().getUnNumberedString());
-                        if (!interpreter.getFileSectionStatements().isEmpty())
-                            writerController.writeLines(interpreter.getFileSectionStatements());
                     }
                     else 
                         writerController.writeStubbedLine(sourceLine);

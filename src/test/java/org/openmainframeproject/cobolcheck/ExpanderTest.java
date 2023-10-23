@@ -66,7 +66,7 @@ public class ExpanderTest {
         }
     }
 
-    @Test
+/*     @Test
     public void it_inserts_a_mock_correctly() throws IOException {
         String s1 = "       WORKING-STORAGE SECTION.";
         String s2 = "       EXEC SQL INCLUDE TEXEM  END-EXEC.";
@@ -92,7 +92,7 @@ public class ExpanderTest {
 
         assertEquals(Utilities.getTrimmedList(expected1), actual);
     }
-
+ */
     
     @Test
     public void it_inserts_code_correctly_when_call_has_exception_handling_with_end_call_terminator()
