@@ -66,7 +66,7 @@ public class ExpanderTest {
         }
     }
 
-/*     @Test
+     @Test
     public void it_inserts_a_mock_correctly() throws IOException {
         String s1 = "       WORKING-STORAGE SECTION.";
         String s2 = "       EXEC SQL INCLUDE TEXEM  END-EXEC.";
@@ -92,7 +92,7 @@ public class ExpanderTest {
 
         assertEquals(Utilities.getTrimmedList(expected1), actual);
     }
- */
+ 
     
     @Test
     public void it_inserts_code_correctly_when_call_has_exception_handling_with_end_call_terminator()
@@ -268,13 +268,13 @@ public class ExpanderTest {
     private String expected1 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
                     "      *EXEC SQL INCLUDE TEXEM  END-EXEC.                                       " + Constants.NEWLINE +
+                    "       01  FILLER.                                                              " + Constants.NEWLINE +
+                    "          05  WS-FIELD-1           PIC X(80).                                   " + Constants.NEWLINE +
+                    "          05  ws-Field-2           PIC X(80).                                   " + Constants.NEWLINE +
                     "       01  TEXEM.                                                               " + Constants.NEWLINE +
                     "           10 FIRST-NAME           PIC X(10).                                   " + Constants.NEWLINE +
                     "           10 LAST-NAME            PIC X(10).                                   " + Constants.NEWLINE +
                     "           10 TMS-CREA             PIC X(26).                                   " + Constants.NEWLINE +
-                    "       01  FILLER.                                                              " + Constants.NEWLINE +
-                    "          05  WS-FIELD-1           PIC X(80).                                   " + Constants.NEWLINE +
-                    "          05  ws-Field-2           PIC X(80).                                   " + Constants.NEWLINE +
                     "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
                     "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
                     "      *============= \"Basic test\" =============*                             " + Constants.NEWLINE +
