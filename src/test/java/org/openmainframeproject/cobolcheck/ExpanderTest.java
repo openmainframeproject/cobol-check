@@ -66,7 +66,7 @@ public class ExpanderTest {
         }
     }
 
-     @Test
+    @Test
     public void it_inserts_a_mock_correctly() throws IOException {
         String s1 = "       WORKING-STORAGE SECTION.";
         String s2 = "       EXEC SQL INCLUDE TEXEM  END-EXEC.";
