@@ -20,7 +20,7 @@
               DECLARE NAME-CUR CURSOR FOR
               SELECT FIRST_NAME, LAST_NAME FROM TEXEM
            END-EXEC.
-
+       LINKAGE SECTION.
        PROCEDURE DIVISION.
        0000-MAIN.
 

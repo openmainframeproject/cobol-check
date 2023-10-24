@@ -90,9 +90,36 @@ public class ExpanderTest {
 
         List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
 
-        assertEquals(Utilities.getTrimmedList(expected1), actual);
+        assertEquals(Utilities.getTrimmedList(expected0), actual);
     }
 
+    @Test
+    public void it_inserts_db2_copy_linkage_correctly() throws IOException {
+        String s1 = "       WORKING-STORAGE SECTION.";
+        String s2 = "       EXEC SQL INCLUDE TEXEM  END-EXEC.";
+        String s3 = "       01  FILLER.";
+        String s4 = "          05  WS-FIELD-1           PIC X(80).";
+        String s5 = "          05  ws-Field-2           PIC X(80).";
+        String s6 = "       LINKAGE SECTION.";
+        String s7 = "       PROCEDURE DIVISION.";
+        String s8 = "       000-START SECTION.";
+        String s9 = "           MOVE \"Value1\" to WS-FIELD-1";
+        String s10 = "           EXIT SECTION";
+        String s11 = "           .";
+
+        String t1 = "           TestSuite \"Basic test\"";
+        String t2 = "           PERFORM 000-START";
+        String t3 = "           EXPECT WS-FIELD-1 TO BE \"Value1\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+
+        assertEquals(Utilities.getTrimmedList(expected1), actual);
+    } 
     
     @Test
     public void it_inserts_code_correctly_when_call_has_exception_handling_with_end_call_terminator()
@@ -264,17 +291,78 @@ public class ExpanderTest {
         assertEquals(Utilities.getTrimmedList(expected8), actual);
         Config.changeProperty("cobolcheck.test.unmockcall.display", "true");
     }
-
-    private String expected1 =
+private String expected0 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
                     "      *EXEC SQL INCLUDE TEXEM  END-EXEC.                                       " + Constants.NEWLINE +
+                    "       01  FILLER.                                                              " + Constants.NEWLINE +
+                    "          05  WS-FIELD-1           PIC X(80).                                   " + Constants.NEWLINE +
+                    "          05  ws-Field-2           PIC X(80).                                   " + Constants.NEWLINE +
                     "       01  TEXEM.                                                               " + Constants.NEWLINE +
                     "           10 FIRST-NAME           PIC X(10).                                   " + Constants.NEWLINE +
                     "           10 LAST-NAME            PIC X(10).                                   " + Constants.NEWLINE +
                     "           10 TMS-CREA             PIC X(26).                                   " + Constants.NEWLINE +
+                    "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
+                    "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
+                    "      *============= \"Basic test\" =============*                             " + Constants.NEWLINE +
+                    "           DISPLAY \"TESTSUITE:\"                                                 " + Constants.NEWLINE +
+                    "           DISPLAY \"Basic test\"                                              " + Constants.NEWLINE +
+                    "           MOVE \"Basic test\"                                                 " + Constants.NEWLINE +
+                    "               TO UT-TEST-SUITE-NAME                                            " + Constants.NEWLINE +
+                    "            PERFORM 000-START                                                  " + Constants.NEWLINE +
+                    "           ADD 1 TO UT-TEST-CASE-COUNT                                         " + Constants.NEWLINE +
+                    "           SET UT-NORMAL-COMPARE TO TRUE                                       " + Constants.NEWLINE +
+                    "           SET UT-ALPHANUMERIC-COMPARE TO TRUE                                 " + Constants.NEWLINE +
+                    "           MOVE WS-FIELD-1 TO UT-ACTUAL                                        " + Constants.NEWLINE +
+                    "           MOVE \"Value1\"                                                     " + Constants.NEWLINE +
+                    "               TO UT-EXPECTED                                                  " + Constants.NEWLINE +
+                    "           SET UT-RELATION-EQ TO TRUE                                          " + Constants.NEWLINE +
+                    "           PERFORM UT-CHECK-EXPECTATION                                        " + Constants.NEWLINE +
+                    "       UT-BEFORE-EACH.                                                          " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed before each Test Case                                  " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       UT-AFTER-EACH.                                                           " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *This is performed after each Test Case                                   " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
+                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "      -    \"test has control over input data\"                                 " + Constants.NEWLINE + 
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "                                                                                " + Constants.NEWLINE +
+                    "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
+                    "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "           .                                                                    " + Constants.NEWLINE +
+                    "                                                                                " + Constants.NEWLINE +
+                    "       000-START SECTION.                                                       " + Constants.NEWLINE +
+                    "           MOVE \"Value1\" to WS-FIELD-1                                        " + Constants.NEWLINE +
+                    "           EXIT SECTION                                                         " + Constants.NEWLINE +
+                    "           .                                                                    ";
+
+    private String expected1 =
+            "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
+                    "      *EXEC SQL INCLUDE TEXEM  END-EXEC.                                       " + Constants.NEWLINE +
                     "       01  FILLER.                                                              " + Constants.NEWLINE +
                     "          05  WS-FIELD-1           PIC X(80).                                   " + Constants.NEWLINE +
                     "          05  ws-Field-2           PIC X(80).                                   " + Constants.NEWLINE +
+                    "       01  TEXEM.                                                               " + Constants.NEWLINE +
+                    "           10 FIRST-NAME           PIC X(10).                                   " + Constants.NEWLINE +
+                    "           10 LAST-NAME            PIC X(10).                                   " + Constants.NEWLINE +
+                    "           10 TMS-CREA             PIC X(26).                                   " + Constants.NEWLINE +
+                    "       LINKAGE SECTION.                                                         " + Constants.NEWLINE +
                     "       PROCEDURE DIVISION.                                                      " + Constants.NEWLINE +
                     "           PERFORM UT-INITIALIZE                                                " + Constants.NEWLINE +
                     "      *============= \"Basic test\" =============*                             " + Constants.NEWLINE +
