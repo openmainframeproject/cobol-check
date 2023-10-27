@@ -135,16 +135,16 @@ public class Generator {
             workingStorageHasEnded = true;
         }
         if (interpreter.didLineJustEnter(Constants.PROCEDURE_DIVISION) && interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
-            if (!interpreter.getFileSectionStatements().isEmpty() && !linkageExist) 
-                writerController.writeLines(interpreter.getFileSectionStatements());
+            if (!interpreter.getSqlCopyBookStatements().isEmpty() && !linkageExist) 
+                writerController.writeLines(interpreter.getSqlCopyBookStatements());
             writerController.stopStoringLines();
             testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());
             writerController.releaseStoredLines();
         }
         if (interpreter.didLineJustEnter(Constants.LINKAGE_SECTION))  { 
-            if (!interpreter.getFileSectionStatements().isEmpty() ) 
-                writerController.writeLines(interpreter.getFileSectionStatements());
+            if (!interpreter.getSqlCopyBookStatements().isEmpty() ) 
+                writerController.writeLines(interpreter.getSqlCopyBookStatements());
             linkageExist = true;
         }
     }

@@ -24,6 +24,9 @@ public class LineRepository {
     // All lines from original Data Division / File Section
     private List<String> fileSectionStatements;
 
+    // All lines from DB2 Copybooks
+    private List<String> sqlCopyBookStatement;
+
     // Internal file identifiers and status field names
     private final Map<String, String> fileIdentifiersAndStatuses;
 
@@ -32,6 +35,7 @@ public class LineRepository {
 
     LineRepository() {
         fileSectionStatements = new ArrayList<>();
+        sqlCopyBookStatement = new ArrayList<>();
         this.fileIdentifiersAndStatuses = new HashMap<>();
     }
 
@@ -41,6 +45,10 @@ public class LineRepository {
 
     List<String> getFileSectionStatements() {
         return fileSectionStatements;
+    }
+
+    List<String> getSqlCopyBookStatement() {
+        return sqlCopyBookStatement;
     }
 
     Map<String, String> getFileIdentifiersAndStatuses() {
@@ -67,14 +75,23 @@ public class LineRepository {
         }
         fileSectionStatements.add(statement);
     }
+    
+    void addsqlCopyBookStatement(String statement){
+        if (sqlCopyBookStatement == null){
+            sqlCopyBookStatement = new ArrayList<>();
+        }
+        sqlCopyBookStatement.add(statement);
+    }
 
     void putFileIdentifierAndStatus(String key, String value){
         fileIdentifiersAndStatuses.put(key, value);
     }
+
     void addFileIdentifierWithNoStatus(String identifier){
         fileIdentifiersAndStatuses.put(identifier, Constants.EMPTY_STRING);
         currentExpectFileIdentifier = identifier;
     }
+
     void addStatusForLastSetIdentifier(String status){
         fileIdentifiersAndStatuses.put(currentExpectFileIdentifier, status);
     }
@@ -144,7 +161,7 @@ public class LineRepository {
         } catch (IOException ioEx) {
             throw new CopybookCouldNotBeExpanded(ioEx);
         }
-        fileSectionStatements.addAll(copyLines);
+        sqlCopyBookStatement.addAll(copyLines);
         return copyLines;
     }
 }

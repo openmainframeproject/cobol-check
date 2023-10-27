@@ -53,6 +53,10 @@ public class InterpreterController {
         return lineRepository.getFileControlStatements();
     }
 
+    public List<String> getSqlCopyBookStatements() {
+        return lineRepository.getSqlCopyBookStatement();
+    }
+
     public Map<String, String> getFileIdentifiersAndStatuses() {
         return lineRepository.getFileIdentifiersAndStatuses();
     }
