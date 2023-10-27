@@ -4,7 +4,7 @@
            Move 25,74 to VALUE-1
            Expect VALUE-1 = 25,74
 
-           TestCase "simple expect for number"
+           TestCase "simple expect for number with mock"
            MOCK PARAGRAPH 100-ASSIGN
                MOVE 105 TO VALUE-1
            END-MOCK

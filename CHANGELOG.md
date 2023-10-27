@@ -20,6 +20,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.8\] 2023-10-17
+### Implemented
+- Proper handling of END-EXEC without trailing period in WORKING-STORAGE
+- Fixed bugs in input argument handling
+- Fixed bug with spaces in path
+- Added default return code
+- Added ability to mock and verify calls without commas separating arguments
+- Fixes to the linter
+- Greatly improved management of mocked sections
+- Added the usage of test tree instead of own test run panel
+- Fixed a bug where numeric fields where not properly identified
+- Added a warning when a call was attempted and not mocked, and the ability to throw an error instead
+- Updated metadata on the extension
+- Improved usage of the Gnu COBOL compiler
+- Updated the test workflows
+- Added expanding of copybooks in exec-sql statements
+- And lots of other minor things
+
+## \[0.2.7\] 2023-03-21
+### Implemented
+- EXPECT now properly handles variable subscription without a space delimiter (EXPECT varibable(idx) TO BE 1)
+- COBOL level item 77 now handled properly 
+- More robust scanning of WORKING-STORAGE items
+- Corrected assignment of the various COBOL computational binary field types.
+
+## \[0.2.6\] 2023-01-12
+### Implemented
+- Datastructure-verification for Working Storage has been added.
+
 ## \[0.2.5\] 2022-12-21
 ### Implemented
 - Compiler options for COBOL Check's run of GnuCOBOL can be set in the config-file

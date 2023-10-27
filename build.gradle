@@ -6,7 +6,7 @@ plugins {
     id 'jacoco'
 }
 
-def productVersion = '0.2.5'
+def productVersion = '0.2.8'
 def productName = 'cobol-check'
 group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
@@ -148,7 +148,7 @@ task copyJarToBin(type: Copy) {
 }
 
 task clearExtensionJar(type: Delete) {
-    delete fileTree(dir:'vs code extension/Cobol-check/bin', include: '**.jar')
+    delete fileTree(dir:'vs-code-extension/Cobol-check/bin', include: '**.jar')
 }
 
 task copyJarToExtension(type: Copy) {
@@ -156,7 +156,7 @@ task copyJarToExtension(type: Copy) {
     dependsOn clearExtensionJar, fatJar
     from('build/libs/')
     include '**/*.jar'
-    into 'vs code extension/Cobol-check/bin/'
+    into 'vs-code-extension/Cobol-check/bin/'
 }
 
 

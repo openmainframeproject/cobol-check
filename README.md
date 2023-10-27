@@ -1,9 +1,6 @@
 # Cobol Check 
-
-[![Build Status](https://travis-ci.com/neopragma/cobol-check.svg?branch=main)](https://travis-ci.com/neopragma/cobol-check) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=neopragma_cobol-check&metric=alert_status)](https://sonarcloud.io/dashboard?id=neopragma_cobol-check)
-
 Cobol Check provides fine-grained unit testing/checking for Cobol at the same conceptual level of detail as unit testing frameworks for other languages, such as Python, Ruby, C#, and Java. 
-
+ 
 ## Feature overview
 - Fine-grained assertions
 - Stubs and mocks
@@ -26,11 +23,11 @@ As of March 2022 we could use help with:
 
 ## Downloads 
 
-Version 0.2.5 pre-release is available! 
+Version 0.2.8 pre-release is available! 
 
 [//]: # (- Find the download on the project home page on the [Neo Pragma site]&#40;https://neopragma.com/projects/cobol-check/&#41;.)
-- Find distributions here: [Cobol Check Ditributions](https://github.com/openmainframeproject/cobol-check/blob/main/build/distributions).
-- Find general release information in the [changelog](https://github.com/openmainframeproject/cobol-check/blob/main/CHANGELOG.md).
+- Find distributions here: [Cobol Check Ditributions](https://github.com/openmainframeproject/cobol-check/tree/Developer/build/distributions).
+- Find general release information in the [changelog](https://github.com/openmainframeproject/cobol-check/blob/Developer/CHANGELOG.md).
 - Find more information about supported functionality on [the wiki](https://github.com/openmainframeproject/cobol-check/wiki/Common-Test-Case-Patterns).
 
 If you want source code, you can clone the repository or download a compressed archive(currently outdated) [from here](https://github.com/openmainframeproject/cobol-check/releases/tag/0.1.0).

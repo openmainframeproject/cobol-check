@@ -29,7 +29,7 @@ public class FileNameMatcher extends SimpleFileVisitor<Path> {
         private boolean defaultToAllFiles = false;
 
         public FileNameMatcher(String pattern) {
-            if (pattern.length() == 0) {
+            if (pattern.length() == 0 || pattern.equals("null")) {
                 defaultToAllFiles = true;
             }
             matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);

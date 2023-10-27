@@ -83,6 +83,7 @@ public final class Constants {
     public static final String END_BEFORE_TOKEN = "END-BEFORE";
     public static final String AFTER_EACH_TOKEN = "AFTER EACH";
     public static final String END_AFTER_TOKEN = "END-AFTER";
+    public static final String NUMERIC_KEYWORD = "NUMERIC";
     public static final String IN_KEYWORD = "IN";
     public static final String OF_KEYWORD = "OF";
 
@@ -90,7 +91,7 @@ public final class Constants {
     public static final String BEFORE_EACH_TOKEN_HYPHEN = "BEFORE-EACH";
     public static final String AFTER_EACH_TOKEN_HYPHEN = "AFTER-EACH";
     public static final String PARA_TOKEN = "PARA";
-    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL", "NUMERIC");
+    public static final List<String> IGNORED_TOKENS = Arrays.asList("END-CALL");
 
     // Configuration key values
     public static final String CONCATENATED_TEST_SUITES_CONFIG_KEY = "concatenated.test.suites";
@@ -145,8 +146,13 @@ public final class Constants {
     public static final String EXEC_CICS_TOKEN = "EXEC CICS";
     public static final String END_EXEC_TOKEN = "END-EXEC";
     public static final String CONTINUE_TOKEN = "CONTINUE";
+    public static final String INCLUDE = "INCLUDE";
 
+    public static final String BINARY = "BINARY";
+    public static final String COMP_2_VALUE = "COMP-2";
     public static final String COMP_3_VALUE = "COMP-3";
+    public static final String COMP_4_VALUE = "COMP-4";
+    public static final String COMP_5_VALUE = "COMP-5";
     public static final String COMP_VALUE = "COMP";
     public static final String PIC_VALUE = "PIC";
     public static final String PICTURE_VALUE = "PICTURE";

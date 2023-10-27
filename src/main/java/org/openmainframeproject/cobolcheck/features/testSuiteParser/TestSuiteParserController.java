@@ -21,6 +21,7 @@ public class TestSuiteParserController {
     private BeforeAfterRepo beforeAfterRepo;
     private MockGenerator mockGenerator;
     private BufferedReader testSuiteReader;
+    private WhenOtherGenerator whenOtherGenerator;
 
     private TestSuiteErrorLog testSuiteErrorLog;
 
@@ -29,7 +30,7 @@ public class TestSuiteParserController {
     private List<String> parsedTestSuiteLines;
 
     // The boilerplate copybooks for cobol-check test code inserted into Working-Storage and Procedure.
-    // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in future.
+    // The names are a throwback to the proof-of-concept project, cobol-unit-test. Might change in the future.
     private static final String workingStorageCopybookFilename = "CCHECKWS.CPY";
     private static final String procedureDivisionResultCopybookFilename = "CCHECKRESULTPD.CPY";
     private static final String procedureDivisionParagraphCopybookFilename = "CCHECKPARAGRAPHSPD.CPY";
@@ -54,6 +55,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getTestCodePrefix();
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     //Used for testing only
@@ -65,6 +67,7 @@ public class TestSuiteParserController {
         testSuiteParser = new TestSuiteParser(new KeywordExtractor(), mockRepository, beforeAfterRepo, testSuiteErrorLog);
         mockGenerator = new MockGenerator();
         testCodePrefix = Config.getString(Constants.COBOLCHECK_PREFIX_CONFIG_KEY, Constants.DEFAULT_COBOLCHECK_PREFIX);
+        whenOtherGenerator = new WhenOtherGenerator();
     }
 
     public boolean hasWorkingStorageTestCodeBeenInserted() {
@@ -182,6 +185,7 @@ public class TestSuiteParserController {
         lines.add("");
         lines.addAll(generateAfterParagraph());
         lines.add("");
+        lines.addAll(generateCobolLinesForUnmockedCalls());
         lines.addAll(generateBeforeAfterBranchParagraphs(true));
         lines.addAll(generateMockCountInitializer());
         lines.add("");
@@ -232,6 +236,27 @@ public class TestSuiteParserController {
         return beforeAfterRepo.getAllBranchingParagraphs(withComments);
     }
 
+    public List<String> generateCobolLinesForUnmockedCalls() {
+        List<String> cobolLines = new ArrayList<>();
+        cobolLines.add("       UT-PROCESS-UNMOCK-CALL.");
+        if(Config.getDisplayUnMockedCalls()) {
+            String line1 = "           Add 1 to %sNUMBER-UNMOCK-CALL";
+            String line2 = "           display \"Call not mocked in testcase: \" %1$sTEST-CASE-NAME ";
+            String line3 = "           display \"               in testsuite: \" %1$sTEST-SUITE-NAME";
+            String line4 = "           display \"All used calls should be mocked, to ensure the unit test has control over input data\"";
+        
+            String testCodePrefix = Config.getTestCodePrefix();
+            cobolLines.add(String.format(line1, testCodePrefix));
+            cobolLines.add(String.format(line2, testCodePrefix));
+            cobolLines.add(String.format(line3, testCodePrefix));
+            cobolLines.add(line4);
+        }
+        cobolLines.add("           CONTINUE");
+        cobolLines.add("           .");
+        cobolLines.add("");
+        return cobolLines;
+    }
+
     public boolean mockExistsFor(String identifier, String type, List<String> arguments){
         return mockRepository.mockExistsFor(identifier, type, arguments);
     }
@@ -258,13 +283,6 @@ public class TestSuiteParserController {
         return lines;
     }
 
-    public List<String> getContinueLine(){
-        List<String> lines = new ArrayList<>();
-        lines.add(mockGenerator.getContinueLine());
-        CobolGenerator.addStartAndEndTags(lines);
-        return lines;
-    }
-
     public void logUnusedMocks(){
         testSuiteErrorLog.logUnusedMocks(mockRepository.getMocks());
     }
@@ -279,7 +297,6 @@ public class TestSuiteParserController {
      */
     public List<String> getBoilerplateCodeFromCopybooks(String copybookFilename) throws IOException {
         List<String> lines = new ArrayList<>();
-        boolean isComma = Config.isDecimalPointComma();
         String path = Constants.COBOLCHECK_COPYBOOK_DIRECTORY + copybookFilename;
         InputStream is = this.getClass().getResourceAsStream(path);
         BufferedReader secondarySourceBufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -313,4 +330,17 @@ public class TestSuiteParserController {
     public void prepareNextParse() {
         Config.setDecimalPointIsCommaFromFile();
     }
+
+    public List<String> generateWhenOtherSectionOrParagraph(String type, List<String> sectionOrParagraphlines, String sourceLine, String identifier, boolean withComments)  throws IOException{
+        List<String> lines = new ArrayList<>();
+        WhenOther whenOther = testSuiteParser.getWhenOtherSectionOrParagraph(type, sectionOrParagraphlines, identifier, true);
+        lines.add(whenOtherGenerator.generateWhenOtherCall(whenOther));
+        lines.addAll(this.getEndEvaluateLine());
+        lines.add(sourceLine);
+        lines.add("");
+        lines.addAll(whenOtherGenerator.generateWhenOther(whenOther, withComments));
+        return lines;
+    }
+    
+
 }

@@ -11,6 +11,7 @@ import org.openmainframeproject.cobolcheck.features.testSuiteParser.*;
 import org.openmainframeproject.cobolcheck.features.writer.CobolWriter;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.NumericFields;
 
 import java.io.BufferedReader;
@@ -295,15 +296,103 @@ public class TestSuiteErrorLogTest {
     }
 
     @Test
-    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments() {
+    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments_and_commas_1() {
         testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
         testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
         testSuite.append("       MOCK CALL 'value' USING BY CONTENT VALUE-1, VALUE-2 ONCE END-MOCK"+ Constants.NEWLINE);
 
         String expectedResult = "";
-        expectedResult += "SYNTAX ERROR in file: null:2:13:" + Constants.NEWLINE;
-        expectedResult += "Unexpected token on line 2, index 13:" + Constants.NEWLINE;
-        expectedResult += "Cannot have Cobol Check keyword <ONCE> inside a MOCK block" + Constants.NEWLINE+ Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:3:60:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 60:" + Constants.NEWLINE;
+        expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Got < ONCE> classified as <  ONCE>" + Constants.NEWLINE+ Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
+        expectedResult += "Following <ONCE> classified as <ONCE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK:   []" + Constants.NEWLINE;
+        expectedResult += "Got <END-MOCK> classified as <END-MOCK>" + Constants.NEWLINE+ Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments_and_commas_2() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'value' USING BY CONTENT VALUE-1, VALUE-2 VERIFY END-MOCK"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:3:60:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 60:" + Constants.NEWLINE;
+        expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Got <VERIFY> classified as <VERIFY>" + Constants.NEWLINE+ Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
+        expectedResult += "Following <VERIFY> classified as <VERIFY>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK:   []" + Constants.NEWLINE;
+        expectedResult += "Got <END-MOCK> classified as <END-MOCK>" + Constants.NEWLINE+ Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments_without_commas_1() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'value' USING BY CONTENT VALUE-1 VALUE-2 ONCE END-MOCK"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:3:59:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 59:" + Constants.NEWLINE;
+        expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Got < ONCE> classified as <  ONCE>" + Constants.NEWLINE+ Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
+        expectedResult += "Following <ONCE> classified as <ONCE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK:   []" + Constants.NEWLINE;
+        expectedResult += "Got <END-MOCK> classified as <END-MOCK>" + Constants.NEWLINE+ Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_at_the_end_of_mock_context_with_arguments_without_commas_2() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'value' USING BY CONTENT VALUE-1 VALUE-2 VERIFY END-MOCK"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:3:59:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 59:" + Constants.NEWLINE;
+        expectedResult += "Following <VALUE-2> classified as <fieldname>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK: [END-MOCK, fieldname, BY REFERENCE, BY CONTENT, qualified-field-name, BY VALUE, USING]" + Constants.NEWLINE;
+        expectedResult += "Got <VERIFY> classified as <VERIFY>" + Constants.NEWLINE+ Constants.NEWLINE;
+        expectedResult += "SYNTAX ERROR in file: null:3:11:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 11:" + Constants.NEWLINE;
+        expectedResult += "Following <VERIFY> classified as <VERIFY>" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of MOCK:   []" + Constants.NEWLINE;
+        expectedResult += "Got <END-MOCK> classified as <END-MOCK>" + Constants.NEWLINE+ Constants.NEWLINE;
 
         assertThrows(TestSuiteSyntaxException.class, () -> {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
@@ -352,7 +441,7 @@ public class TestSuiteErrorLogTest {
         expectedResult += "SYNTAX ERROR in file: null:3:25:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index 25:" + Constants.NEWLINE;
         expectedResult += "Following <MOVE> classified as <fieldname>" + Constants.NEWLINE;
-        expectedResult += "Expected classification in the context of VERIFY: [fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING, HAPPENED, NEVER HAPPENED]" + Constants.NEWLINE;
+        expectedResult += "Expected classification in the context of VERIFY: [fieldname, BY REFERENCE, BY CONTENT, BY VALUE, USING, HAPPENED, qualified-field-name, NEVER HAPPENED]" + Constants.NEWLINE;
         expectedResult += "Got <'PROG3'> classified as <alphanumeric-literal>" + Constants.NEWLINE + Constants.NEWLINE;
         expectedResult += "RUNTIME ERROR in file: null:3:8:" + Constants.NEWLINE;
         expectedResult += "Unexpected token on line 3, index  8:" + Constants.NEWLINE;
@@ -386,6 +475,113 @@ public class TestSuiteErrorLogTest {
             testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
                     numericFields);
         });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_after_verify_() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'PROG3' END-MOCK"+ Constants.NEWLINE);
+        testSuite.append("       VERIFY CALL 'PROG3' HAPPENED ONCE"+ Constants.NEWLINE);
+        testSuite.append("       BEFORE EACH"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:5:8:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 5, index  8:" + Constants.NEWLINE;
+        expectedResult += "Following <ONCE> classified as <ONCE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification: [cobol-token, TESTSUITE, TESTCASE, MOCK, VERIFY, EXPECT]" + Constants.NEWLINE;
+        expectedResult += "Got <BEFORE EACH> classified as <BEFORE EACH>" + Constants.NEWLINE + Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_after_verify_without_commas() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'PROG3' END-MOCK"+ Constants.NEWLINE);
+        testSuite.append("       VERIFY CALL 'PROG3' HAPPENED ONCE"+ Constants.NEWLINE);
+        testSuite.append("       BEFORE EACH"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:5:8:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 5, index  8:" + Constants.NEWLINE;
+        expectedResult += "Following <ONCE> classified as <ONCE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification: [cobol-token, TESTSUITE, TESTCASE, MOCK, VERIFY, EXPECT]" + Constants.NEWLINE;
+        expectedResult += "Got <BEFORE EACH> classified as <BEFORE EACH>" + Constants.NEWLINE + Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void it_catches_unexpected_keyword_after_verify_without_commas_() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       MOCK CALL 'PROG3' END-MOCK"+ Constants.NEWLINE);
+        testSuite.append("       VERIFY CALL 'PROG3' HAPPENED ONCE"+ Constants.NEWLINE);
+        testSuite.append("       BEFORE EACH"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "SYNTAX ERROR in file: null:5:8:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 5, index  8:" + Constants.NEWLINE;
+        expectedResult += "Following <ONCE> classified as <ONCE>" + Constants.NEWLINE;
+        expectedResult += "Expected classification: [cobol-token, TESTSUITE, TESTCASE, MOCK, VERIFY, EXPECT]" + Constants.NEWLINE;
+        expectedResult += "Got <BEFORE EACH> classified as <BEFORE EACH>" + Constants.NEWLINE + Constants.NEWLINE;
+
+        assertThrows(TestSuiteSyntaxException.class, () -> {
+            testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())),
+                    numericFields);
+        });
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+
+    @Test
+    public void it_catches_type_mismatch_of_numeric_and_alphanumeric_for_explicit_numeric_in_unit_test() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       EXPECT WS-ALPHA-VALUE TO BE NUMERIC \"Hello\""+ Constants.NEWLINE);
+
+        String expectedResult = "";
+        expectedResult += "WARNING in file: null:3:44:" + Constants.NEWLINE;
+        expectedResult += "Unexpected token on line 3, index 44:" + Constants.NEWLINE;
+        expectedResult += "Expected compare to be of type <NUMERIC>, but the variable was classified as the type <ALPHANUMERIC>" + Constants.NEWLINE;
+        expectedResult += "The test was carried out with the compare type <ALPHANUMERIC>" + Constants.NEWLINE + Constants.NEWLINE;
+
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
+
+        String actualResult = testSuiteErrorLog.getErrorMessages();
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void explicit_numeric_gives_no_warning_when_variable_is_numeric() {
+        testSuite.append("       TESTSUITE \"Name of test suite\""+ Constants.NEWLINE);
+        testSuite.append("       TESTCASE \"Name of test case\""+ Constants.NEWLINE);
+        testSuite.append("       EXPECT WS-NUMERIC-VALUE TO BE NUMERIC 1"+ Constants.NEWLINE);
+
+        String expectedResult = "";
+
+        numericFields.setDataTypeOf("WS-NUMERIC-VALUE", DataType.PACKED_DECIMAL);
+
+        testSuiteParser.getParsedTestSuiteLines(new BufferedReader(new StringReader(testSuite.toString())), numericFields);
 
         String actualResult = testSuiteErrorLog.getErrorMessages();
         assertEquals(expectedResult, actualResult);

@@ -6,6 +6,9 @@ import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringTuple;
 import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -38,7 +41,6 @@ public class CopybookExpander {
     private final String pathToCopybooks;
     private final List<String> copybookFilenameSuffixes;
 
-
     public CopybookExpander() {
         pathToCopybooks = getPathToCopybooks();
         copybookFilenameSuffixes = Config.getCopybookFilenameSuffixes();
@@ -50,7 +52,7 @@ public class CopybookExpander {
     }
 
     public List<String> expand(List<String> expandedLines, String copybookFilename,
-                         StringTuple... textReplacement) throws IOException {
+            StringTuple... textReplacement) throws IOException {
         String fullPath = PathHelper.findFilePath(pathToCopybooks, copybookFilename, copybookFilenameSuffixes);
         if (fullPath == null)
             throw new IOException("could not find copybook " + copybookFilename + " in " + pathToCopybooks);
@@ -119,6 +121,30 @@ public class CopybookExpander {
 
     private String getPathToCopybooks() {
         return PathHelper.endWithFileSeparator(Config.getCopyBookSourceDirectoryPathString());
+    }
+
+    public List<String> expandDB2(List<String> expandedLines, String copybookFilename,
+            StringTuple... textReplacement) throws IOException {
+        String fullPath = PathHelper.findFilePath(pathToCopybooks, copybookFilename, copybookFilenameSuffixes);
+        if (fullPath == null)
+            throw new IOException("could not find copybook " + copybookFilename + " in " + pathToCopybooks);
+        try (BufferedReader copybookReader = new BufferedReader(new FileReader(new File(fullPath)))) {
+            String sourceLine;
+            while ((sourceLine = copybookReader.readLine()) != null) {
+                if (sourceLine.contains(Constants.EXEC_SQL_TOKEN)) {
+                    while (!sourceLine.contains(Constants.END_EXEC_TOKEN)) {
+                        sourceLine = copybookReader.readLine();
+                    }
+                sourceLine = copybookReader.readLine();
+                }
+                if(!sourceLine.isEmpty()) {
+                    if(!Interpreter.isComment(sourceLine)) {
+                        expandedLines.add(sourceLine);
+                    }
+                }
+            }
+        }
+        return expandedLines;
     }
 
 }

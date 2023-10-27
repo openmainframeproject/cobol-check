@@ -1,0 +1,23 @@
+{
+	"name": "cobol-check-extension-client",
+	"description": "Cobol-check extension to run cobol unit tests",
+	"author": "Open Mainframe Project",
+	"license": "MIT",
+	"version": "0.3.2",
+	"publisher": "openmainframeproject",
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"dependencies": {
+		"vscode-languageclient": "^7.0.0"
+	},
+	"activationEvents": [
+		"workspaceContains:*.cut"
+	],
+	"devDependencies": {
+		"@types/glob": "^7.1.4",
+		"@types/node": "^15.12.2",
+		"@types/vscode": "^1.52.0",
+		"vscode-test": "^1.3.0"
+	}
+}

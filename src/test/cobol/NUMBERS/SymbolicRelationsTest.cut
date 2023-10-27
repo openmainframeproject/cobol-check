@@ -196,11 +196,11 @@
            move 475.063 to ws-field-1
            expect ws-field-1 not <= 475.062
 
-           TestCase "Not greater-than-or-equal-to-sign with field compare when equal (should fail)"
+           TestCase "Not less-than-or-equal-to-sign with field compare when equal (should fail)"
            move 475.062 to ws-field-1
            expect ws-field-1 not <= 475.062
 
-           TestCase "Not greater-than-or-equal-to-sign with field compare when less (should fail)"
+           TestCase "Not less-than-or-equal-to-sign with field compare when less (should fail)"
            move 475.062 to ws-field-1
            expect ws-field-1 not <= 475.063
 
@@ -208,7 +208,7 @@
            move 123.45 to ws-display-field
            expect ws-display-field to be 123.45
 
-           TestCase "Display Numeric field equals literal"
+           TestCase "Display Numeric field equals literal with negative numbers"
            move -123.45 to ws-display-field
            expect ws-display-field to be -123.45
 
@@ -240,3 +240,6 @@
            move -123 to ws-field-3
            expect ws-field-3 to be -123
 
+           TestCase "Variable must be 4"
+           move 4 to ws-num-occ (1)
+           expect ws-num-occ(1) to be numeric 4

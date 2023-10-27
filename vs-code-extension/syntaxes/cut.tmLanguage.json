@@ -1,0 +1,151 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "COBOL unit test",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings" 
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"match": "(^.{6})(\\*.*$)",
+					"name": "comment.line.cut"
+				},
+				{
+					"match": "(^.{6})(\\/.*$)",
+					"name": "comment.line.cut"
+				},
+				{
+					"begin": "\"",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.begin.cut"
+						}
+					},
+					"end": "(\"|$)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.end.cut"
+						}
+					},
+					"name": "string.quoted.double.cut"
+				},
+				{
+					"begin": "'",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.begin.cut"
+						}
+					},
+					"end": "('|$)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.end.cut"
+						}
+					},
+					"name": "string.quoted.single.cut"
+				},
+				{
+					"begin": "[zZ]\"",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.begin.cut"
+						}
+					},
+					"end": "(\"|$)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.end.cut"
+						}
+					},
+					"name": "string.quoted.double.cut"
+				},
+				{
+					"match": "(?<=(\\(|\\[))((\\-\\+)*[0-9 ,\\.\\+\\-\\*\\/]+)(?=(\\)|\\]))",
+					"name": "constant.numeric.cut",
+					"captures": {
+						"1": {
+							"name": "keyword.start.bracket.cobol"
+						},
+						"2": {
+							"name": "constant.numeric.cut"
+						},
+						"3": {
+							"name": "keyword.end.bracket.cobol"
+						}
+					},
+					"comment": "simple numerics in () and []"
+				},
+				{
+					"match": "(\\-|\\+)?((([0-9]+(\\.[0-9]+))|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)([LlFfUuDd]|UL|ul)?(?=\\s|\\.$|,|\\))",
+					"name": "constant.numeric.cut"
+				},
+				{
+					"match": "(\\-|\\+)?([0-9]+)(?=\\s|\\.$|,|\\))",
+					"name": "constant.numeric.cut"
+				},
+				{
+					"match": "(^[0-9][0-9][0-9][0-9][0-9][0-9])",
+					"name": "constant.numeric.cut"
+				},
+				{
+					"match": "(?i)(ignore|expect|verify|to be|not|in|happened|never|once|at least|more)(?=\\s|\\.|$)",
+					"name": "keyword.control.cut",
+					"comment": "Control keywords outside testcases"
+				},
+				{
+					"match": "(?i:testsuite)(?=\\s|\\.|$)",
+					"name": "constant.character.escape",
+					"comment": "Description keywords in unit tests"
+				},
+				{
+					"begin": "(?i:mock|after\\ each|after\\-each|before\\ each|before\\-each)",
+					"name": "constant.character.escape",
+					"patterns": [
+						{
+							"include": "source.cobol"
+						}
+					],
+					"end": "(?i:end\\-mock|end\\-after|end\\-before)",
+					"endCaptures": "constant.character.escape",
+					"comment": "For inline COBOL in unit test blocks"
+				},
+				{
+					"begin": "(?i:testcase)",
+					"name": "constant.character.escape",
+					"patterns": [
+						{
+							"match": "(?i)(ignore|expect|verify|to be|not|in|happened|never|once|at least|more)(?=\\s|\\.|$)",
+							"name": "keyword.control.cut",
+							"comment": "Control keywords inside testcases"
+						},
+						{
+							"begin": "(?i:mock)",
+							"name": "keyword.operator",
+							"patterns": [
+								{
+									"include": "source.cobol"
+								}
+							],
+							"end": "(?i:end\\-mock)",
+							"endCaptures": "keyword.operator",
+							"comment": "Mocks inside a testcase"
+						},
+						{
+							"include": "source.cobol"
+						}
+					],
+					"end": "(\\z)",
+					"endCaptures": "constant.character.escape",
+					"comment": "For inline COBOL in testcases TODO: Lookaround for testcase blocks."
+				}
+			]
+		}
+	},
+	"scopeName": "source.cut"
+}

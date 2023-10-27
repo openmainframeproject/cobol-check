@@ -202,7 +202,7 @@ public class CobolWriter {
         else if (line2.length() > 0 && isComment){
             //Continue comment
             writeLine(line1);
-            line2 = ("      * " + line2);
+            line2 = StringHelper.commentOutLine(line2);
         }
         //Handle line 2
         if (line2.length() > maxLineLength){

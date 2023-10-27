@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InterpreterControllerTest {
     InterpreterController interpreterController;
     BufferedReader mockedReader;
+    String[] nullArray = null;
 
     @BeforeAll
     public static void setup(){
@@ -119,7 +120,7 @@ public class InterpreterControllerTest {
         expected.add("       CBL OPT(0), RULES(LAXPERF)");
         expected.add("       IDENTIFICATION DIVISION.");
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1,nullArray);
 
         String line = "";
         boolean assertHappened = false;
@@ -197,7 +198,7 @@ public class InterpreterControllerTest {
 
         String expected = "       CBL OPT(1), OPT(0), RULES(LAXPERF)";
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1,nullArray);
 
         String line = "";
         boolean assertHappened = false;
@@ -221,7 +222,7 @@ public class InterpreterControllerTest {
 
         String expected = "       IDENTIFICATION DIVISION.";
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+        Mockito.when(mockedReader.readLine()).thenReturn(str1,nullArray);
 
         String line = "";
         boolean assertHappened = false;
@@ -724,22 +725,34 @@ public class InterpreterControllerTest {
 
     @Test
     public void it_updates_numeric_fields() throws IOException {
-        String str1 = "       DATA DIVISION.";
-        String str2 = "       WORKING-STORAGE SECTION.";
-        String str3 = "       01  FILLER.";
-        String str4 = "           05  OUTPUT-FILE-STATUS PIC XX.";
-        String str5 = "               88  OUTPUT-OK      VALUE '00'.";
-        String str6 = "           05  WS-COUNT           PIC S9(5) COMP-3.";
-        String str7 = "           05  WS-COUNT-FORMATTED PIC ZZ,ZZ9.";
+        String str1  = "       DATA DIVISION.";
+        String str2  = "       WORKING-STORAGE SECTION.";
+        String str3  = "       01  FILLER.";
+        String str4  = "           05  OUTPUT-FILE-STATUS PIC XX.";
+        String str5  = "               88  OUTPUT-OK      VALUE '00'.";
+        String str6  = "           05.";
+        String str7  = "             08  WS-COUNT   ";        
+        String str8 = "                      PIC S9(5) COMP-3.";
+        String str9  = "           05  WS-DISPLAY-NUM2      PIC 9(04) OCCURS";
+        String str10  = "                         20.";
+        String str11  = "           05  TEMP-VAL                  PIC X(200) VALUE SPACES.";
+        String str12 = "       77   CHAR-CT                      PIC S9(3) COMP.";
 
-        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, null);
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, str12, null);
 
         while (interpreterController.interpretNextLine() != null){
             interpreterController.interpretNextLine();
         }
-
         assertEquals("PACKED_DECIMAL",
                 interpreterController.getNumericFieldDataTypeFor("WS-COUNT").name());
+        assertEquals("DISPLAY_NUMERIC",
+                interpreterController.getNumericFieldDataTypeFor("WS-DISPLAY-NUM2").name());
+        assertEquals("ALPHANUMERIC",
+                interpreterController.getNumericFieldDataTypeFor("TEMP-VAL").name());
+        assertEquals("BINARY",
+                interpreterController.getNumericFieldDataTypeFor("CHAR-CT").name());
+
     }
 
     @Test
@@ -842,5 +855,165 @@ public class InterpreterControllerTest {
         assertTrue(testsRan);
     }
 
+    @Test
+    public void it_handles_END_EXEC_without_terminating_period() throws IOException {
+        String str1  = "       DATA DIVISION.";
+        String str2  = "       WORKING-STORAGE SECTION.";
+        String str3  = "       01  FILLER.";
+        String str4  = "           05  WS-FIELD        PIC 9(04).";
+        String str5 = "           EXEC SQL";
+        String str6 = "               SQL STUFF";
+        String str7 = "           END-exec";
+        String str8 = "       PROCEDURE DIVISION.";
 
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, str7, str8, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertTrue(interpreterController.didLineJustEnter(Constants.PROCEDURE_DIVISION));
+
+    }
+    @Test
+    public void it_adds_file_section_statements_from_source_and_db2copybook_multipleLines() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL";
+        String str4 = "       INCLUDE TEXEM";
+        String str5 = "       END-EXEC.";
+        String str6 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, str6, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals(4,interpreterController.getFileSectionStatements().size());
+        assertTrue(interpreterController.getFileSectionStatements().contains("       01  TEXEM."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 FIRST-NAME           PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 LAST-NAME            PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 TMS-CREA             PIC X(26)."));
+    }
+
+    @Test
+    public void it_adds_file_section_statements_from_source_and_db2copybook() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL INCLUDE TEXEM END-EXEC.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals(4,interpreterController.getFileSectionStatements().size());
+        assertTrue(interpreterController.getFileSectionStatements().contains("       01  TEXEM."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 FIRST-NAME           PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 LAST-NAME            PIC X(10)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("           10 TMS-CREA             PIC X(26)."));
+    }
+
+    @Test
+    public void it_updates_numeric_fields_from_DB2Copybook() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL INCLUDE TEXE2 END-EXEC.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals("PACKED_DECIMAL",
+                interpreterController.getNumericFieldDataTypeFor("WALLET").name());
+    }
+
+    @Test
+    public void it_updates_numeric_fields_from_copybook() throws IOException {
+        String str1 = "       FILE SECTION.";
+        String str2 = "       FD  INPUT-FILE";
+        String str3 = "       01  OUTPUT-RECORD.";
+        String str4 = "         COPY COPY001-padded.";
+        String str5 = "       WORKING-STORAGE SECTION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, str5, null);
+
+        while (interpreterController.interpretNextLine() != null) {
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals("PACKED_DECIMAL",
+                interpreterController.getNumericFieldDataTypeFor("TEST-DATA-ELEMENT-001-B2").name());
+    }
+
+    @Test
+    public void it_registers_DB2Copybook_as_stub() throws IOException {
+        String str1 ="        DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL INCLUDE TEXE2 END-EXEC.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("EXEC SQL")){
+                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
+
+    @Test
+    public void it_registers_DB2Copybook_on_multiple_lines_as_stub() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       EXEC SQL";
+        String str4 = "       INCLUDE TEXEM";
+        String str5 = "       END-EXEC.";
+        String str6 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4,  str5, str6, null);
+
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("EXEC SQL")) {
+                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
+
+    @Test
+    public void it_stubs_linkage_line() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "       LINKAGE SECTION.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        boolean testsRan = false;
+        String currentLine = "";
+        while (currentLine != null){
+            currentLine = interpreterController.interpretNextLine();
+            if (currentLine != null && currentLine.contains("LINKAGE SECTION.")) {
+                assertFalse(interpreterController.shouldCurrentLineBeStubbed());
+                testsRan = true;
+            }
+        }
+        assertTrue(testsRan);
+    }
 }

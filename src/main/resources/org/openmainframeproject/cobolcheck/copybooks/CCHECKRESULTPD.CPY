@@ -6,6 +6,8 @@
            DISPLAY ==UT==TEST-CASE-NUMBER ' PASSED'
            MOVE ==UT==NUMBER-FAILED TO ==UT==TEST-CASE-NUMBER
            DISPLAY ==UT==TEST-CASE-NUMBER ' FAILED'
+           MOVE ==UT==NUMBER-UNMOCK-CALL TO ==UT==TEST-CASE-NUMBER
+           DISPLAY ==UT==TEST-CASE-NUMBER ' CALLS NOT MOCKED'
            DISPLAY "================================================="
            MOVE ==UT==RETCODE TO RETURN-CODE
            GOBACK.
