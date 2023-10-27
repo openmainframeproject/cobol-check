@@ -265,6 +265,37 @@ public class ExpanderTest {
         Config.changeProperty("cobolcheck.test.unmockcall.display", "true");
     }
 
+    @Test
+    public void variable_before_exec_sql_include_is_evaluated_as_text() throws IOException {
+        String s1 = "       ID DIVISION.";
+        String s2 = "       PROGRAM-ID.         TEST.";
+        String s3 = "       ENVIRONMENT DIVISION.";
+        String s4 = "       DATA DIVISION.";
+        String s5 = "       WORKING-STORAGE SECTION.";
+        String s6 = "       01  WS-FIELD-1           PIC X(80).";
+        String s7 = "       EXEC SQL INCLUDE SQLCA END-EXEC. ";
+        String s8 = "       PROCEDURE DIVISION.";
+        String s9 = "       000-START SECTION.";
+        String s10 = "           MOVE \"Value1\" to WS-FIELD-1";
+        String s11 = "           EXIT SECTION";
+        String s12 = "           .";
+
+        String t1 = "           TestSuite \"Basic test\"";
+        String t2 = "           TestCase \"Basic test\"";
+        String t3 = "           PERFORM 000-START";
+        String t4 = "           EXPECT WS-FIELD-1 TO BE \"Value1\"";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        List<String> actual = Utilities.getTrimmedList(Utilities.removeBoilerPlateCode(writer.toString(), boilerPlateTags));
+        String[] actualArray = actual.toArray(new String[0]);
+
+        assertEquals("           MOVE WS-FIELD-1 TO UT-ACTUAL", actualArray[49]);
+    }
+
     private String expected1 =
             "       WORKING-STORAGE SECTION.                                                 " + Constants.NEWLINE +
                     "      *EXEC SQL INCLUDE TEXEM  END-EXEC.                                       " + Constants.NEWLINE +
@@ -305,10 +336,10 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
                     "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
-                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
-                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase: \" UT-TEST-CASE-NAME          " + Constants.NEWLINE +
+                    "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE + 
                     "           CONTINUE                                                             " + Constants.NEWLINE +
@@ -348,10 +379,10 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
                     "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
-                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
-                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase: \" UT-TEST-CASE-NAME          " + Constants.NEWLINE +
+                    "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +            
                     "           CONTINUE                                                             " + Constants.NEWLINE +
@@ -368,7 +399,7 @@ public class ExpanderTest {
                     "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
                     "      *    PERFORM 100-WELCOME                                                  " + Constants.NEWLINE +
                     "      *END-CALL.                                                                  " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                             " + Constants.NEWLINE +
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                             " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
             
@@ -395,10 +426,10 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
                     "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
-                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
-                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase: \" UT-TEST-CASE-NAME          " + Constants.NEWLINE +
+                    "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +   
                     "           CONTINUE                                                             " + Constants.NEWLINE +
@@ -414,7 +445,7 @@ public class ExpanderTest {
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
                     "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
                     "      *    PERFORM 100-WELCOME.                                                 " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
             
@@ -441,11 +472,11 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
                     "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
-                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
-                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
-                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "           display \"Call not mocked in testcase: \" UT-TEST-CASE-NAME          " + Constants.NEWLINE +
+                    "           display \"               in testsuite: \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +   
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +                                                               
@@ -460,7 +491,7 @@ public class ExpanderTest {
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE + 
                     "      *    ON EXCEPTION                                                         " + Constants.NEWLINE + 
                     "      *    DISPLAY \"HELLO WORLD\".                                             " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE +    
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
             
@@ -487,10 +518,10 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
                     "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
-                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
-                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
+                    "           display \"Call not mocked in testcase: \" UT-TEST-CASE-NAME          " + Constants.NEWLINE +
+                    "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +    
                     "           CONTINUE                                                             " + Constants.NEWLINE +
@@ -510,7 +541,7 @@ public class ExpanderTest {
                     "      *    DISPLAY \"HELLO WORLD\"                                              " + Constants.NEWLINE +
                     "      *    END-CALL                                                             " + Constants.NEWLINE + 
                     "      *END-CALL                                                                 " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "      DISPLAY \"NO COMMENTS\"                                                   " + Constants.NEWLINE;
     
@@ -537,11 +568,11 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +                                               
                     "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +                                     
-                    "           display \"Call not mocked in testcase \" UT-TEST-CASE-NAME \" in     " + Constants.NEWLINE +        
-                    "      -    \" testsuite \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +                                     
-                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
+                    "           display \"Call not mocked in testcase: \" UT-TEST-CASE-NAME          " + Constants.NEWLINE +
+                    "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
+                    "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +                                                               
@@ -555,12 +586,12 @@ public class ExpanderTest {
                     "                                                                                " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
                     "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +   
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +   
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
                     "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE;
 
@@ -598,7 +629,7 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +                                                               
                     "                                                                                " + Constants.NEWLINE +
@@ -611,7 +642,7 @@ public class ExpanderTest {
                     "                                                                                " + Constants.NEWLINE +
                     "       100-PARA.                                                                " + Constants.NEWLINE +
                     "      *    CALL 'PROG'.                                                         " + Constants.NEWLINE +
-                    "           PERFORM PROCESS-UNMOCK-CALL                                         " + Constants.NEWLINE +
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                         " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE;
     private String expected8 =
@@ -653,7 +684,7 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
-                    "       PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +
+                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +                                                               
                     "                                                                                " + Constants.NEWLINE +
@@ -683,12 +714,12 @@ public class ExpanderTest {
                     "                   ALSO \"para with unmock call\"                              " + Constants.NEWLINE +
                     "                    PERFORM UT-1-1-1-MOCK                                      " + Constants.NEWLINE + 
                     "           WHEN OTHER                                                          " + Constants.NEWLINE +
-                    "                    PERFORM PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE + 
+                    "                    PERFORM UT-PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE + 
                     "            END-EVALUATE                                                       " + Constants.NEWLINE +
                     "            CONTINUE                                                           " + Constants.NEWLINE +
                     "           .                                                                   " + Constants.NEWLINE +
                     "      *    CALL 'PROG2'.                                                       " + Constants.NEWLINE + 
-                    "           PERFORM PROCESS-UNMOCK-CALL                                         " + Constants.NEWLINE +
+                    "           PERFORM UT-PROCESS-UNMOCK-CALL                                         " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE;
 }
