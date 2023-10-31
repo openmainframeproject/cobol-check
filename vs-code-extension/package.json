@@ -55,6 +55,11 @@
             "type": "object",
             "title": "COBOL unit test syntax",
             "properties": {
+                "cut.maxWaitTime": {
+                    "type": "number",
+                    "default": 5000,
+                    "description": "Max wait time before kill the process."
+                },
                 "cut.maxNumberOfProblems": {
                     "scope": "resource",
                     "type": "number",

@@ -71,7 +71,7 @@ export function getCobolCheckRunArgumentsBasedOnSuiteDirectory(vsCodeInstallPath
 }
 
 export async function runCobolCheck(path : string, commandLineArgs : string) : Promise<CobParser.CobolCheckOutputParser> {
-	return new Promise(async resolve => {
+	return new Promise(async (resolve, reject) => {
 		// Getting the right command based on platform
 		let executeJarCommand = '';
 		if (currentPlatform === windowsPlatform){
@@ -86,12 +86,14 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 
 		LOGGER.log("Running Cobol Check with arguments: " + commandLineArgs, LOGGER.INFO)
 		try{
+			let maxWaitMillisec = vscode.workspace.getConfiguration("cut").maxWaitTime;
+			LOGGER.log("MAX WAIT TIME SET TO: " + maxWaitMillisec, LOGGER.INFO);
 			var exec = require('child_process').exec;
 			const testPath = appendPath(externalVsCodeInstallationDir, "Cobol-check");
 			// fix for MacOS
 			const tmpStr = "cd " + testPath + " && "
 			//Run Cobol Check jar with arguments
-			var child = exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, (error : string, stdout : string, stderr : string) => {
+			var child = await exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, {timeout: maxWaitMillisec}, (error : string, stdout : string, stderr : string) => {
 				if(error !== null){
 					LOGGER.log("*** COBOL CHECK ERROR: " + error, LOGGER.ERROR);
 				}
