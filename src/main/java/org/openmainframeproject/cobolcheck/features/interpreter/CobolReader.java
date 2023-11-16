@@ -4,8 +4,6 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
-import org.apache.commons.io.input;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
