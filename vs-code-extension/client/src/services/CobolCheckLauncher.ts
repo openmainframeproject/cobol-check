@@ -3,6 +3,9 @@ import { integer } from 'vscode-languageclient';
 import * as LOGGER from '../utils/Logger'
 import * as CobParser from './CobolCheckOutputParser'
 import { getConfigurationValueFor } from './CobolCheckConfiguration';
+import { subProcess, subProcessSync } from 'subspawn';
+
+
 
 const windowsPlatform = 'Windows';
 const macPlatform = 'MacOS';
@@ -86,17 +89,21 @@ export async function runCobolCheck(path : string, commandLineArgs : string) : P
 
 		LOGGER.log("Running Cobol Check with arguments: " + commandLineArgs, LOGGER.INFO)
 		try{
+			var killProcess = require('kill-process-by-name');
 			let maxWaitMillisec = vscode.workspace.getConfiguration("cut").maxWaitTime;
 			LOGGER.log("MAX WAIT TIME SET TO: " + maxWaitMillisec, LOGGER.INFO);
 			var exec = require('child_process').exec;
 			const testPath = appendPath(externalVsCodeInstallationDir, "Cobol-check");
 			// fix for MacOS
 			const tmpStr = "cd " + testPath + " && "
+				
 			//Run Cobol Check jar with arguments
-			var child = await exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, {timeout: maxWaitMillisec}, (error : string, stdout : string, stderr : string) => {
+			var child = exec(tmpStr + executeJarCommand + ' ' + commandLineArgs, {timeout:maxWaitMillisec}, (error : string, stdout : string, stderr : string) => {
 				if(error !== null){
 					LOGGER.log("*** COBOL CHECK ERROR: " + error, LOGGER.ERROR);
 				}
+				killProcess('cobc');
+				LOGGER.log("child.pid: " + child.pid, LOGGER.INFO);
 				LOGGER.log("Cobol Check out:\n" + stdout, LOGGER.INFO)
 				LOGGER.log("Cobol Check log:\n" + stderr, LOGGER.INFO)
 				resolve(new CobParser.CobolCheckOutputParser(stdout, stderr, error))
