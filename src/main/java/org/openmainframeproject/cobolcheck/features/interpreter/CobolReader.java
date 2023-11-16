@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
+import org.apache.commons.io.input;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class CobolReader {
 
     private String lineJustEntered = null;
     private final int maxLineLength = 72;
-
+    
     public CobolReader(BufferedReader sourceReader) {
         reader = sourceReader;
         state = new State();
@@ -66,7 +67,10 @@ public class CobolReader {
         }
         previousLine = currentLine;
         setPreviousMeaningfulLine();
-        currentLine = new CobolLine(line, tokenExtractor);
+        if (line.length() > 71)
+            currentLine = new CobolLine(line.substring(0, 71), tokenExtractor);
+        else
+            currentLine = new CobolLine(line, tokenExtractor);
         return currentLine;
     }
 
