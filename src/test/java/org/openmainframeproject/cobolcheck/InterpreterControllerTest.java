@@ -1010,7 +1010,7 @@ public class InterpreterControllerTest {
         while (currentLine != null){
             currentLine = interpreterController.interpretNextLine();
             if (currentLine != null && currentLine.contains("LINKAGE SECTION.")) {
-                assertFalse(interpreterController.shouldCurrentLineBeStubbed());
+                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
                 testsRan = true;
             }
         }

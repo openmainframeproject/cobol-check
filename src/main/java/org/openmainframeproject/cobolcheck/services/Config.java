@@ -64,6 +64,7 @@ public class Config {
     public static final String DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY = "./";
     public static final String GNUCOBOL_COMPILE_OPTIONS = "gnucobol.compile.options";
     public static final String RESOLVED_GNUCOBOL_COMPILE_OPTIONS = "resolved.gnucobol.compile.options";
+    public static final String COMMENT_LINKAGE = "comment.linkage";
 
     private static Properties settings = null;
 
@@ -340,6 +341,11 @@ public class Config {
         setGnuCOBOLCompileOptions();
         return (List<String>)settings.get(RESOLVED_GNUCOBOL_COMPILE_OPTIONS);
     }
+
+    public static Boolean getCommentLinkage() {
+        String value = settings.getProperty(COMMENT_LINKAGE, "false");
+        return Boolean.parseBoolean(value.trim());
+    } 
 
     public static Boolean getDisplayUnMockedCalls() {
         String value = settings.getProperty(DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY, "false");
