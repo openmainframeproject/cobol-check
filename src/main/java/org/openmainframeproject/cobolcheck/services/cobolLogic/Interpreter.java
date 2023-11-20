@@ -2,6 +2,7 @@ package org.openmainframeproject.cobolcheck.services.cobolLogic;
 
 import org.openmainframeproject.cobolcheck.features.interpreter.Area;
 import org.openmainframeproject.cobolcheck.features.interpreter.State;
+import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 
 import java.util.*;
@@ -269,6 +270,7 @@ public class Interpreter {
      * @return true if the source line should be commented out
      */
     public static boolean shouldLineBeStubbed(CobolLine line, State state) {
+
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)) {
             if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN) ||
                     line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN)) {
@@ -277,6 +279,10 @@ public class Interpreter {
         }
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
             if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
+                return true;
+        }
+        if (Config.getCommentLinkage()) {
+            if (line.containsToken(Constants.LINKAGE_SECTION))
                 return true;
         }
         return false;
