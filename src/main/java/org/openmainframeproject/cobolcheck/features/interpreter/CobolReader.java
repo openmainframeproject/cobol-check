@@ -65,8 +65,8 @@ public class CobolReader {
         }
         previousLine = currentLine;
         setPreviousMeaningfulLine();
-        if (line.length() > 71) 
-            currentLine = new CobolLine(line.substring(0, 71), tokenExtractor);
+        if (line.length() > 72) 
+            currentLine = new CobolLine(line.substring(0, 72), tokenExtractor);
         else
             currentLine = new CobolLine(line, tokenExtractor);
         return currentLine;

@@ -1027,7 +1027,7 @@ public class InterpreterControllerTest {
             interpreterController.interpretNextLine();
         }
 
-        assertEquals(interpreterController.getCurrentLineAsStatement().getTrimmedString(), "THIS LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE IS LONGGGGGGG");
+        assertEquals(interpreterController.getCurrentLineAsStatement().getTrimmedString(), "THIS LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE IS LONGGGGGGGG");
  
     }
 }
