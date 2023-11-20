@@ -233,8 +233,8 @@ public class InterpreterController {
         }
 
         // Current line might change from when it was originally read
-        if (reader.getCurrentLine().getUnNumberedString().length() > 71 )
-            return reader.getCurrentLine().getUnNumberedString().substring(0, 71);
+        if (reader.getCurrentLine().getUnNumberedString().length() > 72 )
+            return reader.getCurrentLine().getUnNumberedString().substring(0, 72);
         else 
             return reader.getCurrentLine().getUnNumberedString();
     }
