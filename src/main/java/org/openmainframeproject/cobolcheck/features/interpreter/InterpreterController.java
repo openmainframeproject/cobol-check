@@ -53,6 +53,10 @@ public class InterpreterController {
         return lineRepository.getFileControlStatements();
     }
 
+    public List<String> getSqlCopyBookStatements() {
+        return lineRepository.getSqlCopyBookStatement();
+    }
+
     public Map<String, String> getFileIdentifiersAndStatuses() {
         return lineRepository.getFileIdentifiersAndStatuses();
     }
@@ -154,9 +158,11 @@ public class InterpreterController {
     public boolean shouldCurrentStatementBeStubbed() {
         for (CobolLine line : reader.getCurrentStatement()) {
             if (Interpreter.shouldLineBeStubbed(line, reader.getState())) {
-                if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
+                if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine())) {
                     reader.putNextLine("           .");
-                reader.putNextLine("            CONTINUE");
+                    if (!reader.getState().isFlagSetFor(Constants.WORKING_STORAGE_SECTION))    
+                        reader.putNextLine("            CONTINUE");
+                }
                 return true;
             }
         }

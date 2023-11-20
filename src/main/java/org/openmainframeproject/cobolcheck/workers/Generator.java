@@ -33,6 +33,7 @@ public class Generator {
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
     private boolean workingStorageHasEnded;
+    private boolean linkageExist;
 
     List<String> matchingTestDirectories;
     
@@ -82,7 +83,8 @@ public class Generator {
             Log.debug("Initializer.runTestSuites() testSourceOutPath: <" + testSourceOutPath + ">");
 
             workingStorageHasEnded = false;
-
+            linkageExist = false;
+            
             mergeTestSuite();
             Log.info(Messages.get("INF012", programName));
 
@@ -132,11 +134,18 @@ public class Generator {
             writerController.startStoringLines();
             workingStorageHasEnded = true;
         }
-        if (interpreter.didLineJustEnter(Constants.PROCEDURE_DIVISION) && interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)){
+        if (interpreter.didLineJustEnter(Constants.PROCEDURE_DIVISION) && interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
+            if (!interpreter.getSqlCopyBookStatements().isEmpty() && !linkageExist) 
+                writerController.writeLines(interpreter.getSqlCopyBookStatements());
             writerController.stopStoringLines();
             testSuiteParserController.parseTestSuites(interpreter.getNumericFields());
             writerController.writeLines(testSuiteParserController.getWorkingStorageMockCode());
             writerController.releaseStoredLines();
+        }
+        if (interpreter.didLineJustEnter(Constants.LINKAGE_SECTION))  { 
+            if (!interpreter.getSqlCopyBookStatements().isEmpty() ) 
+                writerController.writeLines(interpreter.getSqlCopyBookStatements());
+            linkageExist = true;
         }
     }
 
@@ -177,8 +186,6 @@ public class Generator {
                 if (interpreter.shouldCurrentLineBeStubbed()) {
                     if(interpreter.isReading(Constants.WORKING_STORAGE_SECTION)) {
                         writerController.writeStubbedLine(interpreter.getCurrentLineAsStatement().getUnNumberedString());
-                        if (!interpreter.getFileSectionStatements().isEmpty())
-                            writerController.writeLines(interpreter.getFileSectionStatements());
                     }
                     else 
                         writerController.writeStubbedLine(sourceLine);

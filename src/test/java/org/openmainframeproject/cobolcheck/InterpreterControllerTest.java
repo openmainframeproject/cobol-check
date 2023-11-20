@@ -890,11 +890,11 @@ public class InterpreterControllerTest {
             interpreterController.interpretNextLine();
         }
 
-        assertEquals(4,interpreterController.getFileSectionStatements().size());
-        assertTrue(interpreterController.getFileSectionStatements().contains("       01  TEXEM."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           10 FIRST-NAME           PIC X(10)."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           10 LAST-NAME            PIC X(10)."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           10 TMS-CREA             PIC X(26)."));
+        assertEquals(4,interpreterController.getSqlCopyBookStatements().size());
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("       01  TEXEM."));
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("           10 FIRST-NAME           PIC X(10)."));
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("           10 LAST-NAME            PIC X(10)."));
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("           10 TMS-CREA             PIC X(26)."));
     }
 
     @Test
@@ -910,11 +910,11 @@ public class InterpreterControllerTest {
             interpreterController.interpretNextLine();
         }
 
-        assertEquals(4,interpreterController.getFileSectionStatements().size());
-        assertTrue(interpreterController.getFileSectionStatements().contains("       01  TEXEM."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           10 FIRST-NAME           PIC X(10)."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           10 LAST-NAME            PIC X(10)."));
-        assertTrue(interpreterController.getFileSectionStatements().contains("           10 TMS-CREA             PIC X(26)."));
+        assertEquals(4,interpreterController.getSqlCopyBookStatements().size());
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("       01  TEXEM."));
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("           10 FIRST-NAME           PIC X(10)."));
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("           10 LAST-NAME            PIC X(10)."));
+        assertTrue(interpreterController.getSqlCopyBookStatements().contains("           10 TMS-CREA             PIC X(26)."));
     }
 
     @Test
