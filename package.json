@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "kill-process-by-name": "^1.0.5"
+  }
+}
