@@ -1016,4 +1016,18 @@ public class InterpreterControllerTest {
         }
         assertTrue(testsRan);
     }
+    
+    @Test
+    public void it_doesnt_read_pass_col_72() throws IOException {
+        String str1 = "       THIS LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE IS LONGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, null);
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        assertEquals(interpreterController.getCurrentLineAsStatement().getTrimmedString(), "THIS LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE IS LONGGGGGGG");
+ 
+    }
 }
