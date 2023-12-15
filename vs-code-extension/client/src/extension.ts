@@ -32,6 +32,7 @@ export async function activate(context: ExtensionContext) {
 
 	const fileChangedEmitter = new vscode.EventEmitter<vscode.Uri>();
 	
+	// let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', (pathToExpandedProgram : string) => {
 	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', () => {
 		//Setting loader
 		vscode.window.withProgress({location: vscode.ProgressLocation.Notification, cancellable: true, title: 'Cobol Check running:'}, 
@@ -41,7 +42,15 @@ export async function activate(context: ExtensionContext) {
 
 			//Getting arguments to run
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
-			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, vscode.window.activeTextEditor.document.uri.fsPath);
+			// let argument : string = ''
+			// console.log("Cobol-check extention: pathToExpandedProgram=" + pathToExpandedProgram)	
+			// if(pathToExpandedProgram === undefined) {
+				let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, vscode.window.activeTextEditor.document.uri.fsPath);
+			// }
+			// else {
+			// 	argument = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, pathToExpandedProgram);
+			// }
+			// console.log("Cobol-check extention: argument=" + argument)
 			if (argument === null) return;
 
 			progress.report({ message: 'Running tests' })
