@@ -24,7 +24,7 @@ let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/b
 let currentPlatform = getOS();
 
 
-export async function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) { 
 	startCutLanguageClientServer(context);
 
 	const ctrl = vscode.tests.createTestController('CobolCheckController', 'Cobol Check');
