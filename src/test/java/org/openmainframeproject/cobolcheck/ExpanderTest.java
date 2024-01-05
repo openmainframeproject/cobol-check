@@ -396,9 +396,6 @@ public class ExpanderTest {
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
-                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
-                    "      *    PERFORM 100-WELCOME                                                  " + Constants.NEWLINE +
-                    "      *END-CALL.                                                                  " + Constants.NEWLINE +
                     "           PERFORM UT-PROCESS-UNMOCK-CALL                                             " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
@@ -443,8 +440,6 @@ public class ExpanderTest {
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
-                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
-                    "      *    PERFORM 100-WELCOME.                                                 " + Constants.NEWLINE +
                     "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
@@ -489,8 +484,6 @@ public class ExpanderTest {
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE + 
-                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE + 
-                    "      *    DISPLAY \"HELLO WORLD\".                                             " + Constants.NEWLINE +
                     "           PERFORM UT-PROCESS-UNMOCK-CALL                                " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    ";
@@ -535,12 +528,6 @@ public class ExpanderTest {
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                 " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING VALUE-1                                           " + Constants.NEWLINE +
-                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE + 
-                    "      *    CALL \"PROGRAM2\" USING VALUE-1                                      " + Constants.NEWLINE +
-                    "      *    ON EXCEPTION                                                         " + Constants.NEWLINE +
-                    "      *    DISPLAY \"HELLO WORLD\"                                              " + Constants.NEWLINE +
-                    "      *    END-CALL                                                             " + Constants.NEWLINE + 
-                    "      *END-CALL                                                                 " + Constants.NEWLINE +
                     "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +    
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "      DISPLAY \"NO COMMENTS\"                                                   " + Constants.NEWLINE;
@@ -585,12 +572,10 @@ public class ExpanderTest {
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
-                    "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
                     "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +   
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "      *CALL \"PROGRAM\" USING DATA-1 ON EXCEPTION                               " + Constants.NEWLINE +
-                    "      *    DISPLAY \"ERROR\".                                                   " + Constants.NEWLINE +
                     "           PERFORM UT-PROCESS-UNMOCK-CALL                                 " + Constants.NEWLINE +
                     "            CONTINUE                                                            " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE;

@@ -2,9 +2,9 @@
        PROGRAM-ID.  MOCK.
       /****************************************************************
       * Program to exercise different mock statements and edge cases.
-      *****************************************************************
+      ***************************************************************** 
        ENVIRONMENT DIVISION.
-       INPUT-OUTPUT SECTION.
+       INPUT-OUTPUT SECTION.                                            
        FILE-CONTROL.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
@@ -23,10 +23,10 @@
 
        000-START SECTION.
            MOVE "Value1" to VALUE-1
-           MOVE "Value2" to VALUE-2
+           MOVE "Value2" to VALUE-2                                     dadawdwd
       /
-           PERFORM 100-WELCOME
-           PERFORM 200-GOODBYE
+           PERFORM 100-WELCOME                                          dadadada
+           PERFORM 200-GOODBYE                                          dadadada
       /
            PERFORM 300-CHANGE-1
            PERFORM 400-CHANGE-2
