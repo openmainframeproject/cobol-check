@@ -12,7 +12,7 @@ group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
 
 def approvalExpectedOutput = "approval-test-expected.txt"
-def approvalActualOutput = "output/testResults.txt"
+def approvalActualOutput = "approval-test-actual.txt"
 
 sonarqube {
     properties {
@@ -194,7 +194,7 @@ task prepareDistribution(type: Zip) {
 
 def approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn fatJar
+    dependsOn copyJarToBin, copyRunScripts
     def output = -1
 
     if ("${OS_NAME}" == "linux") {
