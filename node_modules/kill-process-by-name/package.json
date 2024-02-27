@@ -1,0 +1,18 @@
+{
+  "name": "kill-process-by-name",
+  "version": "1.0.5",
+  "description": "Kills all processes by a certain program",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "Process",
+    "killall",
+    "kill",
+    "subprocess",
+    "child"
+  ],
+  "author": "Richard Wolf",
+  "license": "MIT"
+}
