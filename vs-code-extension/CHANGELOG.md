@@ -1,6 +1,13 @@
 # Change Log
 
 All notable changes to the "cobol-unit-test" extension will be documented in this file. Versioning according to SemVer: https://semver.org/ 
+## [0.4.4] 04.04.2024
+- Now using COBOL Check version 0.2.9 
+
+## [0.4.3] 29.12.2023
+- Create alternative temp file for cobol check extension
+- Unit test can now run with or without input file
+
 ## [0.4.2] 21.09.2023
 - Using VScode build in Testing control framework
 - Removed Cobol Check view in view container
