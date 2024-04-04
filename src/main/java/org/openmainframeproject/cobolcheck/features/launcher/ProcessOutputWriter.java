@@ -99,7 +99,7 @@ public class ProcessOutputWriter {
             errorThread.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore interrupted status
-            Log.warn(Messages.get("WRN008")); 
+            Log.warn(Messages.get("WRN009"));
         }
 
         // Convert StringBuilder to String, removing the last NEWLINE if necessary
