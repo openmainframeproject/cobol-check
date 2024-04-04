@@ -75,17 +75,28 @@ public class CobolGenerator {
             lines.add(getInjectEndTagComment());
     }
 
-    static List<String> generateWhenOtherLines(String identifier, String type, List<String> commentLines, List<String> bodyLines){
+    static List<String> generateWhenOtherLines(String identifier, String type, List<String> commentLines, List<String> bodyLines) {
         List<String> lines = new ArrayList<>();
-        if(type.equals(Constants.SECTION_TOKEN)) 
+        if (type.equals(Constants.SECTION_TOKEN))
             lines.add(String.format(WHEN_OTHER_SECTION_HEADER_FORMAT, identifier));
-        else lines.add(String.format(PARAGRAPH_HEADER_FORMAT, identifier));
+        else
+            lines.add(String.format(PARAGRAPH_HEADER_FORMAT, identifier));
+
         if (commentLines != null)
             lines.addAll(commentLines);
-        if (bodyLines != null)
+
+        if (bodyLines != null) {
             lines.addAll(bodyLines);
-        lines.add(ENDING_PERIOD);
+            // Check if the last line in bodyLines ends with a period
+            if (!bodyLines.get(bodyLines.size() - 1).endsWith(".")) {
+                lines.add(ENDING_PERIOD);
+            }
+        } else {
+            // If bodyLines is null, add ENDING_PERIOD
+            lines.add(ENDING_PERIOD);
+        }
         return lines;
     }
+
 
 }
