@@ -112,7 +112,12 @@ public class ProcessOutputWriter {
         catch (IOException ex) {
             Log.warn(Messages.get("WRN007"));
         }
+
+        // Convert StringBuilder to String, removing the last NEWLINE if necessary
+        processInput = StringHelper.removeLastIndex(processInputBuilder.toString());
+        processError = StringHelper.removeLastIndex(processErrorBuilder.toString());
     }
+
 
     private void writeOutPutToConsole() {
         System.out.println(processInput);
