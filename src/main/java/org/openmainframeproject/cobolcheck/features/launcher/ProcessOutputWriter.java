@@ -67,6 +67,7 @@ public class ProcessOutputWriter {
         int numberOfCharsRead = 0;
         char cobolCheckOutput[] = null;
         try {
+<<<<<<< HEAD
                 numberOfCharsRead = reader.read(tempReadBuffer, writeOffset, maxBytesToReadFromCobolCheck);
                 System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
                 if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
@@ -111,6 +112,13 @@ public class ProcessOutputWriter {
         }
         catch (IOException ex) {
             Log.warn(Messages.get("WRN007"));
+=======
+            inputThread.join();
+            errorThread.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            Log.warn(Messages.get("WRN009"));
+>>>>>>> 1ad4623 (Correct message)
         }
 
         // Convert StringBuilder to String, removing the last NEWLINE if necessary
