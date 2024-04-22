@@ -1,4 +1,4 @@
-// The module 'vscode' contains the VS Code extensibility API
+// The module 'vscode' contains the VS Code extensibility API 
 // Import the module and reference it with the alias vscode in your code below
 
 //Include files ved byg/udgivelse?
@@ -32,7 +32,7 @@ export async function activate(context: ExtensionContext) {
 
 	const fileChangedEmitter = new vscode.EventEmitter<vscode.Uri>();
 	
-	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', () => {
+	let runCobolCheck_Cmd = vscode.commands.registerCommand('cobolcheck.run', (pathToExpandedProgram : string) => {
 		//Setting loader
 		vscode.window.withProgress({location: vscode.ProgressLocation.Notification, cancellable: true, title: 'Cobol Check running:'}, 
 		async (progress) => {
@@ -41,7 +41,15 @@ export async function activate(context: ExtensionContext) {
 
 			//Getting arguments to run
 			let applicationSourceDir = await getConfigurationValueFor(configPath, 'application.source.directory');
-			let argument : string = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, vscode.window.activeTextEditor.document.uri.fsPath);
+			let argument : string = null
+			console.log("Cobol-check extention: pathToExpandedProgram=" + pathToExpandedProgram)	
+			if(pathToExpandedProgram === undefined) {
+				argument = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, vscode.window.activeTextEditor.document.uri.fsPath);
+			}
+			else {
+				argument = getCobolCheckRunArgumentsBasedOnCurrentFile(externalVsCodeInstallationDir, configPath, applicationSourceDir, pathToExpandedProgram);
+			}
+			console.log("Cobol-check extention: argument=" + argument)
 			if (argument === null) return;
 
 			progress.report({ message: 'Running tests' })
