@@ -21,8 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock batch file I/O
 
 ## \[0.2.9\] 2024-04-23
-### Not released
+### Implemented
+- Better thread handling of the files processInput and processError 
 - Fixing bug in showing unit test result twice.
+
 
 ## \[0.2.8\] 2023-10-17
 ### Implemented

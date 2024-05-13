@@ -8,7 +8,7 @@
         "Snippets"
     ],
     "description": "Extension for running unit tests in Cobol",
-    "version": "0.4.3",
+    "version": "0.4.4",
     "icon": "images/cobol-check-logo-small.png",
     "repository": {
         "type": "git",

@@ -336,7 +336,6 @@ public class MockIT {
                     "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
                     "           EXIT SECTION                                                         " + Constants.NEWLINE +
                     "           .                                                                   " + Constants.NEWLINE+
-                    "           .                                                                   " + Constants.NEWLINE+
                     "                                                                              " + Constants.NEWLINE+
                     "                                                                                "+ Constants.NEWLINE;
 
@@ -506,7 +505,6 @@ public class MockIT {
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
             "           EXIT SECTION.                                                        " + Constants.NEWLINE +
             "           .                                                                   " + Constants.NEWLINE+
-            "           .                                                                   " + Constants.NEWLINE+
             "                                                                                " + Constants.NEWLINE+
             "                                                                                " + Constants.NEWLINE+
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
@@ -530,7 +528,6 @@ public class MockIT {
             "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "                                                                                " + Constants.NEWLINE+
             "       200-GOODBYE SECTION                   .                                                    " + Constants.NEWLINE +
@@ -553,7 +550,6 @@ public class MockIT {
             "      *****************************************************************     " + Constants.NEWLINE +
             "           MOVE \"Bye\" to VALUE-1                                                 " + Constants.NEWLINE +
             "          .                                                                    " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "                                                                                " + Constants.NEWLINE;
 
@@ -796,7 +792,6 @@ public class MockIT {
             "           MOVE \"Value1\" to VALUE-1                                             " + Constants.NEWLINE +
             "           EXIT SECTION.                                                        " + Constants.NEWLINE +
             "           .                                                                   " + Constants.NEWLINE+
-            "           .                                                           " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "                                                                                " + Constants.NEWLINE+
             "       100-WELCOME SECTION.                                                     " + Constants.NEWLINE +
@@ -830,7 +825,6 @@ public class MockIT {
             "            CONTINUE                                                        " + Constants.NEWLINE +
             "           MOVE \"Hello\" to VALUE-1.                                              " + Constants.NEWLINE +
             "           .                                                                    " + Constants.NEWLINE +
-            "           .                                                           " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE+
             "                                                                                " + Constants.NEWLINE+
             "       200-GOODBYE SECTION.                                                     " + Constants.NEWLINE +
@@ -879,7 +873,6 @@ public class MockIT {
             "            END-EVALUATE                                                        " + Constants.NEWLINE +
             "            CONTINUE                                                        " + Constants.NEWLINE +
             "          .                                                                    " + Constants.NEWLINE +
-            "           .                                                           " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "      * Ending with comment                                                    ";
