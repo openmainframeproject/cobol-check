@@ -60,14 +60,17 @@ public class ProcessOutputWriter {
     }
 
     private void getProcessOut(Process proc) {
-<<<<<<< HEAD
-        Reader reader = new InputStreamReader(proc.getInputStream());
-        int maxBytesToReadFromCobolCheck = 25000;
-        char tempReadBuffer[] = new char[maxBytesToReadFromCobolCheck];
-        int writeOffset = 0;
-        int numberOfCharsRead = 0;
-        char cobolCheckOutput[] = null;
-        try {
+        StringBuilder processErrorBuilder = new StringBuilder();
+        final Object lock = new Object(); // For synchronizing access if necessary
+
+        Thread inputThread = new Thread(() -> {
+            Reader reader = new InputStreamReader(proc.getInputStream());
+            int maxBytesToReadFromCobolCheck = 25000;
+            char tempReadBuffer[] = new char[maxBytesToReadFromCobolCheck];
+            int writeOffset = 0;
+            int numberOfCharsRead = 0;
+            char cobolCheckOutput[] = null;    
+            try {
                 numberOfCharsRead = reader.read(tempReadBuffer, writeOffset, maxBytesToReadFromCobolCheck);
                 System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
                 if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
@@ -86,38 +89,12 @@ public class ProcessOutputWriter {
                 }
                 reader.close();
                 System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
-        }
-        catch(IOException e) {
-            System.out.println("ProcessOutputWriter - getProcessOut - e = " + e);
-        }
-        
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-
-        processError = "";
-        try{
-            String s = null;
+            } catch (IOException e) {
+                Log.warn(Messages.get("WRN007"));
+            }
             processInput = "";
             for (int i = 0; i < numberOfCharsRead; i++) {
                 processInput += cobolCheckOutput[i];
-            }
-            while ((s = stdError.readLine()) != null){
-                if (s != null)
-                    processError += s + Constants.NEWLINE;
-=======
-        StringBuilder processInputBuilder = new StringBuilder();
-        StringBuilder processErrorBuilder = new StringBuilder();
-        final Object lock = new Object(); // For synchronizing access if necessary
-
-        Thread inputThread = new Thread(() -> {
-            try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-                String s;
-                while ((s = stdInput.readLine()) != null) {
-                    synchronized (lock) {
-                        processInputBuilder.append(s).append(Constants.NEWLINE);
-                    }
-                }
-            } catch (IOException e) {
-                Log.warn(Messages.get("WRN007"));
             }
         });
 
@@ -131,16 +108,9 @@ public class ProcessOutputWriter {
                 }
             } catch (IOException e) {
                 Log.warn(Messages.get("WRN007"));
->>>>>>> origin/Developer
             }
         });
 
-<<<<<<< HEAD
-            stdError.close();
-        }
-        catch (IOException ex) {
-            Log.warn(Messages.get("WRN007"));
-=======
         inputThread.start();
         errorThread.start();
 
@@ -151,11 +121,10 @@ public class ProcessOutputWriter {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore interrupted status
             Log.warn(Messages.get("WRN009"));
->>>>>>> origin/Developer
         }
 
         // Convert StringBuilder to String, removing the last NEWLINE if necessary
-        processInput = StringHelper.removeLastIndex(processInputBuilder.toString());
+        processInput = StringHelper.removeLastIndex(processInput.toString());
         processError = StringHelper.removeLastIndex(processErrorBuilder.toString());
     }
 
