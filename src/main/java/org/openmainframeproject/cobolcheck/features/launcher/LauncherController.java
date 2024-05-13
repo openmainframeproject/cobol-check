@@ -40,7 +40,6 @@ public class LauncherController {
         int exitCode = launcher.launchProgram(pLauncher, PathHelper.getTestSourceOutPath(), (proc) ->
                 processOutputWriter.writeProcessOutputToTestResultsFile(proc, Config.getTestResultFormat(),
                         Config.getTestResultFormatStyle(), programName, true, isLastRun));
-
         if (processOutputWriter.writeWasSuccesful){
             Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
         }

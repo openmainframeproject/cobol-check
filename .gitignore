@@ -125,3 +125,4 @@ approval-test-actual.txt
 default.conf
 null
 ParserErrorLog.txt
+/zapp.json

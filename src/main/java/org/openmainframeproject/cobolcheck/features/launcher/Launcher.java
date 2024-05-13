@@ -33,10 +33,9 @@ public class Launcher {
     int launchProgram(ProcessLauncher launcher, String programPath) throws InterruptedException {
         if (launcher == null) return -1;
         Process process = launcher.run(programPath);
-
         int exitCode = 1;
         exitCode = process.waitFor();
-        return exitCode;
+                return exitCode;
     }
 
     /**
