@@ -60,18 +60,45 @@ public class ProcessOutputWriter {
     }
 
     private void getProcessOut(Process proc) {
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        Reader reader = new InputStreamReader(proc.getInputStream());
+        int maxBytesToReadFromCobolCheck = 25000;
+        char tempReadBuffer[] = new char[maxBytesToReadFromCobolCheck];
+        int writeOffset = 0;
+        int numberOfCharsRead = 0;
+        char cobolCheckOutput[] = null;
+        try {
+                numberOfCharsRead = reader.read(tempReadBuffer, writeOffset, maxBytesToReadFromCobolCheck);
+                System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
+                if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
+                    int largeMaxBytesToReadFromCobolCheck = 100000;
+                    char largeTempReadBuffer[] = new char[maxBytesToReadFromCobolCheck + largeMaxBytesToReadFromCobolCheck];
+                    System.arraycopy(tempReadBuffer, 0, largeTempReadBuffer, 0, tempReadBuffer.length);
+                    int largeNumberOfCharsRead = reader.read(largeTempReadBuffer, tempReadBuffer.length, largeMaxBytesToReadFromCobolCheck);
+                    System.out.println("ProcessOutputWriter: largeNumberOfCharsRead = " + largeNumberOfCharsRead);
+                    numberOfCharsRead += largeNumberOfCharsRead;
+                    cobolCheckOutput = new char[numberOfCharsRead];
+                    System.arraycopy(largeTempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                }
+                else {
+                    cobolCheckOutput = new char[numberOfCharsRead];
+                    System.arraycopy(tempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                }
+                reader.close();
+                System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
+        }
+        catch(IOException e) {
+            System.out.println("ProcessOutputWriter - getProcessOut - e = " + e);
+        }
+        
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        processInput = "";
-        processError = "";
 
+        processError = "";
         try{
             String s = null;
-            while ((s = stdInput.readLine()) != null){
-                if (s != null)
-                    processInput += s + Constants.NEWLINE;
+            processInput = "";
+            for (int i = 0; i < numberOfCharsRead; i++) {
+                processInput += cobolCheckOutput[i];
             }
-
             while ((s = stdError.readLine()) != null){
                 if (s != null)
                     processError += s + Constants.NEWLINE;
@@ -80,11 +107,9 @@ public class ProcessOutputWriter {
             processInput = StringHelper.removeLastIndex(processInput);
             processError = StringHelper.removeLastIndex(processError);
 
-            stdInput.close();
             stdError.close();
         }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             Log.warn(Messages.get("WRN007"));
         }
     }

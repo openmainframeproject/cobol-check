@@ -58,11 +58,9 @@ public abstract class Formatter {
      */
     public void parseText(String text, String testSuitePackage){
         String[] lines = text.split(Constants.NEWLINE);
-
         for (String line : lines){
             if (line.trim().isEmpty() || line.startsWith("==="))
                 continue;
-
 
             //Getting Test Suite name
             if (line.trim().equalsIgnoreCase(testSuiteKeyword))
