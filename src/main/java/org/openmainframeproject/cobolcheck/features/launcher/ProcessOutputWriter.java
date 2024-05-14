@@ -73,23 +73,22 @@ public class ProcessOutputWriter {
             try {
                 synchronized (lock) {
                     numberOfCharsRead = reader.read(tempReadBuffer, writeOffset, maxBytesToReadFromCobolCheck);
-                    System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
-                    if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
-                        int largeMaxBytesToReadFromCobolCheck = 100000;
-                        char largeTempReadBuffer[] = new char[maxBytesToReadFromCobolCheck + largeMaxBytesToReadFromCobolCheck];
-                        System.arraycopy(tempReadBuffer, 0, largeTempReadBuffer, 0, tempReadBuffer.length);
-                        int largeNumberOfCharsRead = reader.read(largeTempReadBuffer, tempReadBuffer.length, largeMaxBytesToReadFromCobolCheck);
-                        System.out.println("ProcessOutputWriter: largeNumberOfCharsRead = " + largeNumberOfCharsRead);
-                        numberOfCharsRead += largeNumberOfCharsRead;
-                        cobolCheckOutput = new char[numberOfCharsRead];
-                        System.arraycopy(largeTempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
-                    }
-                    else {
-                        cobolCheckOutput = new char[numberOfCharsRead];
-                        System.arraycopy(tempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                    if(numberOfCharsRead > 0) {
+                        if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
+                            int largeMaxBytesToReadFromCobolCheck = 100000;
+                            char largeTempReadBuffer[] = new char[maxBytesToReadFromCobolCheck + largeMaxBytesToReadFromCobolCheck];
+                            System.arraycopy(tempReadBuffer, 0, largeTempReadBuffer, 0, tempReadBuffer.length);
+                            int largeNumberOfCharsRead = reader.read(largeTempReadBuffer, tempReadBuffer.length, largeMaxBytesToReadFromCobolCheck);
+                            numberOfCharsRead += largeNumberOfCharsRead;
+                            cobolCheckOutput = new char[numberOfCharsRead];
+                            System.arraycopy(largeTempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                        }
+                        else {
+                            cobolCheckOutput = new char[numberOfCharsRead];
+                            System.arraycopy(tempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                        }
                     }
                     reader.close();
-                    System.out.println("ProcessOutputWriter: numberOfCharsRead = " + numberOfCharsRead);
                 }
             } catch (IOException e) {
                 Log.warn(Messages.get("WRN007"));
