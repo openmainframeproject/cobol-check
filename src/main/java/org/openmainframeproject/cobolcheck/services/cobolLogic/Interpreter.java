@@ -3,6 +3,8 @@ package org.openmainframeproject.cobolcheck.services.cobolLogic;
 import org.openmainframeproject.cobolcheck.features.interpreter.Area;
 import org.openmainframeproject.cobolcheck.features.interpreter.State;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.platform.Platform;
+import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
 
 import java.util.*;
 
@@ -276,8 +278,15 @@ public class Interpreter {
             }
         }
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
-            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
-                return true;
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN)) {
+                Platform platform = PlatformLookup.get();
+                switch(platform){
+                    case ZOS:
+                        return false;
+                    default:
+                        return true;
+                }
+            }
         }
         return false;
     }
