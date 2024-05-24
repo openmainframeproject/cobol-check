@@ -63,136 +63,141 @@ declare module 'vscode' {
 		constructor(covered: number, total: number);
 	}
 
+	/* ******************************************************************************** */
+	/* Below classes is out commented because they have been moved to standard npm code */
+	/* in the file index.d.ts                                                           */
+	/* ******************************************************************************** */
+
 	/**
 	 * Contains coverage metadata for a file.
 	 */
-	export class FileCoverage {
-		/**
-		 * File URI.
-		 */
-		readonly uri: Uri;
+	// export class FileCoverage {
+	// 	/**
+	// 	 * File URI.
+	// 	 */
+	// 	readonly uri: Uri;
 
-		/**
-		 * Statement coverage information. If the reporter does not provide statement
-		 * coverage information, this can instead be used to represent line coverage.
-		 */
-		statementCoverage: CoveredCount;
+	// 	/**
+	// 	 * Statement coverage information. If the reporter does not provide statement
+	// 	 * coverage information, this can instead be used to represent line coverage.
+	// 	 */
+	// 	statementCoverage: CoveredCount;
 
-		/**
-		 * Branch coverage information.
-		 */
-		branchCoverage?: CoveredCount;
+	// 	/**
+	// 	 * Branch coverage information.
+	// 	 */
+	// 	branchCoverage?: CoveredCount;
 
-		/**
-		 * Function coverage information.
-		 */
-		functionCoverage?: CoveredCount;
+	// 	/**
+	// 	 * Function coverage information.
+	// 	 */
+	// 	functionCoverage?: CoveredCount;
 
-		/**
-		 * Detailed, per-statement coverage. If this is undefined, the editor will
-		 * call {@link TestCoverageProvider.resolveFileCoverage} when necessary.
-		 */
-		detailedCoverage?: DetailedCoverage[];
+	// 	/**
+	// 	 * Detailed, per-statement coverage. If this is undefined, the editor will
+	// 	 * call {@link TestCoverageProvider.resolveFileCoverage} when necessary.
+	// 	 */
+	// 	detailedCoverage?: DetailedCoverage[];
 
-		/**
-		 * Creates a {@link FileCoverage} instance with counts filled in from
-		 * the coverage details.
-		 * @param uri Covered file URI
-		 * @param detailed Detailed coverage information
-		 */
-		static fromDetails(uri: Uri, details: readonly DetailedCoverage[]): FileCoverage;
+	// 	/**
+	// 	 * Creates a {@link FileCoverage} instance with counts filled in from
+	// 	 * the coverage details.
+	// 	 * @param uri Covered file URI
+	// 	 * @param detailed Detailed coverage information
+	// 	 */
+	// 	static fromDetails(uri: Uri, details: readonly DetailedCoverage[]): FileCoverage;
 
-		/**
-		 * @param uri Covered file URI
-		 * @param statementCoverage Statement coverage information. If the reporter
-		 * does not provide statement coverage information, this can instead be
-		 * used to represent line coverage.
-		 * @param branchCoverage Branch coverage information
-		 * @param functionCoverage Function coverage information
-		 */
-		constructor(
-			uri: Uri,
-			statementCoverage: CoveredCount,
-			branchCoverage?: CoveredCount,
-			functionCoverage?: CoveredCount,
-		);
-	}
+	// 	/**
+	// 	 * @param uri Covered file URI
+	// 	 * @param statementCoverage Statement coverage information. If the reporter
+	// 	 * does not provide statement coverage information, this can instead be
+	// 	 * used to represent line coverage.
+	// 	 * @param branchCoverage Branch coverage information
+	// 	 * @param functionCoverage Function coverage information
+	// 	 */
+	// 	constructor(
+	// 		uri: Uri,
+	// 		statementCoverage: CoveredCount,
+	// 		branchCoverage?: CoveredCount,
+	// 		functionCoverage?: CoveredCount,
+	// 	);
+	// }
 
 	/**
 	 * Contains coverage information for a single statement or line.
 	 */
-	export class StatementCoverage {
-		/**
-		 * The number of times this statement was executed. If zero, the
-		 * statement will be marked as un-covered.
-		 */
-		executionCount: number;
+	// export class StatementCoverage {
+	// 	/**
+	// 	 * The number of times this statement was executed. If zero, the
+	// 	 * statement will be marked as un-covered.
+	// 	 */
+	// 	executionCount: number;
 
-		/**
-		 * Statement location.
-		 */
-		location: Position | Range;
+	// 	/**
+	// 	 * Statement location.
+	// 	 */
+	// 	location: Position | Range;
 
-		/**
-		 * Coverage from branches of this line or statement. If it's not a
-		 * conditional, this will be empty.
-		 */
-		branches: BranchCoverage[];
+	// 	/**
+	// 	 * Coverage from branches of this line or statement. If it's not a
+	// 	 * conditional, this will be empty.
+	// 	 */
+	// 	branches: BranchCoverage[];
 
-		/**
-		 * @param location The statement position.
-		 * @param executionCount The number of times this statement was
-		 * executed. If zero, the statement will be marked as un-covered.
-		 * @param branches Coverage from branches of this line.  If it's not a
-		 * conditional, this should be omitted.
-		 */
-		constructor(executionCount: number, location: Position | Range, branches?: BranchCoverage[]);
-	}
+	// 	/**
+	// 	 * @param location The statement position.
+	// 	 * @param executionCount The number of times this statement was
+	// 	 * executed. If zero, the statement will be marked as un-covered.
+	// 	 * @param branches Coverage from branches of this line.  If it's not a
+	// 	 * conditional, this should be omitted.
+	// 	 */
+	// 	constructor(executionCount: number, location: Position | Range, branches?: BranchCoverage[]);
+	// }
 
 	/**
 	 * Contains coverage information for a branch of a {@link StatementCoverage}.
 	 */
-	export class BranchCoverage {
-		/**
-		 * The number of times this branch was executed. If zero, the
-		 * branch will be marked as un-covered.
-		 */
-		executionCount: number;
+	// export class BranchCoverage {
+	// 	/**
+	// 	 * The number of times this branch was executed. If zero, the
+	// 	 * branch will be marked as un-covered.
+	// 	 */
+	// 	executionCount: number;
 
-		/**
-		 * Branch location.
-		 */
-		location?: Position | Range;
+	// 	/**
+	// 	 * Branch location.
+	// 	 */
+	// 	location?: Position | Range;
 
-		/**
-		 * @param executionCount The number of times this branch was executed.
-		 * @param location The branch position.
-		 */
-		constructor(executionCount: number, location?: Position | Range);
-	}
+	// 	/**
+	// 	 * @param executionCount The number of times this branch was executed.
+	// 	 * @param location The branch position.
+	// 	 */
+	// 	constructor(executionCount: number, location?: Position | Range);
+	// }
 
 	/**
 	 * Contains coverage information for a function or method.
 	 */
-	export class FunctionCoverage {
-		/**
-		 * The number of times this function was executed. If zero, the
-		 * function will be marked as un-covered.
-		 */
-		executionCount: number;
+	// export class FunctionCoverage {
+	// 	/**
+	// 	 * The number of times this function was executed. If zero, the
+	// 	 * function will be marked as un-covered.
+	// 	 */
+	// 	executionCount: number;
 
-		/**
-		 * Function location.
-		 */
-		location: Position | Range;
+	// 	/**
+	// 	 * Function location.
+	// 	 */
+	// 	location: Position | Range;
 
-		/**
-		 * @param executionCount The number of times this function was executed.
-		 * @param location The function position.
-		 */
-		constructor(executionCount: number, location: Position | Range);
-	}
+	// 	/**
+	// 	 * @param executionCount The number of times this function was executed.
+	// 	 * @param location The function position.
+	// 	 */
+	// 	constructor(executionCount: number, location: Position | Range);
+	// }
 
-	export type DetailedCoverage = StatementCoverage | FunctionCoverage;
+	// export type DetailedCoverage = StatementCoverage | FunctionCoverage;
 
 }
