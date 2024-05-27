@@ -8,6 +8,9 @@ import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
+import org.openmainframeproject.cobolcheck.services.platform.Platform;
+import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
+import org.openmainframeproject.cobolcheck.services.RunInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -445,17 +448,27 @@ public class InterpreterController {
                 lineRepository.addFileSectionStatement(line.getUnNumberedString());
             }
         }
+        
         if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) &&
                 line.containsToken(Constants.EXEC_SQL_TOKEN) &&
                 (line.containsToken(Constants.INCLUDE)
                         || reader.peekNextMeaningfulLine().containsToken(Constants.INCLUDE))) {
-            extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
-            for (int i = 0; i < extractedCopyBook.size(); i++) {
-                CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
-                List<CobolLine> currentStatement = new ArrayList<>();
-                currentStatement.add(cobolLine);
-                this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
-                updateNumericFields(cobolLine);
+            Platform platform = PlatformLookup.get();
+            switch(platform){
+                case ZOS:
+                    if (line.containsToken("SQLCA") || line.containsToken("SQLDA"))
+                        return;
+                    break;
+                default:
+                    extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
+                    for (int i = 0; i < extractedCopyBook.size(); i++) {
+                        CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
+                        List<CobolLine> currentStatement = new ArrayList<>();
+                        currentStatement.add(cobolLine);
+                        this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
+                        updateNumericFields(cobolLine);                
+                    }
+                    break;
             }
         }
     }

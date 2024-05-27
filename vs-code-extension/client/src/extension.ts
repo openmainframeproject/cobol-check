@@ -168,7 +168,8 @@ export async function activate(context: ExtensionContext) {
 					const lineNo = test.range!.start.line;
 					const fileCoverage = coveredLines.get(test.uri!.toString());
 					if (fileCoverage) {
-						fileCoverage[lineNo]!.executionCount++;
+						// fileCoverage[lineNo]!.executionCount++;
+						(fileCoverage[lineNo]!.executed as number)++;
 					}
 				}
 
