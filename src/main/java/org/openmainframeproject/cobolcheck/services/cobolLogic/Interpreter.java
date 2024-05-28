@@ -282,7 +282,10 @@ public class Interpreter {
                 Platform platform = PlatformLookup.get();
                 switch(platform){
                     case ZOS:
-                        return false;
+                        if(line.containsToken("SQLCA") || line.containsToken("SQLDA"))
+                            return false;
+                        else
+                            return true;
                     default:
                         return true;
                 }
