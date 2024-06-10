@@ -143,7 +143,7 @@ public class InterpreterController {
         if (reader.getState().isFlagSetFor(Constants.PROCEDURE_DIVISION)) {
             if (Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState())) {
                 if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
-                reader.putNextLine("           .");
+                    reader.putNextLine("           .");
                 reader.putNextLine("            CONTINUE");
                 return true;
             }
@@ -157,9 +157,11 @@ public class InterpreterController {
     public boolean shouldCurrentStatementBeStubbed() {
         for (CobolLine line : reader.getCurrentStatement()) {
             if (Interpreter.shouldLineBeStubbed(line, reader.getState())) {
-                if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
-                    reader.putNextLine("           .");
-                reader.putNextLine("            CONTINUE");
+                if (reader.getState().isFlagSetFor(Constants.PROCEDURE_DIVISION)){
+                    if (!insideSectionOrParagraphMockBody && !Interpreter.endsInPeriod(reader.getCurrentLine()))
+                        reader.putNextLine("           .");
+                    reader.putNextLine("            CONTINUE");
+                }
                 return true;
             }
         }
@@ -458,7 +460,6 @@ public class InterpreterController {
                 case ZOS:
                     if (line.containsToken("SQLCA") || line.containsToken("SQLDA"))
                         return;
-                    break;
                 default:
                     extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
                     for (int i = 0; i < extractedCopyBook.size(); i++) {

@@ -273,7 +273,7 @@ public class Interpreter {
     public static boolean shouldLineBeStubbed(CobolLine line, State state) {
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)) {
             if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN) ||
-                    line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN)) {
+                    line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN) || line.containsToken(Constants.END_EXEC_TOKEN)) {
                 return true;
             }
         }
@@ -282,7 +282,7 @@ public class Interpreter {
                 Platform platform = PlatformLookup.get();
                 switch(platform){
                     case ZOS:
-                        if(line.containsToken("SQLCA") || line.containsToken("SQLDA"))
+                        if(line.containsToken(Constants.INCLUDE))
                             return false;
                         else
                             return true;
