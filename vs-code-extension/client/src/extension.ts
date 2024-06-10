@@ -20,11 +20,11 @@ import { getContentFromFilesystem, MarkdownTestData, TestCase, testData, TestFil
 let externalVsCodeInstallationDir = vscode.extensions.getExtension("openmainframeproject.cobol-check-extension").extensionPath;
 let configPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/config.properties');
 let defaultConfigPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/default.properties');
-let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.8.jar');
+let cobolCheckJarPath = appendPath(externalVsCodeInstallationDir, 'Cobol-check/bin/cobol-check-0.2.10.jar');
 let currentPlatform = getOS();
 
 
-export async function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) { 
 	startCutLanguageClientServer(context);
 
 	const ctrl = vscode.tests.createTestController('CobolCheckController', 'Cobol Check');
@@ -168,7 +168,8 @@ export async function activate(context: ExtensionContext) {
 					const lineNo = test.range!.start.line;
 					const fileCoverage = coveredLines.get(test.uri!.toString());
 					if (fileCoverage) {
-						fileCoverage[lineNo]!.executionCount++;
+						// fileCoverage[lineNo]!.executionCount++;
+						(fileCoverage[lineNo]!.executed as number)++;
 					}
 				}
 

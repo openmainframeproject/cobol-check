@@ -60,34 +60,75 @@ public class ProcessOutputWriter {
     }
 
     private void getProcessOut(Process proc) {
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        processInput = "";
-        processError = "";
+        StringBuilder processErrorBuilder = new StringBuilder();
+        final Object lock = new Object(); // For synchronizing access if necessary
 
-        try{
-            String s = null;
-            while ((s = stdInput.readLine()) != null){
-                if (s != null)
-                    processInput += s + Constants.NEWLINE;
+        Thread inputThread = new Thread(() -> {
+            Reader reader = new InputStreamReader(proc.getInputStream());
+            int maxBytesToReadFromCobolCheck = 25000;
+            char tempReadBuffer[] = new char[maxBytesToReadFromCobolCheck];
+            int writeOffset = 0;
+            int numberOfCharsRead = 0;
+            char cobolCheckOutput[] = null;    
+            try {
+                synchronized (lock) {
+                    numberOfCharsRead = reader.read(tempReadBuffer, writeOffset, maxBytesToReadFromCobolCheck);
+                    if(numberOfCharsRead > 0) {
+                        if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
+                            int largeMaxBytesToReadFromCobolCheck = 100000;
+                            char largeTempReadBuffer[] = new char[maxBytesToReadFromCobolCheck + largeMaxBytesToReadFromCobolCheck];
+                            System.arraycopy(tempReadBuffer, 0, largeTempReadBuffer, 0, tempReadBuffer.length);
+                            int largeNumberOfCharsRead = reader.read(largeTempReadBuffer, tempReadBuffer.length, largeMaxBytesToReadFromCobolCheck);
+                            numberOfCharsRead += largeNumberOfCharsRead;
+                            cobolCheckOutput = new char[numberOfCharsRead];
+                            System.arraycopy(largeTempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                        }
+                        else {
+                            cobolCheckOutput = new char[numberOfCharsRead];
+                            System.arraycopy(tempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                        }
+                    }
+                    reader.close();
+                }
+            } catch (IOException e) {
+                Log.warn(Messages.get("WRN007"));
             }
-
-            while ((s = stdError.readLine()) != null){
-                if (s != null)
-                    processError += s + Constants.NEWLINE;
+            processInput = "";
+            for (int i = 0; i < numberOfCharsRead; i++) {
+                processInput += cobolCheckOutput[i];
             }
-            //Remove extra NEWLINE:
-            processInput = StringHelper.removeLastIndex(processInput);
-            processError = StringHelper.removeLastIndex(processError);
+        });
 
-            stdInput.close();
-            stdError.close();
+        Thread errorThread = new Thread(() -> {
+            try (BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()))) {
+                String s;
+                while ((s = stdError.readLine()) != null) {
+                    synchronized (lock) {
+                        processErrorBuilder.append(s).append(Constants.NEWLINE);
+                    }
+                }
+            } catch (IOException e) {
+                Log.warn(Messages.get("WRN007"));
+            }
+        });
+
+        inputThread.start();
+        errorThread.start();
+
+        // Wait for both threads to finish
+        try {
+            inputThread.join();
+            errorThread.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            Log.warn(Messages.get("WRN009"));
         }
-        catch (IOException ex)
-        {
-            Log.warn(Messages.get("WRN007"));
-        }
+
+        // Convert StringBuilder to String, removing the last NEWLINE if necessary
+        processInput = StringHelper.removeLastIndex(processInput.toString());
+        processError = StringHelper.removeLastIndex(processErrorBuilder.toString());
     }
+
 
     private void writeOutPutToConsole() {
         System.out.println(processInput);

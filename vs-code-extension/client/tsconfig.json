@@ -6,7 +6,8 @@
 		"lib": ["es2020"],
 		"outDir": "out",
 		"rootDir": "src",
-		"sourceMap": true
+		"sourceMap": true,
+		"moduleResolution": "node16"
 	},
 	"include": ["src", "test", "Cobol-check"],
 	"exclude": ["node_modules", ".vscode-test"]
