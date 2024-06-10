@@ -60,20 +60,42 @@ public class ProcessOutputWriter {
     }
 
     private void getProcessOut(Process proc) {
-        StringBuilder processInputBuilder = new StringBuilder();
         StringBuilder processErrorBuilder = new StringBuilder();
         final Object lock = new Object(); // For synchronizing access if necessary
 
         Thread inputThread = new Thread(() -> {
-            try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-                String s;
-                while ((s = stdInput.readLine()) != null) {
-                    synchronized (lock) {
-                        processInputBuilder.append(s).append(Constants.NEWLINE);
+            Reader reader = new InputStreamReader(proc.getInputStream());
+            int maxBytesToReadFromCobolCheck = 25000;
+            char tempReadBuffer[] = new char[maxBytesToReadFromCobolCheck];
+            int writeOffset = 0;
+            int numberOfCharsRead = 0;
+            char cobolCheckOutput[] = null;    
+            try {
+                synchronized (lock) {
+                    numberOfCharsRead = reader.read(tempReadBuffer, writeOffset, maxBytesToReadFromCobolCheck);
+                    if(numberOfCharsRead > 0) {
+                        if(numberOfCharsRead == maxBytesToReadFromCobolCheck) {
+                            int largeMaxBytesToReadFromCobolCheck = 100000;
+                            char largeTempReadBuffer[] = new char[maxBytesToReadFromCobolCheck + largeMaxBytesToReadFromCobolCheck];
+                            System.arraycopy(tempReadBuffer, 0, largeTempReadBuffer, 0, tempReadBuffer.length);
+                            int largeNumberOfCharsRead = reader.read(largeTempReadBuffer, tempReadBuffer.length, largeMaxBytesToReadFromCobolCheck);
+                            numberOfCharsRead += largeNumberOfCharsRead;
+                            cobolCheckOutput = new char[numberOfCharsRead];
+                            System.arraycopy(largeTempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                        }
+                        else {
+                            cobolCheckOutput = new char[numberOfCharsRead];
+                            System.arraycopy(tempReadBuffer, 0, cobolCheckOutput, 0, numberOfCharsRead);
+                        }
                     }
+                    reader.close();
                 }
             } catch (IOException e) {
                 Log.warn(Messages.get("WRN007"));
+            }
+            processInput = "";
+            for (int i = 0; i < numberOfCharsRead; i++) {
+                processInput += cobolCheckOutput[i];
             }
         });
 
@@ -103,7 +125,7 @@ public class ProcessOutputWriter {
         }
 
         // Convert StringBuilder to String, removing the last NEWLINE if necessary
-        processInput = StringHelper.removeLastIndex(processInputBuilder.toString());
+        processInput = StringHelper.removeLastIndex(processInput.toString());
         processError = StringHelper.removeLastIndex(processErrorBuilder.toString());
     }
 

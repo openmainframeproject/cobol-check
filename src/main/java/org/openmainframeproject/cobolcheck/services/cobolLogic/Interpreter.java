@@ -3,6 +3,8 @@ package org.openmainframeproject.cobolcheck.services.cobolLogic;
 import org.openmainframeproject.cobolcheck.features.interpreter.Area;
 import org.openmainframeproject.cobolcheck.features.interpreter.State;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.platform.Platform;
+import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
 
 import java.util.*;
 
@@ -271,13 +273,23 @@ public class Interpreter {
     public static boolean shouldLineBeStubbed(CobolLine line, State state) {
         if (state.isFlagSetFor(Constants.PROCEDURE_DIVISION)) {
             if (checkForBatchFileIOStatement(line) || line.containsToken(Constants.CALL_TOKEN) ||
-                    line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN)) {
+                    line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.EXEC_CICS_TOKEN) || line.containsToken(Constants.END_EXEC_TOKEN)) {
                 return true;
             }
         }
         if (state.isFlagSetFor(Constants.WORKING_STORAGE_SECTION)) {
-            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN))
-                return true;
+            if (line.containsToken(Constants.EXEC_SQL_TOKEN) || line.containsToken(Constants.INCLUDE) || line.containsToken(Constants.END_EXEC_TOKEN)) {
+                Platform platform = PlatformLookup.get();
+                switch(platform){
+                    case ZOS:
+                        if(line.containsToken(Constants.INCLUDE))
+                            return false;
+                        else
+                            return true;
+                    default:
+                        return true;
+                }
+            }
         }
         return false;
     }
