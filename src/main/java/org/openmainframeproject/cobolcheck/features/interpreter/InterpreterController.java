@@ -158,7 +158,7 @@ public class InterpreterController {
         for (CobolLine line : reader.getCurrentStatement()) {
             if (Interpreter.shouldLineBeStubbed(line, reader.getState())) {
                 if (reader.getState().isFlagSetFor(Constants.PROCEDURE_DIVISION)){
-                    if (!insideSectionOrParagraphMockBody && !Interpreter.endsInPeriod(reader.getCurrentLine()))
+                    if (!insideSectionOrParagraphMockBody && Interpreter.endsInPeriod(reader.getCurrentLine()))
                         reader.putNextLine("           .");
                     reader.putNextLine("            CONTINUE");
                 }
