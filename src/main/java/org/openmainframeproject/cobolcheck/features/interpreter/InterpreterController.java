@@ -238,7 +238,7 @@ public class InterpreterController {
         }
 
         // Current line might change from when it was originally read
-        return reader.getCurrentLine().getUnNumberedString();
+        return reader.getCurrentLine().getOriginalString();
     }
 
     public void closeReader() {
@@ -606,7 +606,7 @@ public class InterpreterController {
     public void addSectionOrParagraphLine(){
         if(Interpreter.shouldLineBeStubbed(reader.getCurrentLine(), reader.getState()))
             sectionOrParagraph.addLine(StringHelper.stubLine(reader.getCurrentLine().getUnNumberedString(), stubTag));
-        else sectionOrParagraph.addLine(reader.getCurrentLine().getUnNumberedString());
+        else sectionOrParagraph.addLine(reader.getCurrentLine().getOriginalString());
     }
 
     public void addSectionOrParagraphLine(String line){

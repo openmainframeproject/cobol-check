@@ -16,23 +16,6 @@ public class CobolGenerator {
 
 
 
-    static List<String> generateSectionLines(String identifier, List<String> commentLines, List<String> bodyLines){
-        List<String> lines = new ArrayList<>();
-        lines.add(String.format(SECTION_HEADER_FORMAT, identifier));
-        if (commentLines != null)
-            lines.addAll(commentLines);
-        if (bodyLines != null) {
-            lines.addAll(bodyLines);
-            // Check if the last line in bodyLines ends with a period
-            if (!bodyLines.get(bodyLines.size() - 1).endsWith(".")) {
-                lines.add(ENDING_PERIOD);
-            }
-        } else {
-            // If bodyLines is null, add ENDING_PERIOD
-            lines.add(ENDING_PERIOD);
-        }
-        return lines;
-    }
 
     static List<String> generateParagraphLines(String identifier, List<String> commentLines, List<String> bodyLines){
         List<String> lines = new ArrayList<>();
