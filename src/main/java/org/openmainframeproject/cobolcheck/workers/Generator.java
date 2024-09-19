@@ -154,8 +154,10 @@ public class Generator {
             }
         }
         return sourceLine;
+
     }
 
+    
     /**
      * Writes the given line to the output file. If a multiline statement has been read, this will
      * be written instead (this statement will include the line). Comments out lines and statements
@@ -248,6 +250,10 @@ public class Generator {
     private void echoingSourceLineToOutput(String sourceLine){
         try{
             if(interpreter.isInsideSectionOrParagraphMockBody()){
+                // Avoid giving mocked section ending period line numbers, as they would be duplicates
+                if (sourceLine.length() > 6 && sourceLine.substring(6).trim().equals(".")) {
+                    sourceLine = "      " + sourceLine.substring(6);
+                }
                 interpreter.addSectionOrParagraphLine();
             }
             sourceLine = tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine);
