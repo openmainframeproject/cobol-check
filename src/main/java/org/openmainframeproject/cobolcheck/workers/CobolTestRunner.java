@@ -14,9 +14,10 @@ public class CobolTestRunner {
      *
      * @throws InterruptedException - pass any InterruptedException up to the caller
      */
-    public void run(String programName, boolean isLastRun) throws InterruptedException {
+    public int run(String programName, boolean isLastRun) throws InterruptedException {
         Path path = Paths.get(programName);
         programName = path.getFileName().toString();
-        controller.runTestProgram(programName, isLastRun);
+        int exitCode = controller.runTestProgram(programName, isLastRun);
+        return exitCode;
     }
 }

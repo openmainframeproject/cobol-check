@@ -25,7 +25,7 @@ public class LauncherController {
      *
      * @throws InterruptedException - pass any InterruptedException to the caller.
      */
-    public void runTestProgram(String programName, boolean isLastRun) throws InterruptedException {
+    public int runTestProgram(String programName, boolean isLastRun) throws InterruptedException {
         // Compile and run the test program
         ProcessLauncher pLauncher = launcher.getPlatformSpecificLauncher(PlatformLookup.get());
         String processConfigKey = pLauncher.getProcessConfigKeyPrefix() + Constants.PROCESS_CONFIG_KEY;
@@ -44,5 +44,6 @@ public class LauncherController {
             Log.info(Messages.get("INF011", processName, processOutputWriter.getTestResultsFilePath()));
         }
         Log.info(Messages.get("INF009", processName, String.valueOf(exitCode)));
+        return exitCode;
     }
 }
