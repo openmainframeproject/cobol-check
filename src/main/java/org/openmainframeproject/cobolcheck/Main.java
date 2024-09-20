@@ -20,8 +20,11 @@ class Main {
 
             generator.prepareAndRunMerge(programName, initializer.getTestFileNames());
 
-            if (initializer.launchTestProgram())
-                testRunner.run(programName, initializer.isLastSourceProgram(programName));
+            if (initializer.launchTestProgram()) {
+                int exitCode = testRunner.run(programName, initializer.isLastSourceProgram(programName));
+                if (exitCode >= 4)
+                    initializer.setExitStatusHalt();
+            }
         }
 
         initializer.exitProgram();

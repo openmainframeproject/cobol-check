@@ -7,5 +7,3 @@
 
 cd "$(dirname $1)"
 cobc -xj $@
-name=$(echo "$1" | cut -f 1 -d '.')
-"${name}"

@@ -35,7 +35,7 @@ public class Launcher {
         Process process = launcher.run(programPath);
         int exitCode = 1;
         exitCode = process.waitFor();
-                return exitCode;
+        return exitCode;
     }
 
     /**

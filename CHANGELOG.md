@@ -20,12 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.11\] 2024-05-13
+- Fixing bug when cobolcheck.test.program.name was ending with white spaces.
+
 ## \[0.2.10\] 2024-05-13
-### Not released
 - Fixing bug in showing unit test result twice.
 
 ## \[0.2.9\] 2024-04-23
-### Not released
 - Better thread handling of the files processInput and processError 
 
 

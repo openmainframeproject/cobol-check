@@ -72,4 +72,7 @@ public class Initializer {
         return Config.getRunGeneratedTest();
     }
 
+    public void setExitStatusHalt() {
+        statusController.setExitStatusHalt();
+    }
 }
