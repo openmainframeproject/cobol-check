@@ -59,6 +59,5 @@ public class StatusController {
     public void exitProgram(){
         Log.info(Messages.get("INF004") + ": " + status.exitStatus);
         System.exit(status.exitStatus);
-
     }
 }

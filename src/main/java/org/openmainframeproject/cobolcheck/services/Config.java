@@ -211,7 +211,7 @@ public class Config {
     static String generatedTestFileName = "";
     public static String getGeneratedTestFileName() {
         if (generatedTestFileName.isEmpty()){
-            generatedTestFileName = settings.getProperty(Constants.TEST_PROGRAM_NAME_CONFIG_KEY, Constants.CURRENT_DIRECTORY);
+            generatedTestFileName = settings.getProperty(Constants.TEST_PROGRAM_NAME_CONFIG_KEY, Constants.CURRENT_DIRECTORY).trim();
         }
         return generatedTestFileName;
     }

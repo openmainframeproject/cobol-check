@@ -24,3 +24,4 @@
            05  ws-display-numeric   pic 999.
        PROCEDURE DIVISION.
            GOBACK.
+      
