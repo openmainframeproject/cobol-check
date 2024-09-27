@@ -188,6 +188,9 @@ public class Interpreter {
             }
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
+            if(currentLine.getTrimmedString().startsWith("JOIN ") && nextMeaningfulLine.getTrimmedString().startsWith("ON ")){
+                return false;
+            }
             return true;
         }
 
