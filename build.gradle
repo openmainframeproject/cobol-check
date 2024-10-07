@@ -6,7 +6,7 @@ plugins {
     id 'jacoco'
 }
 
-def productVersion = '0.2.11'
+def productVersion = '0.2.12'
 def productName = 'cobol-check'
 group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
