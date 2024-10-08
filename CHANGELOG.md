@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.12\] 2024-10-07
+- Reverted unit test result twice fix and fixed the windows run tests script instead. This should fix double output error and missing output errors.
+- Bumped versions to properly release vscode extension that uses new cobol-check. 
+
 ## \[0.2.11\] 2024-05-13
 - Fixing bug when cobolcheck.test.program.name was ending with white spaces.
 
