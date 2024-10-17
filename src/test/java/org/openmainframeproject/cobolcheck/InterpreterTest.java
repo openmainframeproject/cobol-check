@@ -47,6 +47,36 @@ public class InterpreterTest {
     }
 
     @Test
+    public void it_recognizes_not_end_of_statement_when_line_join_and_next_line_on(){
+        CobolLine current = new CobolLine("               JOIN", tokenExtractor);
+        CobolLine next = new CobolLine("                   ON ", tokenExtractor);
+
+        boolean isEnd = Interpreter.isEndOfStatement(current, next);
+
+        assertFalse(isEnd);
+    }
+
+    @Test
+    public void it_recognizes_not_end_of_statement_when_line_leftouterjoin_and_next_line_on(){
+        CobolLine current = new CobolLine("               LEFT OUTER JOIN", tokenExtractor);
+        CobolLine next = new CobolLine("                   ON ", tokenExtractor);
+
+        boolean isEnd = Interpreter.isEndOfStatement(current, next);
+
+        assertFalse(isEnd);
+    }
+
+    @Test
+    public void it_recognizes_not_end_of_statement_when_line_leftouterjoin_with_tabelname_and_next_line_on(){
+        CobolLine current = new CobolLine("               LEFT OUTER JOIN TABLENAME", tokenExtractor);
+        CobolLine next = new CobolLine("                   ON ", tokenExtractor);
+
+        boolean isEnd = Interpreter.isEndOfStatement(current, next);
+
+        assertFalse(isEnd);
+    }
+
+    @Test
     public void it_finds_too_short_line(){
         CobolLine line = new CobolLine(" .", tokenExtractor);
 
