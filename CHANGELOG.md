@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.12\] 2024-10-17
+- Fixing bug when JOIN followed by ON in next line is not only JOIN but f.ex. LEFT OUTER JOIN.
+
 ## \[0.2.11\] 2024-05-13
 - Fixing bug when cobolcheck.test.program.name was ending with white spaces.
 
