@@ -22,7 +22,7 @@ class Main {
 
             if (initializer.launchTestProgram()) {
                 int exitCode = testRunner.run(programName, initializer.isLastSourceProgram(programName));
-                if (exitCode >= 4)
+                if (exitCode > 4)
                     initializer.setExitStatusHalt();
             }
         }
