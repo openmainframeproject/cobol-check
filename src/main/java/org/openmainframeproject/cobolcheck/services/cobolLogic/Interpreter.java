@@ -7,6 +7,7 @@ import org.openmainframeproject.cobolcheck.services.platform.Platform;
 import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
 
 import java.util.*;
+import java.util.regex.*;
 
 /*
  * Used by Writer
@@ -188,6 +189,9 @@ public class Interpreter {
             }
         }
         if (CobolVerbs.isStartOrEndCobolVerb(nextMeaningfulLine.getTokens().get(0))) {
+            if(wholeWordSearch(currentLine.getTrimmedString(), "JOIN") && nextMeaningfulLine.getTrimmedString().startsWith("ON")){
+                return false;
+            }
             return true;
         }
 
@@ -610,6 +614,13 @@ public class Interpreter {
         statementString = statementString.trim().replace(Constants.PERIOD, "");
         String[] statementWords = statementString.split("\\s+");
         return statementWords;
+    }
+
+    private static Boolean wholeWordSearch(String line, String word) {
+        String patternString = "\\b" + word + "\\b";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(line);
+        return matcher.find();
     }
 }
 

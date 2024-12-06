@@ -1,13 +1,5 @@
 package org.openmainframeproject.cobolcheck.services;
 
-import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
-import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
-import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
-import org.openmainframeproject.cobolcheck.services.log.Log;
-import org.openmainframeproject.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
-import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
-import org.openmainframeproject.cobolcheck.services.platform.Platform;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,6 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+
+import org.openmainframeproject.cobolcheck.exceptions.IOExceptionProcessingConfigFile;
+import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import org.openmainframeproject.cobolcheck.features.launcher.Formatter.DataTransferObjects.DataTransferObjectStyle;
+import org.openmainframeproject.cobolcheck.features.launcher.Formatter.Formats.TestOutputFormat;
+import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
+import org.openmainframeproject.cobolcheck.services.log.Log;
+import org.openmainframeproject.cobolcheck.services.platform.Platform;
 
 /**
  * Loads and manages configuration settings.

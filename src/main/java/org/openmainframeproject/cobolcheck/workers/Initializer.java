@@ -5,6 +5,8 @@ import org.openmainframeproject.cobolcheck.features.argumentHandler.ArgumentHand
 import org.openmainframeproject.cobolcheck.features.environmentSetup.EnvironmentSetupController;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
+import org.openmainframeproject.cobolcheck.services.Messages;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 /**
  * Class for initializing program
@@ -19,6 +21,7 @@ public class Initializer {
     private StatusController statusController;
 
     public Initializer(String[] args) {
+        Log.info(Messages.get("INF000", "0.2.14"));
         argumentController = new ArgumentHandlerController(args);
         environmentController = new EnvironmentSetupController();
         statusController = new StatusController();
