@@ -451,14 +451,13 @@ public class InterpreterController {
             }
         }
         
-        if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) &&
-                line.containsToken(Constants.EXEC_SQL_TOKEN) &&
-                (line.containsToken(Constants.INCLUDE)
-                        || reader.peekNextMeaningfulLine().containsToken(Constants.INCLUDE))) {
+        if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION)) {
+            String statement = reader.readStatementAsOneLine().getTrimmedString().replaceAll("\\s+", " ");
+            if (statement.startsWith(Constants.EXEC_SQL_TOKEN + " " + Constants.INCLUDE)) {
             Platform platform = PlatformLookup.get();
             switch(platform){
                 case ZOS:
-                    if (line.containsToken("SQLCA") || line.containsToken("SQLDA"))
+                    if (statement.contains("SQLCA") || statement.contains("SQLDA"))
                         return;
                 default:
                     extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
@@ -470,6 +469,7 @@ public class InterpreterController {
                         updateNumericFields(cobolLine);                
                     }
                     break;
+                }
             }
         }
     }
