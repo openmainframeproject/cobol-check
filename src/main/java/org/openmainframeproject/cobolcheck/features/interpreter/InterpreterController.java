@@ -451,24 +451,24 @@ public class InterpreterController {
             }
         }
         
-        if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION)) {
+        if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) && line.containsToken(Constants.EXEC_SQL_TOKEN)) {
             String statement = reader.readStatementAsOneLine().getTrimmedString().replaceAll("\\s+", " ");
             if (statement.startsWith(Constants.EXEC_SQL_TOKEN + " " + Constants.INCLUDE)) {
-            Platform platform = PlatformLookup.get();
-            switch(platform){
-                case ZOS:
-                    if (statement.contains("SQLCA") || statement.contains("SQLDA"))
-                        return;
-                default:
-                    extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
-                    for (int i = 0; i < extractedCopyBook.size(); i++) {
-                        CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
-                        List<CobolLine> currentStatement = new ArrayList<>();
-                        currentStatement.add(cobolLine);
-                        this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
-                        updateNumericFields(cobolLine);                
-                    }
-                    break;
+                Platform platform = PlatformLookup.get();
+                switch(platform){
+                    case ZOS:
+                        if (statement.contains("SQLCA") || statement.contains("SQLDA"))
+                            return;
+                    default:
+                        extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
+                        for (int i = 0; i < extractedCopyBook.size(); i++) {
+                            CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
+                            List<CobolLine> currentStatement = new ArrayList<>();
+                            currentStatement.add(cobolLine);
+                            this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
+                            updateNumericFields(cobolLine);                
+                        }
+                        break;
                 }
             }
         }
