@@ -29,11 +29,26 @@
        LINKAGE SECTION.
       *-----------------------------------------------------------------
        01  BIPM012-PARM.
-           COPY BIPM012I.
+      *    COPY BIPM012I.
+      *-----------------------------------------------------------------
+      * >>> START COPYBOOK BIPM012I
+      *
+      *-----------------------------------------------------------------
+          04   MODULE-DATA.
+            05 IO-TABLE.
+               07 INPUT-DATA.
+                  09 USERNO                       PIC 9(03).
+               07 OUTPUT-DATA.
+                  10 MAX-HEIGHT          COMP-3   PIC S9(5).
+                  10 MAX-LENGTH                   PIC S9(07) COMP-3.
+      *-----------------------------------------------------------------
+      * <<< END COPYBOOK BIPM012I
+      *-----------------------------------------------------------------
 
             REPLACE ==:BDSIXXX:== BY ==BIPM012==.
 
-       PROCEDURE DIVISION USING :BDSIXXX:-PARM.
+      * PROCEDURE DIVISION USING :BDSIXXX:-PARM.
+        PROCEDURE DIVISION.
       *-----------------------------------------------------------------
            MOVE ZERO TO MAX-LENGTH          IN :BDSIXXX:-PARM
            .

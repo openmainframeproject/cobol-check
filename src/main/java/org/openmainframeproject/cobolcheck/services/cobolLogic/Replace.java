@@ -1,27 +1,34 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic;
 
+import org.openmainframeproject.cobolcheck.services.RunInfo;
+import org.openmainframeproject.cobolcheck.services.log.Log;
+import org.openmainframeproject.cobolcheck.services.log.LogLevel;
+
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Class to handle the COBOL REPLACE statement on the test suite/test case source code.
- *
- * There are two main public methods:
- * 1. replace() - Used on Inspects the test source for replacing; replaceFrom to replaceTo strings.
- * 2. setReplaceStatement() - Examines the source line for the REPLACE statement and sets the replaceFrom and replaceTo strings.
- *
- * And two convenience methods:
- * 1. isReplaceOn() - Returns the current state of the replaceOn flag.
- * 2. reset() - Resets the state of the Replace class.
- *
- * Method setReplaceStatement() is called on every line of the COBOL source code to set up the REPLACE statements.
+ * <p>
+ * Method inspect() should be called on every line of the COBOL source code to set the REPLACE statements.
  * The source must at least contain a char in the beginning of the line to be considered a valid source line.
  * This char is the comment indicator.
  * The REPLACE statement must be in the standard (IBM) format: REPLACE ==FROM-KEYWORD== BY ==TO-KEYWORD==.
- *
- * Method replace() is called on every line of the ubit test source code to replace the strings.
- *
- *
+ * <p>
+ * Method replace() is called on every line of the unit test source code to replace the strings.
+ * <p>
+ * <b>There are two main public methods:</b>
+ * <ol>
+ * <li>replace() - Used on Inspects the test source for replacing; replaceFrom to replaceTo strings.</li>
+ * <li>inspect() - Examines the source line for the REPLACE statement and sets the replaceFrom and replaceTo strings.</li>
+ * </ol>
+ * <p>
+ * <b>And two convenience methods:</b>
+ * <ol>
+ * <li>isReplaceOn() - Returns the current state of the replaceOn flag.</li>
+ * <li>2. reset() - Resets the state of the Replace class.</li>
+ * </ol>
  */
 public class Replace {
     private static final String COBOL_WORD_REPLACE = "REPLACE";
@@ -48,7 +55,9 @@ public class Replace {
      * ^ indicates we look from the beginning of the line
      * the pattern is case insensitivé
      */
-    private static final Pattern replacePattern = Pattern.compile( "^([\\s|\\d]{0,6})([\\" + COBOL_COMMENT_INDICATOR + "|\\s])(\\s*)(" + COBOL_WORD_REPLACE + ")(\\s*==)(.+)(==\\s*)(by)(\\s*)(==)(.+)(==\\s*)(.)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern replacePattern = Pattern.compile( "^([\\s|\\d]{0,6})([\\"
+            + COBOL_COMMENT_INDICATOR + "|\\s])(\\s*)("
+            + COBOL_WORD_REPLACE + ")(\\s*==)(.+)(==\\s*)(by)(\\s*)(==)(.+)(==\\s*)(.)", Pattern.CASE_INSENSITIVE);
     private static final int GROUP_COMMENT_INDICATOR = 2;
     private static final int GROUP_REPLACE_KEYWORD = 4;
     private static final int GROUP_REPLACE_FROM = 6;
@@ -69,9 +78,22 @@ public class Replace {
      * ^ indicates we look from the beginning of the line
      * the pattern is case insensitivé
      */
-    private static final Pattern commentOffPattern = Pattern.compile( "^([\\s|\\d]{0,6})([\\" + COBOL_COMMENT_INDICATOR + "|\\s])(" + COBOL_WORD_REPLACE + ")(\\s*)(OFF)(\\s*)(.)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern commentOffPattern = Pattern.compile( "^([\\s|\\d]{0,6})([\\"
+            + COBOL_COMMENT_INDICATOR + "|\\s])("
+            + COBOL_WORD_REPLACE + ")(\\s*)(OFF)(\\s*)(.)", Pattern.CASE_INSENSITIVE);
     private static final int GROUP_OFF_COMMENT_INDICATOR = 2;
     private static final int GROUP_OFF_END_OF_STATEMENT = 7;
+
+    /**
+     * Look for the comment indicator in the source line.
+     * Capture group description:
+     * 1. 0-6 digits/spaces             (group 1) the line numbers (if present)
+     * 2. * or space                    (group 2) comment indicator (other markers are not supported)
+     * 3.                               (group 3) remainder of the line
+     */
+    private static final Pattern sourceIsCommentPattern = Pattern.compile("^([\\s|\\d]{0,6})(\\"
+            + COBOL_COMMENT_INDICATOR + ")(.+)");
+    private static final int SOURCE_COMMENT_INDICATOR = 2;
 
     /**
      * The state of the REPLACE statement.
@@ -85,38 +107,88 @@ public class Replace {
      * The string to replace with.
      */
     private static String replaceTo = "";
+    /*
+    * Private constructor to prevent instantiation.
+    */
+    private static boolean inspect_performed = false;
+    private static boolean inspect_performed_warned = false;
 
     /**
-     * Inspects the source line for the REPLACE statement and sets the replaceFrom and replaceTo strings.
-     * Investigates the source line for the replace-key and replaces is with the replace-to-value.
+     * Looks in the source line for the replace-key and replaces is with the replace-to-value.
      *
      * @param source a line of cobol-check unit test code
      * @return the source line there the appropriate replacement has been made
      */
     public static String replace(String source) {
+        if (!inspect_performed) {
+            if (!inspect_performed_warned) {
+                inspect_performed_warned = true;
+                Log.warn("Replace.replace() called before inspect");
+            }
+        }
 
         // avoid null pointer exception
         if (source == null || source.isEmpty()) {
             return source;
         }
 
+
         if (replaceOn) {
-            System.out.println("Replacing: " + replaceFrom + " with: " + replaceTo);
-            return source.replaceAll(replaceFrom, replaceTo);
-        } else {
-            return source;
+            // is the source line a comment? then stop processing
+            if (sourcelineIsComment(source)) {
+                return source;
+            }
+            if (Log.level() == LogLevel.TRACE) {
+                String alteredString = source.replaceAll(replaceFrom, replaceTo);
+                if (!alteredString.equals(source)) {
+                    Log.trace("Replace.replace(): Key: <" + replaceFrom + ">, result: " + alteredString);
+                    return alteredString;
+                }
+            } else {
+                return source.replaceAll(replaceFrom, replaceTo);
+            }
+        }
+
+        // if replace is not in effect, return the source line as is
+        return source;
+    }
+
+    private static boolean sourcelineIsComment(String source) {
+        Matcher sourceElements = sourceIsCommentPattern.matcher(source);
+        if (sourceElements.find()) {
+            // Is the line a comment? true or false
+            return sourceElements.group(SOURCE_COMMENT_INDICATOR).equals(COBOL_COMMENT_INDICATOR);
+        }
+        return false;
+    }
+
+    public static void inspectProgram(File cobolProgram) {
+        //Iterate over the file and inspect each line
+        try (BufferedReader reader = new BufferedReader(new FileReader(cobolProgram))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                inspect(line);
+            }
+        } catch (FileNotFoundException e) {
+            Log.error("Replace.inspectProgram(): File not found: " + e.getMessage());
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            Log.error("Replace.inspectProgram(): Error reading the COBOL program file: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Examines the source line for the REPLACE statement and sets the replaceFrom and replaceTo strings.
-     * @param source
+     * Examines the source line for the REPLACE statement and register the replaceFrom and replaceTo
+     * values.
+     * @param source code line to inspect
      */
-    public static void setReplaceStatement(String source) {
+    public static void inspect(String source) {
         // avoid null pointer exception
         if (source == null || source.isEmpty()) {
             return ;
         }
+        inspect_performed = true;
 
         Matcher replaceStatementElements = replacePattern.matcher(source);
 
@@ -126,11 +198,13 @@ public class Replace {
                 return;
             }
 
-            // Replace on?
             if (!replaceStatementElements.group(GROUP_REPLACE_KEYWORD).isEmpty() && !replaceStatementElements.group(GROUP_END_OF_STATEMENT).isEmpty()) {
+                // Replace keywords found
                 replaceOn = true;
                 replaceFrom = replaceStatementElements.group(GROUP_REPLACE_FROM);
                 replaceTo = replaceStatementElements.group(GROUP_REPLACE_TO);
+                Log.trace("Replace.inspect(): Keywords found, replace <" + replaceFrom + "> with <" + replaceTo + ">");
+
             }
         } else {
             Matcher replaceOffMarker = commentOffPattern.matcher(source);

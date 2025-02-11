@@ -927,4 +927,5 @@ public class TestSuiteParserParsingTest {
         assertTrue(testSuiteParser.containStopValue("string,"));
         assertFalse(testSuiteParser.containStopValue("string"));
     }
+
 }
