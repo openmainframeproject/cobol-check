@@ -1,6 +1,5 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic;
 
-import org.openmainframeproject.cobolcheck.services.RunInfo;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
 
@@ -100,7 +99,7 @@ public class Replace {
      * The state of the REPLACE statement.
      */
     private static boolean replaceOn = false;
-    private static HashMap<String, ReplaceSet> replaceMap = new HashMap<>();
+    private static final HashMap<String, String> replaceMap = new HashMap<>();
     /*
      * Private constructor to prevent instantiation.
      */
@@ -129,14 +128,14 @@ public class Replace {
 
         if (replaceOn) {
             // is the source line a comment? then stop processing
-            if (sourcelineIsComment(source)) {
+            if (sourceLineIsComment(source)) {
                 return source;
             }
             String alteredString = source;
-            String value = "";
+            String value;
             for (String key : replaceMap.keySet()) {
-                value = replaceMap.get(key).getReplaceTo();
-                Log.trace("Replace.replace(): Key: <" + key + ">, Value: <" + replaceMap.get(key).getReplaceTo() + ">");
+                value = replaceMap.get(key);
+                Log.trace("Replace.replace(): Key: <" + key + ">, Value: <" + replaceMap.get(key) + ">");
                 alteredString = alteredString.replaceAll(key, value);
                 if ((Log.level() == LogLevel.TRACE) && (!alteredString.equals(source))) {
                     Log.trace("Replace.replace(): Key: <" + key + ">, result: " + alteredString);
@@ -150,7 +149,7 @@ public class Replace {
         return source;
     }
 
-    private static boolean sourcelineIsComment(String source) {
+    private static boolean sourceLineIsComment(String source) {
         Matcher sourceElements = sourceIsCommentPattern.matcher(source);
         if (sourceElements.find()) {
             // Is the line a comment? true or false
@@ -202,8 +201,7 @@ public class Replace {
                 replaceOn = true;
                 String replaceFrom = replaceStatementElements.group(GROUP_REPLACE_FROM);
                 String replaceTo = replaceStatementElements.group(GROUP_REPLACE_TO);
-                ReplaceSet set = new ReplaceSet(replaceTo);
-                replaceMap.put(replaceFrom, set);
+                replaceMap.put(replaceFrom, replaceTo);
                 Log.trace("Replace.inspect(): Keywords found, replace <" + replaceFrom + "> with <" + replaceTo + ">");
 
             }
@@ -239,17 +237,5 @@ public class Replace {
     public static void reset() {
         replaceOn = false;
         replaceMap.clear();
-    }
-
-    private static class ReplaceSet {
-        private final String replaceTo;
-
-        public ReplaceSet(String replaceTo) {
-            this.replaceTo = replaceTo;
-        }
-
-        public String getReplaceTo() {
-            return replaceTo;
-        }
     }
 }
