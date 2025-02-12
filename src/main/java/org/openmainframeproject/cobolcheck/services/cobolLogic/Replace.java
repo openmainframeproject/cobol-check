@@ -5,6 +5,7 @@ import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +43,7 @@ public class Replace {
      * 3. 0 or more spaces              (group 3) spaces between comment indicator and the REPLACE keyword
      * 4. REPLACE                       (group 4) the REPLACE keyword
      * 5. 0 or more spaces              (group 5) spaces between REPLACE keyword and the keyword marker (==) and the
-     *                                            first == (indicating the beginning of replace-from-keyword)
+     * first == (indicating the beginning of replace-from-keyword)
      * 6. 1 or more characters          (group 6) the replace-from-keyword
      * 7. ==                            (group 7) the second == (indicating the end of replace-from-keyword)
      * 8. by                            (group 8) the BY keyword
@@ -51,11 +52,11 @@ public class Replace {
      * 11. 1 or more characters         (group 11) the replace-to-keyword
      * 12. ==                           (group 12) the fourth == (indicating the end of replace-to-keyword)
      * 13. .                            (group 13) the end of the statement
-     *
+     * <p>
      * ^ indicates we look from the beginning of the line
      * the pattern is case insensitivé
      */
-    private static final Pattern replacePattern = Pattern.compile( "^([\\s|\\d]{0,6})([\\"
+    private static final Pattern replacePattern = Pattern.compile("^([\\s|\\d]{0,6})([\\"
             + COBOL_COMMENT_INDICATOR + "|\\s])(\\s*)("
             + COBOL_WORD_REPLACE + ")(\\s*==)(.+)(==\\s*)(by)(\\s*)(==)(.+)(==\\s*)(.)", Pattern.CASE_INSENSITIVE);
     private static final int GROUP_COMMENT_INDICATOR = 2;
@@ -78,7 +79,7 @@ public class Replace {
      * ^ indicates we look from the beginning of the line
      * the pattern is case insensitivé
      */
-    private static final Pattern commentOffPattern = Pattern.compile( "^([\\s|\\d]{0,6})([\\"
+    private static final Pattern commentOffPattern = Pattern.compile("^([\\s|\\d]{0,6})([\\"
             + COBOL_COMMENT_INDICATOR + "|\\s])("
             + COBOL_WORD_REPLACE + ")(\\s*)(OFF)(\\s*)(.)", Pattern.CASE_INSENSITIVE);
     private static final int GROUP_OFF_COMMENT_INDICATOR = 2;
@@ -99,17 +100,10 @@ public class Replace {
      * The state of the REPLACE statement.
      */
     private static boolean replaceOn = false;
-    /**
-     * The string to find and replace.
-     */
-    private static String replaceFrom = "";
-    /**
-     * The string to replace with.
-     */
-    private static String replaceTo = "";
+    private static HashMap<String, ReplaceSet> replaceMap = new HashMap<>();
     /*
-    * Private constructor to prevent instantiation.
-    */
+     * Private constructor to prevent instantiation.
+     */
     private static boolean inspect_performed = false;
     private static boolean inspect_performed_warned = false;
 
@@ -138,16 +132,19 @@ public class Replace {
             if (sourcelineIsComment(source)) {
                 return source;
             }
-            if (Log.level() == LogLevel.TRACE) {
-                String alteredString = source.replaceAll(replaceFrom, replaceTo);
-                if (!alteredString.equals(source)) {
-                    Log.trace("Replace.replace(): Key: <" + replaceFrom + ">, result: " + alteredString);
-                    return alteredString;
+            String alteredString = source;
+            String value = "";
+            for (String key : replaceMap.keySet()) {
+                value = replaceMap.get(key).getReplaceTo();
+                Log.trace("Replace.replace(): Key: <" + key + ">, Value: <" + replaceMap.get(key).getReplaceTo() + ">");
+                alteredString = alteredString.replaceAll(key, value);
+                if ((Log.level() == LogLevel.TRACE) && (!alteredString.equals(source))) {
+                    Log.trace("Replace.replace(): Key: <" + key + ">, result: " + alteredString);
                 }
-            } else {
-                return source.replaceAll(replaceFrom, replaceTo);
             }
+            return alteredString;
         }
+
 
         // if replace is not in effect, return the source line as is
         return source;
@@ -181,12 +178,13 @@ public class Replace {
     /**
      * Examines the source line for the REPLACE statement and register the replaceFrom and replaceTo
      * values.
+     *
      * @param source code line to inspect
      */
     public static void inspect(String source) {
         // avoid null pointer exception
         if (source == null || source.isEmpty()) {
-            return ;
+            return;
         }
         inspect_performed = true;
 
@@ -201,8 +199,10 @@ public class Replace {
             if (!replaceStatementElements.group(GROUP_REPLACE_KEYWORD).isEmpty() && !replaceStatementElements.group(GROUP_END_OF_STATEMENT).isEmpty()) {
                 // Replace keywords found
                 replaceOn = true;
-                replaceFrom = replaceStatementElements.group(GROUP_REPLACE_FROM);
-                replaceTo = replaceStatementElements.group(GROUP_REPLACE_TO);
+                String replaceFrom = replaceStatementElements.group(GROUP_REPLACE_FROM);
+                String replaceTo = replaceStatementElements.group(GROUP_REPLACE_TO);
+                ReplaceSet set = new ReplaceSet(replaceTo);
+                replaceMap.put(replaceFrom, set);
                 Log.trace("Replace.inspect(): Keywords found, replace <" + replaceFrom + "> with <" + replaceTo + ">");
 
             }
@@ -223,8 +223,8 @@ public class Replace {
 
     /**
      * Returns the current state of the replaceOn flag.
-     * @return true if there is an active REPLACE statement, false otherwise.
      *
+     * @return true if there is an active REPLACE statement, false otherwise.
      */
     public static boolean isReplaceOn() {
         return replaceOn;
@@ -237,7 +237,18 @@ public class Replace {
      */
     public static void reset() {
         replaceOn = false;
-        replaceFrom = "";
-        replaceTo = "";
+        replaceMap.clear();
+    }
+
+    private static class ReplaceSet {
+        private final String replaceTo;
+
+        public ReplaceSet(String replaceTo) {
+            this.replaceTo = replaceTo;
+        }
+
+        public String getReplaceTo() {
+            return replaceTo;
+        }
     }
 }

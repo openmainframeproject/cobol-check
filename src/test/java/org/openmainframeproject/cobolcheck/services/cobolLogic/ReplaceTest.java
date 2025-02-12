@@ -119,4 +119,19 @@ public class ReplaceTest {
         result = Replace.replace(sourceLine);
         assertEquals("007100* INCLUDE :MODULE: FOR MAINTENANCE", result);
     }
+
+    @Test void work_with_two_replace_statements() {
+        String replaceOn1 = " REPLACE ==:MODULE:== BY ==NEWNAME==.";
+        String replaceOn2 = " REPLACE ==:PROGRAM:== BY ==SECOND==.";
+        Replace.inspect(replaceOn1);
+        Replace.inspect(replaceOn2);
+
+        String sourceLine = "  EXPECT MAX-LENGTH          IN :MODULE:-PARM\n";
+        String result = Replace.replace(sourceLine);
+        assertEquals("  EXPECT MAX-LENGTH          IN NEWNAME-PARM\n", result);
+
+        sourceLine = "  EXPECT MAX-LENGTH          IN :PROGRAM:-PARM\n";
+        result = Replace.replace(sourceLine);
+        assertEquals("  EXPECT MAX-LENGTH          IN SECOND-PARM\n", result);
+    }
 }
