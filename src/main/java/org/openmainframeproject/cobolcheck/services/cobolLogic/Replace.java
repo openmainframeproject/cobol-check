@@ -160,6 +160,7 @@ public class Replace {
     }
 
     public static void inspectProgram(File cobolProgram) {
+        Log.trace("Replace.inspectProgram(): Inspecting the COBOL program file: " + cobolProgram);
         //Iterate over the file and inspect each line
         try (BufferedReader reader = new BufferedReader(new FileReader(cobolProgram))) {
             String line;
