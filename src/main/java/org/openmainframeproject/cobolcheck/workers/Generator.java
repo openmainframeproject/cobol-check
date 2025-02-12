@@ -18,6 +18,7 @@ import org.openmainframeproject.cobolcheck.features.writer.WriterController;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.RunInfo;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.Replace;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 /**
@@ -66,6 +67,8 @@ public class Generator {
     public void prepareAndRunMerge(String programName, String testFileNames) {
         RunInfo.setCurrentProgramName(new File(programName).getName());
         RunInfo.setCurrentProgramPath(new File(programName).getAbsolutePath());
+        Replace.inspectProgram(new File(programName+".cbl"));
+
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
         for (String matchingDirectory : matchingTestDirectories) {
 
