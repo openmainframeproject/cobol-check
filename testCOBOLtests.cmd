@@ -1,0 +1,11 @@
+java -jar .\bin\cobol-check-0.2.xx.jar -p ALPHA 
+java -jar .\bin\cobol-check-0.2.xx.jar -p DB2PROG 
+java -jar .\bin\cobol-check-0.2.xx.jar -p DPICNUMBERS 
+java -jar .\bin\cobol-check-0.2.xx.jar -p FILECOPY 
+java -jar .\bin\cobol-check-0.2.xx.jar -p GREETING 
+java -jar .\bin\cobol-check-0.2.xx.jar -p MOCK 
+java -jar .\bin\cobol-check-0.2.xx.jar -p MOCKPARA 
+java -jar .\bin\cobol-check-0.2.xx.jar -p MOCKTEST 
+java -jar .\bin\cobol-check-0.2.xx.jar -p NUMBERS 
+java -jar .\bin\cobol-check-0.2.xx.jar -p RETURNCODE 
+java -jar .\bin\cobol-check-0.2.xx.jar -p TESTNESTED
