@@ -3,135 +3,64 @@ package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReplaceTest {
-    @BeforeEach
-    public void setUp() {
-        Replace.reset();
-    }
 
     @Test
-    public void it_accepts_an_empty_string_as_source() {
-        String testLine = "";
-        String result = Replace.replace(testLine);
-        assertEquals("", result);
+    public void test_General_setup() {
+        // test we can inspect multible times and still have the correct state
+        // and number of replace sets
 
-        Replace.inspect(testLine);
-    }
-
-    @Test
-    public void it_accepts_a_null_string_as_source() {
-        String testLine = null;
-        String result = Replace.replace(testLine);
-        assertEquals(null, result);
-
-        Replace.inspect(testLine);
-    }
-
-    @Test
-    public void it_will_preserve_the_source_string_when_no_replace_is_needed() {
-        String testLine = " This is a test line. When no replace is needed. ";
-        String result = Replace.replace(testLine);
-        Replace.inspect(testLine);
-        assertEquals(testLine, result);
-    }
-
-    @Test
-    public void it_will_recognize_replace_on_one_line() {
-        String testLine = "        REPLACE ==MODULE== BY ==NEW-NAME==.";
-        Replace.inspect(testLine);
+        Replace.inspectProgram(new File("testfiles/replace.cbl"));
         assertTrue(Replace.isReplaceOn());
+        assertEquals(5, Replace.getReplaceSetsSize());
 
-        Replace.reset();
-        testLine = " REPLACE ==MODULE== BY ==NEW-NAME==.";
-        Replace.inspect(testLine);
-        assertTrue(Replace.isReplaceOn());
-
-        Replace.reset();
-        testLine = " replace ==MODULE== by ==NEW-NAME==.";
-        Replace.inspect(testLine);
-        assertTrue(Replace.isReplaceOn());
-
-    }
-
-    @Test
-    public void it_will_recognize_a_comment_and_not_start_replace() {
-        String testLine = "      *     REPLACE ==MODULE== BY ==NEW-NAME==.";
-        Replace.inspect(testLine);
+        Replace.inspectProgram(new File("testfiles/subprog-after.cbl"));
         assertFalse(Replace.isReplaceOn());
+        assertEquals(0, Replace.getReplaceSetsSize());
 
-        testLine = " * REPLACE ==MODULE== BY ==NEW-NAME==.        ";
-        Replace.inspect(testLine);
-        assertFalse(Replace.isReplaceOn());
-    }
-
-    @Test
-    public void it_will_recognize_replace_off() {
-        String testLine = " REPLACE ==MODULE== BY ==NEW-NAME==.";
-        Replace.inspect(testLine);
+        Replace.inspectProgram(new File("testfiles/replace.cbl"));
         assertTrue(Replace.isReplaceOn());
+        assertEquals(5, Replace.getReplaceSetsSize());
+        assertEquals("In Genesys, the lead singer is Phil",Replace.replace("In Genesys, the lead singer is Peter"));
+    }
 
-        String replaceOffSentence = " REPLACE OFF.";
-        Replace.inspect(replaceOffSentence);
-        assertFalse(Replace.isReplaceOn());
+    @Test
+    public void test_replace() {
+        Replace.inspectProgram(new File("testfiles/replace.cbl"));
+        assertEquals("In Genesys, the lead singer is Phil",Replace.replace("In Genesys, the lead singer is Peter"));
+        assertEquals("            MOVE 'CAITLIN' TO WS-OMEGA",Replace.replace("            MOVE 'BRUCE' TO WS-OMEGA"));
+        assertEquals("            MOVE 'SOFT' TO WS-OMEGA",Replace.replace("            MOVE 'SOFT' TO WS-OMEGA"));
+        // When lines are comments, they should not be replaced
+        assertEquals(" *          MOVE 'BRUCE' TO WS-OMEGA",Replace.replace(" *          MOVE 'BRUCE' TO WS-OMEGA"));
+        assertEquals("  *         MOVE 'SOFT' TO WS-OMEGA",Replace.replace("  *         MOVE 'SOFT' TO WS-OMEGA"));
 
     }
 
     @Test
-    public void it_will_recognize_a_comment_and_not_make_replace_off() {
-        String testLine = " REPLACE ==MODULE== BY ==NEW-NAME==.";
-        Replace.inspect(testLine);
-        assertTrue(Replace.isReplaceOn());
-
-        String replaceOffSentence = " * REPLACE OFF.";
-        Replace.inspect(replaceOffSentence);
-        assertTrue(Replace.isReplaceOn());
+    public void test_replace_leading() {
+        Replace.inspectProgram(new File("testfiles/replace.cbl"));
+        assertEquals("      *        USING WS-NOT-USED WS-OMEGA", Replace.replace("      *        USING WS-NOT-USED WS-OMEGA"));
+        assertEquals("        MOVE 'B' TO UT-EXPECTED",Replace.replace("        MOVE 'B' TO :WS:-EXPECTED"));
+        assertEquals("        MOVE 'Y' TO UT-OMEGA",Replace.replace("        MOVE 'Y' TO :WS:-OMEGA"));
+        assertEquals("        MOVE 'Y' TO WS-:WS:",Replace.replace("        MOVE 'Y' TO WS-:WS:"));
     }
 
     @Test
-    public void it_will_replace_the_string() {
-        String replaceOn = " REPLACE ==:MODULE:== BY ==NEWNAME==.";
-        Replace.inspect(replaceOn);
-
-        String sourceLine = "  EXPECT MAX-LENGTH          IN :MODULE:-PARM\n";
-        String result = Replace.replace(sourceLine);
-        assertEquals("  EXPECT MAX-LENGTH          IN NEWNAME-PARM\n", result);
+    public void test_replace_trailing() {
+        Replace.inspectProgram(new File("testfiles/replace.cbl"));
+        assertEquals("      *        USING WS-ALPHA WS-OMEGA", Replace.replace("      *        USING WS-ALPHA WS-OMEGA"));
+        assertEquals("        MOVE 'B' TO UT-EXPECTED",Replace.replace("        MOVE 'B' TO UT-EXPECTED"));
+        assertEquals("        MOVE 'Y' TO UT-GAMMA",Replace.replace("        MOVE 'Y' TO UT-ALPHA"));
+        assertEquals("        MOVE 'Y' TO WS-EXPECTED",Replace.replace("        MOVE 'Y' TO WS-ACTUAL"));
     }
 
-    @Test
-    public void avoid_replacing_when_the_test_source_line_is_a_comment() {
-        String replaceOn = " REPLACE ==:MODULE:== BY ==NEWNAME==.";
-        Replace.inspect(replaceOn);
 
-        // Comment line with the replace from keyword. This must remain untouched
-        String sourceLine = " *  EXPECT MAX-LENGTH          IN :MODULE:-PARM\n";
-        String result = Replace.replace(sourceLine);
-        assertEquals(" *  EXPECT MAX-LENGTH          IN :MODULE:-PARM\n", result);
 
-        // Comment line without the replace to keyword. This must remain untouched
-        sourceLine = "      *REM> READ            READ DATA\n";
-        result = Replace.replace(sourceLine);
-        assertEquals("      *REM> READ            READ DATA\n", result);
 
-        // Numbered comment line with the replace to keyword. This must remain untouched
-        sourceLine = "007100* INCLUDE :MODULE: FOR MAINTENANCE";
-        result = Replace.replace(sourceLine);
-        assertEquals("007100* INCLUDE :MODULE: FOR MAINTENANCE", result);
-    }
 
-    @Test void work_with_two_replace_statements() {
-        String replaceOn1 = " REPLACE ==:MODULE:== BY ==NEWNAME==.";
-        String replaceOn2 = " REPLACE ==:PROGRAM:== BY ==SECOND==.";
-        Replace.inspect(replaceOn1);
-        Replace.inspect(replaceOn2);
-
-        String sourceLine = "  EXPECT MAX-LENGTH          IN :MODULE:-PARM\n";
-        String result = Replace.replace(sourceLine);
-        assertEquals("  EXPECT MAX-LENGTH          IN NEWNAME-PARM\n", result);
-
-        sourceLine = "  EXPECT MAX-LENGTH          IN :PROGRAM:-PARM\n";
-        result = Replace.replace(sourceLine);
-        assertEquals("  EXPECT MAX-LENGTH          IN SECOND-PARM\n", result);
-    }
 }

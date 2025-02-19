@@ -33,8 +33,8 @@ public class ReplaceStatementLocatorTest {
         // TODO: FIX MOCK: Mockito.verify(mockedLocator, times(8)).accumulateStatement(anyString());
 
         // TODO; remove the counters when the mock is working
-        assertEquals(7, locator.commentLinesFound);
-        assertEquals(25, locator.sourceLinesProcessed);
+        assertEquals(9, locator.commentLinesFound);
+        assertEquals(42, locator.sourceLinesProcessed);
 
     }
 
