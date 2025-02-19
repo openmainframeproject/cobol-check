@@ -1,4 +1,4 @@
-package org.openmainframeproject.cobolcheck.services.cobolLogic;
+package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

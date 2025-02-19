@@ -7,7 +7,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
-import org.openmainframeproject.cobolcheck.services.cobolLogic.Replace;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.replace.Replace;
 import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FileNameMatcher;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;

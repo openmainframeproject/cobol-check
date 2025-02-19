@@ -1,4 +1,4 @@
-package org.openmainframeproject.cobolcheck.services.cobolLogic;
+package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
