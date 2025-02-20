@@ -1,11 +1,16 @@
-java -jar .\bin\cobol-check-0.2.xx.jar -p ALPHA 
-java -jar .\bin\cobol-check-0.2.xx.jar -p DB2PROG 
-java -jar .\bin\cobol-check-0.2.xx.jar -p DPICNUMBERS 
-java -jar .\bin\cobol-check-0.2.xx.jar -p FILECOPY 
-java -jar .\bin\cobol-check-0.2.xx.jar -p GREETING 
-java -jar .\bin\cobol-check-0.2.xx.jar -p MOCK 
-java -jar .\bin\cobol-check-0.2.xx.jar -p MOCKPARA 
-java -jar .\bin\cobol-check-0.2.xx.jar -p MOCKTEST 
-java -jar .\bin\cobol-check-0.2.xx.jar -p NUMBERS 
-java -jar .\bin\cobol-check-0.2.xx.jar -p RETURNCODE 
-java -jar .\bin\cobol-check-0.2.xx.jar -p TESTNESTED
+@echo off
+setlocal enabledelayedexpansion
+
+if "%1"=="" (
+echo Usage: runCOBOLtest.cmd [jar-version] like ./runCOBOLtest.cmd 0.2.15
+exit /b 1
+)
+
+for %%f in (src\main\cobol\*) do (
+java -jar .\bin\cobol-check-%1.jar -p %%~nf
+rem print the file name and pause for user input
+echo 'We ran: ' %%~nf ', Press any key to continue or Ctrl+C to exit'
+pause
+)
+
+endlocal
