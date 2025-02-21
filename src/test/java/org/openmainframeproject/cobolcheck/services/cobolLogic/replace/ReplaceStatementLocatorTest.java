@@ -26,7 +26,7 @@ public class ReplaceStatementLocatorTest {
         // Define the behavior of the accumulateStatement method
         // TODO: FIX MOCK: Mockito.doNothing().when(mockedLocator).accumulateStatement(anyString());
 
-        File cobolFile = new File("testfiles/replace.cbl");
+        File cobolFile = new File("./testfiles/REPLACE.CBL");
         ReplaceStatementLocator locator = new ReplaceStatementLocator(cobolFile);
 
         // Verify that the accumulateStatement method was called
@@ -55,7 +55,6 @@ public class ReplaceStatementLocatorTest {
     public void testAccumulateStatementWithMultipleLines() {
         ReplaceStatementLocator locator = new ReplaceStatementLocator();
 
-        locator = new ReplaceStatementLocator();
         locator.accumulateStatement("123245  REPLACE ==REPLACE== BY ==REPLACED==   ");
         locator.accumulateStatement("123456          ==PETER== BY ==PHIL==.   ");
         assertEquals(2, locator.getReplaceSets().size());
@@ -70,7 +69,6 @@ public class ReplaceStatementLocatorTest {
     public void testAccumulateStatementWithMultipleLinesAndComments() {
         ReplaceStatementLocator locator = new ReplaceStatementLocator();
 
-        locator = new ReplaceStatementLocator();
         locator.accumulateStatement("123456* REPLACE ==REPLACE== BY ==REPLACED==   ");
         locator.accumulateStatement("123456  REPLACE ==REPLACE== BY ==REPLACED==   ");
         locator.accumulateStatement("123456*  REPLACE ==BEEF== BY ==SALAD==   ");
