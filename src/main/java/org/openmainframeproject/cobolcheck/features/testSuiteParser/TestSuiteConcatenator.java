@@ -7,6 +7,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.replace.Replace;
 import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FileNameMatcher;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
@@ -107,7 +108,7 @@ public class TestSuiteConcatenator {
                 String line = Constants.EMPTY_STRING;
                 concatenatedTestSuitesWriter.write(StringHelper.commentOutLine("From file: " + matchingFile) + Constants.NEWLINE);
                 while((line = testFileReader.readLine()) != null) {
-                    concatenatedTestSuitesWriter.write(line + Constants.NEWLINE);
+                    concatenatedTestSuitesWriter.write(Replace.replace(line) + Constants.NEWLINE);
                 }
                 testFileReader.close();
             }

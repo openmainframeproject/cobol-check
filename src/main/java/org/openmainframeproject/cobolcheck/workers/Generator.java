@@ -11,13 +11,15 @@ import org.openmainframeproject.cobolcheck.exceptions.CobolSourceCouldNotBeReadE
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
 import org.openmainframeproject.cobolcheck.features.interpreter.InterpreterController;
 import org.openmainframeproject.cobolcheck.features.prepareMerge.PrepareMergeController;
-import org.openmainframeproject.cobolcheck.features.testSuiteParser.Mock;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.MockGenerator;
 import org.openmainframeproject.cobolcheck.features.testSuiteParser.TestSuiteParserController;
 import org.openmainframeproject.cobolcheck.features.writer.WriterController;
+import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.RunInfo;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.replace.Replace;
+import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 
 /**
@@ -66,6 +68,8 @@ public class Generator {
     public void prepareAndRunMerge(String programName, String testFileNames) {
         RunInfo.setCurrentProgramName(new File(programName).getName());
         RunInfo.setCurrentProgramPath(new File(programName).getAbsolutePath());
+        Replace.inspectProgram(new File(PathHelper.appendMatchingFileSuffix(programName, Config.getApplicationFilenameSuffixes())));
+
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
         for (String matchingDirectory : matchingTestDirectories) {
 
