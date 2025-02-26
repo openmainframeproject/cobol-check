@@ -14,8 +14,8 @@ jobs:
         working-directory: ./vs-code-extension
     environment: production
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm install
