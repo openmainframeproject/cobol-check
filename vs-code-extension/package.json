@@ -43,18 +43,18 @@
     "version": "0.4.10",
     "icon": "images/cobol-check-logo-small.png",
     "repository": {
-        "type": "git",
-        "url": "https://github.com/openmainframeproject/cobol-check"
+      "type": "git",
+      "url": "https://github.com/openmainframeproject/cobol-check"
     },
     "bugs": {
-        "url": "https://github.com/openmainframeproject/cobol-check/issues"
+      "url": "https://github.com/openmainframeproject/cobol-check/issues"
     },
     "license": "MIT",
     "engines": {
-        "vscode": "^1.46.0"
+      "vscode": "^1.46.0"
     },
     "activationEvents": [
-        "onStartupFinished"
+      "onStartupFinished"
     ],
     "grammars": [
       {
@@ -196,15 +196,15 @@
     "test": "node ./client/out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/mocha": "^8.0.3",
-    "@types/node": "^12.12.0",
-    "@typescript-eslint/parser": "^2.3.0",
-    "eslint": "^6.4.0",
-    "mocha": "^8.1.1",
-    "typescript": "^4.9.5"
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.13.5",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "mocha": "^11.1.0",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@types/vscode-webview": "^1.57.0"
+    "@types/vscode-webview": "^1.57.5"
   },
   "homepage": "https://github.com/openmainframeproject/cobol-check#readme"
 }
