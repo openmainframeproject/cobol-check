@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+
+
+## \[0.2.14\] 2024-12-05
+- Fixed a bug where an exit code of 4 was not allowed.
+
+
 ## \[0.2.14\] 2024-12-05
 - Fixed a bug where an exit code of 4 was not allowed.
 

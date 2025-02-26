@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 if "%1"=="" (
-echo Usage: runCOBOLtest.cmd [jar-version] like ./runCOBOLtest.cmd 0.2.15
+echo Usage: runCOBOLtest.cmd [jar-version] like ./runCOBOLtest.cmd 0.2.16
 exit /b 1
 )
 
