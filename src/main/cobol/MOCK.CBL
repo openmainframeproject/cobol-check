@@ -106,6 +106,17 @@
            MOVE output-value  TO VALUE-1
            .
 
+       611-CALL-WITH-STRUCTURE.
+           MOVE "1" to ACTION-PARAM
+           MOVE "2" to BOOK-PARAM
+           MOVE "3" to OUTPUT-VALUE
+           CALL 'MYCOBOL' USING ACTION-PARAM,
+                                BOOK-PARAM IN COBOL-STRUCTURE,
+                                OUTPUT-VALUE IN COBOL-STRUCTURE
+           END-CALL
+           MOVE OUTPUT-VALUE IN COBOL-STRUCTURE TO VALUE-1
+           .
+
        700-MAKE-CALL.
            MOVE "arg1" to VALUE-1
            MOVE "arg2" to VALUE-2

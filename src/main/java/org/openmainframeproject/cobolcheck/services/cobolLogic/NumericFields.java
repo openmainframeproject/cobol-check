@@ -59,6 +59,7 @@ public class NumericFields {
     private String getKeyBasedOnAssumedDataStructure(String line) {
         // We will attempt to split the line on any " IN " and " OF " statements, to isolate the names
         // in the referenced data structure.
+        // TODO - check the validity of the regex. It is not clear if it is correct. Because of the inclusion of the - sign. in W set.
         String[] nameTokens = line.toUpperCase().split("(?:^|\\W)OF(?:$|\\W)|(?:^|\\W)IN(?:$|\\W)");
         Boolean found=false;
         for (String key : fieldTypes.keySet()) {
