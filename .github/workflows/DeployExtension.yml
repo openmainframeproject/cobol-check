@@ -14,13 +14,13 @@ jobs:
         working-directory: ./vs-code-extension
     environment: production
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm install
       - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v1
+        uses: HaaLeo/publish-vscode-extension@v2
         with:
           pat: ${{ secrets.VS_CODE_EXTENTION_SECRET }}
           registryUrl: https://marketplace.visualstudio.com
