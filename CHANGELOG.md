@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+
+
+## \[0.2.16\] 2024-12-05
+- Fixed a bug an extra space would be added to the list of mocks, which would create issues when looking for mocks.
+- Added support for the replace statement in unit test source
+
 ## \[0.2.14\] 2024-12-05
 - Fixed a bug where an exit code of 4 was not allowed.
 
