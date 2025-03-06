@@ -106,9 +106,12 @@ public class TestSuiteConcatenator {
             for (String matchingFile : matchingFiles) {
                 BufferedReader testFileReader = new BufferedReader(EncodingIO.getReaderWithCorrectEncoding(matchingFile));
                 String line = Constants.EMPTY_STRING;
+                // Line number is set to zero, to be used in Replace.replace() method
+                // So that replace is performed regardless of line number
+                int lineNumber = 0;
                 concatenatedTestSuitesWriter.write(StringHelper.commentOutLine("From file: " + matchingFile) + Constants.NEWLINE);
                 while((line = testFileReader.readLine()) != null) {
-                    concatenatedTestSuitesWriter.write(Replace.replace(line) + Constants.NEWLINE);
+                    concatenatedTestSuitesWriter.write(Replace.replace(line, lineNumber) + Constants.NEWLINE);
                 }
                 testFileReader.close();
             }
