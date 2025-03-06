@@ -90,7 +90,7 @@ public class StringHelper {
 
     /**
      * Trims only the end of the string.
-     * Ex.: "     Hey  \n" => "     Hey"
+     * Ex.: "     Hey  \n" ~ "     Hey"
      *
      * @param line - original string
      * @return - string trimmed at the end.
@@ -123,7 +123,7 @@ public class StringHelper {
 
     /**
      * Swaps two characters in a given string.
-     * Example: swapChars("1.000.000,00", '.', ',') => "1,000,000.00"
+     * Example: swapChars("1.000.000,00", '.', ',') ~ "1,000,000.00"
      * @param c1 - One of the chars to swap
      * @param c2 - One of the chars to swap
      * @return - The given string with the given char values swapped
