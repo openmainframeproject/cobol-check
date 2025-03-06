@@ -2,6 +2,7 @@
            "Greeting returns the appropriate message based on message type"
 
            TestCase "When message type is greeting it returns 'Hello, World!'"
+           move space to WS-FRIEND
            SET MESSAGE-IS-GREETING TO TRUE
            PERFORM 2000-SPEAK
            EXPECT WS-GREETING TO BE "Hello, World!"
@@ -11,6 +12,7 @@
            EXPECT WS-COUNT TO BE 1
 
            TESTCASE "try 88 level compare"
+           set message-is-farewell to true
            EXPECT MESSAGE-IS-GREETING TO BE FALSE
 
            TESTCASE "When message type is farewell it returns See you later, alligator!"
@@ -19,6 +21,6 @@
            Expect WS-FAREWELL To Be "See you later, alligator!"
 
            TESTCASE "Message type greeting is not true"
-           SET MESSAGE-IS-GREETING TO TRUE
+           SET MESSAGE-IS-FAREWELL TO TRUE
            Expect MESSAGE-IS-GREETING NOT TO BE TRUE
 
