@@ -4,8 +4,6 @@ import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,9 +58,10 @@ public class Replace {
      * Looks in the source line for the replace-key and replaces is with the replace-to-value.
      *
      * @param source a line of cobol-check unit test code
+     * @param lineNumber the line number of the source line
      * @return the source line there the appropriate replacement has been made
      */
-    public static String replace(String source) {
+    public static String replace(String source, int lineNumber) {
         if (!inspect_performed) {
             if (!inspect_performed_warned) {
                 inspect_performed_warned = true;
@@ -86,12 +85,16 @@ public class Replace {
 
         for (ReplaceSet replaceSet : replaceMap) {
             Log.trace("Replace.replace(): Key: <" + replaceSet.getFrom() + ">, Value: <" + replaceSet.getTo() + ">");
-            replacesString = replaceSet.replaceInline(replacesString);
+            replacesString = replaceSet.replaceInline(replacesString, lineNumber);
             if ((Log.level() == LogLevel.TRACE) && (!replacesString.equals(source))) {
                 Log.trace("Replace.replace(): Key: <" + replaceSet.getFrom() + ">, result: " + replacesString);
             }
         }
         return replacesString;
+    }
+
+    public static String replace(String source) {
+        return replace(source, 0);
     }
 
 
@@ -151,5 +154,35 @@ public class Replace {
         replaceMap.clear();
         inspect_performed = false;
         inspect_performed_warned = false;
+    }
+
+    public static String replaceInProgram(File program) {
+        // write the replaced program back to disk
+
+        String newFileName = program+"_MOD";
+        Log.warn("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(newFileName));
+            // read the program one line at the time
+            BufferedReader reader = new BufferedReader(new FileReader(program));
+            //for every line in the program, replace and write to output file
+            String line;
+            int lineCount = 0;
+            while ((line = reader.readLine()) != null) {
+                writer.write(Replace.replace(line, lineCount++));
+                writer.newLine();
+            }
+            writer.close();
+            reader.close();
+        } catch (IOException e) {
+            Log.error("Replace.replaceInProgram(): Error writing the COBOL program file: " + program);
+        }
+        return newFileName;
+    }
+
+    public static void showReplaceSets() {
+        for (ReplaceSet replaceSet : replaceMap) {
+            Log.info("Replace.showReplaceSets():" + replaceSet.toString());
+        }
     }
 }
