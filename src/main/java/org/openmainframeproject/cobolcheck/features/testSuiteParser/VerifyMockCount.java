@@ -105,6 +105,7 @@ public class VerifyMockCount{
     }
 
     public void addArgument(String argument) {
+        argument = argument.replaceAll("\\s+", " ");
         arguments.add(argument);
     }
 }

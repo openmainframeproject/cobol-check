@@ -29,4 +29,19 @@
                                        BOOK-PARAM in COBOL-STRUCTURE,
                                        OUTPUT-VALUE
                   HAPPENED ONCE
+		   
+		   TestCase "parameters with IN are recognized correctly still"
+           MOVE SPACES TO OUTPUT-VALUE IN COBOL-STRUCTURE
+           MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
+                                    BOOK-PARAM IN COBOL-STRUCTURE,
+                                    OUTPUT-VALUE IN COBOL-STRUCTURE
+                MOVE "MOCKED" TO OUTPUT-VALUE IN COBOL-STRUCTURE
+           END-MOCK
+           PERFORM 611-CALL-WITH-STRUCTURE
+           EXPECT OUTPUT-VALUE IN COBOL-STRUCTURE TO BE "MOCKED"
+           VERIFY CALL 'MYCOBOL' USING ACTION-PARAM,
+                                       BOOK-PARAM IN COBOL-STRUCTURE,
+                                       OUTPUT-VALUE IN COBOL-STRUCTURE
+                  HAPPENED ONCE
            .
+		   
