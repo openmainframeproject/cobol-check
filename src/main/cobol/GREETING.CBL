@@ -16,7 +16,7 @@
        01  WS-FRIEND           PIC X(10) VALUE SPACES.
        01  WS-GREETING.
                10  FILLER          PIC X(07) VALUE 'Hello, '.
-               10  WS-USER-NAME    PIC X(06) VALUE SPACES.
+               10  WS-USER-NAME    PIC X(05) VALUE SPACES.
                10  FILLER          PIC X     VALUE '!'.
        01  WS-FAREWELL.
                10  FILLER          PIC X(15) VALUE 'See you later, '.

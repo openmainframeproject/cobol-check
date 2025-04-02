@@ -4,13 +4,21 @@ package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class to handle the COBOL REPLACE statement keys on the test suite/test case source code.
+ * <p>
+ * When fromSourceLine and untilSourceLine are set, the replace is only performed on the lines between these two lines.
+ * When the values are zero, the replace key set is applied to all lines.
+ */
 public class ReplaceSet {
     private String from;
     private String to;
     private boolean trailing;
     private boolean leading;
+    private int fromSourceLine;
+    private int untilSourceLine;
 
-    public ReplaceSet(String from, String to, boolean trailing, boolean leading) {
+    public ReplaceSet(String from, String to, boolean trailing, boolean leading,int fromSourceLine, int untilSourceLine) {
         if (trailing && leading) {
             throw new IllegalArgumentException("Cannot have both trailing and leading set to true");
         }
@@ -19,6 +27,8 @@ public class ReplaceSet {
         this.to = to;
         this.trailing = trailing;
         this.leading = leading;
+        this.fromSourceLine = fromSourceLine;
+        this.untilSourceLine = untilSourceLine;
     }
 
     public ReplaceSet() {
@@ -26,10 +36,12 @@ public class ReplaceSet {
         this.to = "";
         this.trailing = false;
         this.leading = false;
+        this.fromSourceLine = 0;
+        this.untilSourceLine = 0;
     }
 
     /**
-     * Perform 'Replace' in the string (line param). Correponding to the 'REPLACE' statement in COBOL program
+     * Perform 'Replace' in the string (line param). Corresponding to the 'REPLACE' statement in COBOL program
      * And the values parsed from the statements are used to replace the values in the line.
      *
      * @param line The line to replace in
@@ -58,6 +70,28 @@ public class ReplaceSet {
             }
             return line;
         }
+    }
+
+    /**
+     * Perform 'Replace' in the string (line param). Corresponding to the 'REPLACE' statement in COBOL program
+     * And the values parsed from the statements are used to replace the values in the line.
+     * @param line
+     * @param sourceLine
+     * @return
+     */
+    public String replaceInline(String line, int sourceLine) {
+        // if the line is zero, the replace key set is applied
+        if (sourceLine == 0) return replaceInline(line);
+
+        // when fromSourceLine and untilSourceLine are zero, the replace key set is applied to all lines.
+        if (fromSourceLine == 0 && untilSourceLine == 0) return replaceInline(line);
+
+        // when the line number is between fromSourceLine and untilSourceLine, the replace is performed
+        if ((sourceLine >= fromSourceLine && sourceLine <= untilSourceLine) ||
+           ((sourceLine >= fromSourceLine && untilSourceLine == 0))) return replaceInline(line);
+
+        // Otherwise, return the line as is
+        return line;
     }
 
     public void setTrailing(boolean trailing) {
@@ -96,5 +130,21 @@ public class ReplaceSet {
 
     public boolean isLeading() {
         return leading;
+    }
+
+    public void setFromSourceLine(int sourceLineNumber) {
+        this.fromSourceLine = sourceLineNumber;
+    }
+    public void setUntilSourceLine(int sourceLineNumber) {
+        this.untilSourceLine = sourceLineNumber;
+    }
+    public int getFromSourceLine() {
+        return fromSourceLine;
+    }
+    public int getUntilSourceLine() {
+        return untilSourceLine;
+    }
+    public String toString() {
+        return "From: " + from + ", To: " + to + ", Trailing: " + trailing + ", Leading: " + leading + ", FromSourceLine: " + fromSourceLine + ", UntilSourceLine: " + untilSourceLine;
     }
 }

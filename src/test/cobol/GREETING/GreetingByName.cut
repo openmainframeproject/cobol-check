@@ -7,11 +7,11 @@
            PERFORM 2000-SPEAK
            EXPECT WS-GREETING TO BE "Hello, James!"
 
-           TESTCASE "When message type is farewell it returns Goodbye, James!"
+           TESTCASE "When message type is farewell it returns Goodbye, James    !"
            SET MESSAGE-IS-FAREWELL TO TRUE
            MOVE "James" TO WS-FRIEND
            PERFORM 2000-SPEAK
-           EXPECT WS-FAREWELL TO BE "Goodbye, James!"
+           EXPECT WS-FAREWELL TO BE "See you later, James    !"
 
            TESTCASE "User name for greeting and farewell are consistent"
            SET MESSAGE-IS-GREETING TO TRUE

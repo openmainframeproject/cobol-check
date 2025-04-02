@@ -68,9 +68,12 @@ public class Generator {
     public void prepareAndRunMerge(String programName, String testFileNames) {
         RunInfo.setCurrentProgramName(new File(programName).getName());
         RunInfo.setCurrentProgramPath(new File(programName).getAbsolutePath());
-        Replace.inspectProgram(new File(PathHelper.appendMatchingFileSuffix(programName, Config.getApplicationFilenameSuffixes())));
+        File originalSource = new File(PathHelper.appendMatchingFileSuffix(programName, Config.getApplicationFilenameSuffixes()));
+        Replace.inspectProgram(originalSource);
 
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
+        //replace in the program, return the program name with the corrected source code.
+        programName = Replace.replaceInProgram(originalSource);
         for (String matchingDirectory : matchingTestDirectories) {
 
             Reader sourceReader = PrepareMergeController.getSourceReader(programName);
