@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
+import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
 
@@ -162,9 +163,9 @@ public class Replace {
         String newFileName = program+"_MOD";
         Log.warn("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(newFileName));
+            BufferedWriter writer = (BufferedWriter) EncodingIO.getWriterWithCorrectEncoding(newFileName);
             // read the program one line at the time
-            BufferedReader reader = new BufferedReader(new FileReader(program));
+            BufferedReader reader = (BufferedReader) EncodingIO.getReaderWithCorrectEncoding(String.valueOf(program));
             //for every line in the program, replace and write to output file
             String line;
             int lineCount = 0;
