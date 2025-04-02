@@ -21,7 +21,7 @@ public class Initializer {
     private StatusController statusController;
 
     public Initializer(String[] args) {
-        Log.info(Messages.get("INF000", "0.2.14"));
+        Log.info(Messages.get("INF000", "0.2.17"));
         argumentController = new ArgumentHandlerController(args);
         environmentController = new EnvironmentSetupController();
         statusController = new StatusController();
