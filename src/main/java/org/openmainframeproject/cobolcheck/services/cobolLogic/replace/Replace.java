@@ -1,6 +1,8 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
 import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
+import org.openmainframeproject.cobolcheck.services.Config;
+import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
 
@@ -158,10 +160,16 @@ public class Replace {
     }
 
     public static String replaceInProgram(File program) {
-        // write the replaced program back to disk
+        // was there replace statements in the source, if not, return the original filename
+        if (!replaceOn) {
+            Log.debug("Replace.replaceInProgram(): No REPLACE statements found in the COBOL program file: " + program);
+            return program.getAbsolutePath();
+        }
 
-        String newFileName = program+"_MOD";
-        Log.warn("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
+        // write the replaced program back to disk
+        String newFileName = program.getAbsolutePath()+"_rpl";
+        boolean fileForReplacedSourceExisted = fileForReplacedSourceExists(newFileName);
+        Log.info("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
         try {
             BufferedWriter writer = (BufferedWriter) EncodingIO.getWriterWithCorrectEncoding(newFileName);
             // read the program one line at the time
@@ -175,10 +183,35 @@ public class Replace {
             }
             writer.close();
             reader.close();
+
+            if (!fileForReplacedSourceExisted) {
+                updateFilePermissions(newFileName);
+            }
+
         } catch (IOException e) {
             Log.error("Replace.replaceInProgram(): Error writing the COBOL program file: " + program);
+            throw new RuntimeException("Replace.replaceInProgram(): Error writing the COBOL program file: " + program, e);
         }
         return newFileName;
+    }
+
+    /**
+     * Check if the file for the replaced source exists
+     * @param newFileName the name of the file to check
+     * @return true if the file exists, false otherwise
+     */
+    private static boolean fileForReplacedSourceExists(String newFileName) {
+        File file = new File(newFileName);
+        return file.exists();
+    }
+
+    /**
+     * Update the file permissions for the replaced source file
+     * @param newFileName the name of the file to update
+     */
+    private static void updateFilePermissions(String newFileName) {
+        String permissions = Config.getGeneratedFilesPermissionAll();
+        FilePermission.setFilePermissionForAllUsers(new File(newFileName), permissions);
     }
 
     public static void showReplaceSets() {
