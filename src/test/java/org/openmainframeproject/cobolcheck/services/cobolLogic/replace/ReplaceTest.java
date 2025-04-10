@@ -82,6 +82,33 @@ public class ReplaceTest {
         assertEquals("        MOVE 'Y' TO WS-EXPECTED",Replace.replace("        MOVE 'Y' TO WS-ACTUAL", 0));
     }
 
+    @Test
+    public void test_replace_correct_having_the_same_key() {
+        Replace.inspectProgram(new File("./testfiles/REPLACE3.CBL"));
+        assertEquals("        INC-FI01-READ SECTION.",
+                Replace.replace("        INC-:XXXX:-READ SECTION.", 70));
+        assertEquals("        INC-FI02-READ SECTION.",
+                Replace.replace("        INC-:XXXX:-READ SECTION.", 75));
+        assertEquals("        INC-:XXXX:-READ SECTION.",
+                Replace.replace("        INC-:XXXX:-READ SECTION.", 10));
+        assertEquals("        REPLACE ==:XXXX:== BY ==FI02==.",
+                Replace.replace("        REPLACE ==:XXXX:== BY ==FI02==.", 74));
+    }
+
+    @Test
+    public void test_replace_correct_more_times_same_line() {
+        Replace.inspectProgram(new File("./testfiles/REPLACE3.CBL"));
+        assertEquals("       CALL 'BDCSEQIO' USING BDC-SEQ-FI01, FI01-REC",
+                Replace.replace("       CALL 'BDCSEQIO' USING BDC-SEQ-:XXXX:, :XXXX:-REC", 71));
+        assertEquals("       CALL 'BDCSEQIO' USING UT-GAMMA, UT-REC",
+                Replace.replace("       CALL 'BDCSEQIO' USING :WS:-ALPHA, :WS:-REC", 51));
+
+    }
+
+
+
+
+
 
 
 
