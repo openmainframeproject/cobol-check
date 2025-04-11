@@ -4,6 +4,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
+import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -170,9 +171,9 @@ public class Replace {
         boolean fileForReplacedSourceExisted = fileForReplacedSourceExists(newFileName);
         Log.info("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(newFileName));
+            BufferedWriter writer = (BufferedWriter) EncodingIO.getWriterWithCorrectEncoding(newFileName);
             // read the program one line at the time
-            BufferedReader reader = new BufferedReader(new FileReader(program));
+            BufferedReader reader = (BufferedReader) EncodingIO.getReaderWithCorrectEncoding(String.valueOf(program));
             //for every line in the program, replace and write to output file
             String line;
             int lineCount = 0;
