@@ -342,8 +342,7 @@ public class ExpanderTest {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE + 
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -385,8 +384,7 @@ public class ExpanderTest {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +            
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -432,8 +430,7 @@ public class ExpanderTest {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +   
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -478,8 +475,7 @@ public class ExpanderTest {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME                                   " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +   
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -524,8 +520,7 @@ public class ExpanderTest {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +    
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -574,8 +569,7 @@ public class ExpanderTest {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -629,8 +623,8 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
-                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "       UT-PROCESS-UNMOCK-CALL.                                                  " + Constants.NEWLINE +
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +                                                               
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
@@ -684,14 +678,15 @@ public class ExpanderTest {
                     "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
-                    "       UT-PROCESS-UNMOCK-CALL.                                                     " + Constants.NEWLINE +
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
+                    "       UT-PROCESS-UNMOCK-CALL.                                                  " + Constants.NEWLINE +
+                    "           Add 1 to UT-NUMBER-UNMOCK-CALL                                       " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +                                                               
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
                     "      *Sets all global mock counters and expected count to 0                    " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
+                    "           CONTINUE                                                             " + Constants.NEWLINE +
                     "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "      *****************************************************************        " + Constants.NEWLINE +

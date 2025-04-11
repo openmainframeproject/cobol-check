@@ -136,7 +136,8 @@
            ON EXCEPTION 
            DISPLAY "EXCEPTION INSIDE ERROR HANDLING"
            END-CALL
-           END-CALL.
+           END-CALL
+           .
        
        1200-MAKE-CALL.
            CALL 'PROGRAM' USING VALUE-1

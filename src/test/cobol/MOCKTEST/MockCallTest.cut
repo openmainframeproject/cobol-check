@@ -191,7 +191,7 @@
            MOVE SPACES TO OUTPUT-VALUE
            MOCK CALL 'MYCOBOL' USING ACTION-PARAM,
                                     BOOK-PARAM in COBOL-STRUCTURE,
-                                    OUTPUT-PARAM.
+                                    OUTPUT-PARAM
                 MOVE "MOCKED" TO OUTPUT-VALUE
            END-MOCK
            PERFORM 610-MAKE-CALL-STRUCTURE

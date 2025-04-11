@@ -168,4 +168,26 @@ public class ReplaceStatementLocatorTest {
         assertEquals(0, locator.getReplaceSets().get(6).getUntilSourceLine());
     }
 
+    @Test
+    public void test_reacting_correct_to_REPLACE_OFF() {
+        ReplaceStatementLocator locator = new ReplaceStatementLocator();
+        locator.createStatements("REPLACE ==MONDAY== BY ==SUNDAY==", 10);
+        assertEquals(1, locator.getReplaceSets().size());
+        assertEquals(11, locator.getReplaceSets().get(0).getFromSourceLine());
+        assertEquals(0, locator.getReplaceSets().get(0).getUntilSourceLine());
+
+        locator.createStatements("REPLACE OFF", 20);
+        assertEquals(1, locator.getReplaceSets().size());
+        assertEquals(11, locator.getReplaceSets().get(0).getFromSourceLine());
+        assertEquals(19, locator.getReplaceSets().get(0).getUntilSourceLine());
+
+        locator.createStatements("REPLACE ==TUESDAY== BY ==WEDNESDAY==", 30);
+        assertEquals(2, locator.getReplaceSets().size());
+        assertEquals(11, locator.getReplaceSets().get(0).getFromSourceLine());
+        assertEquals(19, locator.getReplaceSets().get(0).getUntilSourceLine());
+        assertEquals(31, locator.getReplaceSets().get(1).getFromSourceLine());
+        assertEquals(0, locator.getReplaceSets().get(1).getUntilSourceLine());
+
+    }
+
 }

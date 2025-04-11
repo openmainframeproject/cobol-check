@@ -59,11 +59,16 @@ public class MockGenerator {
             return lines;
         }
 
+        boolean allMocksAreLocal = true;
         for (Mock mock : mocks){
             if (mock.getScope() == MockScope.Global){
+                allMocksAreLocal = false;
                 lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountIdentifier());
                 lines.add("           MOVE 0 TO " + mock.getGeneratedMockCountExpectedIdentifier());
             }
+        }
+        if (allMocksAreLocal){
+            lines.add(CobolGenerator.getContinueStatement());
         }
         lines.add("           .");
         return lines;
