@@ -239,19 +239,19 @@ public class TestSuiteParserController {
     public List<String> generateCobolLinesForUnmockedCalls() {
         List<String> cobolLines = new ArrayList<>();
         cobolLines.add("       UT-PROCESS-UNMOCK-CALL.");
+        String line1 = "           Add 1 to %sNUMBER-UNMOCK-CALL";
+        String testCodePrefix = Config.getTestCodePrefix();
+        cobolLines.add(String.format(line1, testCodePrefix));
+
         if(Config.getDisplayUnMockedCalls()) {
-            String line1 = "           Add 1 to %sNUMBER-UNMOCK-CALL";
             String line2 = "           display \"Call not mocked in testcase: \" %1$sTEST-CASE-NAME ";
             String line3 = "           display \"               in testsuite: \" %1$sTEST-SUITE-NAME";
             String line4 = "           display \"All used calls should be mocked, to ensure the unit test has control over input data\"";
-        
-            String testCodePrefix = Config.getTestCodePrefix();
-            cobolLines.add(String.format(line1, testCodePrefix));
+
             cobolLines.add(String.format(line2, testCodePrefix));
             cobolLines.add(String.format(line3, testCodePrefix));
             cobolLines.add(line4);
         }
-        cobolLines.add("           CONTINUE");
         cobolLines.add("           .");
         cobolLines.add("");
         return cobolLines;
