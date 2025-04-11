@@ -5,6 +5,7 @@ import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
+import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 
 import java.io.*;
 import java.util.LinkedList;
