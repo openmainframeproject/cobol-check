@@ -292,8 +292,7 @@ public class MockIT {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE + 
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -418,8 +417,7 @@ public class MockIT {
             "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
             "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +
             "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +     
-            "           CONTINUE                                                             " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +                                                               
+            "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
@@ -600,8 +598,7 @@ public class MockIT {
                     "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
                     "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +       
                     "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +  
-                    "           CONTINUE                                                             " + Constants.NEWLINE +
-                    "           .                                                                    " + Constants.NEWLINE +                                                               
+                    "           .                                                                    " + Constants.NEWLINE +
                     "                                                                                " + Constants.NEWLINE +
                     "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
                     "      *****************************************************************         " + Constants.NEWLINE +
@@ -698,8 +695,7 @@ public class MockIT {
             "           display \"               in testsuite: \" UT-TEST-SUITE-NAME         " + Constants.NEWLINE +
             "           display \"All used calls should be mocked, to ensure the unit        " + Constants.NEWLINE +
             "      -    \"test has control over input data\"                                 " + Constants.NEWLINE +  
-            "           CONTINUE                                                             " + Constants.NEWLINE +
-            "           .                                                                    " + Constants.NEWLINE +                                                               
+            "           .                                                                    " + Constants.NEWLINE +
             "                                                                                " + Constants.NEWLINE +
             "       UT-INITIALIZE-MOCK-COUNT.                                                " + Constants.NEWLINE +
             "      *****************************************************************         " + Constants.NEWLINE +
