@@ -36,7 +36,7 @@ public class Generator {
     private TestSuiteParserController testSuiteParserController;
     private boolean workingStorageHasEnded;
 
-    List<String> matchingTestDirectories;
+    public List<String> matchingTestDirectories;
     
     private String currentIdentifier;
     private  String currentMockType;
@@ -72,6 +72,9 @@ public class Generator {
         Replace.inspectProgram(originalSource);
 
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
+        if(matchingTestDirectories.isEmpty()) {
+            return;
+        }
         //replace in the program, return the program name with the corrected source code.
         programName = Replace.replaceInProgram(originalSource);
         for (String matchingDirectory : matchingTestDirectories) {

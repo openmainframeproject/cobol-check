@@ -12,6 +12,7 @@ GREETINGT
 *T.CBL
 LAUNCHTESTT
 CC##*
+*_MOD
 
 # project specific
 testsuites/concatenatedTestsuites
@@ -47,6 +48,7 @@ vs-code-extension/Cobol-check/output/testResults.html
 *.ear
 *.nar
 hs_err_pid*
+docs/
 
 ##############################
 ## Maven

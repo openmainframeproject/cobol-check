@@ -20,9 +20,9 @@ class Main {
 
             generator.prepareAndRunMerge(programName, initializer.getTestFileNames());
 
-            if (initializer.launchTestProgram()) {
+            if (initializer.launchTestProgram() && generator.matchingTestDirectories.size() > 0) {
                 int exitCode = testRunner.run(programName, initializer.isLastSourceProgram(programName));
-                if (exitCode > 4)
+                if (exitCode > 0)
                     initializer.setExitStatusHalt();
             }
         }

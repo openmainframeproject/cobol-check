@@ -6,7 +6,7 @@ plugins {
     id 'jacoco'
 }
 
-def productVersion = '0.2.17'
+def productVersion = '0.2.18'
 def productName = 'cobol-check'
 group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
@@ -94,6 +94,10 @@ tasks.withType(JavaCompile) {
     options.deprecation = true
 }
 
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
 dependencies {
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
@@ -126,8 +130,8 @@ task clearLibJar(type: Delete) {
 }
 
 task fatJar(type: Jar) {
-//    archiveFileName "${productName}-${productVersion}.jar"
-    archiveName "${productName}-${productVersion}.jar"
+   archiveFileName = "${productName}-${productVersion}.jar"
+    // archiveName = "${productName}-${productVersion}.jar"
     description 'Create executable jar'
     dependsOn integrationTest, clearLibJar
     manifest {
@@ -135,7 +139,7 @@ task fatJar(type: Jar) {
                    'Implementation-Title': 'Gradle Quickstart',
                    'Implementation-Version': productVersion
     }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
@@ -171,7 +175,7 @@ task copyRunScripts(type: Copy) {
 }
 
 task prepareDistribution(type: Zip) {
-    archiveName "${productName}-${productVersion}.zip"
+    archiveFileName = "${productName}-${productVersion}.zip"
     description 'Prepare distribution archive'
     dependsOn copyJarToBin, copyJarToExtension, copyRunScripts
     from ("${projectDir}"){
