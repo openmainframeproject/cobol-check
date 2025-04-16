@@ -1,0 +1,188 @@
+@startuml
+skinparam classAttributeIconSize 0
+class CobolReader{
+- reader : BufferedReader
+- state : State
+- tokenExtractor : TokenExtractor
+- previousLine : CobolLine
+- previousMeaningfulLine : CobolLine
+- currentLine : CobolLine
+- nextLines : List<CobolLine>
+- currentStatement : List<CobolLine>
+- lineNumber : int
+- lineJustEntered : String
+- maxLineLength : int
++ CobolReader(sourceReader : BufferedReader)
+getState() : State
+getCurrentLine() : CobolLine
+getPreviousLine() : CobolLine
+getPreviousMeaningfulLine() : CobolLine
+getCurrentStatement() : List<CobolLine>
++ getLineJustEntered() : String
+hasStatementBeenRead() : boolean
+getLineNumber() : int
+readLine() : CobolLine
+readStatementAsOneLine() : CobolLine
+- setPreviousMeaningfulLine() : void
+updateState() : void
+close() : void
+appendNextMeaningfulLineToCurrentLine(isFirstTime : Boolean) : CobolLine
+appendToCurrentLine(appendString : String) : CobolLine
+removePeriodFromCurrentLine() : CobolLine
+addLineBeforeCurrentRead(line : String) : void
+addLineAfterCurrentRead(line : String) : void
+peekNextMeaningfulLine() : CobolLine
+putNextLine(line : CobolLine) : void
+putNextLine(line : String) : void
+readTillEndOfStatement() : List<CobolLine>
+readTillHitToken(token : String, ignoreTokenOnCurrentLine : boolean) : List<CobolLine>
+isFlagSet(partOfProgram : String) : boolean
+}
+class CopybookExpander{
+- pathToCopybooks : String
+- copybookFilenameSuffixes : List<String>
++ CopybookExpander()
++ expand(expandedLines : List<String>, copybookFilename : String) : List<String>
++ expand(expandedLines : List<String>, copybookFilename : String, textReplacement : StringTuple) : List<String>
+- commentOut(sourceLine : String) : String
+- copyStatementIsPresentIn(sourceLine : String) : boolean
+- extractCopybookNameFrom(sourceLine : String) : String
+- getPathToCopybooks() : String
++ expandDB2(expandedLines : List<String>, copybookFilename : String, textReplacement : StringTuple) : List<String>
+}
+class StringTokenizerExtractor{
+- {static} delimiters : String
+- {static} expectedTokens : Map<String,List<String>>
++ StringTokenizerExtractor()
++ extractTokensFrom(sourceLine : String) : List<String>
+- swapStringsOutWithMappedTokens(line : String, stringTokensToString : Map<String,String>) : String
+- swapMappedTokensOutWithSavedStrings(tokens : List<String>, stringTokensToString : Map<String,String>) : void
+}
+StringTokenizerExtractor ..|> TokenExtractor
+class SectionOrParagraph{
+- lines : List<String>
++ SectionOrParagraph()
+addLine(line : String) : void
+getLines() : List<String>
+removeLines() : void
+}
+class Flag{
+- state : boolean
+- mutuallyExclusiveFlags : List<Flag>
+- dependentFlags : List<Flag>
++ Flag()
++ setMutuallyExclusiveFlags(mutuallyExclusiveFlags : List<Flag>) : void
++ setDependentFlags(dependentFlags : List<Flag>) : void
++ isSet() : boolean
++ set() : void
++ unset() : void
+}
+class InterpreterController{
+- reader : CobolReader
+- lineRepository : LineRepository
+- numericFields : NumericFields
+- tokenExtractor : TokenExtractor
+- hasReadLine : boolean
+- possibleMockIdentifier : String
+- possibleMockType : String
+- possibleMockArgs : List<String>
+- extractedCopyBook : List<String>
+- insideSectionOrParagraphMockBody : boolean
+- currentDataStructure : TreeMap<Integer,String>
+- stubTag : String
+- sectionOrParagraph : SectionOrParagraph
++ InterpreterController(sourceReader : BufferedReader)
++ getFileSectionStatements() : List<String>
++ getFileControlStatements() : List<String>
++ getFileIdentifiersAndStatuses() : Map<String,String>
++ getCopyTokens() : List<String>
++ getNumericFieldDataTypeFor(fieldName : String) : DataType
++ getNumericFields() : NumericFields
++ getTokensForCurrentLine() : List<String>
++ getCurrentStatement() : List<String>
++ getCurrentLineAsStatement() : CobolLine
++ hasStatementBeenRead() : boolean
++ isReading(partOfProgram : String) : boolean
++ didLineJustEnter(partOfProgram : String) : boolean
++ hasReaderStateChanged() : boolean
++ currentLineContains(str : String) : boolean
++ isCurrentComponentMockable() : boolean
++ getPossibleMockIdentifier() : String
++ getPossibleMockType() : String
++ getPossibleMockArgs() : List<String>
++ isInsideSectionOrParagraphMockBody() : boolean
++ setInsideSectionOrParagraphMockBody(insideSectionOrParagraphMockBody : boolean) : void
++ shouldCurrentLineBeParsed() : boolean
++ shouldCurrentLineBeStubbed() : boolean
++ shouldCurrentStatementBeStubbed() : boolean
++ isCurrentLineEndingSectionOrParagraph() : boolean
++ isCurrentLineEndingWorkingStorageSection() : boolean
++ canWriteEndEvaluateBeforeCurrentLine() : boolean
++ interpretNextLine() : String
++ closeReader() : void
+- updateDependencies(line : CobolLine) : void
+- updateDecimalPointIsComma(line : CobolLine) : void
+- updateReplaceStatement(line : CobolLine) : void
+- updatePossibleMock(line : CobolLine) : void
+- updatePossibleStub(line : CobolLine) : void
+- tryReadBatchFileIOStatement() : void
+- updateNumericFields(line : CobolLine) : void
+- generateVariableNameBasedOnDataStructure(dataStructure : TreeMap<Integer,String>) : String
+- updateLineRepository(line : CobolLine) : void
+- updateLineRepoBySelectToken(line : CobolLine) : void
+- updateLineRepoByFileStatusToken(line : CobolLine) : void
+- updateLineRepoByCopyStatement() : void
+- updateCBLOptions(line : CobolLine) : void
+- peekNextMeaningfulLineAndGetTokenAtIndex0() : String
+- convertToStrings(lines : List<CobolLine>) : List<String>
+- resetPossibleMockValues() : void
++ getSectionOrParagraphLines() : List<String>
++ removeSectionOrParagraphLines() : void
++ addSectionOrParagraphLine() : void
++ addSectionOrParagraphLine(line : String) : void
++ addSectionOrParagraphLines(lines : List<String>) : void
+}
+class LineRepository{
+- currentExpectFileIdentifier : String
+- fileControlStatements : List<String>
+- fileSectionStatements : List<String>
+- fileIdentifiersAndStatuses : Map<String,String>
+- copyTokens : List<String>
+LineRepository()
+getFileControlStatements() : List<String>
+getFileSectionStatements() : List<String>
+getFileIdentifiersAndStatuses() : Map<String,String>
+getCopyTokens() : List<String>
+setCopyTokens(copyTokens : List<String>) : void
+addFileControlStatement(statement : String) : void
+addFileSectionStatement(statement : String) : void
+putFileIdentifierAndStatus(key : String, value : String) : void
+addFileIdentifierWithNoStatus(identifier : String) : void
+addStatusForLastSetIdentifier(status : String) : void
+addCopyToken(token : String) : void
+addAccumulatedTokensFromCopyStatementToCopyTokens(line : String) : void
+addExpandedCopyStatementsToFileSectionStatements() : List<String>
+addExpandedCopyDB2Statements(line : CobolLine) : List<String>
+}
+class State{
+- flags : Map<String,Flag>
++ State()
++ getFlags() : Map<String,Flag>
++ setFlagFor(key : String) : void
++ unsetFlagFor(key : String) : void
++ isFlagSetFor(key : String) : boolean
+- mutuallyExclusiveFlagsFor(token : String, mutuallyExclusiveTokens : String) : void
+- dependentFlagsFor(token : String, dependentTokens : String) : void
+}
+CobolReader--"- state" State
+InterpreterController--"- reader" CobolReader
+InterpreterController--"- lineRepository" LineRepository
+InterpreterController--"- sectionOrParagraph" SectionOrParagraph
+enum Area{
+NONE
+SEQUENCE_NUMBER
+INDICATOR
+A
+B
+}
+@enduml

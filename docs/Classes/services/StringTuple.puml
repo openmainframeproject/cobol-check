@@ -1,0 +1,12 @@
+@startuml
+skinparam classAttributeIconSize 0
+class StringTuple{
+- first : String
++ second : String
++ StringTuple(first : String, second : String)
++ getFirst() : String
++ getSecond() : String
++ isEmpty() : boolean
+}
+StringTuple ..|> Tuple
+@enduml

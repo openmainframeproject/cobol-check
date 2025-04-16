@@ -1,0 +1,14 @@
+@startuml
+skinparam classAttributeIconSize 0
+class PlatformLookup{
++ {static} get() : Platform
++ {static} get(osNameValue : String) : Platform
+}
+enum Platform{
+LINUX
+UNIX
+WINDOWS
+OSX
+ZOS
+}
+@enduml

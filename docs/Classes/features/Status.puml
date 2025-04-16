@@ -1,0 +1,33 @@
+@startuml
+skinparam classAttributeIconSize 0
+class StatusController{
+status : CurrentStatus
+emitter : Emitter
++ StatusController()
++ setExitStatusNormal() : void
++ setExitStatusHalt() : void
++ isExitStatusNormal() : boolean
++ isExitStatusHalt() : boolean
++ getSourceProgramNames() : String[]
++ setSourceProgramNames(sourceProgramNames : String[]) : void
++ getTestFileNames() : String
++ setTestFileNames(testFileNames : String) : void
++ emitHelp() : void
++ emitVersion() : void
++ exitProgram() : void
+}
+class CurrentStatus{
+exitStatus : int
+sourceProgramNames : String[]
+testFileNames : String
++ CurrentStatus()
+}
+class Emitter{
+- helpText : String[]
+emitHelp() : void
+emitVersion() : void
+emitByLine(text : String[]) : void
+}
+StatusController--"status" CurrentStatus
+StatusController--"emitter" Emitter
+@enduml

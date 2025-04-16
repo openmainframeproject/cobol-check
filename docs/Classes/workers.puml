@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Initializer{
+- argumentController : ArgumentHandlerController
+- environmentController : EnvironmentSetupController
+- statusController : StatusController
++ Initializer(args : String[])
++ run() : void
++ getSourceProgramNames() : String[]
++ getTestFileNames() : String
++ isExitStatusHalt() : boolean
++ exitProgram() : void
++ isLastSourceProgram(name : String) : boolean
++ launchTestProgram() : boolean
++ setExitStatusHalt() : void
+}
+class CobolTestRunner{
+controller : LauncherController
++ run(programName : String, isLastRun : boolean) : int
+}
+class Generator{
+- interpreter : InterpreterController
+- writerController : WriterController
+- testSuiteParserController : TestSuiteParserController
+- workingStorageHasEnded : boolean
++ matchingTestDirectories : List<String>
+- currentIdentifier : String
+- currentMockType : String
++ Generator()
++ Generator(interpreter : InterpreterController, writerController : WriterController, testSuiteParserController : TestSuiteParserController)
++ prepareAndRunMerge(programName : String, testFileNames : String) : void
+- mergeTestSuite() : void
+- processingBeforeEchoingSourceLineToOutput() : void
+- tryInsertEndEvaluateAtMockedCompomentEnd(sourceLine : String) : String
+- writeToSource(sourceLine : String) : void
+- processingAfterEchoingSourceLineToOutput() : void
+- closeReadersAndWriters(programName : String) : void
+- writeWhenOtherSectionOrParagraph(sourceLine : String) : void
+- echoingSourceLineToOutput(sourceLine : String) : void
+}
+@enduml

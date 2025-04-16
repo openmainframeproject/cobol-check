@@ -1,0 +1,26 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Log{
+- {static} currentLogLevel : LogLevel
++ {static} off() : void
++ {static} set(level : LogLevel) : void
++ {static} level() : LogLevel
++ {static} fatal(message : String) : void
++ {static} error(message : String) : void
++ {static} warn(message : String) : void
++ {static} info(message : String) : void
++ {static} debug(message : String) : void
++ {static} trace(message : String) : void
+- {static} write(message : String) : void
+}
+Log--"- {static} currentLogLevel" LogLevel
+enum LogLevel{
+OFF
+FATAL
+ERROR
+WARN
+INFO
+DEBUG
+TRACE
+}
+@enduml

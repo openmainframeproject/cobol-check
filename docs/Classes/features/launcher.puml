@@ -1,0 +1,352 @@
+@startuml
+skinparam classAttributeIconSize 0
+class ProcessOutputWriter{
+testResultsFilePath : String
+writeWasSuccesful : boolean
+processInput : String
+processError : String
+xmlFormat : XMLFormat
+htmlFormat : HTMLFormat
++ ProcessOutputWriter()
++ getTestResultsFilePath() : String
++ WriteWasSuccesful() : boolean
++ writeProcessOutputToTestResultsFile(proc : Process, format : TestOutputFormat, style : DataTransferObjectStyle, programName : String, outputToConsole : boolean, isLastRun : boolean) : void
+- getProcessOut(proc : Process) : void
+- writeOutPutToConsole() : void
+- writeProcessOutputToFile(path : String) : boolean
+- writeProcessOutputWithFormat(formatter : Formatter, programName : String, writeToFile : boolean) : void
+- cleanupOldTestResults() : void
+}
+class Launcher{
+launchProgram(launcher : ProcessLauncher, programPath : String, postLaunchAction : Consumer<Process>) : int
+launchProgram(launcher : ProcessLauncher, programPath : String) : int
++ getPlatformSpecificLauncher(platform : Platform) : ProcessLauncher
+}
+class TestSuite{
+- name : String
+- failedTests : int
+- testCases : List<TestCase>
+- programName : String
+- programPath : String
+- path : String
++ getName() : String
++ setName(name : String) : void
++ getTests() : int
++ getPassedTests() : int
++ getFailedTests() : int
++ incrementFailedTests() : void
++ getTestCases() : List<TestCase>
++ addTestCase(testCase : TestCase) : void
++ getProgramName() : String
++ setProgramName(programName : String) : void
++ getProgramPath() : String
++ setProgramPath(programPath : String) : void
++ getPath() : String
++ setPath(path : String) : void
+}
+class WindowsProcessLauncher{
+- processConfigKeyPrefix : String
++ WindowsProcessLauncher(processConfigKeyPrefix : String)
++ getProcessConfigKeyPrefix() : String
++ run(programName : String) : Process
+}
+WindowsProcessLauncher ..|> ProcessLauncher
+class DataTransferObject{
+testSuiteIndex : int
+testCaseIndex : int
+testInstance : TestInstance
+lastProgram : String
++ moveToNextTestSuite() : void
++ moveToNextTestCase() : void
++ getDataTransferObject() : Object
++ setNumberOfAllTests(numberofTests : String) : void
++ setNumberOffAllFailures(numberOfFailures : String) : void
++ setCurrentTestSuiteName(name : String) : void
++ setCurrentTestSuiteTests(numberofTests : String) : void
++ setCurrentTestSuiteFailures(numberOfFailures : String) : void
++ setCurrentTestSuitePackage(testSuitePackage : String) : void
++ setCurrentTestCaseName(name : String) : void
++ setCurrentTestCaseFailure(message : String, type : String) : void
++ setCounts() : void
++ setCurrentTestCaseErrorMessage(message : String, type : String) : void
+}
+class LauncherController{
+- launcher : Launcher
+- processOutputWriter : ProcessOutputWriter
++ LauncherController()
++ runTestProgram(programName : String, isLastRun : boolean) : int
+}
+class LaunchHelper{
+{static} generateCommandParms(processKey : String, programName : String, compileOptions : List<String>, surroundWithQuotes : boolean) : String[]
+}
+class XMLFormat{
++ XMLFormat(dataTransferObjectStyle : DataTransferObjectStyle)
++ writeInFormat(path : String) : String
+}
+XMLFormat --|> Formatter
+class Skipped{
+- message : String
++ getMessage() : String
++ setMessage(value : String) : void
+}
+class Testsuites{
+- disabled : String
+- errors : String
+- failures : String
+- name : String
+- tests : String
+- time : String
+- testsuite : List<Testsuite>
++ getTestsuites() : List<Testsuite>
++ setTestsuite(value : List<Testsuite>) : void
++ addTestSuite(value : Testsuite) : void
++ getDisabled() : String
++ setDisabled(value : String) : void
++ getErrors() : String
++ setErrors(value : String) : void
++ getFailures() : String
++ setFailures(value : String) : void
++ getName() : String
++ setName(value : String) : void
++ getTests() : String
++ setTests(value : String) : void
++ getTime() : String
++ setTime(value : String) : void
+}
+class HTMLFormat{
++ HTMLFormat(dataTransferObjectStyle : DataTransferObjectStyle)
++ writeInFormat(path : String) : String
+}
+HTMLFormat --|> Formatter
+class TestCase{
+name : String
+passed : boolean
+failMessage : String
++ getName() : String
++ setName(name : String) : void
++ didPass() : boolean
++ setPassed(passed : boolean) : void
++ getFailMessage() : String
++ setFailMessage(failMessage : String) : void
+}
+class Properties{
+- property : List<Property>
++ getProperty() : List<Property>
++ setProperty(value : List<Property>) : void
+}
+class Testcase{
+- name : String
+- assertions : String
+- classname : String
+- status : String
+- time : String
+- skipped : Skipped
+- error : Error
+- failure : Error
+- systemOut : String
+- systemErr : String
++ getSkipped() : Skipped
++ setSkipped(value : Skipped) : void
++ getError() : Error
++ setError(value : Error) : void
++ getFailure() : Error
++ setFailure(value : Error) : void
++ getSystemOut() : String
++ setSystemOut(value : String) : void
++ getSystemErr() : String
++ setSystemErr(value : String) : void
++ getName() : String
++ setName(value : String) : void
++ getAssertions() : String
++ setAssertions(value : String) : void
++ getClassname() : String
++ setClassname(value : String) : void
++ getStatus() : String
++ setStatus(value : String) : void
++ getTime() : String
++ setTime(value : String) : void
+}
+class TableEmbedDto{
+result : String
+- htmlCharacterEntityMap : Map<String,String>
++ getDataTransferObject() : Object
+- getHeader() : String
+- getTime() : String
+- getTestOverView() : String
+- generateHtmlForTestSuite(testSuite : TestSuite) : String
+- formatGeneratedArtifacts(testSuite : TestSuite) : String
+- generateHtmlForTestCase(testCase : TestCase) : String
+- initializeHtmlCharacterEntitiesMap() : void
+- setHtmlCharacterEnities(input : String) : String
+}
+TableEmbedDto --|> DataTransferObject
+class JUnitDto{
+- testsuites : Testsuites
++ getTestsuites() : Testsuites
++ setTestsuites(value : Testsuites) : void
++ setTestCounts() : void
++ moveToNextTestSuite() : void
++ moveToNextTestCase() : void
++ getDataTransferObject() : Object
++ setNumberOfAllTests(numberofTests : String) : void
++ setNumberOffAllFailures(numberOfFailures : String) : void
++ setCurrentTestSuiteName(name : String) : void
++ setCurrentTestSuiteTests(numberofTests : String) : void
++ setCurrentTestSuiteFailures(numberOfFailures : String) : void
++ setCurrentTestSuitePackage(testSuitePackage : String) : void
++ setCurrentTestCaseName(name : String) : void
++ setCurrentTestCaseFailure(message : String, type : String) : void
++ setCurrentTestCaseErrorMessage(message : String, type : String) : void
+}
+JUnitDto --|> DataTransferObject
+class Property{
+- name : String
+- value : String
++ getName() : String
++ setName(value : String) : void
++ getValue() : String
++ setValue(value : String) : void
+}
+class Formatter{
+- testSuiteKeyword : String
+- passKeyword : String
+- failPrefixKeyword : String
+- failKeyword : String
+- expectedKeyword : String
+- verifyCompareKeywords : List<String>
+- expectKeyword : String
+- verifyKeyword : String
+- testCasesExecutedText : String
+- tokenExtractor : TokenExtractor
+- expectTestSuiteName : boolean
+- failData : String
+- expectFailMessage : boolean
+- expectWasMessage : boolean
+- expectExpectedMessage : boolean
+# dataTransferObject : DataTransferObject
+- expectNumberPassed : boolean
+- expectNumberFailed : boolean
++ Formatter(dataTransferObjectStyle : DataTransferObjectStyle)
++ {abstract} writeInFormat(path : String) : String
++ parseText(text : String, testSuitePackage : String) : void
+- setTestCaseValues(line : String) : void
+- getFailureType(line : String) : String
+- instantiateBasedOnStyle(style : DataTransferObjectStyle) : DataTransferObject
+}
+class LinuxProcessLauncher{
+- processConfigKeyPrefix : String
++ LinuxProcessLauncher(processConfigKeyPrefix : String)
++ getProcessConfigKeyPrefix() : String
++ run(programName : String) : Process
+}
+LinuxProcessLauncher ..|> ProcessLauncher
+class Testsuite{
+- name : String
+- tests : String
+- disabled : String
+- errors : String
+- failures : String
+- hostname : String
+- testsuiteId : String
+- testsuitePackage : String
+- skipped : String
+- time : String
+- timestamp : String
+- properties : Properties
+- testcase : List<Testcase>
+- systemOut : String
+- systemErr : String
++ getProperties() : Properties
++ setProperties(value : Properties) : void
++ getTestcase() : List<Testcase>
++ setTestcase(value : List<Testcase>) : void
++ addTestCase(value : Testcase) : void
++ getSystemOut() : String
++ setSystemOut(value : String) : void
++ getSystemErr() : String
++ setSystemErr(value : String) : void
++ getName() : String
++ setName(value : String) : void
++ getTests() : String
++ setTests(value : String) : void
++ getDisabled() : String
++ setDisabled(value : String) : void
++ getErrors() : String
++ setErrors(value : String) : void
++ getFailures() : String
++ setFailures(value : String) : void
++ getHostname() : String
++ setHostname(value : String) : void
++ getID() : String
++ setID(value : String) : void
++ getTestsuitePackage() : String
++ setTestsuitePackage(value : String) : void
++ getSkipped() : String
++ setSkipped(value : String) : void
++ getTime() : String
++ setTime(value : String) : void
++ getTimestamp() : String
++ setTimestamp(value : String) : void
+}
+class Error{
+- message : String
+- type : String
+- text : String
++ getMessage() : String
++ setMessage(value : String) : void
++ getType() : String
++ setType(value : String) : void
++ getText() : String
++ setText(value : String) : void
+}
+class TableDocumentDto{
++ getDataTransferObject() : Object
+- getHtmlHeader() : String
+- getHtmlEnd() : String
+}
+TableDocumentDto --|> TableEmbedDto
+class TestInstance{
+- testSuites : List<TestSuite>
+- testingPrograms : String
+- testSuiteNumber : int
+- testSuiteNumberFailed : int
+- testCaseNumber : int
+- testCaseNumberFailed : int
++ getTestSuites() : List<TestSuite>
++ addTestSuite(testSuite : TestSuite) : void
++ getTestingPrograms() : String
++ getTestSuiteNumber() : int
++ getTestSuiteNumberPassed() : int
++ getTestSuiteNumberFailed() : int
++ incrementFailedTestSuites() : void
++ getTestCaseNumber() : int
++ getTestCaseNumberPassed() : int
++ getTestCaseNumberFailed() : int
+}
+ProcessOutputWriter--"xmlFormat" XMLFormat
+ProcessOutputWriter--"htmlFormat" HTMLFormat
+DataTransferObject--"testInstance" TestInstance
+LauncherController--"- launcher" Launcher
+LauncherController--"- processOutputWriter" ProcessOutputWriter
+Testcase--"- skipped" Skipped
+Testcase--"- error" Error
+Testcase--"- failure" Error
+JUnitDto--"- testsuites" Testsuites
+Formatter--"# dataTransferObject" DataTransferObject
+Testsuite--"- properties" Properties
+interface ProcessLauncher{
+getProcessConfigKeyPrefix() : String
+run(programName : String) : Process
+}
+enum DataTransferObjectStyle{
+directOutput
+tableDocument
+tableEmbed
+JUnit
+}
+enum TestOutputFormat{
+txt
+xml
+html
+}
+@enduml

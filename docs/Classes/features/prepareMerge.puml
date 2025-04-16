@@ -1,0 +1,14 @@
+@startuml
+skinparam classAttributeIconSize 0
+class IO_FileGetter{
+{static} getSourceReader(programName : String) : Reader
+{static} getTestSourceWriter(sourceFile : String) : Writer
+{static} getMatchingTestDirectoriesForProgram(programName : String) : List<String>
+}
+class PrepareMergeController{
++ {static} getSourceReader(programName : String) : Reader
++ {static} getTestSourceWriter(sourceFile : String) : Writer
++ {static} getTestSourceOutPath() : String
++ {static} getMatchingTestDirectoriesForProgram(programName : String) : List<String>
+}
+@enduml

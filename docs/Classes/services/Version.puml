@@ -1,0 +1,6 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Version{
++ {static} current() : String
+}
+@enduml

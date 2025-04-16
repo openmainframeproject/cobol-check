@@ -1,0 +1,100 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Config{
++ {static} DECIMAL_POINT_IS_COMMA_CONFIG_KEY : String
++ {static} APPEND_RULES_AND_OPTIONS : String
++ {static} INJECT_START_TAG_CONFIG_KEY : String
++ {static} INJECT_END_TAG_CONFIG_KEY : String
++ {static} STUB_COMMENT_TAG : String
++ {static} GENERATED_CODE_PATH : String
++ {static} DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY : String
++ {static} TESTSUITEPARSER_ERROR_LOG_PATH : String
++ {static} TESTSUITEPARSER_ERROR_LOG_NAME : String
++ {static} IO_ENCODING_LINUX_KEY : String
++ {static} IO_ENCODING_MACOSX_KEY : String
++ {static} IO_ENCODING_WINDOWS_KEY : String
++ {static} IO_ENCODING_ZOS_KEY : String
++ {static} IO_ENCODING_UNIX_KEY : String
++ {static} GENERATED_FILES_PERMISSION_ALL : String
++ {static} LOCALE_LANGUAGE_CONFIG_KEY : String
++ {static} LOCALE_COUNTRY_CONFIG_KEY : String
++ {static} LOCALE_VARIANT_CONFIG_KEY : String
++ {static} DEFAULT_LOCALE_CONFIG_KEY : String
++ {static} RUN_GENERATED_TESTS_CONFIG_KEY : String
++ {static} RUN_GENERATED_TESTS_DEFAULT : String
++ {static} RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX : String
++ {static} APPLICATION_SOURCE_FILENAME_SUFFIX : String
++ {static} RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX : String
++ {static} APPLICATION_COPYBOOK_FILENAME_SUFFIX : String
++ {static} NONE : String
++ {static} DEFAULT_CONFIG_FILE_PATH : String
++ {static} TEST_RESULTS_FILE_CONFIG_KEY : String
++ {static} TEST_RESULTS_FORMAT_CONFIG_KEY : String
++ {static} TEST_RESULTS_FORMAT_STYLE_CONFIG_KEY : String
++ {static} APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_APPLICATION_SOURCE_DIRECTORY : String
++ {static} COPY_SOURCE_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_COPY_SOURCE_DIRECTORY : String
++ {static} TESTSUITE_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_TESTSUITE_DIRECTORY : String
++ {static} COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY : String
++ {static} GNUCOBOL_COMPILE_OPTIONS : String
++ {static} RESOLVED_GNUCOBOL_COMPILE_OPTIONS : String
+- {static} settings : Properties
+{static} runDirectory : String
+- {static} testCodePrefix : String
+{static} decimalPointIsComma : boolean
+- {static} testSuiteParserErrorLogFileName : String
+{static} generatedTestFileName : String
+{static} concatenatedTestSuitePath : String
+- {static} sourceFolderContext : String
+- Config()
++ {static} load() : void
++ {static} load(configResourceName : String) : void
++ {static} changeProperty(propertyName : String, newValue : String) : void
++ {static} getString(key : String) : String
++ {static} getString(key : String, defaultValue : String) : String
++ {static} remove(key : String) : void
++ {static} getDefaultLocale() : Locale
++ {static} setRunDirectory(value : String) : void
++ {static} getTestCodePrefix() : String
++ {static} setDecimalPointIsCommaFromFile() : void
++ {static} isDecimalPointComma() : boolean
++ {static} setDecimalPointIsComma(value : boolean) : void
++ {static} getAppendRulesAndOptions() : String
++ {static} getGeneratedTestCodePath() : String
++ {static} getTestsuiteparserErrorLogPath() : String
++ {static} getTestsuiteparserErrorLogName() : String
++ {static} setTestSuiteParserErrorLogFileName(fileName : String) : void
++ {static} getGeneratedFilesPermissionAll() : String
++ {static} getInjectStartTag() : String
++ {static} getInjectEndTag() : String
++ {static} getStubTag() : String
++ {static} getTestResultFilePathString() : String
++ {static} getGeneratedTestFileName() : String
++ {static} setGeneratedTestFileName(keyValue : String) : void
++ {static} getConcatenatedTestSuitesPath() : String
++ {static} setConcatenatedTestSuitesPath(keyValue : String) : void
++ {static} getTestResultFormat() : TestOutputFormat
++ {static} getCharsetForPlatform(platform : Platform) : String
++ {static} getTestResultFormatStyle() : DataTransferObjectStyle
++ {static} getRunGeneratedTest() : boolean
++ {static} setSourceFolderContext(keyValue : String) : void
++ {static} getApplicationSourceDirectoryPathString() : String
++ {static} getCopyBookSourceDirectoryPathString() : String
++ {static} getTestSourceDirectoryPathString() : String
++ {static} getApplicationFilenameSuffixes() : List<String>
+- {static} setApplicationFilenameSuffixes() : void
++ {static} getCopybookFilenameSuffixes() : List<String>
++ {static} getScriptDirectory() : String
++ {static} getGnuCOBOLCompileOptions() : List<String>
++ {static} getDisplayUnMockedCalls() : Boolean
++ {static} setGnuCOBOLCompileOptions() : void
+- {static} setCopybookFilenameSuffix() : void
+- {static} resolveFilenameSuffixes(configKey : String, resolvedConfigKey : String) : void
+- {static} resolveConfigList(configKey : String, resolvedConfigKey : String) : void
+- {static} setDefaultLocaleOverride() : void
+- {static} getCorrectRunContext(path : String) : String
+}
+@enduml

@@ -1,0 +1,1161 @@
+@startuml
+skinparam classAttributeIconSize 0
+class StatusController{
+status : CurrentStatus
+emitter : Emitter
++ StatusController()
++ setExitStatusNormal() : void
++ setExitStatusHalt() : void
++ isExitStatusNormal() : boolean
++ isExitStatusHalt() : boolean
++ getSourceProgramNames() : String[]
++ setSourceProgramNames(sourceProgramNames : String[]) : void
++ getTestFileNames() : String
++ setTestFileNames(testFileNames : String) : void
++ emitHelp() : void
++ emitVersion() : void
++ exitProgram() : void
+}
+class Keyword{
+- value : String
+- validNextKeys : List<String>
+- validNextKeysInContext : Map<String,List<String>>
+- keywordAction : KeywordAction
++ Keyword(value : String, validNextKeys : List<String>, keywordAction : KeywordAction)
++ Keyword(value : String, validNextKeys : List<String>, validNextKeysInContext : Map<String,List<String>>, keywordAction : KeywordAction)
++ value() : String
++ getValidNextKeys(context : String) : List<String>
++ keywordAction() : KeywordAction
+}
+class VerifyMockCount{
+- attachedMock : Mock
+- expectedCount : String
+- atLeast : boolean
+- noMoreThan : boolean
+- identifier : String
+- type : String
+- arguments : List<String>
+- testSuiteFileName : String
+- declarationLineNumberInOriginalFile : int
+- declarationIndexNumberInOriginalFile : int
++ VerifyMockCount()
++ getExpectedCount() : String
++ isSetToAtLeast() : boolean
++ isSetToNoMoreThan() : boolean
++ getAttachedMock() : Mock
++ getIdentifier() : String
++ getType() : String
++ setType(type : String) : void
++ setIdentifier(identifier : String) : void
++ setAttachedMock(attachedMock : Mock) : void
++ setExpectedCount(expectedCount : String) : void
++ getTestSuiteFileName() : String
++ setTestSuiteFileName(testSuiteFileName : String) : void
++ getDeclarationLineNumberInOriginalFile() : int
++ setDeclarationLineNumberInOriginalFile(declarationLineNumberInOriginalFile : int) : void
++ getDeclarationIndexNumberInOriginalFile() : int
++ setDeclarationIndexNumberInOriginalFile(declarationIndexNumberInOriginalFile : int) : void
+expectExact(expectedCount : String) : void
+expectAtLeast(expectedCount : String) : void
+expectNoMoreThan(expectedCount : String) : void
++ getArguments() : List<String>
++ addArgument(argument : String) : void
+}
+class OptionKey{
++ shortKey : String
++ longKey : String
+}
+class SectionOrParagraph{
+- lines : List<String>
++ SectionOrParagraph()
+addLine(line : String) : void
+getLines() : List<String>
+removeLines() : void
+}
+class LinuxProcessLauncher{
+- processConfigKeyPrefix : String
++ LinuxProcessLauncher(processConfigKeyPrefix : String)
++ getProcessConfigKeyPrefix() : String
++ run(programName : String) : Process
+}
+LinuxProcessLauncher ..|> ProcessLauncher
+class Keywords{
+- {static} keywordInfo : Map<String,Keyword>
+- {static} mockTypes : List<String>
+- {static} qualifiedNameKeywords : List<String>
++ {static} getKeywordFor(key : String, expectFieldName : boolean) : Keyword
+}
+class KeywordExtractor{
+- multiWordTokens : Map<String,List<String>>
+- buffer : StringBuilder
+- PERIOD : char
+- COMMA : char
+- DOUBLE_QUOTE : char
+- SINGLE_QUOTE : char
+- SPACE : char
+- nextExpectedTokens : List<String>
+- openQuote : boolean
+- openParenthesis : boolean
+- quoteDelimiter : char
+- processingNumericLiteral : boolean
++ KeywordExtractor()
++ extractTokensFrom(sourceLine : String) : List<String>
+- handleEndOfWord(sourceLine : String, tokens : List<String>, tokenOffset : int) : int
++ tokenListEndsDuringMultiToken(tokens : List<String>) : boolean
+- isQuote(character : char) : boolean
+- startNumericLiteral(buffer : StringBuilder, currentCharacter : char) : boolean
+- isDecimalPoint(buffer : StringBuilder, currentCharacter : char, sourceLine : String, tokenOffset : int) : boolean
+- getPreviousCharacterFromBuffer(buffer : StringBuilder) : char
+- addTokenAndClearBuffer(buffer : StringBuilder, tokens : List<String>) : StringBuilder
+}
+KeywordExtractor ..|> TokenExtractor
+class TableDocumentDto{
++ getDataTransferObject() : Object
+- getHtmlHeader() : String
+- getHtmlEnd() : String
+}
+TableDocumentDto --|> TableEmbedDto
+class LauncherController{
+- launcher : Launcher
+- processOutputWriter : ProcessOutputWriter
++ LauncherController()
++ runTestProgram(programName : String, isLastRun : boolean) : int
+}
+class OptionValue{
++ hasArgument : boolean
++ isSet : boolean
++ argumentValue : String
+}
+class LineRepository{
+- currentExpectFileIdentifier : String
+- fileControlStatements : List<String>
+- fileSectionStatements : List<String>
+- fileIdentifiersAndStatuses : Map<String,String>
+- copyTokens : List<String>
+LineRepository()
+getFileControlStatements() : List<String>
+getFileSectionStatements() : List<String>
+getFileIdentifiersAndStatuses() : Map<String,String>
+getCopyTokens() : List<String>
+setCopyTokens(copyTokens : List<String>) : void
+addFileControlStatement(statement : String) : void
+addFileSectionStatement(statement : String) : void
+putFileIdentifierAndStatus(key : String, value : String) : void
+addFileIdentifierWithNoStatus(identifier : String) : void
+addStatusForLastSetIdentifier(status : String) : void
+addCopyToken(token : String) : void
+addAccumulatedTokensFromCopyStatementToCopyTokens(line : String) : void
+addExpandedCopyStatementsToFileSectionStatements() : List<String>
+addExpandedCopyDB2Statements(line : CobolLine) : List<String>
+}
+class WhenOther{
+- identifier : String
+- type : String
+- lines : List<String>
+- testSuiteNumber : int
+- testCaseNumber : int
+- mockNumber : int
++ WhenOther(testSuiteNumber : int, testCaseNumber : int, mockNumber : int)
++ getGeneratedWhenOtherIdentifier() : String
++ getGeneratedWhenOtherIdentifierRoot() : String
++ addLines(lines : List<String>) : void
++ setType(type : String) : void
++ getType() : String
++ getLines() : List<String>
++ setIdentifier(identifier : String) : void
++ getCommentText() : List<String>
+}
+class WriterController{
+- cobolWriter : CobolWriter
++ WriterController(testSourceWriter : Writer)
++ WriterController(cobolWriter : CobolWriter)
++ startStoringLines() : void
++ stopStoringLines() : void
++ releaseStoredLines() : void
++ writeLine(line : String) : void
++ writeCommentedLine(line : String) : void
++ writeStubbedLine(line : String) : void
++ writeLines(lines : List<String>) : void
++ writeCommentedLines(lines : List<String>) : void
++ writeStubbedLines(lines : List<String>) : void
++ closeWriter(programName : String) : void
+}
+class WhenOtherGenerator{
+- performFormat : String
+generateWhenOtherCall(whenOther : WhenOther) : String
+generateWhenOther(whenOther : WhenOther, withComments : boolean) : List<String>
+- generateParagraphsForWhenOther(whenOther : WhenOther, withComments : boolean) : List<String>
+}
+class CobolReader{
+- reader : BufferedReader
+- state : State
+- tokenExtractor : TokenExtractor
+- previousLine : CobolLine
+- previousMeaningfulLine : CobolLine
+- currentLine : CobolLine
+- nextLines : List<CobolLine>
+- currentStatement : List<CobolLine>
+- lineNumber : int
+- lineJustEntered : String
+- maxLineLength : int
++ CobolReader(sourceReader : BufferedReader)
+getState() : State
+getCurrentLine() : CobolLine
+getPreviousLine() : CobolLine
+getPreviousMeaningfulLine() : CobolLine
+getCurrentStatement() : List<CobolLine>
++ getLineJustEntered() : String
+hasStatementBeenRead() : boolean
+getLineNumber() : int
+readLine() : CobolLine
+readStatementAsOneLine() : CobolLine
+- setPreviousMeaningfulLine() : void
+updateState() : void
+close() : void
+appendNextMeaningfulLineToCurrentLine(isFirstTime : Boolean) : CobolLine
+appendToCurrentLine(appendString : String) : CobolLine
+removePeriodFromCurrentLine() : CobolLine
+addLineBeforeCurrentRead(line : String) : void
+addLineAfterCurrentRead(line : String) : void
+peekNextMeaningfulLine() : CobolLine
+putNextLine(line : CobolLine) : void
+putNextLine(line : String) : void
+readTillEndOfStatement() : List<CobolLine>
+readTillHitToken(token : String, ignoreTokenOnCurrentLine : boolean) : List<CobolLine>
+isFlagSet(partOfProgram : String) : boolean
+}
+class CopybookExpander{
+- pathToCopybooks : String
+- copybookFilenameSuffixes : List<String>
++ CopybookExpander()
++ expand(expandedLines : List<String>, copybookFilename : String) : List<String>
++ expand(expandedLines : List<String>, copybookFilename : String, textReplacement : StringTuple) : List<String>
+- commentOut(sourceLine : String) : String
+- copyStatementIsPresentIn(sourceLine : String) : boolean
+- extractCopybookNameFrom(sourceLine : String) : String
+- getPathToCopybooks() : String
++ expandDB2(expandedLines : List<String>, copybookFilename : String, textReplacement : StringTuple) : List<String>
+}
+class TestSuiteParserController{
+- testSuiteParser : TestSuiteParser
+testSuiteConcatenator : TestSuiteConcatenator
+- mockRepository : MockRepository
+- beforeAfterRepo : BeforeAfterRepo
+- mockGenerator : MockGenerator
+- testSuiteReader : BufferedReader
+- whenOtherGenerator : WhenOtherGenerator
+- testSuiteErrorLog : TestSuiteErrorLog
+- parsedTestSuiteLines : List<String>
+- {static} workingStorageCopybookFilename : String
+- {static} procedureDivisionResultCopybookFilename : String
+- {static} procedureDivisionParagraphCopybookFilename : String
+- {static} copyBookTokensWithPeriodAsDecimalPoint : String[]
+- workingStorageHeader : String
+- testCodePrefix : String
+- workingStorageTestCodeHasBeenInserted : boolean
++ TestSuiteParserController(testFileNames : String)
++ TestSuiteParserController(reader : BufferedReader)
++ hasWorkingStorageTestCodeBeenInserted() : boolean
++ getWorkingStorageHeader() : String
++ concatenateTestSuites(programTestSuiteSubdirectory : String) : void
++ parseTestSuites(numericFields : NumericFields) : void
++ getWorkingStorageTestCode(fileSectionStatements : List<String>) : List<String>
++ getWorkingStorageMockCode() : List<String>
++ generateMockCountingFields() : List<String>
++ getProcedureDivisionTestCode() : List<String>
++ generateMockCountInitializer() : List<String>
++ generateMockSections(withComments : boolean) : List<String>
++ generateBeforeParagraph() : List<String>
++ generateAfterParagraph() : List<String>
++ generateBeforeAfterBranchParagraphs(withComments : boolean) : List<String>
++ generateCobolLinesForUnmockedCalls() : List<String>
++ mockExistsFor(identifier : String, type : String, arguments : List<String>) : boolean
++ generateMockPerformCalls(identifier : String, type : String, arguments : List<String>) : List<String>
++ getEndEvaluateLine() : List<String>
++ logUnusedMocks() : void
++ getBoilerplateCodeFromCopybooks(copybookFilename : String) : List<String>
++ closeTestSuiteReader() : void
++ prepareNextParse() : void
++ generateWhenOtherSectionOrParagraph(type : String, sectionOrParagraphlines : List<String>, sourceLine : String, identifier : String, withComments : boolean) : List<String>
+}
+class MockGenerator{
+- testSuiteIdentifier : String
+- testCaseIdentifier : String
+- performFormat : String
+- endEvaluateLine : String
+- continueLine : String
++ {static} performUnMockPara : String
+- countMockInitialWSHeader : String
+- initializeMockCountParagraphHeader : String
+generateWorkingStorageMockCountLines(mocks : List<Mock>) : List<String>
+generateMockCountInitializer(mocks : List<Mock>) : List<String>
+generateMockParagraphs(mocks : List<Mock>, withComments : boolean) : List<String>
+generateMockPerformCalls(identifier : String, type : String, arguments : List<String>, mocks : List<Mock>) : List<String>
+getEndEvaluateLine() : String
+getContinueLine() : String
+- generateMockCountValues(mocks : List<Mock>) : List<String>
+- generateParagraphsForMock(mock : Mock, withComment : boolean) : List<String>
+}
+class TestCase{
+name : String
+passed : boolean
+failMessage : String
++ getName() : String
++ setName(name : String) : void
++ didPass() : boolean
++ setPassed(passed : boolean) : void
++ getFailMessage() : String
++ setFailMessage(failMessage : String) : void
+}
+class Formatter{
+- testSuiteKeyword : String
+- passKeyword : String
+- failPrefixKeyword : String
+- failKeyword : String
+- expectedKeyword : String
+- verifyCompareKeywords : List<String>
+- expectKeyword : String
+- verifyKeyword : String
+- testCasesExecutedText : String
+- tokenExtractor : TokenExtractor
+- expectTestSuiteName : boolean
+- failData : String
+- expectFailMessage : boolean
+- expectWasMessage : boolean
+- expectExpectedMessage : boolean
+# dataTransferObject : DataTransferObject
+- expectNumberPassed : boolean
+- expectNumberFailed : boolean
++ Formatter(dataTransferObjectStyle : DataTransferObjectStyle)
++ {abstract} writeInFormat(path : String) : String
++ parseText(text : String, testSuitePackage : String) : void
+- setTestCaseValues(line : String) : void
+- getFailureType(line : String) : String
+- instantiateBasedOnStyle(style : DataTransferObjectStyle) : DataTransferObject
+}
+class TestSuite{
+- name : String
+- failedTests : int
+- testCases : List<TestCase>
+- programName : String
+- programPath : String
+- path : String
++ getName() : String
++ setName(name : String) : void
++ getTests() : int
++ getPassedTests() : int
++ getFailedTests() : int
++ incrementFailedTests() : void
++ getTestCases() : List<TestCase>
++ addTestCase(testCase : TestCase) : void
++ getProgramName() : String
++ setProgramName(programName : String) : void
++ getProgramPath() : String
++ setProgramPath(programPath : String) : void
++ getPath() : String
++ setPath(path : String) : void
+}
+class Testcase{
+- name : String
+- assertions : String
+- classname : String
+- status : String
+- time : String
+- skipped : Skipped
+- error : Error
+- failure : Error
+- systemOut : String
+- systemErr : String
++ getSkipped() : Skipped
++ setSkipped(value : Skipped) : void
++ getError() : Error
++ setError(value : Error) : void
++ getFailure() : Error
++ setFailure(value : Error) : void
++ getSystemOut() : String
++ setSystemOut(value : String) : void
++ getSystemErr() : String
++ setSystemErr(value : String) : void
++ getName() : String
++ setName(value : String) : void
++ getAssertions() : String
++ setAssertions(value : String) : void
++ getClassname() : String
++ setClassname(value : String) : void
++ getStatus() : String
++ setStatus(value : String) : void
++ getTime() : String
++ setTime(value : String) : void
+}
+class IO_FileGetter{
+{static} getSourceReader(programName : String) : Reader
+{static} getTestSourceWriter(sourceFile : String) : Writer
+{static} getMatchingTestDirectoriesForProgram(programName : String) : List<String>
+}
+class ArgumentHandler{
+- options : Map<OptionKey,OptionValue>
+- {static} LONG_OPT_PREFIX : String
+- {static} SHORT_OPT_PREFIX : String
+- {static} LONG_OPT_KEYWORD : String
+- {static} ARGUMENT_REQUIRED_INDICATOR : char
+- {static} canTakeMultipleArguments : List<String>
++ ArgumentHandler(args : String[], optionsString : String)
++ getValueFor(key : String) : String
++ isSet(key : String) : boolean
+- storeOptionSettings(optionsString : String) : void
+- processCommandLineArgumentArray(args : String[]) : void
++ loadArgProgramPaths() : void
+- lookupOption(requestedOption : String) : OptionValue
+- isKey(argValue : String) : boolean
+- stripPrefix(argValue : String) : String
+}
+class ProcessOutputWriter{
+testResultsFilePath : String
+writeWasSuccesful : boolean
+processInput : String
+processError : String
+xmlFormat : XMLFormat
+htmlFormat : HTMLFormat
++ ProcessOutputWriter()
++ getTestResultsFilePath() : String
++ WriteWasSuccesful() : boolean
++ writeProcessOutputToTestResultsFile(proc : Process, format : TestOutputFormat, style : DataTransferObjectStyle, programName : String, outputToConsole : boolean, isLastRun : boolean) : void
+- getProcessOut(proc : Process) : void
+- writeOutPutToConsole() : void
+- writeProcessOutputToFile(path : String) : boolean
+- writeProcessOutputWithFormat(formatter : Formatter, programName : String, writeToFile : boolean) : void
+- cleanupOldTestResults() : void
+}
+class Property{
+- name : String
+- value : String
++ getName() : String
++ setName(value : String) : void
++ getValue() : String
++ setValue(value : String) : void
+}
+class State{
+- flags : Map<String,Flag>
++ State()
++ getFlags() : Map<String,Flag>
++ setFlagFor(key : String) : void
++ unsetFlagFor(key : String) : void
++ isFlagSetFor(key : String) : boolean
+- mutuallyExclusiveFlagsFor(token : String, mutuallyExclusiveTokens : String) : void
+- dependentFlagsFor(token : String, dependentTokens : String) : void
+}
+class LaunchHelper{
+{static} generateCommandParms(processKey : String, programName : String, compileOptions : List<String>, surroundWithQuotes : boolean) : String[]
+}
+class CobolWriter{
+writer : Writer
+- currentLineIsComment : boolean
+- maxLineLength : int
+- storeLines : boolean
+- storedLines : List<String>
+- stubTag : String
++ CobolWriter(writer : Writer)
+writeLine(line : String) : void
++ startStoringLines() : void
++ stopStoringLines() : void
++ releaseStoredLines() : void
+writeCommentedLine(line : String) : void
+writeStubbedLine(line : String) : void
+writeFormattedLine(format : String, args : Object) : void
+writeLines(lines : List<String>) : void
+writeCommentedLines(lines : List<String>) : void
+writeStubbedLines(lines : List<String>) : void
+close() : void
+- writeMultiLine(line : String, isComment : boolean, isRecursiveCall : boolean) : void
+- getStringContinuationSign(line1 : String, line2 : String) : char
+}
+class PrepareMergeController{
++ {static} getSourceReader(programName : String) : Reader
++ {static} getTestSourceWriter(sourceFile : String) : Writer
++ {static} getTestSourceOutPath() : String
++ {static} getMatchingTestDirectoriesForProgram(programName : String) : List<String>
+}
+class Flag{
+- state : boolean
+- mutuallyExclusiveFlags : List<Flag>
+- dependentFlags : List<Flag>
++ Flag()
++ setMutuallyExclusiveFlags(mutuallyExclusiveFlags : List<Flag>) : void
++ setDependentFlags(dependentFlags : List<Flag>) : void
++ isSet() : boolean
++ set() : void
++ unset() : void
+}
+class Launcher{
+launchProgram(launcher : ProcessLauncher, programPath : String, postLaunchAction : Consumer<Process>) : int
+launchProgram(launcher : ProcessLauncher, programPath : String) : int
++ getPlatformSpecificLauncher(platform : Platform) : ProcessLauncher
+}
+class ArgumentHandlerController{
+argumentHandler : ArgumentHandler
++ ArgumentHandlerController(args : String[])
++ ArgumentHandlerController(args : String[], optionsString : String)
++ loadSettingsFromArguments() : void
++ isKeySet(key : String) : boolean
++ getKeyValue(key : String) : String
+}
+class Testsuite{
+- name : String
+- tests : String
+- disabled : String
+- errors : String
+- failures : String
+- hostname : String
+- testsuiteId : String
+- testsuitePackage : String
+- skipped : String
+- time : String
+- timestamp : String
+- properties : Properties
+- testcase : List<Testcase>
+- systemOut : String
+- systemErr : String
++ getProperties() : Properties
++ setProperties(value : Properties) : void
++ getTestcase() : List<Testcase>
++ setTestcase(value : List<Testcase>) : void
++ addTestCase(value : Testcase) : void
++ getSystemOut() : String
++ setSystemOut(value : String) : void
++ getSystemErr() : String
++ setSystemErr(value : String) : void
++ getName() : String
++ setName(value : String) : void
++ getTests() : String
++ setTests(value : String) : void
++ getDisabled() : String
++ setDisabled(value : String) : void
++ getErrors() : String
++ setErrors(value : String) : void
++ getFailures() : String
++ setFailures(value : String) : void
++ getHostname() : String
++ setHostname(value : String) : void
++ getID() : String
++ setID(value : String) : void
++ getTestsuitePackage() : String
++ setTestsuitePackage(value : String) : void
++ getSkipped() : String
++ setSkipped(value : String) : void
++ getTime() : String
++ setTime(value : String) : void
++ getTimestamp() : String
++ setTimestamp(value : String) : void
+}
+class Emitter{
+- helpText : String[]
+emitHelp() : void
+emitVersion() : void
+emitByLine(text : String[]) : void
+}
+class EnvironmentSetup{
+loadConfigurationSettings(configFileFromCommandLine : String) : void
+setLogLevel(logLevelFromCommandLine : String) : void
+}
+class XMLFormat{
++ XMLFormat(dataTransferObjectStyle : DataTransferObjectStyle)
++ writeInFormat(path : String) : String
+}
+XMLFormat --|> Formatter
+class BeforeAfterRepo{
+beforeEachItems : List<BeforeAfterItem>
+beforeEachEvaluationGenerator : EvaluationGenerator
+afterEachItems : List<BeforeAfterItem>
+afterEachEvaluationGenerator : EvaluationGenerator
+testCodePrefix : String
+- {static} BEFORE_EACH_BRANCH_NAME : String
+- {static} AFTER_EACH_BRANCH_NAME : String
+- {static} TESTSUITE_NAME_VARIABLE : String
+- {static} PERFORM_LINE : String
+- {static} BEFORE_EACH_PARAGRAPH_NAME : String
+- {static} AFTER_EACH_PARAGRAPH_NAME : String
++ BeforeAfterRepo()
+addBeforeEachItem(id : int, testSuiteName : String, lines : List<String>) : void
+addAfterEachItem(id : int, testSuiteName : String, lines : List<String>) : void
+getBeforeEachParagraphLines() : List<String>
+getAfterEachParagraphLines() : List<String>
+getAllBranchingParagraphs(withComments : boolean) : List<String>
+}
+class MockRepository{
+- mocks : List<Mock>
++ addMock(mock : Mock) : void
++ getMocks() : List<Mock>
++ mockExistsFor(identifier : String, type : String, arguments : List<String>) : boolean
++ getMockFor(identifier : String, type : String, testSuite : String, testCase : String, arguments : List<String>) : Mock
+- mockAlreadyExist(mock : Mock) : boolean
+}
+class DataTransferObject{
+testSuiteIndex : int
+testCaseIndex : int
+testInstance : TestInstance
+lastProgram : String
++ moveToNextTestSuite() : void
++ moveToNextTestCase() : void
++ getDataTransferObject() : Object
++ setNumberOfAllTests(numberofTests : String) : void
++ setNumberOffAllFailures(numberOfFailures : String) : void
++ setCurrentTestSuiteName(name : String) : void
++ setCurrentTestSuiteTests(numberofTests : String) : void
++ setCurrentTestSuiteFailures(numberOfFailures : String) : void
++ setCurrentTestSuitePackage(testSuitePackage : String) : void
++ setCurrentTestCaseName(name : String) : void
++ setCurrentTestCaseFailure(message : String, type : String) : void
++ setCounts() : void
++ setCurrentTestCaseErrorMessage(message : String, type : String) : void
+}
+class JUnitDto{
+- testsuites : Testsuites
++ getTestsuites() : Testsuites
++ setTestsuites(value : Testsuites) : void
++ setTestCounts() : void
++ moveToNextTestSuite() : void
++ moveToNextTestCase() : void
++ getDataTransferObject() : Object
++ setNumberOfAllTests(numberofTests : String) : void
++ setNumberOffAllFailures(numberOfFailures : String) : void
++ setCurrentTestSuiteName(name : String) : void
++ setCurrentTestSuiteTests(numberofTests : String) : void
++ setCurrentTestSuiteFailures(numberOfFailures : String) : void
++ setCurrentTestSuitePackage(testSuitePackage : String) : void
++ setCurrentTestCaseName(name : String) : void
++ setCurrentTestCaseFailure(message : String, type : String) : void
++ setCurrentTestCaseErrorMessage(message : String, type : String) : void
+}
+JUnitDto --|> DataTransferObject
+class Error{
+- message : String
+- type : String
+- text : String
++ getMessage() : String
++ setMessage(value : String) : void
++ getType() : String
++ setType(value : String) : void
++ getText() : String
++ setText(value : String) : void
+}
+class CobolGenerator{
+- {static} SECTION_HEADER_FORMAT : String
+- {static} WHEN_OTHER_SECTION_HEADER_FORMAT : String
+- {static} PARAGRAPH_HEADER_FORMAT : String
+- {static} ENDING_PERIOD : String
+{static} generateParagraphLines(identifier : String, commentLines : List<String>, bodyLines : List<String>) : List<String>
+{static} generateCommentBlock(body : String) : List<String>
+{static} getInjectStartTagComment() : String
+{static} getInjectEndTagComment() : String
+{static} getContinueStatement() : String
+{static} addStartAndEndTags(lines : List<String>) : void
+{static} generateWhenOtherLines(identifier : String, type : String, commentLines : List<String>, bodyLines : List<String>) : List<String>
+}
+class HTMLFormat{
++ HTMLFormat(dataTransferObjectStyle : DataTransferObjectStyle)
++ writeInFormat(path : String) : String
+}
+HTMLFormat --|> Formatter
+class BeforeAfterItem{
+name : String
+testSuite : String
+lines : List<String>
+BeforeAfterItem(name : String, testSuite : String, lines : List<String>)
+}
+class TestSuiteErrorLog{
+- lastKeyword : Keyword
+- lastToken : String
+- fileMessage : String
+- lineIndexMessage : String
+- followingExpectedGotMessage : String
+- followingExpectedInContextGotMessage : String
+- keywordInBlock : String
+- errorOccured : boolean
+- cobolCheckStartingAndEndingKeywords : List<String>
+- errorLogPath : String
+- errorLogMessages : String
++ TestSuiteErrorLog()
++ hasErrorOccured() : boolean
++ getErrorMessages() : String
++ getLastKeywordValue() : String
++ checkExpectedTokenSyntax(currentKeyword : Keyword, currentToken : String, currentFile : String, lineNumber : int, lineIndex : int) : boolean
++ checkSyntaxInsideBlock(blockKeyword : String, cobolLines : List<String>, tokenExtractor : TokenExtractor, currentFile : String, lineNumber : int) : void
++ logIdenticalMocks(mock : Mock) : void
++ logVerifyReferencesNonExistentMock(verify : VerifyMockCount) : void
++ logUnusedMocks(mocks : List<Mock>) : void
++ logVariableTypeMismatch(expectedType : String, actualType : String, currentFile : String, lineNumber : int, lineIndex : int) : void
+- outputError(error : String) : void
+- displayErrorType(errorType : ErrorTypes) : String
+- getTestSuiteParserErrorLogPath() : String
+- initializeTestSuiteErrorLogWriter(path : String) : void
+}
+class EvaluationItem{
+arguments : String[]
+lines : String[]
+EvaluationItem(lines : String[], arguments : String)
+}
+class ContextHandler{
+- {static} currentContext : String
+- {static} keyword : Keyword
+- {static} startAndEndOfContexts : Map<String,List<String>>
++ {static} tryEnterContext(keyword : String) : void
++ {static} tryExitingContext(keyword : String) : void
++ {static} forceContextExit() : void
++ {static} insideOfContext() : boolean
++ {static} getCurrentContext() : String
++ {static} doesKeyEndContext(key : String) : boolean
+}
+class Mock{
+- identifier : String
+- type : String
+- lines : List<String>
+- arguments : List<String>
+- scope : MockScope
+- isUsed : boolean
+- testSuiteName : String
+- testCaseName : String
+- testSuiteNumber : int
+- testCaseNumber : int
+- mockNumber : int
+- testSuiteFileName : String
+- declarationLineNumberInOriginalFile : int
+- declarationIndexNumberInOriginalFile : int
++ Mock(testSuiteName : String, testCaseName : String, testSuiteNumber : int, testCaseNumber : int, mockNumber : int)
++ getGeneratedMockIdentifierRoot() : String
++ getGeneratedMockIdentifier() : String
++ getGeneratedMockCountIdentifier() : String
++ getGeneratedMockCountExpectedIdentifier() : String
++ getGeneratedMockStringIdentifierName() : String
++ getMockDisplayString() : String
++ getMockDescription() : String
++ getCommentText() : List<String>
++ getIdentifier() : String
++ getType() : String
++ getLines() : List<String>
++ getArguments() : List<String>
++ getScope() : MockScope
++ isUsed() : boolean
++ getTestSuiteName() : String
++ getTestCaseName() : String
++ setIdentifier(identifier : String) : void
++ setType(type : String) : void
++ setScope(scope : MockScope) : void
++ markAsUsed() : void
++ addLine(line : String) : void
++ addLines(lines : List<String>) : void
++ addArgument(argument : String) : void
++ getTestSuiteFileName() : String
++ setTestSuiteFileName(testSuiteFileName : String) : void
++ getDeclarationLineNumberInOriginalFile() : int
++ setDeclarationLineNumberInOriginalFile(declarationLineNumberInOriginalFile : int) : void
++ getDeclarationIndexNumberInOriginalFile() : int
++ setDeclarationIndexNumberInOriginalFile(declarationIndexNumberInOriginalFile : int) : void
+- getArgumentText() : String
+}
+class Properties{
+- property : List<Property>
++ getProperty() : List<Property>
++ setProperty(value : List<Property>) : void
+}
+class EnvironmentSetupController{
+environmentSetup : EnvironmentSetup
++ EnvironmentSetupController()
++ runSetup(configFileFromCommandLine : String, logLevelFromCommandLine : String) : void
+}
+class InterpreterController{
+- reader : CobolReader
+- lineRepository : LineRepository
+- numericFields : NumericFields
+- tokenExtractor : TokenExtractor
+- hasReadLine : boolean
+- possibleMockIdentifier : String
+- possibleMockType : String
+- possibleMockArgs : List<String>
+- extractedCopyBook : List<String>
+- insideSectionOrParagraphMockBody : boolean
+- currentDataStructure : TreeMap<Integer,String>
+- stubTag : String
+- sectionOrParagraph : SectionOrParagraph
++ InterpreterController(sourceReader : BufferedReader)
++ getFileSectionStatements() : List<String>
++ getFileControlStatements() : List<String>
++ getFileIdentifiersAndStatuses() : Map<String,String>
++ getCopyTokens() : List<String>
++ getNumericFieldDataTypeFor(fieldName : String) : DataType
++ getNumericFields() : NumericFields
++ getTokensForCurrentLine() : List<String>
++ getCurrentStatement() : List<String>
++ getCurrentLineAsStatement() : CobolLine
++ hasStatementBeenRead() : boolean
++ isReading(partOfProgram : String) : boolean
++ didLineJustEnter(partOfProgram : String) : boolean
++ hasReaderStateChanged() : boolean
++ currentLineContains(str : String) : boolean
++ isCurrentComponentMockable() : boolean
++ getPossibleMockIdentifier() : String
++ getPossibleMockType() : String
++ getPossibleMockArgs() : List<String>
++ isInsideSectionOrParagraphMockBody() : boolean
++ setInsideSectionOrParagraphMockBody(insideSectionOrParagraphMockBody : boolean) : void
++ shouldCurrentLineBeParsed() : boolean
++ shouldCurrentLineBeStubbed() : boolean
++ shouldCurrentStatementBeStubbed() : boolean
++ isCurrentLineEndingSectionOrParagraph() : boolean
++ isCurrentLineEndingWorkingStorageSection() : boolean
++ canWriteEndEvaluateBeforeCurrentLine() : boolean
++ interpretNextLine() : String
++ closeReader() : void
+- updateDependencies(line : CobolLine) : void
+- updateDecimalPointIsComma(line : CobolLine) : void
+- updateReplaceStatement(line : CobolLine) : void
+- updatePossibleMock(line : CobolLine) : void
+- updatePossibleStub(line : CobolLine) : void
+- tryReadBatchFileIOStatement() : void
+- updateNumericFields(line : CobolLine) : void
+- generateVariableNameBasedOnDataStructure(dataStructure : TreeMap<Integer,String>) : String
+- updateLineRepository(line : CobolLine) : void
+- updateLineRepoBySelectToken(line : CobolLine) : void
+- updateLineRepoByFileStatusToken(line : CobolLine) : void
+- updateLineRepoByCopyStatement() : void
+- updateCBLOptions(line : CobolLine) : void
+- peekNextMeaningfulLineAndGetTokenAtIndex0() : String
+- convertToStrings(lines : List<CobolLine>) : List<String>
+- resetPossibleMockValues() : void
++ getSectionOrParagraphLines() : List<String>
++ removeSectionOrParagraphLines() : void
++ addSectionOrParagraphLine() : void
++ addSectionOrParagraphLine(line : String) : void
++ addSectionOrParagraphLines(lines : List<String>) : void
+}
+class TestInstance{
+- testSuites : List<TestSuite>
+- testingPrograms : String
+- testSuiteNumber : int
+- testSuiteNumberFailed : int
+- testCaseNumber : int
+- testCaseNumberFailed : int
++ getTestSuites() : List<TestSuite>
++ addTestSuite(testSuite : TestSuite) : void
++ getTestingPrograms() : String
++ getTestSuiteNumber() : int
++ getTestSuiteNumberPassed() : int
++ getTestSuiteNumberFailed() : int
++ incrementFailedTestSuites() : void
++ getTestCaseNumber() : int
++ getTestCaseNumberPassed() : int
++ getTestCaseNumberFailed() : int
+}
+class StringTokenizerExtractor{
+- {static} delimiters : String
+- {static} expectedTokens : Map<String,List<String>>
++ StringTokenizerExtractor()
++ extractTokensFrom(sourceLine : String) : List<String>
+- swapStringsOutWithMappedTokens(line : String, stringTokensToString : Map<String,String>) : String
+- swapMappedTokensOutWithSavedStrings(tokens : List<String>, stringTokensToString : Map<String,String>) : void
+}
+StringTokenizerExtractor ..|> TokenExtractor
+class WindowsProcessLauncher{
+- processConfigKeyPrefix : String
++ WindowsProcessLauncher(processConfigKeyPrefix : String)
++ getProcessConfigKeyPrefix() : String
++ run(programName : String) : Process
+}
+WindowsProcessLauncher ..|> ProcessLauncher
+class CurrentStatus{
+exitStatus : int
+sourceProgramNames : String[]
+testFileNames : String
++ CurrentStatus()
+}
+class Skipped{
+- message : String
++ getMessage() : String
++ setMessage(value : String) : void
+}
+class TestSuiteParser{
+- keywordExtractor : KeywordExtractor
+- testSuiteWritingStyle : TestSuiteWritingStyle
+- testSuiteTokens : List<String>
+- testNamesHierarchy : HashMap<String,HashSet<String>>
+- currentTestSuiteLine : String
+- fileLineNumber : int
+- fileLineIndexNumber : int
+- currentTestSuiteRealFile : String
+- oldTestSuiteRealFile : String
+- currentFieldName : String
+- testSuiteErrorLog : TestSuiteErrorLog
+- beforeAfterRepo : BeforeAfterRepo
+mockRepository : MockRepository
+- currentMock : Mock
+- parsingDataUsing : String
+- mockNumber : int
+- expectMockIdentifier : boolean
+expectUsing : boolean
+expectMockArguments : boolean
+- ignoreCobolStatementAndFieldNameKeyAction : boolean
+- currentVerify : VerifyMockCount
+- verifyInProgress : boolean
+- testCodePrefix : String
+- emptyTestSuite : boolean
+- cobolStatementInProgress : boolean
+- expectInProgress : boolean
+- toBeInProgress : boolean
+- boolean88LevelCompare : boolean
+- expectTestsuiteName : boolean
+- expectTestcaseName : boolean
+- fieldNameForExpect : String
+- possibleQualifiedName : boolean
+- expectQualifiedName : boolean
+- expectedValueToCompare : String
+- reverseCompare : boolean
+- greaterThanComparison : boolean
+- lessThanComparison : boolean
+- nextAction : KeywordAction
+- currentTestSuiteName : String
+- testSuiteNumber : int
+- currentTestCaseName : String
+- testCaseNumber : int
+- expectNumericCompare : boolean
+- whenOtherNumber : int
+- {static} COBOL_PERFORM_INITIALIZE : String
+- {static} COBOL_DISPLAY_TESTSUITE : String
+- {static} COBOL_DISPLAY_NAME : String
+- {static} COBOL_STORE_TESTCASE_NAME_1 : String
+- {static} COBOL_STORE_TESTCASE_NAME_2 : String
+- {static} COBOL_STORE_TESTSUITE_NAME_1 : String
+- {static} COBOL_STORE_TESTSUITE_NAME_2 : String
+- {static} COBOL_PERFORM_BEFORE : String
+- {static} COBOL_PERFORM_INITIALIZE_MOCK_COUNT : String
+- {static} COBOL_INCREMENT_TEST_CASE_COUNT : String
+- {static} COBOL_SET_NORMAL_OR_REVERSE_COMPARE : String
+- {static} COBOL_SET_COMPARE_NUMERIC : String
+- {static} COBOL_SET_COMPARE_88_LEVEL : String
+- {static} COBOL_SET_RELATION : String
+- {static} COBOL_MOVE_FIELDNAME_TO_ACTUAL : String
+- {static} COBOL_MOVE_FIELDNAME_TO_ACTUAL_NUMERIC : String
+- {static} COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_1 : String
+- {static} COBOL_MOVE_EXPECTED_ALPHANUMERIC_LITERAL_2 : String
+- {static} COBOL_MOVE_EXPECTED_NUMERIC_LITERAL : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_1 : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_2 : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_3 : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_4 : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_5 : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_6 : String
+- {static} COBOL_SET_ACTUAL_88_VALUE_7 : String
+- {static} COBOL_SET_EXPECTED_88_VALUE_1 : String
+- {static} COBOL_SET_EXPECTED_88_VALUE_2 : String
+- {static} COBOL_SET_EXPECTED_88_VALUE_3 : String
+- {static} COBOL_SET_EXPECTED_88_VALUE_4 : String
+- {static} COBOL_SET_EXPECTED_88_VALUE_5 : String
+- {static} COBOL_SET_EXPECTED_88_VALUE : String
+- {static} COBOL_SET_ALPHANUMERIC_COMPARE : String
+- {static} COBOL_CHECK_EXPECTATION : String
+- {static} COBOL_PERFORM_AFTER : String
+- {static} ELEVEN_LEADING_SPACES : String
+- {static} COBOL_SET_ACTUAL_MOCK_ACCESSES : String
+- {static} COBOL_SET_EXPECTED_MOCK_ACCESSES : String
+- {static} COBOL_SET_MOCK_OPERATION : String
+- {static} COBOL_SET_VERIFY_EXACT : String
+- {static} COBOL_SET_VERIFY_AT_LEAST : String
+- {static} COBOL_SET_VERIFY_NO_MORE_THAN : String
+- {static} COBOL_PERFORM_ASSERT_ACCESS : String
+- {static} COBOL_MOVE : String
+- {static} RELATION_EQ : String
+- {static} RELATION_GT : String
+- {static} RELATION_LT : String
+- {static} NORMAL : String
+- {static} REVERSE : String
+- cobolStatement : StringBuffer
+- numericFields : NumericFields
++ TestSuiteParser(keywordExtractor : KeywordExtractor, mockRepository : MockRepository, beforeAfterRepo : BeforeAfterRepo, testSuiteErrorLog : TestSuiteErrorLog)
++ getParsedTestSuiteLines(testSuiteReader : BufferedReader, numericFieldsList : NumericFields) : List<String>
++ containStopValue(testSuiteToken : String) : boolean
+- removeToken(lines : List<String>, token : String) : List<String>
+- getNextTokenFromTestSuite(testSuiteReader : BufferedReader) : String
+- readNextLineFromTestSuite(testSuiteReader : BufferedReader) : String
+- getWritingStyleOfLine(line : String) : TestSuiteWritingStyle
+- handleEndOfMockStatement(testSuiteReader : BufferedReader, testSuiteToken : String, skipCurrentToken : boolean, tracker : TokenTracker) : void
++ handleEndOfVerifyStatement(parsedTestSuiteLines : List<String>, tracker : TokenTracker) : void
+- getCallArgument(referenceType : String, value : String) : String
++ getTestInitializationLine() : String
++ addTestSuiteNamelines(testSuiteName : String, parsedTestSuiteLines : List<String>) : void
++ addTestCaseNameLines(testCaseName : String, parsedTestSuiteLines : List<String>) : void
++ addPerformBeforeEachLine(parsedTestSuiteLines : List<String>) : void
++ addPerformAfterEachLine(parsedTestSuiteLines : List<String>) : void
+addIncrementTestCaseCountLine(parsedTestSuiteLines : List<String>) : void
+addTestCodeForAssertion(parsedTestSuiteLines : List<String>, numericFields : NumericFields) : void
+addTestCodeFor88LevelEqualityCheck(parsedTestSuiteLines : List<String>) : void
+addSetNormalOrReverseCompare(parsedTestSuiteLines : List<String>) : void
+addLinesForCurrentVerifyStatement(parsedTestSuiteLines : List<String>) : void
+addFinalLines(parsedTestSuiteLines : List<String>) : void
+fieldIsANumericDataType(fieldNameForExpect : String) : boolean
+appendTokenToCobolStatement(testSuiteToken : String) : void
+addUserWrittenCobolStatement(parsedTestSuiteLines : List<String>) : void
+- getLinesUntilKeywordHit(testSuiteReader : BufferedReader, endingKeyword : String, currentKey : String, skipCurrentToken : boolean) : List<String>
+- initializeCobolStatement() : void
++ getCurrentTestSuiteName() : String
++ getCurrentTestCaseName() : String
++ getCobolStatement() : String
++ getCurrentFieldName() : String
++ getWhenOtherSectionOrParagraph(type : String, lines : List<String>, itdentifier : String, withComments : boolean) : WhenOther
+}
+class TokenTracker{
+summizedTokensForArgument : String
+parseDataUsingForSummizedTokens : String
+lastAddedTokenToArgumentIsQualifier : boolean
++ reset() : void
++ toString() : String
+}
+class TableEmbedDto{
+result : String
+- htmlCharacterEntityMap : Map<String,String>
++ getDataTransferObject() : Object
+- getHeader() : String
+- getTime() : String
+- getTestOverView() : String
+- generateHtmlForTestSuite(testSuite : TestSuite) : String
+- formatGeneratedArtifacts(testSuite : TestSuite) : String
+- generateHtmlForTestCase(testCase : TestCase) : String
+- initializeHtmlCharacterEntitiesMap() : void
+- setHtmlCharacterEnities(input : String) : String
+}
+TableEmbedDto --|> DataTransferObject
+class Testsuites{
+- disabled : String
+- errors : String
+- failures : String
+- name : String
+- tests : String
+- time : String
+- testsuite : List<Testsuite>
++ getTestsuites() : List<Testsuite>
++ setTestsuite(value : List<Testsuite>) : void
++ addTestSuite(value : Testsuite) : void
++ getDisabled() : String
++ setDisabled(value : String) : void
++ getErrors() : String
++ setErrors(value : String) : void
++ getFailures() : String
++ setFailures(value : String) : void
++ getName() : String
++ setName(value : String) : void
++ getTests() : String
++ setTests(value : String) : void
++ getTime() : String
++ setTime(value : String) : void
+}
+class EvaluationGenerator{
+- EVALUATE_START : String
+- WHEN_FORMAT1 : String
+- WHEN_FORMAT2 : String
+- PERFORM_FORMAT : String
+- WHEN_OTHER_LINE : String
+- END_EVALUATE_LINE : String
+- ANY_KEYWORD : String
+- ALSO_KEYWORD : String
+argumentIdentifiers : String[]
+evaluationItems : List<EvaluationItem>
++ EvaluationGenerator(argumentIdentifiers : String)
++ containsItems() : boolean
++ addEvaluationItem(line : String, arguments : String) : void
++ addEvaluationItem(lines : String[], arguments : String) : void
++ getEvaluationLines(withWhenOther : boolean, whenOtherLines : Collection<String>, withEndEvaluate : boolean) : List<String>
+- getEvaluationHeader() : List<String>
+- getEvaluationBody() : List<String>
+}
+class TestSuiteConcatenator{
+- testFileNames : String
++ TestSuiteConcatenator(testFileNames : String)
+concatenateTestSuites(programTestSuiteSubdirectory : String) : Reader
+}
+StatusController--"status" CurrentStatus
+StatusController--"emitter" Emitter
+Keyword--"- keywordAction" KeywordAction
+VerifyMockCount--"- attachedMock" Mock
+LauncherController--"- launcher" Launcher
+LauncherController--"- processOutputWriter" ProcessOutputWriter
+WriterController--"- cobolWriter" CobolWriter
+CobolReader--"- state" State
+TestSuiteParserController--"- testSuiteParser" TestSuiteParser
+TestSuiteParserController--"testSuiteConcatenator" TestSuiteConcatenator
+TestSuiteParserController--"- mockRepository" MockRepository
+TestSuiteParserController--"- beforeAfterRepo" BeforeAfterRepo
+TestSuiteParserController--"- mockGenerator" MockGenerator
+TestSuiteParserController--"- whenOtherGenerator" WhenOtherGenerator
+TestSuiteParserController--"- testSuiteErrorLog" TestSuiteErrorLog
+Formatter--"# dataTransferObject" DataTransferObject
+Testcase--"- skipped" Skipped
+Testcase--"- error" Error
+Testcase--"- failure" Error
+ProcessOutputWriter--"xmlFormat" XMLFormat
+ProcessOutputWriter--"htmlFormat" HTMLFormat
+ArgumentHandlerController--"argumentHandler" ArgumentHandler
+Testsuite--"- properties" Properties
+BeforeAfterRepo--"beforeEachEvaluationGenerator" EvaluationGenerator
+BeforeAfterRepo--"afterEachEvaluationGenerator" EvaluationGenerator
+DataTransferObject--"testInstance" TestInstance
+JUnitDto--"- testsuites" Testsuites
+TestSuiteErrorLog--"- lastKeyword" Keyword
+ContextHandler--"- {static} keyword" Keyword
+Mock--"- scope" MockScope
+EnvironmentSetupController--"environmentSetup" EnvironmentSetup
+InterpreterController--"- reader" CobolReader
+InterpreterController--"- lineRepository" LineRepository
+InterpreterController--"- sectionOrParagraph" SectionOrParagraph
+TestSuiteParser--"- keywordExtractor" KeywordExtractor
+TestSuiteParser--"- testSuiteWritingStyle" TestSuiteWritingStyle
+TestSuiteParser--"- testSuiteErrorLog" TestSuiteErrorLog
+TestSuiteParser--"- beforeAfterRepo" BeforeAfterRepo
+TestSuiteParser--"mockRepository" MockRepository
+TestSuiteParser--"- currentMock" Mock
+TestSuiteParser--"- currentVerify" VerifyMockCount
+TestSuiteParser--"- nextAction" KeywordAction
+interface ProcessLauncher{
+getProcessConfigKeyPrefix() : String
+run(programName : String) : Process
+}
+enum Area{
+NONE
+SEQUENCE_NUMBER
+INDICATOR
+A
+B
+}
+enum MockScope{
+Local
+Global
+}
+enum TestSuiteWritingStyle{
+Freeform
+Strict
+}
+enum DataTransferObjectStyle{
+directOutput
+tableDocument
+tableEmbed
+JUnit
+}
+enum ErrorTypes{
+SYNTAX_ERROR
+RUNTIME_ERROR
+WARNING
+}
+enum KeywordAction{
+NONE
+ACTUAL_FIELDNAME
+BOOLEAN_COMPARE
+COBOL_STATEMENT
+EXPECTED_VALUE
+FIELDNAME
+IGNORE
+NEW_TESTCASE
+REVERSE_LOGIC
+TESTSUITE_NAME
+}
+enum TestOutputFormat{
+txt
+xml
+html
+}
+@enduml

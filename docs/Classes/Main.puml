@@ -1,0 +1,118 @@
+@startuml
+class Main {
+    + main(args: String[]): void
+}
+
+package "Features" {
+    class LauncherController {
+        - Launcher launcher
+        - ProcessOutputWriter processOutputWriter
+        + runTestProgram(programName: String, isLastRun: boolean): int
+    }
+
+    class InterpreterController {
+        - CobolReader reader
+        - LineRepository lineRepository
+        - NumericFields numericFields
+        - TokenExtractor tokenExtractor
+        + getFileSectionStatements(): List<String>
+        + getNumericFieldDataTypeFor(fieldName: String): DataType
+        + getTokensForCurrentLine(): List<String>
+        + hasStatementBeenRead(): boolean
+    }
+
+    class Generator {
+        - boolean workingStorageHasEnded
+        - List<String> matchingTestDirectories
+        + prepareAndRunMerge(programName: String, testFileNames: String)
+        + mergeTestSuite()
+        + closeReadersAndWriters(programName: String)
+    }
+}
+
+package "Services" {
+    class Config {
+        + getRunGeneratedTest(): boolean
+        + getString(key: String): String
+        + getCharsetForPlatform(platform: Platform): String
+        + getStubTag(): String
+    }
+
+    class PathHelper {
+        + getTestSourceOutPath(): String
+        + appendMatchingFileSuffix(programName: String, suffixes: List<String>): String
+    }
+
+    class Log {
+        + debug(message: String)
+        + info(message: String)
+        + error(message: String)
+    }
+
+    class Messages {
+        + get(key: String, ...args: Object[]): String
+    }
+}
+
+package "FileHelpers" {
+    class EncodingIO {
+        + getReaderWithCorrectEncoding(path: String): Reader
+        + getWriterWithCorrectEncoding(path: String, append: boolean): Writer
+    }
+}
+
+package "Interpreter" {
+    class CobolReader {
+        - BufferedReader reader
+        - State state
+        + getCurrentLine(): CobolLine
+        + getPreviousLine(): CobolLine
+        + readNextLine(): CobolLine
+    }
+
+    class LineRepository {
+        - List<String> fileSectionStatements
+        - List<String> fileControlStatements
+        + getFileSectionStatements(): List<String>
+        + getFileControlStatements(): List<String>
+    }
+
+    class NumericFields {
+        + getNumericFieldDataTypeFor(fieldName: String): DataType
+    }
+
+    class TokenExtractor {
+        + extractTokens(line: String): List<String>
+    }
+}
+
+package "Platform" {
+    class PlatformLookup {
+        + get(): Platform
+    }
+
+    class Platform {
+        + getName(): String
+    }
+}
+
+Main --> LauncherController
+Main --> InterpreterController
+Main --> Generator
+LauncherController --> Launcher
+LauncherController --> ProcessOutputWriter
+LauncherController --> Config
+LauncherController --> PathHelper
+InterpreterController --> CobolReader
+InterpreterController --> LineRepository
+InterpreterController --> NumericFields
+InterpreterController --> TokenExtractor
+Generator --> InterpreterController
+Generator --> Config
+Generator --> PathHelper
+EncodingIO --> Config
+CobolReader --> State
+CobolReader --> LineRepository
+LineRepository --> NumericFields
+PlatformLookup --> Platform
+@enduml

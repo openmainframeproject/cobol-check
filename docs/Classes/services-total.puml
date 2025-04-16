@@ -1,0 +1,560 @@
+@startuml
+skinparam classAttributeIconSize 0
+class NumericFields{
+- fieldTypes : Map<String,DataType>
++ dataTypeOf(fieldName : String) : DataType
++ setDataTypeOf(fieldName : String, dataType : DataType) : void
++ reset() : void
+- argumentCheck(argumentValue : Object, messageId : String) : void
+- getKeyBasedOnAssumedDataStructure(line : String) : String
+}
+class Version{
++ {static} current() : String
+}
+class EIBResponseCodes{
+- EIBFN : byte
+- EIBRCODE : byte
+- EIBRCODEOffset : int
+- EIBRESP : int
++ EIBResponseCodes(EIBFN : byte, EIBRCODE : byte, EIBRCODEOffset : int, EIBRESP : int)
++ EIBFN() : byte
++ EIBRCODE() : byte
++ EIBRCODEOffset() : int
++ EIBRESP() : int
+}
+class Messages{
+- {static} messageBundle : ResourceBundle
++ {static} get(messageId : String, substitutionValues : String) : String
++ {static} setLocale(locale : Locale) : void
++ {static} loadResourceBundle() : void
+}
+class ReplaceSet{
+- from : String
+- to : String
+- trailing : boolean
+- leading : boolean
+- fromSourceLine : int
+- untilSourceLine : int
++ ReplaceSet(from : String, to : String, trailing : boolean, leading : boolean, fromSourceLine : int, untilSourceLine : int)
++ ReplaceSet()
++ replaceInline(line : String) : String
++ replaceInline(line : String, sourceLine : int) : String
++ setTrailing(trailing : boolean) : void
++ setLeading(leading : boolean) : void
++ setFrom(value : String) : void
++ setTo(value : String) : void
++ getFrom() : String
++ getTo() : String
++ isTrailing() : boolean
++ isLeading() : boolean
++ setFromSourceLine(sourceLineNumber : int) : void
++ setUntilSourceLine(sourceLineNumber : int) : void
++ getFromSourceLine() : int
++ getUntilSourceLine() : int
++ toString() : String
+}
+class ReplaceStatementLocator{
+- replaceSets : LinkedList<ReplaceSet>
+- tokenizer : ReplaceTokenizer
+# currentStatement : StringBuilder
+# statementLineNumber : int
+# we_are_parsing_a_replace_statement : boolean
+# sourceLinesProcessed : int
+# commentLinesFound : int
+- currentSourcecodeLine : int
++ ReplaceStatementLocator()
++ ReplaceStatementLocator(cobolFile : File)
++ getReplaceSets() : LinkedList<ReplaceSet>
+# accumulateStatement(line : String, sourceLineNumber : int) : void
+# updateUntilInReplaceSets(fromSourceLine : int, untilSourceLine : int) : void
+# createStatements(statement : String, sourceLineNumber : int) : void
+- {static} getNewReplaceSet(sourceLineNumber : int) : ReplaceSet
+}
+class Config{
++ {static} DECIMAL_POINT_IS_COMMA_CONFIG_KEY : String
++ {static} APPEND_RULES_AND_OPTIONS : String
++ {static} INJECT_START_TAG_CONFIG_KEY : String
++ {static} INJECT_END_TAG_CONFIG_KEY : String
++ {static} STUB_COMMENT_TAG : String
++ {static} GENERATED_CODE_PATH : String
++ {static} DISPLAY_TESTS_WITH_UNMOCK_CALLS_CONFIG_KEY : String
++ {static} TESTSUITEPARSER_ERROR_LOG_PATH : String
++ {static} TESTSUITEPARSER_ERROR_LOG_NAME : String
++ {static} IO_ENCODING_LINUX_KEY : String
++ {static} IO_ENCODING_MACOSX_KEY : String
++ {static} IO_ENCODING_WINDOWS_KEY : String
++ {static} IO_ENCODING_ZOS_KEY : String
++ {static} IO_ENCODING_UNIX_KEY : String
++ {static} GENERATED_FILES_PERMISSION_ALL : String
++ {static} LOCALE_LANGUAGE_CONFIG_KEY : String
++ {static} LOCALE_COUNTRY_CONFIG_KEY : String
++ {static} LOCALE_VARIANT_CONFIG_KEY : String
++ {static} DEFAULT_LOCALE_CONFIG_KEY : String
++ {static} RUN_GENERATED_TESTS_CONFIG_KEY : String
++ {static} RUN_GENERATED_TESTS_DEFAULT : String
++ {static} RESOLVED_APPLICATION_SOURCE_FILENAME_SUFFIX : String
++ {static} APPLICATION_SOURCE_FILENAME_SUFFIX : String
++ {static} RESOLVED_APPLICATION_COPYBOOK_FILENAME_SUFFIX : String
++ {static} APPLICATION_COPYBOOK_FILENAME_SUFFIX : String
++ {static} NONE : String
++ {static} DEFAULT_CONFIG_FILE_PATH : String
++ {static} TEST_RESULTS_FILE_CONFIG_KEY : String
++ {static} TEST_RESULTS_FORMAT_CONFIG_KEY : String
++ {static} TEST_RESULTS_FORMAT_STYLE_CONFIG_KEY : String
++ {static} APPLICATION_SOURCE_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_APPLICATION_SOURCE_DIRECTORY : String
++ {static} COPY_SOURCE_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_COPY_SOURCE_DIRECTORY : String
++ {static} TESTSUITE_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_TESTSUITE_DIRECTORY : String
++ {static} COBOLCHECK_SCRIPT_DIRECTORY_CONFIG_KEY : String
++ {static} DEFAULT_COBOLCHECK_SCRIPT_DIRECTORY : String
++ {static} GNUCOBOL_COMPILE_OPTIONS : String
++ {static} RESOLVED_GNUCOBOL_COMPILE_OPTIONS : String
+- {static} settings : Properties
+{static} runDirectory : String
+- {static} testCodePrefix : String
+{static} decimalPointIsComma : boolean
+- {static} testSuiteParserErrorLogFileName : String
+{static} generatedTestFileName : String
+{static} concatenatedTestSuitePath : String
+- {static} sourceFolderContext : String
+- Config()
++ {static} load() : void
++ {static} load(configResourceName : String) : void
++ {static} changeProperty(propertyName : String, newValue : String) : void
++ {static} getString(key : String) : String
++ {static} getString(key : String, defaultValue : String) : String
++ {static} remove(key : String) : void
++ {static} getDefaultLocale() : Locale
++ {static} setRunDirectory(value : String) : void
++ {static} getTestCodePrefix() : String
++ {static} setDecimalPointIsCommaFromFile() : void
++ {static} isDecimalPointComma() : boolean
++ {static} setDecimalPointIsComma(value : boolean) : void
++ {static} getAppendRulesAndOptions() : String
++ {static} getGeneratedTestCodePath() : String
++ {static} getTestsuiteparserErrorLogPath() : String
++ {static} getTestsuiteparserErrorLogName() : String
++ {static} setTestSuiteParserErrorLogFileName(fileName : String) : void
++ {static} getGeneratedFilesPermissionAll() : String
++ {static} getInjectStartTag() : String
++ {static} getInjectEndTag() : String
++ {static} getStubTag() : String
++ {static} getTestResultFilePathString() : String
++ {static} getGeneratedTestFileName() : String
++ {static} setGeneratedTestFileName(keyValue : String) : void
++ {static} getConcatenatedTestSuitesPath() : String
++ {static} setConcatenatedTestSuitesPath(keyValue : String) : void
++ {static} getTestResultFormat() : TestOutputFormat
++ {static} getCharsetForPlatform(platform : Platform) : String
++ {static} getTestResultFormatStyle() : DataTransferObjectStyle
++ {static} getRunGeneratedTest() : boolean
++ {static} setSourceFolderContext(keyValue : String) : void
++ {static} getApplicationSourceDirectoryPathString() : String
++ {static} getCopyBookSourceDirectoryPathString() : String
++ {static} getTestSourceDirectoryPathString() : String
++ {static} getApplicationFilenameSuffixes() : List<String>
+- {static} setApplicationFilenameSuffixes() : void
++ {static} getCopybookFilenameSuffixes() : List<String>
++ {static} getScriptDirectory() : String
++ {static} getGnuCOBOLCompileOptions() : List<String>
++ {static} getDisplayUnMockedCalls() : Boolean
++ {static} setGnuCOBOLCompileOptions() : void
+- {static} setCopybookFilenameSuffix() : void
+- {static} resolveFilenameSuffixes(configKey : String, resolvedConfigKey : String) : void
+- {static} resolveConfigList(configKey : String, resolvedConfigKey : String) : void
+- {static} setDefaultLocaleOverride() : void
+- {static} getCorrectRunContext(path : String) : String
+}
+class FilePermission{
++ {static} setFilePermissionForAllUsers(path : String, permissions : String) : void
++ {static} setFilePermissionForAllUsers(file : File, permissions : String) : void
+}
+class Log{
+- {static} currentLogLevel : LogLevel
++ {static} off() : void
++ {static} set(level : LogLevel) : void
++ {static} level() : LogLevel
++ {static} fatal(message : String) : void
++ {static} error(message : String) : void
++ {static} warn(message : String) : void
++ {static} info(message : String) : void
++ {static} debug(message : String) : void
++ {static} trace(message : String) : void
+- {static} write(message : String) : void
+}
+class CobolVerbs{
+- {static} values : List<String>
+- {static} allVerbs : List<String>
+- CobolVerbs()
++ {static} isCobolVerb(token : String) : boolean
++ {static} isStartOrEndCobolVerb(token : String) : boolean
+}
+class CobolLine{
+- originalString : String
+- unNumberedString : String
+- trimmedString : String
+- tokens : List<String>
++ CobolLine(line : String, tokenExtractor : TokenExtractor)
++ getOriginalString() : String
++ getUnNumberedString() : String
++ getTrimmedString() : String
++ getTokens() : List<String>
++ getToken(index : int) : String
++ tokensSize() : int
++ containsToken(tokenValue : String) : boolean
++ containsAllTokens(tokenValues : Collection<String>) : boolean
++ containsAllTokensInConsecutiveOrder(tokenValues : Collection<String>) : boolean
++ getTokenIndexOf(tokenValue : String) : int
++ endsWithToken(tokenValue : String) : boolean
+- removeSequenceNumberArea(originalLine : String) : String
++ convertCobolLinesToCobolLine(cobolLines : List<CobolLine>) : CobolLine
+}
+class PlatformLookup{
++ {static} get() : Platform
++ {static} get(osNameValue : String) : Platform
+}
+class Constants{
++ {static} STATUS_NORMAL : int
++ {static} STATUS_HALT : int
++ {static} COMMENT_SPACE_OFFSET : int
++ {static} COBOLCHECK_PACKAGE_PATH : String
++ {static} COBOLCHECK_COPYBOOK_DIRECTORY : String
++ {static} COMMAND_lINE_OPTIONS : String
++ {static} EMPTY_STRING : String
++ {static} NEWLINE : String
++ {static} FILE_SEPARATOR : String
++ {static} CURRENT_DIRECTORY : String
++ {static} PERIOD : String
++ {static} COMMENT_INDICATOR : String
++ {static} COLON : String
++ {static} SPACE : String
++ {static} COMMA : String
++ {static} QUOTE : String
++ {static} APOSTROPHE : String
++ {static} PSEUDO_TEXT_DELIMITER_EQUALS : String
++ {static} PSEUDO_TEXT_DELIMITER_COLON : String
++ {static} TRUE : String
++ {static} FALSE : String
++ {static} TESTSUITE_KEYWORD : String
++ {static} TESTCASE_KEYWORD : String
++ {static} EXPECT_KEYWORD : String
++ {static} FIELDNAME_KEYWORD : String
++ {static} TO_BE_KEYWORD : String
++ {static} TO_EQUAL_KEYWORD : String
++ {static} NOT_KEYWORD : String
++ {static} ALPHANUMERIC_LITERAL_KEYWORD : String
++ {static} PARENTHESIS_ENCLOSED_KEYWORD : String
++ {static} NUMERIC_LITERAL_KEYWORD : String
++ {static} COBOL_TOKEN : String
++ {static} BOOLEAN_VALUE : String
++ {static} REPLACING_KEYWORD : String
++ {static} BY_KEYWORD : String
++ {static} EQUAL_SIGN_KEYWORD : String
++ {static} NOT_EQUAL_SIGN_KEYWORD : String
++ {static} GREATER_THAN_SIGN_KEYWORD : String
++ {static} LESS_THAN_SIGN_KEYWORD : String
++ {static} GREATER_THAN_EQUAL_TO_SIGN_KEYWORD : String
++ {static} LESS_THAN_EQUAL_TO_SIGN_KEYWORD : String
++ {static} MOCK_KEYWORD : String
++ {static} MOCK_TYPE : String
++ {static} QUALIFIED_FIELD_NAME : String
++ {static} ENDMOCK_KEYWORD : String
++ {static} VERIFY_KEYWORD : String
++ {static} NEVER_HAPPENED_KEYWORD : String
++ {static} HAPPENED_KEYWORD : String
++ {static} ONCE_KEYWORD : String
++ {static} AT_LEAST_KEYWORD : String
++ {static} NO_MORE_THAN_KEYWORD : String
++ {static} TIME_KEYWORD : String
++ {static} TIMES_KEYWORD : String
++ {static} BEFORE_EACH_TOKEN : String
++ {static} END_BEFORE_TOKEN : String
++ {static} AFTER_EACH_TOKEN : String
++ {static} END_AFTER_TOKEN : String
++ {static} NUMERIC_KEYWORD : String
++ {static} IN_KEYWORD : String
++ {static} OF_KEYWORD : String
++ {static} BEFORE_EACH_TOKEN_HYPHEN : String
++ {static} AFTER_EACH_TOKEN_HYPHEN : String
++ {static} PARA_TOKEN : String
++ {static} IGNORED_TOKENS : List<String>
++ {static} CONCATENATED_TEST_SUITES_CONFIG_KEY : String
++ {static} DEFAULT_CONCATENATED_TEST_SUITES_PATH : String
++ {static} TEST_PROGRAM_NAME_CONFIG_KEY : String
++ {static} DEFAULT_TEST_PROGRAM_NAME : String
++ {static} PROCESS_CONFIG_KEY : String
++ {static} COBOLCHECK_PREFIX_CONFIG_KEY : String
++ {static} DEFAULT_COBOLCHECK_PREFIX : String
++ {static} TEST_CODE_PREFIX_PLACEHOLDER : String
++ {static} TESTS_OPTION : String
++ {static} PROGRAMS_OPTION : String
++ {static} IDENTIFICATION_DIVISION : String
++ {static} ENVIRONMENT_DIVISION : String
++ {static} CONFIGURATION_SECTION : String
++ {static} SPECIAL_NAMES_PARAGRAPH : String
++ {static} INPUT_OUTPUT_SECTION : String
++ {static} FILE_CONTROL : String
++ {static} DATA_DIVISION : String
++ {static} PROCEDURE_DIVISION : String
++ {static} FILE_SECTION : String
++ {static} LOCAL_STORAGE_SECTION : String
++ {static} LINKAGE_SECTION : String
++ {static} WORKING_STORAGE_SECTION : String
++ {static} SELECT_TOKEN : String
++ {static} FILE_STATUS_TOKEN : String
++ {static} IS_TOKEN : String
++ {static} DECIMAL_POINT_KEYWORD : String
++ {static} COMMA_KEYWORD : String
++ {static} FD_TOKEN : String
++ {static} LEVEL_01_TOKEN : String
++ {static} COPY_TOKEN : String
++ {static} SECTION_TOKEN : String
++ {static} CALL_TOKEN : String
++ {static} USING_TOKEN : String
++ {static} BY_REFERENCE_TOKEN : String
++ {static} BY_CONTENT_TOKEN : String
++ {static} BY_VALUE_TOKEN : String
++ {static} DECLARATIVES_TOKEN : String
++ {static} EXIT_TOKEN : String
++ {static} END_SECTION_TOKEN : String
++ {static} END_PARAGRAPH_TOKEN : String
++ {static} END_CALL_TOKEN : String
++ {static} ZERO_TOKEN : String
++ {static} REPLACE_TOKEN : String
++ {static} CBL_TOKEN : String
++ {static} EXEC_SQL_TOKEN : String
++ {static} EXEC_CICS_TOKEN : String
++ {static} END_EXEC_TOKEN : String
++ {static} CONTINUE_TOKEN : String
++ {static} INCLUDE : String
++ {static} BINARY : String
++ {static} COMP_2_VALUE : String
++ {static} COMP_3_VALUE : String
++ {static} COMP_4_VALUE : String
++ {static} COMP_5_VALUE : String
++ {static} COMP_VALUE : String
++ {static} PIC_VALUE : String
++ {static} PICTURE_VALUE : String
++ {static} NUMERIC_PICTURE_CLAUSE_PATTERN : String
++ {static} PARAGRAPH_TOKEN : String
+- Constants()
+}
+class ReplaceToken{
+- value : String
+- type : ReplaceTokenType
++ ReplaceToken(value : String)
+- setType() : void
++ getValue() : String
++ getType() : ReplaceTokenType
+}
+class EIBResponseTable{
+- {static} EIBResponsesTable : Map<String,EIBResponseCodes>
++ {static} lookup(conditionName : String) : EIBResponseCodes
+}
+class FileNameMatcher{
+- matcher : PathMatcher
+- matchingFiles : List<String>
+- defaultToAllFiles : boolean
++ FileNameMatcher(pattern : String)
++ getMatchingFiles() : List<String>
+find(file : Path) : void
++ visitFile(file : Path, attrs : BasicFileAttributes) : FileVisitResult
++ preVisitDirectory(dir : Path, attrs : BasicFileAttributes) : FileVisitResult
++ visitFileFailed(file : Path, exc : IOException) : FileVisitResult
+}
+FileNameMatcher --|> SimpleFileVisitor
+class DirectoryNameMatcher{
+- matcher : PathMatcher
+- matchingDirectories : List<String>
++ DirectoryNameMatcher(pattern : String)
++ getMatchingDirectories() : List<String>
++ find(path : Path) : void
++ visitFile(file : Path, attrs : BasicFileAttributes) : FileVisitResult
++ preVisitDirectory(dir : Path, attrs : BasicFileAttributes) : FileVisitResult
++ visitFileFailed(file : Path, exc : IOException) : FileVisitResult
+}
+DirectoryNameMatcher --|> SimpleFileVisitor
+class StringHelper{
++ {static} isBlank(subject : String) : boolean
++ {static} notBlank(subject : String) : boolean
++ {static} defaultIfBlank(subject : String, defaultValue : String) : String
++ {static} isEmptyArray(subject : String[]) : boolean
++ {static} fixedLength(sourceLine : String) : String
++ {static} adjustPathString(pathString : String) : String
++ {static} changeFileExtension(path : String, extension : String) : String
++ {static} removeTrailingSpaces(line : String) : String
++ {static} occursFirst(text : String, expectedFirst : char, expectedSecond : char) : boolean
++ {static} swapChars(text : String, c1 : char, c2 : char) : String
++ {static} commentOutLine(line : String) : String
++ {static} stubLine(line : String, stubTag : String) : String
++ {static} getNumberOfLeadingSpaces(line : String) : int
++ {static} ExcludeBetweenTags(value : String, startTag : char, endTag : char) : String
++ {static} isStringContinuationLine(line : String) : boolean
++ {static} moveToAreaB(line : String) : String
++ {static} moveToAreaB(lines : List<String>) : List<String>
++ quote(value : String) : String
++ {static} removeLastIndex(value : String) : String
++ {static} equalsAny(value : String, collection : Collection<String>) : boolean
++ {static} containsAny(value : String, collection : Collection<String>) : boolean
++ {static} startsWithAny(value : String, collection : Collection<String>) : boolean
+}
+class EncodingIO{
++ {static} getReaderWithCorrectEncoding(path : String) : Reader
++ {static} getWriterWithCorrectEncoding(path : String) : Writer
++ {static} getWriterWithCorrectEncoding(path : String, append : boolean) : Writer
+}
+class StringTuple{
+- first : String
++ second : String
++ StringTuple(first : String, second : String)
++ getFirst() : String
++ getSecond() : String
++ isEmpty() : boolean
+}
+StringTuple ..|> Tuple
+class RunInfo{
+- {static} currentProgramName : String
+- {static} currentProgramPath : String
+- {static} testSuiteNameToPathMap : Map<String,String>
+- {static} configFilePath : String
+- {static} generatedCobolSourcePath : String
+- {static} compiledProgramPath : String
++ {static} setCurrentProgramName(programName : String) : void
++ {static} getCurrentProgramName() : String
++ {static} getCurrentProgramPath() : String
++ {static} setCurrentProgramPath(currentProgramPath : String) : void
++ {static} getTestSuitePath(testSuiteName : String) : String
++ {static} addTestSuiteNameToPathMapKeyValuePair(testSuiteName : String, path : String) : void
++ {static} getConfigFilePath() : String
++ {static} setConfigFilePath(configFilePath : String) : void
++ {static} getGeneratedCobolSourcePath() : String
++ {static} setGeneratedCobolSourcePath(generatedCobolSourcePath : String) : void
++ {static} getCompiledProgramPath() : String
+}
+class ReplaceTokenizer{
+- position : int
+- tokens : LinkedList<ReplaceToken>
+- isComment : boolean
+- {static} GROUP_COMMENT_INDICATOR : int
+- {static} COMMENT_INDICATOR : String
+- {static} replacePattern : Pattern
+- {static} isCommentPattern : Pattern
++ tokenize(line : String) : void
++ hasMoreTokens() : boolean
++ nextToken() : ReplaceToken
++ isComment() : boolean
+}
+class Replace{
+- {static} COBOL_COMMENT_INDICATOR : String
+- {static} sourceIsCommentPattern : Pattern
+- {static} SOURCE_COMMENT_INDICATOR : int
+- {static} replaceOn : boolean
+- {static} replaceMap : LinkedList<ReplaceSet>
+- {static} inspect_performed : boolean
+- {static} inspect_performed_warned : boolean
++ {static} replace(source : String, lineNumber : int) : String
++ {static} replace(source : String) : String
++ {static} inspectProgram(cobolProgram : File) : void
+- {static} sourceLineIsComment(source : String) : boolean
++ {static} isReplaceOn() : boolean
++ {static} getReplaceSetsSize() : int
+- {static} reset() : void
++ {static} replaceInProgram(program : File) : String
++ {static} showReplaceSets() : void
+}
+class Interpreter{
+- {static} SPACE : String
+- {static} batchFileIOVerbs : List<String>
+- {static} minimumMeaningfulSourceLineLength : int
+- {static} commentIndicatorOffset : int
+- {static} commentIndicators : List<Character>
+- {static} sequenceNumberAreaEnd : int
+- {static} indicatorAreaEnd : int
+- {static} A_AreaEnd : int
+- {static} B_AreaEnd : int
++ {static} getSequenceNumberAreaIndex() : int
++ {static} setFlagsForCurrentLine(line : CobolLine, nextLine : CobolLine, state : State) : String
++ {static} isEndOfStatement(currentLine : CobolLine, nextMeaningfulLine : CobolLine) : boolean
++ {static} lineEndsParagraphOrSection(currentLine : CobolLine, nextLine : CobolLine, lineFollowingNext : CobolLine, state : State) : boolean
++ {static} isTooShortToBeMeaningful(line : CobolLine) : boolean
++ {static} isComment(line : CobolLine) : boolean
++ {static} isComment(line : String) : boolean
++ {static} isMeaningful(line : CobolLine) : boolean
++ {static} isEmpty(line : CobolLine) : boolean
++ {static} shouldLineBeParsed(line : CobolLine, state : State) : boolean
++ {static} shouldLineBeStubbed(line : CobolLine, state : State) : boolean
++ {static} getStubEndToken(line : CobolLine, state : State) : String
++ {static} shouldLineBeReadAsStatement(line : CobolLine, state : State) : boolean
++ {static} lineContainsBinaryFieldDefinition(line : CobolLine) : boolean
++ {static} containsOnlyPeriod(line : CobolLine) : boolean
++ {static} checkForBatchFileIOStatement(line : CobolLine) : boolean
+- {static} isBatchFileIOStatement(tokens : List<String>, ioVerb : String) : boolean
++ {static} getSectionOrParagraphName(line : CobolLine) : String
++ {static} isSectionHeader(line : CobolLine, state : State) : boolean
++ {static} isParagraphHeader(line : CobolLine, nextLine : CobolLine, state : State) : boolean
+- {static} isParagraphHeaderFormat(line : CobolLine, nextLine : CobolLine) : boolean
++ {static} getUsingArgs(line : CobolLine) : List<String>
++ {static} getBeginningArea(line : CobolLine, ignoreSequenceArea : boolean) : Area
++ {static} isInNumericFormat(token : String) : boolean
++ {static} endsInPeriod(line : CobolLine) : boolean
++ {static} endsInPeriod(lines : List<CobolLine>) : boolean
++ {static} updateCurrentDataStructure(currentStatement : List<CobolLine>, currentHierarchy : TreeMap<Integer,String>) : TreeMap<Integer,String>
+- {static} determineVariableName(statementWords : String[]) : String
+- {static} isInteger(testString : String) : boolean
+- {static} determineCobolLevelNumber(levelNumberString : String) : Integer
+- {static} extractStatementWords(currentStatement : List<CobolLine>) : String[]
+- {static} wholeWordSearch(line : String, word : String) : Boolean
+}
+class PathHelper{
+- PathHelper()
++ {static} getTestSourceOutPath() : String
++ {static} appendMatchingFileSuffix(filePath : String, applicationSuffixes : List<String>) : String
++ {static} getMatchingDirectories(name : String, path : String) : List<String>
++ {static} endWithFileSeparator(path : String) : String
++ {static} findFilePath(path : String, fileName : String, possibleExtensions : List<String>) : String
+}
+ReplaceStatementLocator--"- tokenizer" ReplaceTokenizer
+Log--"- {static} currentLogLevel" LogLevel
+ReplaceToken--"- type" ReplaceTokenType
+interface Tuple{
+getFirst() : T1
+getSecond() : T2
+isEmpty() : boolean
+}
+interface TokenExtractor{
+extractTokensFrom(sourceLine : String) : List<String>
+}
+enum DataType{
+ALPHANUMERIC
+BINARY
+PACKED_DECIMAL
+FLOATING_POINT
+DISPLAY_NUMERIC
+}
+enum Platform{
+LINUX
+UNIX
+WINDOWS
+OSX
+ZOS
+}
+enum ReplaceTokenType{
+REPLACE
+LEADING
+TRAILING
+BY
+TERMINATOR
+OTHER
+}
+enum LogLevel{
+OFF
+FATAL
+ERROR
+WARN
+INFO
+DEBUG
+TRACE
+}
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Messages{
+- {static} messageBundle : ResourceBundle
++ {static} get(messageId : String, substitutionValues : String) : String
++ {static} setLocale(locale : Locale) : void
++ {static} loadResourceBundle() : void
+}
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+class CobolWriter{
+writer : Writer
+- currentLineIsComment : boolean
+- maxLineLength : int
+- storeLines : boolean
+- storedLines : List<String>
+- stubTag : String
++ CobolWriter(writer : Writer)
+writeLine(line : String) : void
++ startStoringLines() : void
++ stopStoringLines() : void
++ releaseStoredLines() : void
+writeCommentedLine(line : String) : void
+writeStubbedLine(line : String) : void
+writeFormattedLine(format : String, args : Object) : void
+writeLines(lines : List<String>) : void
+writeCommentedLines(lines : List<String>) : void
+writeStubbedLines(lines : List<String>) : void
+close() : void
+- writeMultiLine(line : String, isComment : boolean, isRecursiveCall : boolean) : void
+- getStringContinuationSign(line1 : String, line2 : String) : char
+}
+class WriterController{
+- cobolWriter : CobolWriter
++ WriterController(testSourceWriter : Writer)
++ WriterController(cobolWriter : CobolWriter)
++ startStoringLines() : void
++ stopStoringLines() : void
++ releaseStoredLines() : void
++ writeLine(line : String) : void
++ writeCommentedLine(line : String) : void
++ writeStubbedLine(line : String) : void
++ writeLines(lines : List<String>) : void
++ writeCommentedLines(lines : List<String>) : void
++ writeStubbedLines(lines : List<String>) : void
++ closeWriter(programName : String) : void
+}
+WriterController--"- cobolWriter" CobolWriter
+@enduml

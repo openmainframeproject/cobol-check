@@ -1,0 +1,28 @@
+@startuml
+actor User
+participant LauncherController
+participant Launcher
+participant ProcessLauncher
+participant Config
+participant PathHelper
+participant ProcessOutputWriter
+
+User -> LauncherController: runTestProgram(programName, isLastRun)
+LauncherController -> Launcher: getPlatformSpecificLauncher(PlatformLookup.get())
+Launcher -> ProcessLauncher: Return platform-specific launcher
+LauncherController -> Config: getString(processConfigKey)
+Config --> LauncherController: Return processName
+LauncherController -> PathHelper: getTestSourceOutPath()
+PathHelper --> LauncherController: Return test source path
+LauncherController -> Launcher: launchProgram(pLauncher, testSourcePath, callback)
+Launcher -> ProcessLauncher: Launch program
+LauncherController -> ProcessOutputWriter: writeProcessOutputToTestResultsFile(proc, ...)
+ProcessOutputWriter --> LauncherController: Write successful?
+alt Write successful
+    LauncherController -> Log: Log success message
+else Write failed
+    LauncherController -> Log: Log error message
+end
+LauncherController -> Log: Log exit code
+User <-- LauncherController: Return exit code
+@enduml

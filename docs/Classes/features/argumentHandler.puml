@@ -1,0 +1,38 @@
+@startuml
+skinparam classAttributeIconSize 0
+class OptionKey{
++ shortKey : String
++ longKey : String
+}
+class ArgumentHandler{
+- options : Map<OptionKey,OptionValue>
+- {static} LONG_OPT_PREFIX : String
+- {static} SHORT_OPT_PREFIX : String
+- {static} LONG_OPT_KEYWORD : String
+- {static} ARGUMENT_REQUIRED_INDICATOR : char
+- {static} canTakeMultipleArguments : List<String>
++ ArgumentHandler(args : String[], optionsString : String)
++ getValueFor(key : String) : String
++ isSet(key : String) : boolean
+- storeOptionSettings(optionsString : String) : void
+- processCommandLineArgumentArray(args : String[]) : void
++ loadArgProgramPaths() : void
+- lookupOption(requestedOption : String) : OptionValue
+- isKey(argValue : String) : boolean
+- stripPrefix(argValue : String) : String
+}
+class OptionValue{
++ hasArgument : boolean
++ isSet : boolean
++ argumentValue : String
+}
+class ArgumentHandlerController{
+argumentHandler : ArgumentHandler
++ ArgumentHandlerController(args : String[])
++ ArgumentHandlerController(args : String[], optionsString : String)
++ loadSettingsFromArguments() : void
++ isKeySet(key : String) : boolean
++ getKeyValue(key : String) : String
+}
+ArgumentHandlerController--"argumentHandler" ArgumentHandler
+@enduml

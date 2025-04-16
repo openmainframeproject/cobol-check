@@ -1,0 +1,197 @@
+@startuml
+skinparam classAttributeIconSize 0
+class CobolLine{
+- originalString : String
+- unNumberedString : String
+- trimmedString : String
+- tokens : List<String>
++ CobolLine(line : String, tokenExtractor : TokenExtractor)
++ getOriginalString() : String
++ getUnNumberedString() : String
++ getTrimmedString() : String
++ getTokens() : List<String>
++ getToken(index : int) : String
++ tokensSize() : int
++ containsToken(tokenValue : String) : boolean
++ containsAllTokens(tokenValues : Collection<String>) : boolean
++ containsAllTokensInConsecutiveOrder(tokenValues : Collection<String>) : boolean
++ getTokenIndexOf(tokenValue : String) : int
++ endsWithToken(tokenValue : String) : boolean
+- removeSequenceNumberArea(originalLine : String) : String
++ convertCobolLinesToCobolLine(cobolLines : List<CobolLine>) : CobolLine
+}
+class EIBResponseCodes{
+- EIBFN : byte
+- EIBRCODE : byte
+- EIBRCODEOffset : int
+- EIBRESP : int
++ EIBResponseCodes(EIBFN : byte, EIBRCODE : byte, EIBRCODEOffset : int, EIBRESP : int)
++ EIBFN() : byte
++ EIBRCODE() : byte
++ EIBRCODEOffset() : int
++ EIBRESP() : int
+}
+class Interpreter{
+- {static} SPACE : String
+- {static} batchFileIOVerbs : List<String>
+- {static} minimumMeaningfulSourceLineLength : int
+- {static} commentIndicatorOffset : int
+- {static} commentIndicators : List<Character>
+- {static} sequenceNumberAreaEnd : int
+- {static} indicatorAreaEnd : int
+- {static} A_AreaEnd : int
+- {static} B_AreaEnd : int
++ {static} getSequenceNumberAreaIndex() : int
++ {static} setFlagsForCurrentLine(line : CobolLine, nextLine : CobolLine, state : State) : String
++ {static} isEndOfStatement(currentLine : CobolLine, nextMeaningfulLine : CobolLine) : boolean
++ {static} lineEndsParagraphOrSection(currentLine : CobolLine, nextLine : CobolLine, lineFollowingNext : CobolLine, state : State) : boolean
++ {static} isTooShortToBeMeaningful(line : CobolLine) : boolean
++ {static} isComment(line : CobolLine) : boolean
++ {static} isComment(line : String) : boolean
++ {static} isMeaningful(line : CobolLine) : boolean
++ {static} isEmpty(line : CobolLine) : boolean
++ {static} shouldLineBeParsed(line : CobolLine, state : State) : boolean
++ {static} shouldLineBeStubbed(line : CobolLine, state : State) : boolean
++ {static} getStubEndToken(line : CobolLine, state : State) : String
++ {static} shouldLineBeReadAsStatement(line : CobolLine, state : State) : boolean
++ {static} lineContainsBinaryFieldDefinition(line : CobolLine) : boolean
++ {static} containsOnlyPeriod(line : CobolLine) : boolean
++ {static} checkForBatchFileIOStatement(line : CobolLine) : boolean
+- {static} isBatchFileIOStatement(tokens : List<String>, ioVerb : String) : boolean
++ {static} getSectionOrParagraphName(line : CobolLine) : String
++ {static} isSectionHeader(line : CobolLine, state : State) : boolean
++ {static} isParagraphHeader(line : CobolLine, nextLine : CobolLine, state : State) : boolean
+- {static} isParagraphHeaderFormat(line : CobolLine, nextLine : CobolLine) : boolean
++ {static} getUsingArgs(line : CobolLine) : List<String>
++ {static} getBeginningArea(line : CobolLine, ignoreSequenceArea : boolean) : Area
++ {static} isInNumericFormat(token : String) : boolean
++ {static} endsInPeriod(line : CobolLine) : boolean
++ {static} endsInPeriod(lines : List<CobolLine>) : boolean
++ {static} updateCurrentDataStructure(currentStatement : List<CobolLine>, currentHierarchy : TreeMap<Integer,String>) : TreeMap<Integer,String>
+- {static} determineVariableName(statementWords : String[]) : String
+- {static} isInteger(testString : String) : boolean
+- {static} determineCobolLevelNumber(levelNumberString : String) : Integer
+- {static} extractStatementWords(currentStatement : List<CobolLine>) : String[]
+- {static} wholeWordSearch(line : String, word : String) : Boolean
+}
+class Replace{
+- {static} COBOL_COMMENT_INDICATOR : String
+- {static} sourceIsCommentPattern : Pattern
+- {static} SOURCE_COMMENT_INDICATOR : int
+- {static} replaceOn : boolean
+- {static} replaceMap : LinkedList<ReplaceSet>
+- {static} inspect_performed : boolean
+- {static} inspect_performed_warned : boolean
++ {static} replace(source : String, lineNumber : int) : String
++ {static} replace(source : String) : String
++ {static} inspectProgram(cobolProgram : File) : void
+- {static} sourceLineIsComment(source : String) : boolean
++ {static} isReplaceOn() : boolean
++ {static} getReplaceSetsSize() : int
+- {static} reset() : void
++ {static} replaceInProgram(program : File) : String
++ {static} showReplaceSets() : void
+}
+class CobolVerbs{
+- {static} values : List<String>
+- {static} allVerbs : List<String>
+- CobolVerbs()
++ {static} isCobolVerb(token : String) : boolean
++ {static} isStartOrEndCobolVerb(token : String) : boolean
+}
+class NumericFields{
+- fieldTypes : Map<String,DataType>
++ dataTypeOf(fieldName : String) : DataType
++ setDataTypeOf(fieldName : String, dataType : DataType) : void
++ reset() : void
+- argumentCheck(argumentValue : Object, messageId : String) : void
+- getKeyBasedOnAssumedDataStructure(line : String) : String
+}
+class ReplaceStatementLocator{
+- replaceSets : LinkedList<ReplaceSet>
+- tokenizer : ReplaceTokenizer
+# currentStatement : StringBuilder
+# statementLineNumber : int
+# we_are_parsing_a_replace_statement : boolean
+# sourceLinesProcessed : int
+# commentLinesFound : int
+- currentSourcecodeLine : int
++ ReplaceStatementLocator()
++ ReplaceStatementLocator(cobolFile : File)
++ getReplaceSets() : LinkedList<ReplaceSet>
+# accumulateStatement(line : String, sourceLineNumber : int) : void
+# updateUntilInReplaceSets(fromSourceLine : int, untilSourceLine : int) : void
+# createStatements(statement : String, sourceLineNumber : int) : void
+- {static} getNewReplaceSet(sourceLineNumber : int) : ReplaceSet
+}
+class EIBResponseTable{
+- {static} EIBResponsesTable : Map<String,EIBResponseCodes>
++ {static} lookup(conditionName : String) : EIBResponseCodes
+}
+class ReplaceSet{
+- from : String
+- to : String
+- trailing : boolean
+- leading : boolean
+- fromSourceLine : int
+- untilSourceLine : int
++ ReplaceSet(from : String, to : String, trailing : boolean, leading : boolean, fromSourceLine : int, untilSourceLine : int)
++ ReplaceSet()
++ replaceInline(line : String) : String
++ replaceInline(line : String, sourceLine : int) : String
++ setTrailing(trailing : boolean) : void
++ setLeading(leading : boolean) : void
++ setFrom(value : String) : void
++ setTo(value : String) : void
++ getFrom() : String
++ getTo() : String
++ isTrailing() : boolean
++ isLeading() : boolean
++ setFromSourceLine(sourceLineNumber : int) : void
++ setUntilSourceLine(sourceLineNumber : int) : void
++ getFromSourceLine() : int
++ getUntilSourceLine() : int
++ toString() : String
+}
+class ReplaceToken{
+- value : String
+- type : ReplaceTokenType
++ ReplaceToken(value : String)
+- setType() : void
++ getValue() : String
++ getType() : ReplaceTokenType
+}
+class ReplaceTokenizer{
+- position : int
+- tokens : LinkedList<ReplaceToken>
+- isComment : boolean
+- {static} GROUP_COMMENT_INDICATOR : int
+- {static} COMMENT_INDICATOR : String
+- {static} replacePattern : Pattern
+- {static} isCommentPattern : Pattern
++ tokenize(line : String) : void
++ hasMoreTokens() : boolean
++ nextToken() : ReplaceToken
++ isComment() : boolean
+}
+ReplaceStatementLocator--"- tokenizer" ReplaceTokenizer
+ReplaceToken--"- type" ReplaceTokenType
+interface TokenExtractor{
+extractTokensFrom(sourceLine : String) : List<String>
+}
+enum ReplaceTokenType{
+REPLACE
+LEADING
+TRAILING
+BY
+TERMINATOR
+OTHER
+}
+enum DataType{
+ALPHANUMERIC
+BINARY
+PACKED_DECIMAL
+FLOATING_POINT
+DISPLAY_NUMERIC
+}
+@enduml

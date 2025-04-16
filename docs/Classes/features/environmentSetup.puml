@@ -1,0 +1,13 @@
+@startuml
+skinparam classAttributeIconSize 0
+class EnvironmentSetup{
+loadConfigurationSettings(configFileFromCommandLine : String) : void
+setLogLevel(logLevelFromCommandLine : String) : void
+}
+class EnvironmentSetupController{
+environmentSetup : EnvironmentSetup
++ EnvironmentSetupController()
++ runSetup(configFileFromCommandLine : String, logLevelFromCommandLine : String) : void
+}
+EnvironmentSetupController--"environmentSetup" EnvironmentSetup
+@enduml

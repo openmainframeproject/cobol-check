@@ -1,0 +1,43 @@
+@startuml
+skinparam classAttributeIconSize 0
+class FileNameMatcher{
+- matcher : PathMatcher
+- matchingFiles : List<String>
+- defaultToAllFiles : boolean
++ FileNameMatcher(pattern : String)
++ getMatchingFiles() : List<String>
+find(file : Path) : void
++ visitFile(file : Path, attrs : BasicFileAttributes) : FileVisitResult
++ preVisitDirectory(dir : Path, attrs : BasicFileAttributes) : FileVisitResult
++ visitFileFailed(file : Path, exc : IOException) : FileVisitResult
+}
+FileNameMatcher --|> SimpleFileVisitor
+class DirectoryNameMatcher{
+- matcher : PathMatcher
+- matchingDirectories : List<String>
++ DirectoryNameMatcher(pattern : String)
++ getMatchingDirectories() : List<String>
++ find(path : Path) : void
++ visitFile(file : Path, attrs : BasicFileAttributes) : FileVisitResult
++ preVisitDirectory(dir : Path, attrs : BasicFileAttributes) : FileVisitResult
++ visitFileFailed(file : Path, exc : IOException) : FileVisitResult
+}
+DirectoryNameMatcher --|> SimpleFileVisitor
+class PathHelper{
+- PathHelper()
++ {static} getTestSourceOutPath() : String
++ {static} appendMatchingFileSuffix(filePath : String, applicationSuffixes : List<String>) : String
++ {static} getMatchingDirectories(name : String, path : String) : List<String>
++ {static} endWithFileSeparator(path : String) : String
++ {static} findFilePath(path : String, fileName : String, possibleExtensions : List<String>) : String
+}
+class EncodingIO{
++ {static} getReaderWithCorrectEncoding(path : String) : Reader
++ {static} getWriterWithCorrectEncoding(path : String) : Writer
++ {static} getWriterWithCorrectEncoding(path : String, append : boolean) : Writer
+}
+class FilePermission{
++ {static} setFilePermissionForAllUsers(path : String, permissions : String) : void
++ {static} setFilePermissionForAllUsers(file : File, permissions : String) : void
+}
+@enduml

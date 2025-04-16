@@ -1,0 +1,27 @@
+@startuml
+skinparam classAttributeIconSize 0
+class StringHelper{
++ {static} isBlank(subject : String) : boolean
++ {static} notBlank(subject : String) : boolean
++ {static} defaultIfBlank(subject : String, defaultValue : String) : String
++ {static} isEmptyArray(subject : String[]) : boolean
++ {static} fixedLength(sourceLine : String) : String
++ {static} adjustPathString(pathString : String) : String
++ {static} changeFileExtension(path : String, extension : String) : String
++ {static} removeTrailingSpaces(line : String) : String
++ {static} occursFirst(text : String, expectedFirst : char, expectedSecond : char) : boolean
++ {static} swapChars(text : String, c1 : char, c2 : char) : String
++ {static} commentOutLine(line : String) : String
++ {static} stubLine(line : String, stubTag : String) : String
++ {static} getNumberOfLeadingSpaces(line : String) : int
++ {static} ExcludeBetweenTags(value : String, startTag : char, endTag : char) : String
++ {static} isStringContinuationLine(line : String) : boolean
++ {static} moveToAreaB(line : String) : String
++ {static} moveToAreaB(lines : List<String>) : List<String>
++ quote(value : String) : String
++ {static} removeLastIndex(value : String) : String
++ {static} equalsAny(value : String, collection : Collection<String>) : boolean
++ {static} containsAny(value : String, collection : Collection<String>) : boolean
++ {static} startsWithAny(value : String, collection : Collection<String>) : boolean
+}
+@enduml

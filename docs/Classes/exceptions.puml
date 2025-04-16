@@ -1,0 +1,97 @@
+@startuml
+skinparam classAttributeIconSize 0
+class IOExceptionProcessingConfigFile{
++ IOExceptionProcessingConfigFile(filename : String)
++ IOExceptionProcessingConfigFile(ex : Throwable)
++ IOExceptionProcessingConfigFile(filename : String, ex : Throwable)
+}
+IOExceptionProcessingConfigFile --|> RuntimeException
+class CopybookCouldNotBeExpanded{
++ CopybookCouldNotBeExpanded(cause : Throwable)
+}
+CopybookCouldNotBeExpanded --|> RuntimeException
+class TestSuiteInputFileNotFoundException{
++ TestSuiteInputFileNotFoundException(message : String)
++ TestSuiteInputFileNotFoundException(cause : Throwable)
++ TestSuiteInputFileNotFoundException(message : String, cause : Throwable)
+}
+TestSuiteInputFileNotFoundException --|> RuntimeException
+class TestResultsInputFileNotFoundException{
++ TestResultsInputFileNotFoundException(message : String)
++ TestResultsInputFileNotFoundException(cause : Throwable)
++ TestResultsInputFileNotFoundException(message : String, cause : Throwable)
+}
+TestResultsInputFileNotFoundException --|> RuntimeException
+class CommandLineArgumentException{
++ CommandLineArgumentException(message : String)
+}
+CommandLineArgumentException --|> RuntimeException
+class ComponentMockedTwiceInSameScopeException{
++ ComponentMockedTwiceInSameScopeException(message : String)
+}
+ComponentMockedTwiceInSameScopeException --|> RuntimeException
+class VerifyReferencesNonexistentMockException{
++ VerifyReferencesNonexistentMockException(message : String)
+}
+VerifyReferencesNonexistentMockException --|> TestSuiteSyntaxException
+class PossibleInternalLogicErrorException{
++ PossibleInternalLogicErrorException(message : String)
++ PossibleInternalLogicErrorException(cause : Throwable)
++ PossibleInternalLogicErrorException(message : String, cause : Throwable)
+}
+PossibleInternalLogicErrorException --|> RuntimeException
+class TestCaseAlreadyExistsException{
++ TestCaseAlreadyExistsException(message : String)
++ TestCaseAlreadyExistsException(cause : Throwable)
++ TestCaseAlreadyExistsException(message : String, cause : Throwable)
+}
+TestCaseAlreadyExistsException --|> RuntimeException
+class ProcessLauncherException{
++ ProcessLauncherException(message : String)
++ ProcessLauncherException(cause : Throwable)
++ ProcessLauncherException(message : String, cause : Throwable)
+}
+ProcessLauncherException --|> RuntimeException
+class TestSuiteAlreadyExistsException{
++ TestSuiteAlreadyExistsException(message : String)
++ TestSuiteAlreadyExistsException(cause : Throwable)
++ TestSuiteAlreadyExistsException(message : String, cause : Throwable)
+}
+TestSuiteAlreadyExistsException --|> RuntimeException
+class IOExceptionProcessingTestResultFile{
++ IOExceptionProcessingTestResultFile(filename : String)
++ IOExceptionProcessingTestResultFile(ex : Throwable)
++ IOExceptionProcessingTestResultFile(filename : String, ex : Throwable)
+}
+IOExceptionProcessingTestResultFile --|> RuntimeException
+class TestSuiteCouldNotBeReadException{
++ TestSuiteCouldNotBeReadException(cause : Throwable)
+}
+TestSuiteCouldNotBeReadException --|> RuntimeException
+class UndefinedKeywordException{
++ UndefinedKeywordException(message : String)
+}
+UndefinedKeywordException --|> RuntimeException
+class ExpectedConfigSettingNotFoundException{
++ ExpectedConfigSettingNotFoundException(message : String)
+}
+ExpectedConfigSettingNotFoundException --|> RuntimeException
+class EmptyTestSuiteException{
++ EmptyTestSuiteException(message : String)
+}
+EmptyTestSuiteException --|> RuntimeException
+class TestSuiteSyntaxException{
++ TestSuiteSyntaxException(message : String)
+}
+TestSuiteSyntaxException --|> RuntimeException
+class ConcatenatedTestSuiteIOException{
++ ConcatenatedTestSuiteIOException(message : String)
++ ConcatenatedTestSuiteIOException(cause : Throwable)
++ ConcatenatedTestSuiteIOException(message : String, cause : Throwable)
+}
+ConcatenatedTestSuiteIOException --|> RuntimeException
+class CobolSourceCouldNotBeReadException{
++ CobolSourceCouldNotBeReadException(cause : Throwable)
+}
+CobolSourceCouldNotBeReadException --|> RuntimeException
+@enduml

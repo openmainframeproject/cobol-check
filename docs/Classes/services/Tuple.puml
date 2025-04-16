@@ -1,0 +1,8 @@
+@startuml
+skinparam classAttributeIconSize 0
+interface Tuple{
+getFirst() : T1
+getSecond() : T2
+isEmpty() : boolean
+}
+@enduml

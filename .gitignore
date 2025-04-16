@@ -48,7 +48,6 @@ vs-code-extension/Cobol-check/output/testResults.html
 *.ear
 *.nar
 hs_err_pid*
-docs/
 
 ##############################
 ## Maven
