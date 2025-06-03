@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.18\] 2025-06-02
+- Sequence numbers are handled correct in long lines
+
 ## \[0.2.17\] 2025-04-02
 - Made sure we are using the correct encoding
 
