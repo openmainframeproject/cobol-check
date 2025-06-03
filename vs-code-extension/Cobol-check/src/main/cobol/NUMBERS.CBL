@@ -14,5 +14,8 @@
            05  ws-field-3           pic s9(16) comp.
            05  ws-field-4           pic s9(16) comp-4.
            05  ws-display-field     pic s9(5)v99.
+           05  ws-num-occ           pic 9(04) occurs 10.
+       77   CHAR-CT                      PIC S9(3) COMP.   
        PROCEDURE DIVISION.
            GOBACK.
+      
