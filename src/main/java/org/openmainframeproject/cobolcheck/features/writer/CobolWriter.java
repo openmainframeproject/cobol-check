@@ -160,6 +160,11 @@ public class CobolWriter {
      * @throws IOException - pass any IOExceptions to the caller.
      */
     private void writeMultiLine(String line, boolean isComment, boolean isRecursiveCall) throws IOException {
+        String saveNumbers = "";
+        if (line.matches("^\\d{6}.*")) {
+            saveNumbers = line.substring(0,6);
+            line = line.replaceFirst("^\\d{6}", "      ");
+        }
         String line1 = line.substring(0,maxLineLength);
         String line2 = line.substring(maxLineLength);
         if (line2.length() > 0 && !isComment) {
@@ -196,6 +201,9 @@ public class CobolWriter {
                         break;
                     }
                 }
+            }
+            if (!saveNumbers.isEmpty()) {
+                line1 = line1.replaceFirst("      ", saveNumbers);
             }
             writeLine(line1);
         }
