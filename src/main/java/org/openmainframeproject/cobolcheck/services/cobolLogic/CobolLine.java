@@ -16,6 +16,7 @@ public class CobolLine {
     public CobolLine(String line, TokenExtractor tokenExtractor){
         originalString = line;
         unNumberedString = removeSequenceNumberArea(line);
+        unNumberedString = removeTrailingComment(unNumberedString);
         trimmedString = unNumberedString.trim();
         tokens = tokenExtractor.extractTokensFrom(unNumberedString);
     }
@@ -112,6 +113,20 @@ public class CobolLine {
             return originalLine;
         else
             return "      " + originalLine.substring(index);
+    }
+
+    /**
+     * Removes any floating comment from text and returns the result.
+     * @param line - incoming text
+     * @return the line without anything following *> and without *>
+     */
+    private String removeTrailingComment(String line) {
+        String trailingComment = Interpreter.getTrailingComment();
+        if (line.contains(trailingComment)) {
+            int index = line.indexOf(trailingComment);
+            return line.substring(0, index);
+        }
+        return line;
     }
 
     public CobolLine convertCobolLinesToCobolLine(List<CobolLine> cobolLines) {

@@ -861,9 +861,11 @@ public class TestSuiteParser {
         testSuiteErrorLog.checkSyntaxInsideBlock(Constants.MOCK_KEYWORD, mockLines, keywordExtractor,
                 currentTestSuiteRealFile, fileLineNumber);
         Keyword endMockKeyword = Keywords.getKeywordFor(Constants.ENDMOCK_KEYWORD, false);
-        testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile,
+        if (currentTestSuiteLine != null) {
+            testSuiteErrorLog.checkExpectedTokenSyntax(endMockKeyword, Constants.ENDMOCK_KEYWORD, currentTestSuiteRealFile,
                 fileLineNumber,
                 currentTestSuiteLine.indexOf(Constants.ENDMOCK_KEYWORD));
+        }
         if (currentMock.getType().equals(Constants.CALL_TOKEN))
             currentMock.addLines(removeToken(mockLines, "END-CALL"));
         else
@@ -1195,15 +1197,19 @@ public class TestSuiteParser {
                 !line.toUpperCase(Locale.ROOT).contains(endingKeyword.toUpperCase(Locale.ROOT))) {
             lines.add(line);
         }
-        int startIndex = line.toUpperCase(Locale.ROOT).indexOf(endingKeyword);
-        int endIndex = startIndex + endingKeyword.length();
-        String lineToAdd = line.substring(0, startIndex);
-        if (!lineToAdd.trim().isEmpty())
-            lines.add(lineToAdd);
-        if (endIndex < line.length())
-            testSuiteTokens = keywordExtractor.extractTokensFrom(line.substring(endIndex));
-        else
+        if (line != null) {
+            int startIndex = line.toUpperCase(Locale.ROOT).indexOf(endingKeyword);
+            int endIndex = startIndex + endingKeyword.length();
+            String lineToAdd = line.substring(0, startIndex);
+            if (!lineToAdd.trim().isEmpty())
+                lines.add(lineToAdd);
+            if (endIndex < line.length())
+                testSuiteTokens = keywordExtractor.extractTokensFrom(line.substring(endIndex));
+            else
+                testSuiteTokens.clear();
+        } else {
             testSuiteTokens.clear();
+        }
         return lines;
     }
 

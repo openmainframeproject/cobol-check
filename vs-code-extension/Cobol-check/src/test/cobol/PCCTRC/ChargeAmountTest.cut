@@ -1,0 +1,374 @@
+      *================================================================
+      * COBOL-Check Test Suite for PCCTRC Currency Conversion Program
+      * Generated from Cucumber Feature: Currency Conversion Processing
+      *================================================================
+       
+       TESTSUITE 'PCC Transaction Currency Conversion Tests'
+       
+      *================================================================
+      * Test Case 1: Successfully convert USD transaction
+      *================================================================
+       TESTCASE 'Convert USD transaction successfully'
+       
+      * SETUP - Initialize test data for USD conversion
+       MOVE 'N' TO TRANC-ENDFILE
+       MOVE '0' TO TRANC-STATUS-1
+       MOVE '0' TO TRANC-STATUS-2
+       MOVE '0' TO TRANU-STATUS-1
+       MOVE '0' TO TRANU-STATUS-2
+       MOVE '0' TO REPORT-STATUS-1
+       MOVE '0' TO REPORT-STATUS-2
+       MOVE ZERO TO WS-RETURN-CODE
+       
+      * Set up currency conversion rates
+       MOVE 1.0     TO SYMBOL-USD
+       MOVE 1.29514 TO SYMBOL-CAD
+       MOVE 0.85760 TO SYMBOL-EUR
+       MOVE 0.74929 TO SYMBOL-GBP
+       
+      * Create test transaction record - USD
+       MOVE 1234567890123456 TO DTRAN-ACC-NBR
+       MOVE 20241201         TO DTRAN-DT-VAL
+       MOVE 143000           TO DTRAN-TM-VAL
+       MOVE 100.50           TO DTRAN-CHG-AMT
+       MOVE 'D'              TO DTRAN-TYPE
+       MOVE 'USD'            TO DTRAN-CUR-CD
+       MOVE 123456           TO DTRAN-RET-CD
+       MOVE 654321           TO DTRAN-ATH-CD
+       MOVE 'C'              TO DTRAN-TYP-CD
+       
+      * EXECUTE - Process the conversion
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       
+      * VERIFY - Check results
+       EXPECT DTRAN-CHG-AMT TO BE 100.50
+       EXPECT WS-RETURN-CODE TO BE ZERO
+       
+       
+      *================================================================
+      * Test Case 2: Successfully convert GBP transaction
+      *================================================================
+       TESTCASE 'Convert GBP transaction successfully'
+       
+      * SETUP
+       MOVE 'N' TO TRANC-ENDFILE
+       MOVE ZERO TO WS-RETURN-CODE
+       
+      * Set up currency conversion rates
+       MOVE 1.0     TO SYMBOL-USD
+       MOVE 0.74929 TO SYMBOL-GBP
+       
+      * Create test transaction record - GBP
+       MOVE 9876543210987654 TO DTRAN-ACC-NBR
+       MOVE 20241201         TO DTRAN-DT-VAL
+       MOVE 090000           TO DTRAN-TM-VAL
+       MOVE 200.00           TO DTRAN-CHG-AMT
+       MOVE 'C'              TO DTRAN-TYPE
+       MOVE 'GBP'            TO DTRAN-CUR-CD
+       MOVE 111111           TO DTRAN-RET-CD
+       MOVE 222222           TO DTRAN-ATH-CD
+       MOVE 'S'              TO DTRAN-TYP-CD
+       
+      * EXECUTE
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       
+      * VERIFY - GBP rate is 0.74929, so 200.00 * 0.74929 = 149.858
+      * Rounded to 149.86
+       EXPECT DTRAN-CHG-AMT TO BE 149.86
+       EXPECT WS-RETURN-CODE TO BE ZERO
+       
+       
+      *================================================================
+      * Test Case 3: Successfully convert EUR transaction
+      *================================================================
+       TESTCASE 'Convert EUR transaction successfully'
+       
+      * SETUP
+       MOVE 'N' TO TRANC-ENDFILE
+       MOVE ZERO TO WS-RETURN-CODE
+       
+      * Set up currency conversion rates
+       MOVE 1.0     TO SYMBOL-USD
+       MOVE 0.85760 TO SYMBOL-EUR
+       
+      * Create test transaction record - EUR
+       MOVE 5555666677778888 TO DTRAN-ACC-NBR
+       MOVE 20241201         TO DTRAN-DT-VAL
+       MOVE 120000           TO DTRAN-TM-VAL
+       MOVE 500.75           TO DTRAN-CHG-AMT
+       MOVE 'D'              TO DTRAN-TYPE
+       MOVE 'EUR'            TO DTRAN-CUR-CD
+       MOVE 333333           TO DTRAN-RET-CD
+       MOVE 444444           TO DTRAN-ATH-CD
+       MOVE 'P'              TO DTRAN-TYP-CD
+       
+      * EXECUTE
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       
+      * VERIFY - EUR rate is 0.85760, so 500.75 * 0.85760 = 429.4436
+      * Rounded to 429.44
+       EXPECT DTRAN-CHG-AMT TO BE 429.44
+       EXPECT WS-RETURN-CODE TO BE ZERO
+       
+       
+      *================================================================
+      * Test Case 4: Successfully convert CAD transaction
+      *================================================================
+       TESTCASE 'Convert CAD transaction successfully'
+       
+      * SETUP
+       MOVE 'N' TO TRANC-ENDFILE
+       MOVE ZERO TO WS-RETURN-CODE
+       
+      * Set up currency conversion rates
+       MOVE 1.0     TO SYMBOL-USD
+       MOVE 1.29514 TO SYMBOL-CAD
+       
+      * Create test transaction record - CAD
+       MOVE 1111222233334444 TO DTRAN-ACC-NBR
+       MOVE 20241202         TO DTRAN-DT-VAL
+       MOVE 160000           TO DTRAN-TM-VAL
+       MOVE 1000.00          TO DTRAN-CHG-AMT
+       MOVE 'C'              TO DTRAN-TYPE
+       MOVE 'CAD'            TO DTRAN-CUR-CD
+       MOVE 555555           TO DTRAN-RET-CD
+       MOVE 666666           TO DTRAN-ATH-CD
+       MOVE 'M'              TO DTRAN-TYP-CD
+       
+      * EXECUTE
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       
+      * VERIFY - CAD rate is 1.29514, so 1000.00 * 1.29514 = 1295.14
+       EXPECT DTRAN-CHG-AMT TO BE 1295.14
+       EXPECT WS-RETURN-CODE TO BE ZERO
+       
+       
+      *================================================================
+      * Test Case 5: Handle unsupported currency code
+      *================================================================
+       TESTCASE 'Handle unsupported currency XYZ'
+       
+      * SETUP
+       MOVE 'N' TO TRANC-ENDFILE
+       MOVE ZERO TO WS-RETURN-CODE
+       
+      * Mock the ILBOABN0 call to capture abend code
+       MOCK CALL WS-ILBOABN0 USING WS-ABEND-CODE-1003.
+              DISPLAY 'MOCK: ILBOABN0 called with code: ' WS-ABEND-CODE-1003
+       END-MOCK
+
+       
+      * Create test transaction record - Invalid currency
+       MOVE 9999888877776666 TO DTRAN-ACC-NBR
+       MOVE 20241201         TO DTRAN-DT-VAL
+       MOVE 180000           TO DTRAN-TM-VAL
+       MOVE 250.00           TO DTRAN-CHG-AMT
+       MOVE 'D'              TO DTRAN-TYPE
+       MOVE 'XYZ'            TO DTRAN-CUR-CD
+       MOVE 777777           TO DTRAN-RET-CD
+       MOVE 888888           TO DTRAN-ATH-CD
+       MOVE 'C'              TO DTRAN-TYP-CD
+       
+      * EXECUTE
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       
+      * VERIFY - Should call ILBOABN0 with abend code 1003
+       VERIFY CALL WS-ILBOABN0 USING WS-ABEND-CODE-1003
+               HAPPENED ONCE
+       EXPECT WS-ABEND-CODE-1003 TO BE 1003
+       
+       
+      *================================================================
+      * Test Case 6: Validate transaction type flags
+      *================================================================
+       TESTCASE 'Validate transaction type flags'
+       
+      * SETUP - Test debit transaction
+       MOVE 'D' TO DTRAN-TYPE
+       
+      * VERIFY
+       EXPECT DTRAN-DEBIT TO BE TRUE
+       EXPECT DTRAN-CREDIT TO BE FALSE
+       
+      * SETUP - Test credit transaction
+       MOVE 'C' TO DTRAN-TYPE
+       
+      * VERIFY
+       EXPECT DTRAN-CREDIT TO BE TRUE
+       EXPECT DTRAN-DEBIT TO BE FALSE
+       
+       
+      *================================================================
+      * Test Case 7: Validate transaction entry method flags
+      *================================================================
+       TESTCASE 'Validate transaction entry method flags'
+       
+      * SETUP - Test paper entry
+       MOVE 'P' TO DTRAN-TYP-CD
+       EXPECT DTRAN-PAPER-ENTRY TO BE TRUE
+       EXPECT DTRAN-MANUAL-ENTER TO BE FALSE
+       EXPECT DTRAN-CARD-SWIPED TO BE FALSE
+       EXPECT DTRAN-CHIP-READ TO BE FALSE
+       
+      * SETUP - Test manual entry
+       MOVE 'M' TO DTRAN-TYP-CD
+       EXPECT DTRAN-MANUAL-ENTER TO BE TRUE
+       EXPECT DTRAN-PAPER-ENTRY TO BE FALSE
+       EXPECT DTRAN-CARD-SWIPED TO BE FALSE
+       EXPECT DTRAN-CHIP-READ TO BE FALSE
+       
+      * SETUP - Test card swiped
+       MOVE 'S' TO DTRAN-TYP-CD
+       EXPECT DTRAN-CARD-SWIPED TO BE TRUE
+       EXPECT DTRAN-PAPER-ENTRY TO BE FALSE
+       EXPECT DTRAN-MANUAL-ENTER TO BE FALSE
+       EXPECT DTRAN-CHIP-READ TO BE FALSE
+       
+      * SETUP - Test chip read
+       MOVE 'C' TO DTRAN-TYP-CD
+       EXPECT DTRAN-CHIP-READ TO BE TRUE
+       EXPECT DTRAN-PAPER-ENTRY TO BE FALSE
+       EXPECT DTRAN-MANUAL-ENTER TO BE FALSE
+       EXPECT DTRAN-CARD-SWIPED TO BE FALSE
+       
+       
+      *================================================================
+      * Test Case 8: Test file status conditions
+      *================================================================
+       TESTCASE 'Test file status OK conditions'
+       
+      * SETUP - Test successful file status
+       MOVE '0' TO TRANC-STATUS-1
+       EXPECT TRANC-OK TO BE TRUE
+       EXPECT TRANC-EOF TO BE FALSE
+       
+       MOVE '0' TO TRANU-STATUS-1
+       EXPECT TRANU-OK TO BE TRUE
+       EXPECT TRANU-EOF TO BE FALSE
+       
+       MOVE '0' TO REPORT-STATUS-1
+       EXPECT REPORT-OK TO BE TRUE
+       EXPECT REPORT-EOF TO BE FALSE
+       
+      * SETUP - Test EOF conditions
+       MOVE '1' TO TRANC-STATUS-1
+       EXPECT TRANC-EOF TO BE TRUE
+       EXPECT TRANC-OK TO BE FALSE
+       
+       
+      *================================================================
+      * Test Case 9: Test endfile flag conditions
+      *================================================================
+       TESTCASE 'Test endfile flag conditions'
+       
+      * SETUP - Test not at end of file
+       SET TRANC-NOT-AT-ENDFILE TO TRUE
+       EXPECT TRANC-NOT-AT-ENDFILE TO BE TRUE
+       EXPECT TRANC-AT-ENDFILE TO BE FALSE
+       
+      * SETUP - Test at end of file
+       SET TRANC-AT-ENDFILE TO TRUE
+       EXPECT TRANC-AT-ENDFILE TO BE TRUE
+       EXPECT TRANC-NOT-AT-ENDFILE TO BE FALSE
+       
+       
+      *================================================================
+      * Test Case 10: Test currency conversion with rounding
+      *================================================================
+       TESTCASE 'Test currency conversion with rounding precision'
+       
+      * SETUP
+       MOVE ZERO TO WS-RETURN-CODE
+       MOVE 0.123456789 TO SYMBOL-EUR
+       
+      * Create test transaction with amount requiring rounding
+       MOVE 123.456789 TO DTRAN-CHG-AMT
+       MOVE 'EUR' TO DTRAN-CUR-CD
+       
+      * EXECUTE
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       
+      * VERIFY - Check that rounding occurs properly
+      * 123.456789 * 0.123456789 = 15.2415... should round to 15.24
+       EXPECT DTRAN-CHG-AMT >= 15.23
+       EXPECT DTRAN-CHG-AMT < 15.25
+       
+       
+      *================================================================
+      * Test Case 11: Test major world currencies
+      *================================================================
+       TESTCASE 'Test conversion of major world currencies'
+       
+      * SETUP - Initialize common test data
+       MOVE ZERO TO WS-RETURN-CODE
+       MOVE 100.00 TO DTRAN-CHG-AMT
+       
+      * Test Japanese Yen (typically no decimal places in real world)
+       MOVE 110.0 TO SYMBOL-JPY
+       MOVE 'JPY' TO DTRAN-CUR-CD
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       EXPECT DTRAN-CHG-AMT TO BE 11000.00
+       
+      * Reset for next test
+       MOVE 100.00 TO DTRAN-CHG-AMT
+       
+      * Test Australian Dollar
+       MOVE 1.35 TO SYMBOL-AUD
+       MOVE 'AUD' TO DTRAN-CUR-CD
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       EXPECT DTRAN-CHG-AMT TO BE 135.00
+       
+      * Reset for next test
+       MOVE 100.00 TO DTRAN-CHG-AMT
+       
+      * Test Swiss Franc
+       MOVE 0.92 TO SYMBOL-CHF
+       MOVE 'CHF' TO DTRAN-CUR-CD
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       EXPECT DTRAN-CHG-AMT TO BE 92.00
+       
+       
+      *================================================================
+      * Test Case 12: Test boundary conditions
+      *================================================================
+       TESTCASE 'Test boundary conditions for amounts'
+       
+      * SETUP
+       MOVE ZERO TO WS-RETURN-CODE
+       MOVE 1.0 TO SYMBOL-USD
+       MOVE 'USD' TO DTRAN-CUR-CD
+       
+      * Test minimum amount (0.01)
+       MOVE 0.01 TO DTRAN-CHG-AMT
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       EXPECT DTRAN-CHG-AMT TO BE 0.01
+       
+      * Test maximum amount (99999999.99)
+       MOVE 99999999.99 TO DTRAN-CHG-AMT
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       EXPECT DTRAN-CHG-AMT TO BE 99999999.99
+       
+      * Test zero amount
+       MOVE 0.00 TO DTRAN-CHG-AMT
+       PERFORM CONVERT-TRANSACTION THRU CONVX
+       EXPECT DTRAN-CHG-AMT TO BE 0.00
+       
+
+      *================================================================
+      * Configuration for COBOL-Check
+      *================================================================
+      * 
+      * To run these tests, use the following command:
+      * cobol-check -p PCCTRC.cbl -t PCCTRC.cut
+      *
+      * Where:
+      * - PCCTRC.cbl is your main COBOL program
+      * - PCCTRC.cut is this test file
+      *
+      * The test framework will:
+      * 1. Parse the COBOL program structure
+      * 2. Generate test runner code
+      * 3. Compile and execute tests
+      * 4. Generate test reports
+      *
+      *================================================================

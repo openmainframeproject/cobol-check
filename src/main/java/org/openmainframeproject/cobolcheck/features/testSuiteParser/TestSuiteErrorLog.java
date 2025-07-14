@@ -88,6 +88,7 @@ public class TestSuiteErrorLog {
     public void checkSyntaxInsideBlock(String blockKeyword, List<String> cobolLines, TokenExtractor tokenExtractor, String currentFile, int lineNumber) {
         int revertedCount = cobolLines.size();
         for (String line : cobolLines){
+            if (line.indexOf('*') == 6) continue;
             List<String> keywords = tokenExtractor.extractTokensFrom(line);
             for(String keyword : keywords){
                 if (cobolCheckStartingAndEndingKeywords.contains(keyword.toUpperCase(Locale.ROOT))){

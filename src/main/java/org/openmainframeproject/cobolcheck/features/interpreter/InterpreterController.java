@@ -7,10 +7,8 @@ import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
-import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.platform.Platform;
 import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
-import org.openmainframeproject.cobolcheck.services.RunInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -238,7 +236,10 @@ public class InterpreterController {
         }
 
         // Current line might change from when it was originally read
-        return reader.getCurrentLine().getOriginalString();
+        if (reader.getCurrentLine().getUnNumberedString().length() > 72 )
+            return reader.getCurrentLine().getUnNumberedString().substring(0, 72);
+        else
+            return reader.getCurrentLine().getUnNumberedString();
     }
 
     public void closeReader() {

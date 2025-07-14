@@ -15,6 +15,7 @@ import java.util.regex.*;
 
 public class Interpreter {
     private static final String SPACE = " ";
+    private static final String TRAILING_COMMENT = "*>";
 
     // Source tokens from Procedure Division that begin batch I/O statements
     private static final List<String> batchFileIOVerbs = Arrays.asList(
@@ -34,6 +35,10 @@ public class Interpreter {
 
     public static int getSequenceNumberAreaIndex(){
         return sequenceNumberAreaEnd;
+    }
+
+    public static String getTrailingComment() {
+        return TRAILING_COMMENT;
     }
 
     //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
