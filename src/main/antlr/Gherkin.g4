@@ -1,6 +1,6 @@
 grammar Gherkin;
 startRule : gherkinDocument;
-gherkinDocument : feature? EMPTY? EOF ;
+gherkinDocument : feature? EMPTY*? EOF ;
 
 noline : (comment EMPTY | EMPTY)+? ;
 feature : noline* featureHeader (EMPTY background)? (EMPTY scenarioDefinition)* (EMPTY rule)* ;
@@ -36,8 +36,9 @@ docStringSeparator : DOCSTRING other? ;
 descriptionHelper : EMPTY (description noline+)*? ;
 description : other ;
 
-other : (ANY | AND | BACKGROUND | BUT | EXAMPLE | EXAMPLES | FEATURE | GIVEN | OUTLINE | RULE |
-  SCENARIO | SCENARIOS | THEN | WHEN | COLON)+;
+other : (ANY | BACKGROUND | EXAMPLE | EXAMPLES | FEATURE | OUTLINE | RULE | SCENARIO | SCENARIOS)
+(ANY | AND | BACKGROUND | BUT | EXAMPLE | EXAMPLES | FEATURE | GIVEN | OUTLINE | RULE |
+  SCENARIO | SCENARIOS | THEN | WHEN | COLON)*;
 
 TABLEROW : WS? ('|'((~[|\r\n])|('\\\\|'))*)+(~[\\]'|');
 TAGLINE : WS? AT ANY* EMPTY ;
