@@ -8,6 +8,7 @@ import org.openmainframeproject.cobolcheck.services.log.Log;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -62,7 +63,8 @@ public class PathHelper {
         Files.walkFileTree(Paths.get(path), directoryFinder);
         matchingDirectories = directoryFinder.getMatchingDirectories();
         if (matchingDirectories.isEmpty()) {
-            Log.warn(Messages.get("WRN001", name, path));
+            Log.error(Messages.get("ERR033", name, path));
+            throw new NoSuchFileException("no directories found at " + path);
         }
         return matchingDirectories;
     }

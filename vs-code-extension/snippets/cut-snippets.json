@@ -1,7 +1,7 @@
 {
 	"AFTER EACH Block": {
 		"prefix": "AFTER EACH",
-		"description": "Instantiates an AFTER EACH block and places the curso in its body",
+		"description": "Instantiates an AFTER EACH block and places the cursor in its body",
 		"body": [
 			"AFTER EACH",
 			"   ${0}",
