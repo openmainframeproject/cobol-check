@@ -9,25 +9,27 @@ import org.openmainframeproject.cobolcheck.services.filehelpers.PathHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
 /**
  * Expand copybooks referenced by the code under test.
- *
+ * <p>
  * In the general use case, COPY statements are left alone and the compiler handles expansion.
- *
+ * <p>
  * Cobol-check runs as a precompiler and does not "see" the expanded Cobol source code.
  * There are two cases in which cobol-check may need to "see" the expanded code.
- *
+ * <p>
  * 1. If source statements pertinent to a mock are contained in copybooks, cobol-check needs to
  * be able to comment-out those statements in the merged test program.
- *
+ * <p>
  * 2. IBM z/OS compilers support nested COPY statements with the REPLACING option. Off-platform
  * compilers written by others do not support this, as it is an IBM extension to Cobol. When the
  * code under test uses this feature, and cobol-check is running on a platform other than z/OS,
@@ -45,10 +47,6 @@ public class CopybookExpander {
         pathToCopybooks = getPathToCopybooks();
         copybookFilenameSuffixes = Config.getCopybookFilenameSuffixes();
 
-    }
-
-    public List<String> expand(List<String> expandedLines, String copybookFilename) throws IOException {
-        return expand(expandedLines, copybookFilename, new StringTuple(null, null));
     }
 
     public List<String> expand(List<String> expandedLines, String copybookFilename,
@@ -89,8 +87,27 @@ public class CopybookExpander {
         return expandedLines;
     }
 
-    private String commentOut(String sourceLine) {
+    /**
+     * Comments out a source line by placing an asterisk in column 7.
+     * If the line is shorter than 7 characters, it is returned unchanged.
+     * @param sourceLine
+     * @return
+     */
+    String commentOut(String sourceLine) {
+        // Create StringBuilder from sourceLine ensuring it is at least 7 characters long
+        if (sourceLine == null || sourceLine.length() < 7) {
+            return sourceLine;
+        }
         StringBuilder tempLine = new StringBuilder(sourceLine);
+        // IF the column 7 is not space, then we are probably dealing with a
+        // non-standard source format. In that case, we will throw an exception.
+        if (tempLine.charAt(6) != ' '  && tempLine.charAt(6) != '*') {
+            throw new PossibleInternalLogicErrorException(
+                    Messages.get("ERR034",
+                            sourceLine));
+        }
+
+        // put an asterisk in column 7 (index 6)
         tempLine.setCharAt(6, '*');
         return tempLine.toString();
     }
@@ -123,8 +140,7 @@ public class CopybookExpander {
         return PathHelper.endWithFileSeparator(Config.getCopyBookSourceDirectoryPathString());
     }
 
-    public List<String> expandDB2(List<String> expandedLines, String copybookFilename,
-            StringTuple... textReplacement) throws IOException {
+    public List<String> expandDB2(List<String> expandedLines, String copybookFilename) throws IOException {
         String fullPath = PathHelper.findFilePath(pathToCopybooks, copybookFilename, copybookFilenameSuffixes);
         if (fullPath == null)
             throw new IOException("could not find copybook " + copybookFilename + " in " + pathToCopybooks);
@@ -145,6 +161,65 @@ public class CopybookExpander {
             }
         }
         return expandedLines;
+    }
+
+    /**
+     * Returns the lines included by the INCLUDE statement
+     * @param 'exec sql' statement with an INCLUDE clause
+     * @return list of lines included by the INCLUDE statement
+     * @throws IOException
+     */
+    public List<String> getIncludedLines(String line) throws IOException {
+        List<String> expandedLines = new ArrayList<>();
+        String copybookName = extractCopybookNameFromCopyStatement(line);
+        return this.expandDB2(expandedLines, copybookName);
+    }
+
+
+    String extractCopybookNameFromCopyStatement(String line) {
+        String copybookName ;
+        int copybookNameStartPosition = findCopybookNamePositionInCopyStatement(line);
+        int copybookNameEndPosition = findCopyBookNameEndPositionInCopyStatement(line, copybookNameStartPosition);
+        if (copybookNameStartPosition >= 0 && copybookNameEndPosition > copybookNameStartPosition) {
+            copybookName = line.substring(copybookNameStartPosition, copybookNameEndPosition).trim();
+            if (copybookName.endsWith(Constants.PERIOD)) {
+                copybookName = copybookName.substring(0, copybookName.length() - 1);
+            }
+        } else {
+            throw new PossibleInternalLogicErrorException(
+                    Messages.get("ERR008",
+                            line,
+                            "LineRepository.extractCopybookNameFromCopyStatement(line)",
+                            line));
+        }
+        return copybookName;
+    }
+
+    int findCopybookNamePositionInCopyStatement(String line) {
+        int copybookNamePosition = -1;
+        int copyWordPosition = line.indexOf(Constants.INCLUDE);
+        if (copyWordPosition >= 0) {
+            copybookNamePosition = copyWordPosition + Constants.INCLUDE.length() + 1;
+        }
+        return copybookNamePosition;
+    }
+
+    int findCopyBookNameEndPositionInCopyStatement(String line, int copybookNameStartPosition) {
+        int copybookNameEndPosition = -1;
+        if (copybookNameStartPosition >= 0) {
+            int periodPosition = line.indexOf(Constants.PERIOD, copybookNameStartPosition);
+            int spacePosition = line.indexOf(Constants.SPACE, copybookNameStartPosition);
+            if (periodPosition >= 0 && spacePosition >= 0) {
+                copybookNameEndPosition = Math.min(periodPosition, spacePosition);
+            } else if (periodPosition >= 0) {
+                copybookNameEndPosition = periodPosition;
+            } else if (spacePosition >= 0) {
+                copybookNameEndPosition = spacePosition;
+            } else {
+                copybookNameEndPosition = line.length();
+            }
+        }
+        return copybookNameEndPosition;
     }
 
 }

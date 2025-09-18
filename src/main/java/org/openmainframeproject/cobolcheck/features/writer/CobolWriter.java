@@ -3,6 +3,7 @@ package org.openmainframeproject.cobolcheck.features.writer;
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.services.StringHelper;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -39,6 +40,7 @@ public class CobolWriter {
                 storedLines.add(line);
             else
                 writer.write(line);
+                writer.flush();
         }
         else {
             //We need to check if this line is to be commented out or if it is already a comment
@@ -95,12 +97,8 @@ public class CobolWriter {
         writeLine(StringHelper.stubLine(line, stubTag));
     }
 
-    void writeFormattedLine(String format, Object... args) throws IOException {
-        writeLine(String.format(format, args));
-    }
-
     /**
-     * Writes all the given lines of cobol code to the test output file. If the any of the lines
+     * Writes all the given lines of cobol code to the test output file. If any of the lines
      * are too long for cobol to handle, it will be correctly split into multiple lines.
      *
      * @param lines - lines to be written
