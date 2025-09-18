@@ -72,8 +72,11 @@ public class Generator {
         Replace.inspectProgram(originalSource);
 
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
-        //replace in the program, return the program name with the corrected source code.
-        programName = Replace.replaceInProgram(originalSource);
+        // Handle REPLACE statements in the original source code
+        if (Replace.isReplaceOn()) {
+            //replace in the program, return the file name where the corrected source code was placed.
+            programName = Replace.replaceInProgram(originalSource);
+        }
         for (String matchingDirectory : matchingTestDirectories) {
 
             Reader sourceReader = PrepareMergeController.getSourceReader(programName);

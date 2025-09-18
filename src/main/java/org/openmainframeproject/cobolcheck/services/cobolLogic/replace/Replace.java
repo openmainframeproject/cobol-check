@@ -1,5 +1,6 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
+import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
@@ -160,7 +161,7 @@ public class Replace {
     public static String replaceInProgram(File program) {
         // write the replaced program back to disk
 
-        String newFileName = program+"_MOD";
+        String newFileName = getOutputFile(program.getAbsolutePath());
         Log.warn("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
         try {
             BufferedWriter writer = (BufferedWriter) EncodingIO.getWriterWithCorrectEncoding(newFileName);
@@ -185,5 +186,22 @@ public class Replace {
         for (ReplaceSet replaceSet : replaceMap) {
             Log.info("Replace.showReplaceSets():" + replaceSet.toString());
         }
+    }
+
+    static String getOutputFile(String inputFileName) {
+        inputFileName = inputFileName.trim();
+        inputFileName = inputFileName.replace("\\", "/");
+        int lastSlash = inputFileName.lastIndexOf('/');
+
+
+        String fileName = inputFileName.substring(lastSlash + 1);
+        String outputDir = Config.getGeneratedTestCodePath();
+
+        if (!outputDir.endsWith(File.separator)) {
+            outputDir = outputDir + File.separator;
+        }
+        inputFileName = outputDir + fileName;
+
+        return inputFileName + "_MOD";
     }
 }

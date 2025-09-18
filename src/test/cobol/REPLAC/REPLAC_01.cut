@@ -1,0 +1,8 @@
+           TESTSUITE
+           "Greeting includes the user name when it is provided"
+
+           TESTCASE "When message type is greeting it returns Hello, James!"
+           SET MESSAGE-IS-GREETING TO TRUE
+           MOVE "James" TO WS-FRIEND
+           PERFORM 2000-SPEAK
+           EXPECT WS-GREETING TO BE "Hello, James!"
