@@ -62,7 +62,6 @@ public class LineRepository {
         if (fileSectionStatements == null){
             fileSectionStatements = new ArrayList<>();
         }
-        Log.warn("addFileSectionStatement: " + statement);
         fileSectionStatements.add(statement);
     }
 
