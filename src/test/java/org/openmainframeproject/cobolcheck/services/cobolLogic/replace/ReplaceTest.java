@@ -105,17 +105,37 @@ public class ReplaceTest {
         // regardless of where the input file is located
 
         String inputFileName = ".\\testfiles\\REPLACE.CBL";
-        String expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.CBL_MOD";
-        assertEquals(expectedOutputFileName, Replace.getOutputFile(inputFileName));
+        String expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.replaced.CBL";
+        assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
 
         inputFileName = ".\\test\\files\\REPLACE.CBL";
-        expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.CBL_MOD";
-        assertEquals(expectedOutputFileName, Replace.getOutputFile(inputFileName));
+        expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.replaced.CBL";
+        assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
 
         inputFileName = ".\\test\\files\\REPLACE.xxx";
-        expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.xxx_MOD";
-        assertEquals(expectedOutputFileName, Replace.getOutputFile(inputFileName));
+        expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.replaced.xxx";
+        assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
     }
+
+    // test internal functions for filename manipulation
+    @Test
+    public void test_internal_functions_for_filename_manipulation() {
+        String inputName = "REPLACE.CBL";
+        assertEquals("REPLACE.CBL", Replace.getFilenameWithoutPath(inputName));
+        assertEquals("CBL", Replace.getFileExtension(inputName));
+        assertEquals("REPLACE", Replace.getFileNameWithoutExtension(inputName));
+
+        // Default extension if none found
+        inputName = "REPLACE";
+        assertEquals("CBL", Replace.getFileExtension(inputName));
+    }
+
+    @Test
+    public void test_internal_functions_for_filename_manipulation_path() {
+        String input = ".\\test\\files\\REPLACE.CBL";
+        assertEquals("REPLACE.CBL", Replace.getFilenameWithoutPath(input));
+    }
+
 
 
 

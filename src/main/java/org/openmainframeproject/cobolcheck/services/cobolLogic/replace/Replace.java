@@ -47,6 +47,13 @@ public class Replace {
             + COBOL_COMMENT_INDICATOR + ")(.+)");
     private static final int SOURCE_COMMENT_INDICATOR = 2;
 
+    /**
+     * Suffix for the replaced file name.
+     */
+    private static final String FILE_PERIOD = ".";
+    private static final String REPLACED =  FILE_PERIOD + "replaced";
+    private static final String DEFAULT_EXTENSION = "CBL";
+
 
     /**
      * The state of the REPLACE statement.
@@ -162,7 +169,7 @@ public class Replace {
     public static String replaceInProgram(File program) {
         // write the replaced program back to disk
 
-        String newFileName = getOutputFile(program.getAbsolutePath());
+        String newFileName = getOutputFileName(program.getAbsolutePath());
         Log.warn("Replace.replaceInProgram(): Writing the COBOL program file: " + newFileName);
         try {
             BufferedWriter writer = (BufferedWriter) EncodingIO.getWriterWithCorrectEncoding(newFileName);
@@ -190,21 +197,19 @@ public class Replace {
         }
     }
 
-    static String getOutputFile(String inputFileName) {
-        inputFileName = inputFileName.trim();
-        inputFileName = inputFileName.replace("\\", "/");
-        int lastSlash = inputFileName.lastIndexOf('/');
+    static String getOutputFileName(String inputFileName) {
+        String newFileNAme = getFilenameWithoutPath(inputFileName);
 
-
-        String fileName = inputFileName.substring(lastSlash + 1);
         String outputDir = Config.getGeneratedTestCodePath();
 
         if (!outputDir.endsWith(File.separator)) {
             outputDir = outputDir + File.separator;
         }
-        inputFileName = outputDir + fileName;
 
-        return inputFileName + "_MOD";
+        newFileNAme = outputDir + getFileNameWithoutExtension(newFileNAme)
+                + REPLACED + FILE_PERIOD + getFileExtension(newFileNAme);
+
+        return newFileNAme;
     }
 
     /**
@@ -215,5 +220,43 @@ public class Replace {
     private static void updateFilePermissions(String newFileName) {
         String permissions = Config.getGeneratedFilesPermissionAll();
         FilePermission.setFilePermissionForAllUsers(new File(newFileName), permissions);
+    }
+
+    /** Get the file name without the path.
+     * If there is no path, return the file name as is.
+     * @param filePath the file name with or without path
+     * @return the file name without the path
+     */
+    static String getFilenameWithoutPath(String filePath) {
+        filePath = filePath.trim();
+        filePath = filePath.replace("\\", "/");
+        int lastSlash = filePath.lastIndexOf('/');
+        return filePath.substring(lastSlash + 1);
+    }
+
+    /** Get the file name without the extension.
+     * If there is no extension, return the file name as is.
+     * @param fileName the file name with or without path and extension
+     * @return the file name without the extension
+     */
+    static String getFileNameWithoutExtension(String fileName) {
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot == -1) {
+            return fileName;
+        }
+        return fileName.substring(0, lastDot);
+    }
+
+    /** Get the file extension.
+     * If there is no extension, return ".cbl" as default extension.
+     * @param fileName the file name with or without path and extension
+     * @return the file extension including the dot, e.g. ".cbl"
+     */
+    static String getFileExtension(String fileName) {
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot == -1) {
+            return DEFAULT_EXTENSION;
+        }
+        return fileName.substring(lastDot + 1);
     }
 }
