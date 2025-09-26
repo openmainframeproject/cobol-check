@@ -2,6 +2,7 @@ package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
 import org.openmainframeproject.cobolcheck.services.Config;
 import org.openmainframeproject.cobolcheck.services.filehelpers.EncodingIO;
+import org.openmainframeproject.cobolcheck.services.filehelpers.FilePermission;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.log.LogLevel;
 
@@ -179,6 +180,7 @@ public class Replace {
         } catch (IOException e) {
             Log.error("Replace.replaceInProgram(): Error writing the COBOL program file: " + program);
         }
+        updateFilePermissions(newFileName);
         return newFileName;
     }
 
@@ -203,5 +205,15 @@ public class Replace {
         inputFileName = outputDir + fileName;
 
         return inputFileName + "_MOD";
+    }
+
+    /**
+     * Set the file permissions of the generated file according to the configuration
+     * so other users can read/write/execute the file if so configured.
+     * @param newFileName
+     */
+    private static void updateFilePermissions(String newFileName) {
+        String permissions = Config.getGeneratedFilesPermissionAll();
+        FilePermission.setFilePermissionForAllUsers(new File(newFileName), permissions);
     }
 }
