@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.openmainframeproject.cobolcheck.services.Config;
 
 import java.io.File;
+import java.nio.file.FileSystems;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -101,19 +102,22 @@ public class ReplaceTest {
 
     @Test
     public void test_output_file_name_is_set_to_path_for_test_elements() {
-        //Config.getGeneratedTestCodePath() is where the modified files are written
-        // regardless of where the input file is located
+        //Config.getGeneratedTestCodePath() is where the modified files are written to
+        //regardless of where the input file is located
 
-        String inputFileName = ".\\testfiles\\REPLACE.CBL";
-        String expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.replaced.CBL";
+        // this test must work on all OS - Windows, Linux, Mac therefore we get the OS path Separator
+        String osPathSeparator = FileSystems.getDefault().getSeparator();
+
+        String inputFileName = "." + osPathSeparator + "testfiles" + osPathSeparator + "REPLACE.CBL";
+        String expectedOutputFileName = Config.getGeneratedTestCodePath() + osPathSeparator + "REPLACE.replaced.CBL";
         assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
 
-        inputFileName = ".\\test\\files\\REPLACE.CBL";
-        expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.replaced.CBL";
+        inputFileName = "." + osPathSeparator + "test" + osPathSeparator + "files" + osPathSeparator + "REPLACE.CBL";
+        expectedOutputFileName = Config.getGeneratedTestCodePath() + osPathSeparator + "REPLACE.replaced.CBL";
         assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
 
-        inputFileName = ".\\test\\files\\REPLACE.xxx";
-        expectedOutputFileName = Config.getGeneratedTestCodePath() + "\\REPLACE.replaced.xxx";
+        inputFileName = "." + osPathSeparator + "test" + osPathSeparator + "files" + osPathSeparator + "REPLACE.xxx";
+        expectedOutputFileName = Config.getGeneratedTestCodePath() + osPathSeparator + "REPLACE.replaced.xxx";
         assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
     }
 
@@ -132,7 +136,7 @@ public class ReplaceTest {
 
     @Test
     public void test_internal_functions_for_filename_manipulation_path() {
-        String input = ".\\test\\files\\REPLACE.CBL";
+        String input = "./test/files/REPLACE.CBL";
         assertEquals("REPLACE.CBL", Replace.getFilenameWithoutPath(input));
     }
 
