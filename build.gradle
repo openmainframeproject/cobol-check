@@ -171,6 +171,8 @@ task copyRunScripts(type: Copy) {
     into "${projectDir}/approvalTest"
     filter { line -> line.replaceAll('@VERSION@', productVersion) }
 
+    println("Copied with jar version ${productVersion} to approvalTest directory")
+
 }
 
 task prepareDistribution(type: Zip) {
@@ -198,7 +200,7 @@ task prepareDistribution(type: Zip) {
 def approvalTest
 approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn copyRunScripts, prepareDistribution
+    dependsOn copyJarToBin, copyRunScripts
 
     def output = -1
     def runningOs = OS_NAME.toLowerCase()
