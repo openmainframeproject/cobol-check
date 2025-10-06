@@ -211,7 +211,7 @@ approvalTest = tasks.register("approvalTest", Test) {
     if (runningOs == "linux") {
         println "Linux detected"
         // Grant execute permission to run script
-        def procChmod = "chmod +x build/approvalTest/cobolcheck".execute()
+        def procChmod = "chmod +x src/test/approvalTest/approvaltest".execute()
         procChmod.waitForProcessOutput(System.out, System.err)
 
         def proc = "src/test/approvalTest/approvaltest".execute()
