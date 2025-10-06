@@ -1,0 +1,17 @@
+./build/approvalTest/cobolcheck -p NUMBERS > ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p ALPHA >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p GREETING >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p FILECOPY >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p MOCKTEST >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p DB2PROG >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p MOCK >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p MOCKPARA >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p MOCKTEST >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p RETURNCODE >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p TESTNESTED >> ./build/approvalTest/actual-output.txt
+./build/approvalTest/cobolcheck -p LONGLINESANDNUMBERS >> ./build/approvalTest/actual-output.txt
+
+
+
+
+
