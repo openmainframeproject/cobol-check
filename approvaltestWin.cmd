@@ -1,1 +1,1 @@
-build/approvalTest/cobolcheck -p NUMBERS ALPHA GREETING FILECOPY MOCKTEST DPICNUMBERS  > actual-output.txt
+temp/approvalTest/cobolcheck.cmd -p NUMBERS ALPHA GREETING FILECOPY MOCKTEST DPICNUMBERS  > actual-output.txt

@@ -11,8 +11,8 @@ def productName = 'cobol-check'
 group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
 
-def approvalExpectedOutput = "build/approvalTest/expected-output.txt"
-def approvalActualOutput = "build/approvalTest/actual-output.txt"
+def approvalExpectedOutput = "./expected-output.txt"
+def approvalActualOutput = "./actual-output.txt"
 
 sonarqube {
     properties {
@@ -165,10 +165,10 @@ task copyRunScripts(type: Copy) {
 
     // copy and modify run scripts for bin version
     from "${projectDir}/cobolcheck.cmd"
-    into "${projectDir}/approvalTest"
+    into "${projectDir}/temp/approvalTest"
     filter { line -> line.replaceAll('@VERSION@', productVersion) }
     from "${projectDir}/cobolcheck"
-    into "${projectDir}/approvalTest"
+    into "${projectDir}/temp/approvalTest"
     filter { line -> line.replaceAll('@VERSION@', productVersion) }
 
     println("Copied with jar version ${productVersion} to approvalTest directory")

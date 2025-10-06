@@ -1,7 +1,6 @@
-./approvalTest/cobolcheck -p NUMBERS > ./actual-output.txt
-./approvalTest/cobolcheck -p ALPHA >> ./actual-output.txt
-./approvalTest/cobolcheck -p GREETING >> ./actual-output.txt
-./approvalTest/cobolcheck -p FILECOPY >> ./actual-output.txt
-./approvalTest/cobolcheck -p MOCKTEST >> ./actual-output.txt
-./approvalTest/cobolcheck -p DPICNUMBERS >> ./actual-output.txt
-
+./temp/approvalTest/cobolcheck -p NUMBERS > ./actual-output.txt
+./temp/approvalTest/cobolcheck -p ALPHA >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p GREETING >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p FILECOPY >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p MOCKTEST >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p DPICNUMBERS >> ./actual-output.txt
