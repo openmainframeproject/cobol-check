@@ -1,4 +1,87 @@
 TESTSUITE:
+Verify Cobol Check handles numeric relations properly
+     PASS:   1. Equal sign with literal compare
+**** FAIL:   2. Equal sign with literal compare (should fail)
+    EXPECTED +00000000025.7500000, WAS +00000000025.7400000
+     PASS:   3. Not equal sign with literal compare
+**** FAIL:   4. Not equal sign with literal compare (should fail)
+    EXPECTED +00000000025.7400000, WAS +00000000025.7400000
+     PASS:   5. Not-equal sign with literal compare
+**** FAIL:   6. Not-equal sign with literal compare (should fail)
+    EXPECTED +00000000013.6000000, WAS +00000000013.6000000
+     PASS:   7. Not not-equal sign with literal compare
+**** FAIL:   8. Not not-equal sign with literal compare (should fail)
+    EXPECTED +00000000013.6000000, WAS +00000000013.7000000
+     PASS:   9. Equal sign with ield compare
+**** FAIL:  10. Equal sign with field compare (should fail)
+    EXPECTED +00000000025.7500000, WAS +00000000025.7400000
+     PASS:  11. Not equal sign with field compare
+**** FAIL:  12. Not equal sign with field compare (should fail)
+    EXPECTED +00000000025.7400000, WAS +00000000025.7400000
+     PASS:  13. Not-equal sign with field compare
+**** FAIL:  14. Not-equal sign with field compare (should fail)
+    EXPECTED +00000000025.7400000, WAS +00000000025.7400000
+     PASS:  15. Not not-equal sign with field compare
+**** FAIL:  16. Not not-equal sign with field compare (should fail)
+    EXPECTED +00000000025.7400000, WAS +00000000025.7500000
+     PASS:  17. Less-than sign with literal compare
+**** FAIL:  18. Less-than sign with literal compare (should fail)
+    EXPECTED +00000000018.0660000, WAS +00000000018.0670000
+     PASS:  19. Not less-than sign with literal compare
+**** FAIL:  20. Not less-than sign with literal compare (should fail)
+    EXPECTED +00000000018.0670000, WAS +00000000018.0660000
+     PASS:  21. Less-than sign with field compare
+**** FAIL:  22. Less-than sign with field compare (should fail)
+    EXPECTED +00000000416.0720000, WAS +00000000416.0720000
+     PASS:  23. Not less-than sign with field compare
+**** FAIL:  24. Not less-than sign with field compare (should fail)
+    EXPECTED +00000000416.0720000, WAS +00000000416.0710000
+     PASS:  25. Greater-than sign with literal compare
+**** FAIL:  26. Greater-than sign with literal compare (should fail)
+    EXPECTED +00000000010.0000000, WAS +00000000009.8050000
+     PASS:  27. Not greater-than sign with literal compare
+**** FAIL:  28. Not greater-than sign with literal compare (should fail)
+    EXPECTED +00000000107.7010000, WAS +00000000107.7020000
+     PASS:  29. Greater-than sign with field compare
+**** FAIL:  30. Greater-than sign with field compare (should fail)
+    EXPECTED +00000001766.0314400, WAS +00000001766.0314300
+     PASS:  31. Not greater-than sign with field to field compare
+**** FAIL:  32. Not greater-than sign with field compare (should fail)
+    EXPECTED +00000001766.0314400, WAS +00000001766.0314500
+     PASS:  33. Greater-than-or-equal-to sign with literal compare when greater
+     PASS:  34. Greater-than-or-equal-to sign with literal compare when equal
+**** FAIL:  35. Greater-than-or-equal-to sign with literal compare (should fail)
+    EXPECTED +00000000010.0000000, WAS +00000000009.8050000
+     PASS:  36. Not greater-than-or-equal-to sign with literal compare when less
+**** FAIL:  37. Not greater-than-or-equal-to sign with literal compare when equal (should fail)
+    EXPECTED +00000000018.0670000, WAS +00000000018.0670000
+**** FAIL:  38. Greater-than-or-equal-to sign with literal compare when greater (should fail)
+    EXPECTED +00000000013.4400000, WAS +00000000013.4500000
+     PASS:  39. Greater-than-or-equal-to-sign with field compare when equal
+     PASS:  40. Greater-than-or-equal-to-sign with field compare when greater
+**** FAIL:  41. Greater-than-or-equal-to-sign with field compare when less (should fail)
+    EXPECTED +00000000475.0620000, WAS +00000000475.0610000
+     PASS:  42. Not greater-than-or-equal-to-sign with field compare when less
+**** FAIL:  43. Not greater-than-or-equal-to-sign with field compare when equal (should fail)
+    EXPECTED +00000000475.0620000, WAS +00000000475.0620000
+**** FAIL:  44. Not greater-than-or-equal-to-sign with field compare when greater (should fail)
+    EXPECTED +00000000475.0620000, WAS +00000000475.0630000
+     PASS:  45. Less-than-or-equal-to-sign with field compare when equal
+     PASS:  46. Less-than-or-equal-to-sign with field compare when less
+**** FAIL:  47. Less-than-or-equal-to-sign with field compare when greater (should fail)
+    EXPECTED +00000000475.0620000, WAS +00000000475.0630000
+     PASS:  48. Not less-than-or-equal-to-sign with field compare when greater
+**** FAIL:  49. Not greater-than-or-equal-to-sign with field compare when equal (should fail)
+    EXPECTED +00000000475.0620000, WAS +00000000475.0620000
+**** FAIL:  50. Not greater-than-or-equal-to-sign with field compare when less (should fail)
+    EXPECTED +00000000475.0630000, WAS +00000000475.0620000
+     PASS:  51. Display Numeric field equals literal
+
+ 51 TEST CASES WERE EXECUTED
+ 26 PASSED
+ 25 FAILED
+=================================================
+TESTSUITE:
 Tests of alphanumeric expectations
      PASS:   1. Equality with an alphanumeric literal using TO BE
      PASS:   2. Equality with an alphanumeric literal using TO EQUAL
@@ -13,39 +96,34 @@ Tests of alphanumeric expectations
      PASS:  11. Not greater-than sign with an alphanumeric literal
      PASS:  12. Not less-than sign with an alphanumeric literal
      PASS:  13. Display numeric
-     PASS:  14. Variable must be SPACE
-     PASS:  15. Variable must be SPACES
 
- 15 TEST CASES WERE EXECUTED
- 15 PASSED
+ 13 TEST CASES WERE EXECUTED
+ 13 PASSED
   0 FAILED
-  0 CALLS NOT MOCKED
 =================================================
-
 TESTSUITE:
-Tests of DB2 includes
-     PASS:   1. DB2 Copybook added to PRG
-     PASS:   2. DB2 Copybook added to PRG
+Greeting includes the user name when it is provided
+**** FAIL:   1. When message type is greeting it returns Hello, James!
+    EXPECTED <Hello, James!>, WAS <Hello, James !>
+**** FAIL:   2. When message type is farewell it returns Goodbye, James!
+    EXPECTED <Goodbye, James!>, WAS <See you later, James    !>
+     PASS:   3. User name for greeting and farewell are consistent
+TESTSUITE:
+Greeting returns the appropriate message based on message type
+**** FAIL:   4. When message type is greeting it returns 'Hello, World!'
+    EXPECTED <Hello, World!>, WAS <Hello, Henry !>
+     PASS:   5. try numerical compare
+**** FAIL:   6. try 88 level compare
+    EXPECTED <FALSE>, WAS <TRUE>
+**** FAIL:   7. When message type is farewell it returns See you later, alligator!
+    EXPECTED <See you later, alligator!>, WAS <See you later, Henry    !>
+**** FAIL:   8. Message type greeting is not true
+    EXPECTED <FALSE>, WAS <TRUE>
 
-  2 TEST CASES WERE EXECUTED
+  8 TEST CASES WERE EXECUTED
   2 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
+  6 FAILED
 =================================================
-
-TESTSUITE:
-Verify Cobol Check handles decimal is comma properly
-     PASS:   1. simple expect for number
-     PASS:   2. simple expect for number with mock
-     PASS:   3. VERIFY EXACT 1 ACCESS   TO PARAGRAPH 100-ASSIGN
-
-  3 TEST CASES WERE EXECUTED
-  3 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph 'UT-PROCESS-UNMOCK-CALL':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:237: warning: ignoring redundant .
 TESTSUITE:
 Tests for a sequential file copy program
      PASS:   1. Output fields are populated from the input record
@@ -54,345 +132,104 @@ Tests for a sequential file copy program
   2 TEST CASES WERE EXECUTED
   2 PASSED
   0 FAILED
-  0 CALLS NOT MOCKED
 =================================================
-
 TESTSUITE:
-Greeting includes the user name when it is provided
-     PASS:   1. When message type is greeting it returns Hello, James!
-     PASS:   2. When message type is farewell it returns Goodbye, James    !
-     PASS:   3. User name for greeting and farewell are consistent
+Before and after tests 1
+     PASS:   1. Before sets value
+     PASS:   2. After sets value
+     PASS:   3. Before happens before Testcase
+     PASS:   4. After happens after Testcase (part 1)
+     PASS:   5. After happens after Testcase (part 2)
 TESTSUITE:
-Greeting returns the appropriate message based on message type
-     PASS:   4. When message type is greeting it returns 'Hello, World!'
-     PASS:   5. try numerical compare
-     PASS:   6. try 88 level compare
-     PASS:   7. When message type is farewell it returns See you later, alligator!
-     PASS:   8. Message type greeting is not true
+Before and after tests 2
+     PASS:   6. VERIFY EXACT           0 ACCESSES TO SECTION 000-START
+     PASS:   7. VERIFY EXACT           0 ACCESSES TO SECTION 100-WELCOME
+     PASS:   8. Only global mocks apply in before/after (part 1)
+     PASS:   9. Only global mocks apply in before/after (part 1)
+     PASS:  10. Only global mocks apply in before/after (part 1)
+     PASS:  11. Only global mocks apply in before/after (part 2)
+     PASS:  12. Only global mocks apply in before/after (part 2)
+     PASS:  13. Only global mocks apply in before/after (part 2)
+     PASS:  14. Only global mocks apply in before/after (part 3)
+     PASS:  15. Only global mocks apply in before/after (part 3)
+     PASS:  16. Only global mocks apply in before/after (part 3)
+TESTSUITE:
+Before and after tests 3
+     PASS:  17. Before proceeds after from last testcase (part 1)
+     PASS:  18. Before proceeds after from last testcase (part 2)
+TESTSUITE:
+General tests
+     PASS:  19. Welcome section performs as intended
+     PASS:  20. Welcome section performs as intended
+     PASS:  21. Goodbye section performs as intended
+     PASS:  22. Goodbye section performs as intended
+     PASS:  23. Change-1 changes hello to bye
+     PASS:  24. Change-1 changes hello to bye
+     PASS:  25. Change-1 changes bye to hello
+     PASS:  26. Change-1 changes bye to hello
+     PASS:  27. Change-2 changes hi to see you
+     PASS:  28. Change-2 changes hi to see you
+     PASS:  29. Change-2 changes see you to hi
+     PASS:  30. Change-2 changes see you to hi
+     PASS:  31. Switches values
+     PASS:  32. Switches values
+TESTSUITE:
+Mock Call statements test
+     PASS:  33. Simple call mock works
+     PASS:  34. Simple call mock works
+     PASS:  35. VERIFY EXACT           1 ACCESS   TO CALL 'PROG1'
+     PASS:  36. Simple global call mock works
+     PASS:  37. Simple global call mock works
+     PASS:  38. VERIFY EXACT           1 ACCESS   TO CALL 'PROG1'
+     PASS:  39. Call mock with argument works
+     PASS:  40. Call mock with argument works
+     PASS:  41. VERIFY EXACT           1 ACCESS   TO CALL VALUE-2
+     PASS:  42. Call mock with content reference for arguments work
+     PASS:  43. Call mock with content reference for arguments work
+     PASS:  44. Call mock with content reference for arguments work
+     PASS:  45. VERIFY EXACT           2 ACCESSES TO CALL 'PROG3'
+     PASS:  46. Paragraph mock is called and call mock is ignored
+     PASS:  47. Paragraph mock is called and call mock is ignored
+     PASS:  48. Paragraph mock is called and call mock is ignored
+     PASS:  49. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 800-MAKE-CALL
+     PASS:  50. VERIFY EXACT           0 ACCESSES TO CALL 'PROG3'
+**** FAIL:  51. Global call mock is not overwritten by local call mock (Should fail)
+    EXPECTED <Global PROG1>, WAS <Local PROG1>
+TESTSUITE:
+Mock Sections And Paragraphs
+     PASS:  52. Global mock behaves as intended
+     PASS:  53. Global mock behaves as intended
+     PASS:  54. VERIFY EXACT           1 ACCESS   TO SECTION 000-START
+     PASS:  55. Local mock overwrites global mock
+     PASS:  56. Local mock overwrites global mock
+     PASS:  57. VERIFY AT LEAST        2 ACCESSES TO SECTION 000-START
+     PASS:  58. Multiple local mocks behaves as intended (First Verify should fail)
+     PASS:  59. Multiple local mocks behaves as intended (First Verify should fail)
+**** FAIL:  60. VERIFY ACCESSES TO SECTION 000-START
+   EXPECTED EXACT            5 ACCESSES, WAS     2
+     PASS:  61. VERIFY NO MORE THAN   10 ACCESSES TO SECTION 100-WELCOME
+     PASS:  62. VERIFY EXACT           0 ACCESSES TO PARAGRAPH 500-SWITCH
+     PASS:  63. Empty local mock makes section do nothing
+     PASS:  64. Empty local mock makes section do nothing
+     PASS:  65. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 500-SWITCH
+     PASS:  66. Local and global mocks can be used together
+     PASS:  67. Local and global mocks can be used together
+     PASS:  68. If no local or global mock run source code
+     PASS:  69. If no local or global mock run source code
+     PASS:  70. Global paragraph mock works
+     PASS:  71. Global paragraph mock works
 
-  8 TEST CASES WERE EXECUTED
-  8 PASSED
+ 71 TEST CASES WERE EXECUTED
+ 69 PASSED
+  2 FAILED
+=================================================
+TESTSUITE:
+Verify Cobol Check handles decimal is comma properly
+     PASS:   1. simple expect for number
+     PASS:   2. simple expect for number
+     PASS:   3. VERIFY EXACT           1 ACCESS   TO PARAGRAPH 100-ASSIGN
+
+  3 TEST CASES WERE EXECUTED
+  3 PASSED
   0 FAILED
-  0 CALLS NOT MOCKED
 =================================================
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph '2000-SPEAK':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:661: warning: ignoring redundant .
-TESTSUITE:
-validate call mocking
-     PASS:   1. parameters with IN are recognized correctly
-     PASS:   2. VERIFY EXACT 1 ACCESS   TO CALL 'MYCOBOL'
-     PASS:   3. parameters with OF are recognized correctly
-     PASS:   4. VERIFY EXACT 1 ACCESS   TO CALL 'MYCOBOL'
-     PASS:   5. parameters with IN are recognized correctly still
-     PASS:   6. VERIFY EXACT 1 ACCESS   TO CALL 'MYCOBOL'
-
-  6 TEST CASES WERE EXECUTED
-  6 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph 'UT-PROCESS-UNMOCK-CALL':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:286: warning: ignoring redundant .
-TESTSUITE:
-DETERMINE AGE FROM CPR NUMBER.
-     PASS:   1. not mocked section
-     PASS:   2. locally mocked section
-     PASS:   3. not mocked paragraph
-     PASS:   4. locally mocked paragraph
-     PASS:   5. global mocked section
-     PASS:   6. global mocked paragraph
-
-  6 TEST CASES WERE EXECUTED
-  6 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:279: warning: alphanumeric literal has zero length; a SPACE will be assumed
-WARNING in file: : C:\Udvikler\java_repos\cobol-check-tnp-fork\src\test\cobol\MOCKTEST\MockCallTest.cut:173:12:
-Unexpected token on line 173, index 12:
-Mock <CALL> <'PROGRAM2'> does not reference any construct in the source code
-
-
-TESTSUITE:
-Suite A: Before and after tests 1
-     PASS:   1. A-1: BEFORE-EACH sets value
-     PASS:   2. A-1: BEFORE-EACH sets value
-     PASS:   3. A-2: AFTER-EACH sets value
-     PASS:   4. A-3: Before happens before Testcase
-     PASS:   5. A-4: After happens after Testcase (part 1)
-     PASS:   6. A-5: After happens after Testcase (part 2)
-TESTSUITE:
-Suite A2: Before and after tests 2
-     PASS:   7. VERIFY EXACT 0 ACCESSES TO SECTION 000-START
-     PASS:   8. VERIFY EXACT 0 ACCESSES TO SECTION 100-WELCOME
-     PASS:   9. A2-2: Only global mocks apply in before/after (part 1)
-     PASS:  10. A2-2: Only global mocks apply in before/after (part 1)
-     PASS:  11. A2-2: Only global mocks apply in before/after (part 1)
-     PASS:  12. A2-3: Only global mocks apply in before/after (part 2)
-     PASS:  13. A2-3: Only global mocks apply in before/after (part 2)
-     PASS:  14. A2-3: Only global mocks apply in before/after (part 2)
-     PASS:  15. A2-4: Only global mocks apply in before/after (part 3)
-     PASS:  16. A2-4: Only global mocks apply in before/after (part 3)
-     PASS:  17. A2-4: Only global mocks apply in before/after (part 3)
-TESTSUITE:
-Suite A3: Before and after tests 3
-     PASS:  18. A3-1: Before proceeds after from last testcase (part 1)
-     PASS:  19. A3-2: Before proceeds after from last testcase (part 2)
-TESTSUITE:
-Suite B: General tests
-     PASS:  20. B-2: Welcome section performs as intended
-     PASS:  21. B-2: Welcome section performs as intended
-     PASS:  22. B-3: Goodbye section performs as intended
-     PASS:  23. B-3: Goodbye section performs as intended
-     PASS:  24. B-4: Change-1 changes hello to bye
-     PASS:  25. B-4: Change-1 changes hello to bye
-     PASS:  26. B-5: Change-1 changes bye to hello
-     PASS:  27. B-5: Change-1 changes bye to hello
-     PASS:  28. B-6: Change-2 changes hi to see you
-     PASS:  29. B-6: Change-2 changes hi to see you
-     PASS:  30. B-7: Change-2 changes see you to hi
-     PASS:  31. B-7: Change-2 changes see you to hi
-     PASS:  32. B-8: Switches values
-     PASS:  33. B-8: Switches values
-TESTSUITE:
-Suite C: Mock Call statements test
-     PASS:  34. C-1 Simple call mock works
-     PASS:  35. C-1 Simple call mock works
-     PASS:  36. VERIFY EXACT 1 ACCESS   TO CALL 'PROG1'
-     PASS:  37. C-2 Simple global call mock works
-     PASS:  38. C-2 Simple global call mock works
-     PASS:  39. VERIFY EXACT 1 ACCESS   TO CALL 'PROG1'
-     PASS:  40. C-3 Call mock with argument works
-     PASS:  41. C-3 Call mock with argument works
-     PASS:  42. VERIFY EXACT 1 ACCESS   TO CALL VALUE-2
-     PASS:  43. C-4 Call mock with field and no arguments work
-     PASS:  44. C-4 Call mock with field and no arguments work
-     PASS:  45. VERIFY EXACT 1 ACCESS   TO CALL VALUE-2
-     PASS:  46. C-5 Call mock with content reference for arguments work
-     PASS:  47. C-5 Call mock with content reference for arguments work
-     PASS:  48. C-5 Call mock with content reference for arguments work
-     PASS:  49. VERIFY EXACT 2 ACCESSES TO CALL 'PROG3'
-     PASS:  50. C-6 Call mock with content reference for arguments with one comma work
-     PASS:  51. C-6 Call mock with content reference for arguments with one comma work
-     PASS:  52. C-6 Call mock with content reference for arguments with one comma work
-     PASS:  53. VERIFY EXACT 2 ACCESSES TO CALL 'PROG3'
-     PASS:  54. C-7 Call mock with content reference for arguments without comma work
-     PASS:  55. C-7 Call mock with content reference for arguments without comma work
-     PASS:  56. C-7 Call mock with content reference for arguments without comma work
-     PASS:  57. VERIFY EXACT 2 ACCESSES TO CALL 'PROG3'
-     PASS:  58. C-8 Paragraph mock is called and call mock is ignored
-     PASS:  59. C-8 Paragraph mock is called and call mock is ignored
-     PASS:  60. C-8 Paragraph mock is called and call mock is ignored
-     PASS:  61. VERIFY EXACT 1 ACCESS   TO PARAGRAPH 800-MAKE-CALL
-     PASS:  62. VERIFY EXACT 0 ACCESSES TO CALL 'PROG3'
-     PASS:  63. C-9 Global call mock is overwritten by local call mock
-     PASS:  64. C-10 Mock of call with exception handling works
-     PASS:  65. C-11 Mock of call with exception handling ending with period works
-     PASS:  66. C-12 Mock of call with a new call as exception handling works
-     PASS:  67. C-13 Mock of call with a new call as exception handling ending with period works
-     PASS:  68. VERIFY EXACT 1 ACCESS   TO CALL 'PROGRAM'
-     PASS:  69. VERIFY EXACT 0 ACCESSES TO CALL 'PROGRAM2'
-     PASS:  70. C-14 Mock of calls in series with exception handling works
-     PASS:  71. VERIFY EXACT 2 ACCESSES TO CALL 'PROGRAM'
-     PASS:  72. C-15 CALL MOCK using parameters with IN are recognized correctly
-TESTSUITE:
-Suite D: Mock Sections And Paragraphs
-     PASS:  73. D-1: Global mock behaves as intended
-     PASS:  74. D-1: Global mock behaves as intended
-     PASS:  75. VERIFY EXACT 1 ACCESS   TO SECTION 000-START
-     PASS:  76. VERIFY EXACT 0 ACCESSES TO PARAGRAPH 300-CHANGE-1
-     PASS:  77. D-2: Local mock overwrites global mock
-     PASS:  78. D-2: Local mock overwrites global mock
-     PASS:  79. VERIFY AT LEAST 2 ACCESSES TO SECTION 000-START
-     PASS:  80. VERIFY EXACT 2 ACCESSES TO SECTION 000-START
-     PASS:  81. D-3: Multiple local mocks behaves as intended
-     PASS:  82. VERIFY EXACT 6 ACCESSES TO SECTION 100-WELCOME
-     PASS:  83. VERIFY EXACT 0 ACCESSES TO PARAGRAPH 500-SWITCH
-     PASS:  84. D-3: Multiple local mocks behaves as intended
-     PASS:  85. D-4: Empty local mock makes section do nothing
-     PASS:  86. D-4: Empty local mock makes section do nothing
-     PASS:  87. VERIFY EXACT 1 ACCESS   TO PARAGRAPH 500-SWITCH
-     PASS:  88. D-5: Local and global mocks can be used together
-     PASS:  89. D-5: Local and global mocks can be used together
-     PASS:  90. D-6: If no local or global mock run source code
-     PASS:  91. D-6: If no local or global mock run source code
-     PASS:  92. D-7: Global paragraph mock works
-     PASS:  93. D-7: Global paragraph mock works
-     PASS:  94. D-8: Mock with EXIT SECTION in source works
-     PASS:  95. D-9: Mock one-liner with end mock on next line
-     PASS:  96. D-10: Mock one-liner with content
-     PASS:  97. D-11: Mock content with end-mock on the same line
-     PASS:  98. D-12: content on multiple lines, flow style
-     PASS:  99. D-12: content on multiple lines, flow style
-
- 99 TEST CASES WERE EXECUTED
- 99 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in section 'UT-6-12-0-WO':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:2482: warning: ignoring redundant .
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in section '200-GOODBYE':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph 'UT-6-12-2-WO':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:2563: warning: ignoring redundant .
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in section '410-PLACEHOLDER':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph 'UT-6-12-4-WO':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:2637: warning: ignoring redundant .
-TESTSUITE:
-Verify Cobol Check handles numeric relations properly
-     PASS:   1. Equal sign with literal compare
-**** FAIL:   2. Equal sign with literal compare (should fail)
-    EXPECTED +00000000025.7500000
-         WAS +00000000025.7400000
-     PASS:   3. Not equal sign with literal compare
-**** FAIL:   4. Not equal sign with literal compare (should fail)
-    EXPECTED +00000000025.7400000
-         WAS +00000000025.7400000
-     PASS:   5. Not-equal sign with literal compare
-**** FAIL:   6. Not-equal sign with literal compare (should fail)
-    EXPECTED +00000000013.6000000
-         WAS +00000000013.6000000
-     PASS:   7. Not not-equal sign with literal compare
-**** FAIL:   8. Not not-equal sign with literal compare (should fail)
-    EXPECTED +00000000013.6000000
-         WAS +00000000013.7000000
-     PASS:   9. Equal sign with ield compare
-**** FAIL:  10. Equal sign with field compare (should fail)
-    EXPECTED +00000000025.7500000
-         WAS +00000000025.7400000
-     PASS:  11. Not equal sign with field compare
-**** FAIL:  12. Not equal sign with field compare (should fail)
-    EXPECTED +00000000025.7400000
-         WAS +00000000025.7400000
-     PASS:  13. Not-equal sign with field compare
-**** FAIL:  14. Not-equal sign with field compare (should fail)
-    EXPECTED +00000000025.7400000
-         WAS +00000000025.7400000
-     PASS:  15. Not not-equal sign with field compare
-**** FAIL:  16. Not not-equal sign with field compare (should fail)
-    EXPECTED +00000000025.7400000
-         WAS +00000000025.7500000
-     PASS:  17. Less-than sign with literal compare
-**** FAIL:  18. Less-than sign with literal compare (should fail)
-    EXPECTED +00000000018.0660000
-         WAS +00000000018.0670000
-     PASS:  19. Not less-than sign with literal compare
-**** FAIL:  20. Not less-than sign with literal compare (should fail)
-    EXPECTED +00000000018.0670000
-         WAS +00000000018.0660000
-     PASS:  21. Less-than sign with field compare
-**** FAIL:  22. Less-than sign with field compare (should fail)
-    EXPECTED +00000000416.0720000
-         WAS +00000000416.0720000
-     PASS:  23. Not less-than sign with field compare
-**** FAIL:  24. Not less-than sign with field compare (should fail)
-    EXPECTED +00000000416.0720000
-         WAS +00000000416.0710000
-     PASS:  25. Greater-than sign with literal compare
-**** FAIL:  26. Greater-than sign with literal compare (should fail)
-    EXPECTED +00000000010.0000000
-         WAS +00000000009.8050000
-     PASS:  27. Not greater-than sign with literal compare
-**** FAIL:  28. Not greater-than sign with literal compare (should fail)
-    EXPECTED +00000000107.7010000
-         WAS +00000000107.7020000
-     PASS:  29. Greater-than sign with field compare
-**** FAIL:  30. Greater-than sign with field compare (should fail)
-    EXPECTED +00000001766.0314400
-         WAS +00000001766.0314300
-     PASS:  31. Not greater-than sign with field to field compare
-**** FAIL:  32. Not greater-than sign with field compare (should fail)
-    EXPECTED +00000001766.0314400
-         WAS +00000001766.0314500
-     PASS:  33. Greater-than-or-equal-to sign with literal compare when greater
-     PASS:  34. Greater-than-or-equal-to sign with literal compare when equal
-**** FAIL:  35. Greater-than-or-equal-to sign with literal compare (should fail)
-    EXPECTED +00000000010.0000000
-         WAS +00000000009.8050000
-     PASS:  36. Not greater-than-or-equal-to sign with literal compare when less
-**** FAIL:  37. Not greater-than-or-equal-to sign with literal compare when equal (should fail)
-    EXPECTED +00000000018.0670000
-         WAS +00000000018.0670000
-**** FAIL:  38. Greater-than-or-equal-to sign with literal compare when greater (should fail)
-    EXPECTED +00000000013.4400000
-         WAS +00000000013.4500000
-     PASS:  39. Greater-than-or-equal-to-sign with field compare when equal
-     PASS:  40. Greater-than-or-equal-to-sign with field compare when greater
-**** FAIL:  41. Greater-than-or-equal-to-sign with field compare when less (should fail)
-    EXPECTED +00000000475.0620000
-         WAS +00000000475.0610000
-     PASS:  42. Not greater-than-or-equal-to-sign with field compare when less
-**** FAIL:  43. Not greater-than-or-equal-to-sign with field compare when equal (should fail)
-    EXPECTED +00000000475.0620000
-         WAS +00000000475.0620000
-**** FAIL:  44. Not greater-than-or-equal-to-sign with field compare when greater (should fail)
-    EXPECTED +00000000475.0620000
-         WAS +00000000475.0630000
-     PASS:  45. Less-than-or-equal-to-sign with field compare when equal
-     PASS:  46. Less-than-or-equal-to-sign with field compare when less
-**** FAIL:  47. Less-than-or-equal-to-sign with field compare when greater (should fail)
-    EXPECTED +00000000475.0620000
-         WAS +00000000475.0630000
-     PASS:  48. Not less-than-or-equal-to-sign with field compare when greater
-**** FAIL:  49. Not less-than-or-equal-to-sign with field compare when equal (should fail)
-    EXPECTED +00000000475.0620000
-         WAS +00000000475.0620000
-**** FAIL:  50. Not less-than-or-equal-to-sign with field compare when less (should fail)
-    EXPECTED +00000000475.0630000
-         WAS +00000000475.0620000
-     PASS:  51. Display Numeric field equals literal
-     PASS:  52. Display Numeric field equals literal with negative numbers
-     PASS:  53. Variable must be ZERO
-     PASS:  54. Variable must be ZEROS
-     PASS:  55. Variable must be ZEROES
-     PASS:  56. Variable must be NUMERIC 123
-     PASS:  57. Variable must be NUMERIC -123
-     PASS:  58. Variable must be 123
-     PASS:  59. Variable must be -123
-     PASS:  60. Variable must be 4
-
- 60 TEST CASES WERE EXECUTED
- 35 PASSED
- 25 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-
-TESTSUITE:
-Test Return Code without GOBACK in MOCK
-     PASS:   1. Return code should be 0
-TESTSUITE:
-Test Return Code with GOBACK in MOCK
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph 'UT-PROCESS-UNMOCK-CALL':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:238: warning: ignoring redundant .
-TESTSUITE:
-Test Nested
-     PASS:   1. Test Nested
-
-  1 TEST CASES WERE EXECUTED
-  1 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in paragraph 'UT-PROCESS-UNMOCK-CALL':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:206: warning: ignoring redundant .
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL: in section 'UT-1-1-0-WO':
-C:\Udvikler\java_repos\cobol-check-tnp-fork\.\testruns\CC##99.CBL:493: warning: ignoring redundant .
-TESTSUITE:
-Greeting includes the user name when it is provided
-     PASS:   1. When message type is greeting it returns Hello, James!
-     PASS:   2. When message type is farewell it returns Goodbye, James    !
-     PASS:   3. User name for greeting and farewell are consistent
-TESTSUITE:
-Greeting returns the appropriate message based on message type
-     PASS:   4. When message type is greeting it returns 'Hello, World!'
-     PASS:   5. try numerical compare
-     PASS:   6. try 88 level compare
-     PASS:   7. When message type is farewell it returns See you later, alligator!
-     PASS:   8. Message type greeting is not true
-
-  8 TEST CASES WERE EXECUTED
-  8 PASSED
-  0 FAILED
-  0 CALLS NOT MOCKED
-=================================================
-
