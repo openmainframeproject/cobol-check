@@ -1,0 +1,7 @@
+./cobolcheck -p NUMBERS > ./actual-output.txt
+./cobolcheck -p ALPHA >> ./actual-output.txt
+./cobolcheck -p GREETING >> ./actual-output.txt
+./cobolcheck -p FILECOPY >> ./actual-output.txt
+./cobolcheck -p MOCKTEST >> ./actual-output.txt
+./cobolcheck -p DPICNUMBERS >> ./actual-output.txt
+

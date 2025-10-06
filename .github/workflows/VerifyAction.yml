@@ -27,4 +27,4 @@ jobs:
       - name: Tests
         run: ./gradlew clean test
       - name: Approval Tests
-        run: ./gradlew clean prepareDistribution approvalTest
+        run: ./gradlew clean approvalTest
