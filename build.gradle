@@ -198,7 +198,7 @@ task prepareDistribution(type: Zip) {
 def approvalTest
 approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn copyRunScripts fatJar
+    dependsOn copyRunScripts prepareDistribution
 
     def output = -1
     def runningOs = OS_NAME.toLowerCase()
