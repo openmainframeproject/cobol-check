@@ -205,21 +205,6 @@ approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
     dependsOn prepareDistribution
 
-// COPY FROM copyRunScripts task !!
-    // copy and modify run scripts for bin version
-    from "${projectDir}/src/test/approvalTest/templates/cobolcheck.cmd"
-    into "${projectDir}/build/approvalTest"
-    filter { line -> line.replaceAll('@VERSION@', productVersion) }
-    from "${projectDir}/src/test/approvalTest/templates/cobolcheck"
-    into "${projectDir}/build/approvalTest"
-    filter { line -> line.replaceAll('@VERSION@', productVersion) }
-
-    // copy other files needed for approval test
-    from "${projectDir}/src/test/approvalTest/"
-    into "${projectDir}/build/approvalTest"
-    exclude("templates/**")
-// END COPY FROM copyRunScripts task !!
-
     def output = -1
     def runningOs = OS_NAME.toLowerCase()
 
