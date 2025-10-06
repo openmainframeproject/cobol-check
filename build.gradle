@@ -200,7 +200,8 @@ task prepareDistribution(type: Zip) {
     }
 }
 
-def approvalTest = tasks.register("approvalTest", Test) {
+def approvalTest
+approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
     dependsOn prepareDistribution
 
@@ -209,7 +210,7 @@ def approvalTest = tasks.register("approvalTest", Test) {
 
     if (runningOs == "linux") {
         println "Linux detected"
-        def proc = "build/approvalTest/approvaltest".execute()
+        def proc = "src/test/approvalTest/approvaltest".execute()
         proc.waitForProcessOutput(System.out, System.err)
     }
     if (runningOs.contains("windows")) {
