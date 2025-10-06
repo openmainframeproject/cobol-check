@@ -203,6 +203,7 @@ approvalTest = tasks.register("approvalTest", Test) {
     dependsOn copyJarToBin, copyRunScripts
 
     def output = -1
+    def weRanATest = false
     def runningOs = OS_NAME.toLowerCase()
 
     if (runningOs == "linux") {
@@ -214,21 +215,27 @@ approvalTest = tasks.register("approvalTest", Test) {
 
         def proc = "./approvaltest".execute()
         proc.waitForProcessOutput(System.out, System.err)
+        weRanATest = true
     }
     if (runningOs.contains("windows")) {
         println "Windows detected"
         def proc = "./approvaltestWin.cmd".execute()
         proc.waitForProcessOutput(System.out, System.err)
+        weRanATest = true
     }
 
-    output = new BuildHelper().compareFiles(approvalExpectedOutput, approvalActualOutput, true)
-    println "exit from compare: ${output}"
-
-    if (output != 0) {
-        println "*** FAIL ***"
-        throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+    if (!weRanATest){
+        println "No prepared test for the OS detected: ${runningOs} - skipping"
     } else {
-        println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+        output = new BuildHelper().compareFiles(approvalExpectedOutput, approvalActualOutput, true)
+        println "exit from compare: ${output}"
+
+        if (output != 0) {
+            println "*** FAIL ***"
+            throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+        } else {
+            println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+        }
     }
 }
 
