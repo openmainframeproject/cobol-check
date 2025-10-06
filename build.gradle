@@ -207,7 +207,7 @@ approvalTest = tasks.register("approvalTest", Test) {
         println "Linux detected"
 
         // grant execute permission to run script
-        def procChmod = "chmod +x ./approvalTest".execute()
+        def procChmod = "chmod +x ./approvaltest".execute()
         procChmod.waitForProcessOutput(System.out, System.err)
 
         def proc = "./approvaltest".execute()
