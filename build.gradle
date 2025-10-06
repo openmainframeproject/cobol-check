@@ -198,7 +198,7 @@ task prepareDistribution(type: Zip) {
 def approvalTest
 approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn prepareDistribution
+    dependsOn copyRunScripts fatJar
 
     def output = -1
     def runningOs = OS_NAME.toLowerCase()
@@ -206,12 +206,12 @@ approvalTest = tasks.register("approvalTest", Test) {
     if (runningOs == "linux") {
         println "Linux detected"
 
-        def proc = "approvaltest".execute()
+        def proc = "./approvaltest".execute()
         proc.waitForProcessOutput(System.out, System.err)
     }
     if (runningOs.contains("windows")) {
         println "Windows detected"
-        def proc = "approvaltestWin.cmd".execute()
+        def proc = "./approvaltestWin.cmd".execute()
         proc.waitForProcessOutput(System.out, System.err)
     }
 
