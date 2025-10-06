@@ -202,7 +202,7 @@ task prepareDistribution(type: Zip) {
 
 def approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn copyJarToBin, copyRunScripts
+    dependsOn prepareDistribution
 
     def output = -1
     def runningOs = OS_NAME.toLowerCase()
