@@ -4,6 +4,9 @@ All notable changes to the "cobol-unit-test" extension will be documented in thi
 
 ## [0.4.12] 02.06.2025
 - Now using COBOL Check version 0.2.18
+- 
+## [0.4.13] 24.10.2025
+- Now using COBOL Check version 0.2.19
 
 ## [0.4.11] 02.04.2025
 - Now using COBOL Check version 0.2.17
