@@ -10,7 +10,7 @@
        WORKING-STORAGE SECTION.
        01  FILLER.
            05  VALUE-1           PIC X(80).
-           05  VALUE-2           PIC X(80).
+           05  VALUE-2           PIC X(80) Value 'initial'.
            05  VALUE-3           PIC X(80).
            05  TEMP              PIC X(80).
 
@@ -85,15 +85,15 @@
            CALL 'PROG1'
            .
 
-       610-MAKE-CALL-VALUE-IN-STRUCTURE.
-           MOVE "1" to ACTION-PARAM
-           MOVE "2" to BOOK-PARAM
-           MOVE "3" to OUTPUT-VALUE
-           CALL 'MYCOBOL' USING ACTION-PARAM,
-                                BOOK-PARAM IN BOOK-STRUCTURE,
-                                OUTPUT-PARAM
+       610-CALL-VALUE-IN-STRUCTURE.
+           MOVE "1" to action-value
+           MOVE "2" to book-value
+           MOVE "3" to output-value
+           CALL 'MYCOBOL' USING action-value,
+                                book-value IN BOOK-STRUCTURE,
+                                output-value
            END-CALL
-           MOVE OUTPUT-PARAM TO VALUE-1
+           MOVE OUTPUT-VALUE TO VALUE-1
            .
 
        700-MAKE-CALL.
@@ -115,7 +115,7 @@
               BY CONTENT VALUE-1,
               BY VALUE VALUE-2,
               VALUE-3
-          CALL 'PROG3' USING VALUE-1.
+           CALL 'PROG3' USING VALUE-1.
           
        900-MAKE-CALL.
            CALL 'PROGRAM' USING VALUE-1

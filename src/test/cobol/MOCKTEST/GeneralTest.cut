@@ -1,44 +1,45 @@
-           TestSuite "General tests"
+TestSuite "Suite B: General tests"
 
-           TestCase "No Expect or Verify"
+           TestCase "B-1: No Expect or Verify"
            PERFORM 100-WELCOME
 
-           TestCase "Welcome section performs as intended"
+           TestCase "B-2: Welcome section performs as intended"
            PERFORM 100-WELCOME
            Expect VALUE-1 to be "Hello"
            Expect VALUE-2 to be "Hi"
 
-           TestCase "Goodbye section performs as intended"
+           TestCase "B-3: Goodbye section performs as intended"
            PERFORM 200-GOODBYE
            Expect VALUE-1 to be "Bye"
            Expect VALUE-2 to be "See you"
 
-           TestCase "Change-1 changes hello to bye"
+           TestCase "B-4: Change-1 changes hello to bye"
            PERFORM 100-WELCOME
            PERFORM 300-CHANGE-1
            Expect VALUE-1 to be "Bye"
            Expect VALUE-2 to be "Hi"
 
-           TestCase "Change-1 changes bye to hello"
+           TestCase "B-5: Change-1 changes bye to hello"
            PERFORM 200-GOODBYE
            PERFORM 300-CHANGE-1
            Expect VALUE-1 to be "Hello"
            Expect VALUE-2 to be "See you"
 
-           TestCase "Change-2 changes hi to see you"
+           TestCase "B-6: Change-2 changes hi to see you"
            PERFORM 100-WELCOME
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "Hello"
            Expect VALUE-2 to be "See you"
 
-           TestCase "Change-2 changes see you to hi"
+           TestCase "B-7: Change-2 changes see you to hi"
            PERFORM 200-GOODBYE
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "Bye"
            Expect VALUE-2 to be "Hi"
 
-           TestCase "Switches values"
+           TestCase "B-8: Switches values"
            PERFORM 100-WELCOME
            PERFORM 500-SWITCH
            Expect VALUE-1 to be "Hi"
            Expect VALUE-2 to be "Hello"
+           .

@@ -1,4 +1,4 @@
-           TestSuite "Before and after tests 1"
+TestSuite "Suite A: Before and after tests 1"
 
             BEFORE-EACH
                 MOVE "prepare" TO VALUE-1
@@ -8,25 +8,26 @@
                 MOVE "clean" TO VALUE-2
             END-AFTER
 
-           TestCase "Before sets value"
+           TestCase "A-1: BEFORE-EACH sets value"
            EXPECT VALUE-1 TO BE "prepare"
+          * validate the initial state of VALUE-2, before AFTER-EACH runs and is validated in the next test
+           EXPECT VALUE-2 TO BE "initial"
 
-           TestCase "After sets value"
+           TestCase "A-2: AFTER-EACH sets value"
            EXPECT VALUE-2 TO BE "clean"
 
-           TestCase "Before happens before Testcase"
+           TestCase "A-3: Before happens before Testcase"
            MOVE "during" TO VALUE-1
            EXPECT VALUE-1 TO BE "during"
 
-           TestCase "After happens after Testcase (part 1)"
+           TestCase "A-4: After happens after Testcase (part 1)"
            MOVE "during" TO VALUE-2
            EXPECT VALUE-2 TO BE "during"
 
-           TestCase "After happens after Testcase (part 2)"
+           TestCase "A-5: After happens after Testcase (part 2)"
            EXPECT VALUE-2 TO BE "clean"
 
-
-           TestSuite "Before and after tests 2"
+TestSuite "Suite A2: Before and after tests 2"
             BEFORE-EACH
                 MOVE "before1" TO VALUE-1
                 MOVE "before2" TO VALUE-2
@@ -47,11 +48,11 @@
                 MOVE "GlobalMockedSection2" TO VALUE-3
            END-MOCK
 
-           TestCase "Performs of mocked items does not influence count"
+           TestCase "A2-1: Performs of mocked items does not influence count"
            VERIFY SECTION 000-START HAPPENED 0 TIMES
            VERIFY SECTION 100-WELCOME NEVER HAPPENED
 
-           TestCase "Only global mocks apply in before/after (part 1)"
+           TestCase "A2-2: Only global mocks apply in before/after (part 1)"
            MOVE "arg3" TO VALUE-3
            MOCK SECTION 000-START
                 MOVE "LocalMockedSection1" TO VALUE-1
@@ -63,7 +64,7 @@
            EXPECT VALUE-2 TO BE "before2"
            EXPECT VALUE-3 TO BE "arg3"
 
-           TestCase "Only global mocks apply in before/after (part 2)"
+           TestCase "A2-3: Only global mocks apply in before/after (part 2)"
            MOCK SECTION 000-START
                 MOVE "LocalMockedSection1" TO VALUE-1
            END-MOCK
@@ -74,7 +75,7 @@
            EXPECT VALUE-2 TO BE "before2"
            EXPECT VALUE-3 TO BE "GlobalMockedSection2"
 
-           TestCase "Only global mocks apply in before/after (part 3)"
+           TestCase "A2-4: Only global mocks apply in before/after (part 3)"
            MOCK SECTION 000-START
                 MOVE "LocalMockedSection1" TO VALUE-1
            END-MOCK
@@ -85,7 +86,7 @@
            EXPECT VALUE-2 TO BE "before2"
            EXPECT VALUE-3 TO BE "GlobalMockedSection2"
 
-           TestSuite "Before and after tests 3"
+TestSuite "Suite A3: Before and after tests 3"
 
             BEFORE EACH
                 MOVE "before" TO VALUE-1
@@ -95,8 +96,9 @@
                 MOVE "after" TO VALUE-1
             END-AFTER
 
-           TestCase "Before proceeds after from last testcase (part 1)"
+           TestCase "A3-1: Before proceeds after from last testcase (part 1)"
            EXPECT VALUE-1 TO BE "before"
 
-           TestCase "Before proceeds after from last testcase (part 2)"
+           TestCase "A3-2: Before proceeds after from last testcase (part 2)"
            EXPECT VALUE-1 TO BE "before"
+           .

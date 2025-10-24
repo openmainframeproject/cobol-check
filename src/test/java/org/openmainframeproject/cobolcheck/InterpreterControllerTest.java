@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.openmainframeproject.cobolcheck.services.cobolLogic.DataType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -744,7 +745,13 @@ public class InterpreterControllerTest {
         while (interpreterController.interpretNextLine() != null){
             interpreterController.interpretNextLine();
         }
-        assertEquals("PACKED_DECIMAL",
+
+        // list the statements
+         for (String s : interpreterController.getFileSectionStatements()){
+            System.out.println("Section Statement: " + s);
+         }
+
+         assertEquals("PACKED_DECIMAL",
                 interpreterController.getNumericFieldDataTypeFor("WS-COUNT").name());
         assertEquals("DISPLAY_NUMERIC",
                 interpreterController.getNumericFieldDataTypeFor("WS-DISPLAY-NUM2").name());
@@ -986,14 +993,14 @@ public class InterpreterControllerTest {
 
         boolean testsRan = false;
         String currentLine = "";
+        String stubbedTriggerLine = "";
         while (currentLine != null){
             currentLine = interpreterController.interpretNextLine();
-            if (currentLine != null && currentLine.contains("EXEC SQL")) {
-                assertTrue(interpreterController.shouldCurrentLineBeStubbed());
-                testsRan = true;
+            if (interpreterController.shouldCurrentLineBeStubbed()) {
+                stubbedTriggerLine = currentLine;
             }
         }
-        assertTrue(testsRan);
+        assertNotEquals("", stubbedTriggerLine,"Stub trigger was set");
     }
 
     @Test
@@ -1015,5 +1022,189 @@ public class InterpreterControllerTest {
             }
         }
         assertTrue(testsRan);
+    }
+
+    @Test
+    public void it_parses_WS_section_variables_from_split_lines() throws IOException {
+        // debug flag, output to console if true
+        boolean debugOn = true;
+        // Store test data
+        ArrayList<String> cobolLines = new ArrayList<>(Arrays.asList(
+                "       DATA DIVISION.                                                    ",
+                "       FILE SECTION.                                                     ",
+                "       *-----------------------------------------------------------------",
+                "       WORKING-STORAGE SECTION.",
+                "       *-----------------------------------------------------------------",
+                "       01  WORK-FIELDS.                                                  ",
+                "          03  WS-PROGRAM-NAME            PIC X(8) VALUE 'WSVARI'.        ",
+                "          03  WS-NUM-9                   PIC 9(9).                       ",
+                "          03  WS-NUM-S9                  PIC S9(9) comp                  ",
+                "                                                 value zero.             ",
+                "          03  WS-NUM-S9-C3               PIC S9(9) comp-3                ",
+                "                                                 value 1.                ",
+                "                                                                         "
+        ));
+// Set up the mock to return each line in sequence, then null
+        Mockito.when(mockedReader.readLine()).thenAnswer(invocation -> {
+                    if (!cobolLines.isEmpty()) {
+                        String s = cobolLines.get(0);
+                        cobolLines.remove(0);
+                        return s;
+                    }
+                    return null;
+                });
+
+        while (interpreterController.interpretNextLine() != null){
+            interpreterController.interpretNextLine();
+        }
+
+        if (debugOn) {
+            // list all the statements read from file section
+            System.out.println("File Section Statements:");
+            for (String statement : interpreterController.getFileSectionStatements()) {
+                System.out.println(statement);
+            }
+        }
+
+        assertTrue(interpreterController.isReading(Constants.WORKING_STORAGE_SECTION),"Right Section being read");
+        assertEquals(3,interpreterController.getNumericFields().getNumberOfFields(),"number of variables read");
+        assertEquals(DataType.DISPLAY_NUMERIC,interpreterController.getNumericFieldDataTypeFor("WS-NUM-9"),"var 'WS-NUM-9' read");
+        assertEquals(DataType.BINARY,interpreterController.getNumericFieldDataTypeFor("WS-NUM-S9"),"var 'WS-NUM-S9' read");
+        assertEquals(DataType.PACKED_DECIMAL,interpreterController.getNumericFieldDataTypeFor("WS-NUM-S9-C3"),"var 'WS-NUM-S9-C3' read");
+
+    }
+    // verify the variables in FILE-SECTION may be split on multiple lines
+    @Test
+    public void it_parses_file_section_variables_from_split_lines() throws IOException {
+        ArrayList<String> cobolLines = new ArrayList<>(Arrays.asList(
+                "       DATA DIVISION.                                                    ",
+                "       FILE SECTION.                                                     ",
+                "       *------BEFORE-----------------------------------------------------",
+                "       FD  INPUT-FILE.                                                   ",
+                "       *------AFTER------------------------------------------------------",
+                "           LABEL RECORD IS STANDARD                                      ",
+                "           RECORDING MODE F                                              ",
+                "           BLOCK CONTAINS 0 RECORDS                                      ",
+                "           DATA RECORD IS INPUT-RECORD.                                  ",
+                "           01  INPUT-RECORD.                                             ",
+                "               05  IN-FIELD-1                                            ",
+                "                    PIC X(23).                                           ",
+                "               05  IN-FIELD-2     PIC X(3).                              ",
+                "                                                                         "
+        ));
+
+        Mockito.when(mockedReader.readLine()).thenAnswer(invocation -> {
+            if (!cobolLines.isEmpty()) {
+                return  cobolLines.remove(0);
+            }
+            return null;
+        });
+
+        int i = 1;
+        String currentTestlineOut = "";
+        while ((currentTestlineOut = interpreterController.interpretNextLine())!= null){
+
+            // Validate the returned line. Trimmed to avoid leading and trailing spaces are creating test issues.
+            // counter: i starts at 0 and counts up with each line read by the test.
+            // Some reads are performed inside the interpreterController so the count may not match
+            // the line number in the test data.
+            switch (i) {
+                case 1:
+                    assertEquals("DATA DIVISION.", currentTestlineOut.trim(),"Line 1 read");
+                    break;
+                case 2:
+                    assertEquals("FILE SECTION.", currentTestlineOut.trim(),"Line 2 read");
+                    break;
+                case 3:
+                    assertEquals("*------BEFORE-----------------------------------------------------", currentTestlineOut.trim(),"Line 3 read");
+                    break;
+                case 4:
+                    assertEquals("FD  INPUT-FILE.", currentTestlineOut.trim(),"Line 4 read");
+                    break;
+                case 5:
+                    assertEquals("*------AFTER------------------------------------------------------", currentTestlineOut.trim(),"Line 5 read");
+                    break;
+                case 6:
+                    assertTrue(interpreterController.hasStatementBeenRead(),"we have read a statement");
+                    assertEquals("LABEL RECORD IS STANDARD", interpreterController.getCurrentStatement().get(0).trim(),"Line 6 read");
+                    assertEquals("RECORDING MODE F", interpreterController.getCurrentStatement().get(1).trim(),"Line 7 read");
+                    assertEquals("BLOCK CONTAINS 0 RECORDS", interpreterController.getCurrentStatement().get(2).trim(),"Line 8 read");
+                    assertEquals("DATA RECORD IS INPUT-RECORD.", interpreterController.getCurrentStatement().get(3).trim(),"Line 9 read");
+                    assertEquals("DATA RECORD IS INPUT-RECORD.", currentTestlineOut.trim(), "interpreter returns last read line after reading a multi-line statement");
+                    break;
+                case 7:
+                    assertFalse(interpreterController.hasStatementBeenRead(),"we have not a statement");
+                    assertEquals("01  INPUT-RECORD.", currentTestlineOut.trim(),"Line 10 read");
+                    break;
+                case 8:
+                    assertTrue(interpreterController.hasStatementBeenRead(),"we have read a statement");
+                    assertEquals("PIC X(23).", currentTestlineOut.trim(),"Line 11 read");
+                    assertEquals("05  IN-FIELD-1", interpreterController.getCurrentStatement().get(0).trim(),"Line 12 read");
+                    assertEquals("PIC X(23).", interpreterController.getCurrentStatement().get(1).trim(),"Line 13 read");
+                    break;
+                case 9:
+                    assertFalse(interpreterController.hasStatementBeenRead(),"we have not a statement");
+                    assertEquals("05  IN-FIELD-2     PIC X(3).", currentTestlineOut.trim(),"Line 14 read");
+                    break;
+                case 10:
+                    assertEquals("",currentTestlineOut.trim(),"Line 15 read, only spaces expected, dese");
+                    break;
+                default:
+                    System.out.println("Line " + i + " read" );
+                    // Assert error if we get an unexpected number of lines
+                    fail("Test data has been changed, please update the test case. Unexpected line " + i + " read.");
+                    break;
+            }
+            i++;
+        }
+    }
+
+    // Test the lines in the DATA DIVISION FILE SECTION are stored in the lineRepository
+    @Test
+    public void it_stores_file_section_lines_in_lineRepository() throws IOException {
+        ArrayList<String> cobolLines = new ArrayList<>(Arrays.asList(
+                "       DATA DIVISION.                                                    ",
+                "       FILE SECTION.                                                     ",
+                "       *------BEFORE-----------------------------------------------------",
+                "       FD  INPUT-FILE.                                                   ",
+                "       *------AFTER------------------------------------------------------",
+                "           LABEL RECORD IS STANDARD                                      ",
+                "           RECORDING MODE F                                              ",
+                "           BLOCK CONTAINS 0 RECORDS                                      ",
+                "           DATA RECORD IS INPUT-RECORD.                                  ",
+                "           01  INPUT-RECORD.                                             ",
+                "               05  IN-FIELD-1                                            ",
+                "                    PIC X(23).                                           ",
+                "               05  IN-FIELD-2     PIC X(3).                              ",
+                "                                                                         "
+        ));
+
+        // Return one line at a time from the list, then null when the list is empty
+        Mockito.when(mockedReader.readLine()).thenAnswer(invocation -> {
+            if (!cobolLines.isEmpty()) {
+                return cobolLines.remove(0);
+            }
+            return null;
+        });
+
+        String currentTestlineOut = "";
+        int i = 0;
+        while ((currentTestlineOut = interpreterController.interpretNextLine())!= null){
+            i++;
+        }
+
+        // Print all the lines stored in the file section for debugging
+        System.out.println("Lines stored in file section:");
+        for (String line : interpreterController.getFileSectionStatements()) {
+            System.out.println(line);
+        }
+
+        List<String> fileSectionLines = interpreterController.getFileSectionStatements();
+        assertEquals(4,fileSectionLines.size(),"number of lines in file section");
+        assertEquals("01  INPUT-RECORD.",fileSectionLines.get(0).trim(),"first line in file section");
+        assertEquals("05  IN-FIELD-1",fileSectionLines.get(1).trim(),"line in file section");
+        assertEquals("PIC X(23).",fileSectionLines.get(2).trim(),"line in file section");
+        assertEquals("05  IN-FIELD-2     PIC X(3).",fileSectionLines.get(3).trim(),"line in file section");
+
     }
 }

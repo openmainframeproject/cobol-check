@@ -1,0 +1,27 @@
+           TestSuite "Verify FILE SECTION variables are handled properly"
+
+           TestCase "simple expect for number"
+              Move 12 to WS-A-VAR-2
+              Expect WS-A-VAR-2 to equal 12
+
+           TestCase "simple expect for string"
+              Move "H" to WS-A-VAR-1
+              Expect WS-A-VAR-1 to equal "H"
+
+           TestCase "simple expect for 88 level"
+           move 42 to WS-A-VAR-2
+           Expect SW-VAR-2-IS-42 to be true
+
+           TestCase "simple expect for 88 level false"
+           move 43 to WS-A-VAR-2
+           Expect SW-VAR-2-IS-42 to be false
+
+
+           TestCase "expect for 88 on two lines"
+           move 'HELLO' to WS-A-VAR-3
+           Expect SW-VAR-3-IS-HELLO to be true
+
+           move 'WORLD' to WS-A-VAR-3
+           Expect SW-VAR-3-IS-HELLO to be false
+           Expect SW-VAR-3-IS-WORLD to be true
+

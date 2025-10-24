@@ -10,7 +10,6 @@ import org.openmainframeproject.cobolcheck.services.cobolLogic.*;
 import org.openmainframeproject.cobolcheck.services.log.Log;
 import org.openmainframeproject.cobolcheck.services.platform.Platform;
 import org.openmainframeproject.cobolcheck.services.platform.PlatformLookup;
-import org.openmainframeproject.cobolcheck.services.RunInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +26,6 @@ public class InterpreterController {
     private String possibleMockIdentifier;
     private String possibleMockType;
     private List<String> possibleMockArgs;
-    private List<String> extractedCopyBook;
     private boolean insideSectionOrParagraphMockBody;
     private TreeMap<Integer,String> currentDataStructure;
     private final String stubTag;
@@ -69,6 +67,11 @@ public class InterpreterController {
         return numericFields.dataTypeOf(fieldName);
     }
 
+    /**
+     * returns the NumericFields object, which contains information about
+     * all numeric fields found in the DATA DIVISION of the program under test.
+     * @return
+     */
     public NumericFields getNumericFields() {
         return numericFields;
     }
@@ -263,7 +266,9 @@ public class InterpreterController {
      * @param line - The line the update is based upon
      */
     private void updateDependencies(CobolLine line) throws IOException {
+
         reader.updateState();
+
         updateLineRepository(line);
 
         List<CobolLine> currentStatement = new ArrayList<>();
@@ -272,6 +277,8 @@ public class InterpreterController {
         } else {
              currentStatement.add(line);
         }
+
+        updateLineRepositoryUpdateSecondPass(line);
 
         if (reader.isFlagSet(Constants.SPECIAL_NAMES_PARAGRAPH)) {
             updateDecimalPointIsComma(line);
@@ -432,6 +439,8 @@ public class InterpreterController {
      * @param line - current source line
      */
     private void updateLineRepository(CobolLine line) throws IOException {
+        List<String> extractedCopyBook;
+
         if (reader.isFlagSet(Constants.FILE_CONTROL)) {
             lineRepository.addFileControlStatement(line.getUnNumberedString());
 
@@ -450,7 +459,7 @@ public class InterpreterController {
                 lineRepository.addFileSectionStatement(line.getUnNumberedString());
             }
         }
-        
+
         if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) && line.containsToken(Constants.EXEC_SQL_TOKEN)) {
             String statement = reader.readStatementAsOneLine().getTrimmedString().replaceAll("\\s+", " ");
             if (statement.startsWith(Constants.EXEC_SQL_TOKEN + " " + Constants.INCLUDE)) {
@@ -460,19 +469,45 @@ public class InterpreterController {
                         if (statement.contains("SQLCA") || statement.contains("SQLDA"))
                             return;
                     default:
-                        extractedCopyBook = lineRepository.addExpandedCopyDB2Statements(reader.readStatementAsOneLine());
+                        extractedCopyBook = lineRepository.getExpandedCopyDB2Statements(statement);
+                        lineRepository.addAllLinesFromCopyDB2StatementsToFileSectionStatements(extractedCopyBook);
                         for (int i = 0; i < extractedCopyBook.size(); i++) {
                             CobolLine cobolLine = new CobolLine(extractedCopyBook.get(i), tokenExtractor);
                             List<CobolLine> currentStatement = new ArrayList<>();
                             currentStatement.add(cobolLine);
                             this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
-                            updateNumericFields(cobolLine);                
+                            updateNumericFields(cobolLine);
                         }
                         break;
                 }
             }
         }
     }
+
+    /**
+     * If we are in the FILE SECTION and have read a multiline statement, we need to
+     * add all lines except the first one, to the list of file section statements.
+     * The first line is already added as part of reading the statement in the first pass.
+     *
+     * @param line - current source line
+     */
+    private void updateLineRepositoryUpdateSecondPass(CobolLine line) throws IOException {
+
+        if (reader.isFlagSet(Constants.FILE_SECTION) && reader.isFlagSet(Constants.FD_TOKEN)) {
+             if (reader.isFlagSet(Constants.LEVEL_01_TOKEN)) {
+                if ( this.hasStatementBeenRead()) {
+                    List<CobolLine> lines = reader.getCurrentStatement();
+
+                    // we Skip first line, it is already added as part of reading the statement in the first pass
+                    for (int idx = 1; idx < lines.size(); idx++) {
+                        //   updateNumericFields(l);
+                        lineRepository.addFileSectionStatement(lines.get(idx).getUnNumberedString());
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * If the given line contains a SELECT token, the file identifier will be added, waiting for

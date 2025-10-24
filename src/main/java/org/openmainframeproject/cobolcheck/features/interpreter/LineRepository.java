@@ -5,7 +5,7 @@ import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicError
 import org.openmainframeproject.cobolcheck.services.Constants;
 import org.openmainframeproject.cobolcheck.services.Messages;
 import org.openmainframeproject.cobolcheck.services.StringTuple;
-import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
+import org.openmainframeproject.cobolcheck.services.log.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,9 +50,6 @@ public class LineRepository {
     List<String> getCopyTokens() {
         return copyTokens;
     }
-    void setCopyTokens(List<String> copyTokens) {
-        this.copyTokens = copyTokens;
-    }
 
     void addFileControlStatement(String statement){
         if (fileControlStatements == null){
@@ -68,9 +65,6 @@ public class LineRepository {
         fileSectionStatements.add(statement);
     }
 
-    void putFileIdentifierAndStatus(String key, String value){
-        fileIdentifiersAndStatuses.put(key, value);
-    }
     void addFileIdentifierWithNoStatus(String identifier){
         fileIdentifiersAndStatuses.put(identifier, Constants.EMPTY_STRING);
         currentExpectFileIdentifier = identifier;
@@ -79,14 +73,9 @@ public class LineRepository {
         fileIdentifiersAndStatuses.put(currentExpectFileIdentifier, status);
     }
 
-    void addCopyToken(String token){
-        if (copyTokens == null){
-            copyTokens = new ArrayList<>();
-        }
-        copyTokens.add(token);
-    }
-
     void addAccumulatedTokensFromCopyStatementToCopyTokens(String line) {
+        // warn on the number og tokens collected
+        Log.warn("addAccumulatedTokensFromCopyStatementToCopyTokens: " + line);
         if (copyTokens == null) {
             copyTokens = new ArrayList<>();
         }
@@ -99,6 +88,9 @@ public class LineRepository {
     }
 
     List<String> addExpandedCopyStatementsToFileSectionStatements() {
+        // warn on the number og tokens collected
+        Log.warn("addExpandedCopyStatementsToFileSectionStatements: " + copyTokens.size() + " tokens collected");
+
         for (int i = 0 ; i < copyTokens.size() ; i++) {
             if (copyTokens.get(i).equals(Constants.EMPTY_STRING)) {
                 copyTokens.remove(i);
@@ -127,24 +119,33 @@ public class LineRepository {
         try {
             copyLines = copybookExpander.expand(copyLines, copybookName, replacingValues);
         } catch (IOException ioException) {
-            ioException.printStackTrace();
+            throw new PossibleInternalLogicErrorException("addExpandedCopyStatementsToFileSectionStatements",ioException);
         }
         fileSectionStatements.addAll(copyLines);
         return copyLines;
     }
 
-    List<String> addExpandedCopyDB2Statements(CobolLine line) throws IOException {
-        List<String> copyLines = new ArrayList<>();
+    /**
+     * Expands an 'EXEC SQL' statement into multiple lines
+     * by locating and reading the INCLUDED copybook.
+     * @param line
+     * @return
+     * @throws IOException
+     */
+    List<String> getExpandedCopyDB2Statements(String line) throws IOException {
+        List<String> copyLines;
         CopybookExpander copybookExpander = new CopybookExpander();
-        String copybookName = line.getToken(2);
-        StringTuple replacingValues = new StringTuple(null, null);
 
         try {
-            copyLines = copybookExpander.expandDB2(copyLines, copybookName, replacingValues);
+            copyLines = copybookExpander.getIncludedLines(line);
         } catch (IOException ioEx) {
             throw new CopybookCouldNotBeExpanded(ioEx);
         }
-        fileSectionStatements.addAll(copyLines);
         return copyLines;
+    }
+
+
+    public void addAllLinesFromCopyDB2StatementsToFileSectionStatements(List<String> extractedCopyBook) {
+        this.fileSectionStatements.addAll(extractedCopyBook);
     }
 }

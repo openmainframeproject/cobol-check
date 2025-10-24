@@ -11,8 +11,8 @@ def productName = 'cobol-check'
 group = 'org.openmainframeproject'
 description = 'Unit testing framework for Cobol'
 
-def approvalExpectedOutput = "approval-test-expected.txt"
-def approvalActualOutput = "output/testResults.txt"
+def approvalExpectedOutput = "./expected-output.txt"
+def approvalActualOutput = "./actual-output.txt"
 
 sonarqube {
     properties {
@@ -162,12 +162,17 @@ task copyJarToExtension(type: Copy) {
 
 task copyRunScripts(type: Copy) {
     description 'Makes copies of run scripts'
+
+    // copy and modify run scripts for bin version
     from "${projectDir}/cobolcheck.cmd"
-    into "${projectDir}/GradleTemp"
+    into "${projectDir}/temp/approvalTest"
     filter { line -> line.replaceAll('@VERSION@', productVersion) }
     from "${projectDir}/cobolcheck"
-    into "${projectDir}/GradleTemp"
+    into "${projectDir}/temp/approvalTest"
     filter { line -> line.replaceAll('@VERSION@', productVersion) }
+
+    println("Copied with jar version ${productVersion} to approvalTest directory")
+
 }
 
 task prepareDistribution(type: Zip) {
@@ -185,37 +190,52 @@ task prepareDistribution(type: Zip) {
         rename("build/libs/(.*)", "\$1")
     }
 
-    from ("${projectDir}/GradleTemp")
+    from ("${projectDir}/gradleBuildTemp")
 
     doLast {
-        delete "GradleTemp"
+        delete "${projectDir}/gradleBuildTemp"
     }
 }
 
-def approvalTest = tasks.register("approvalTest", Test) {
+def approvalTest
+approvalTest = tasks.register("approvalTest", Test) {
     description 'Run approval test only'
-    dependsOn fatJar
-    def output = -1
+    dependsOn copyJarToBin, copyRunScripts
 
-    if ("${OS_NAME}" == "linux") {
+    def output = -1
+    def weRanATest = false
+    def runningOs = OS_NAME.toLowerCase()
+
+    if (runningOs == "linux") {
         println "Linux detected"
+
+        // grant execute permission to run script
+        def procChmod = "chmod +x ./approvaltest".execute()
+        procChmod.waitForProcessOutput(System.out, System.err)
+
         def proc = "./approvaltest".execute()
         proc.waitForProcessOutput(System.out, System.err)
+        weRanATest = true
     }
-    if ("${OS_NAME}".toLowerCase().contains("windows")) {
+    if (runningOs.contains("windows")) {
         println "Windows detected"
         def proc = "./approvaltestWin.cmd".execute()
         proc.waitForProcessOutput(System.out, System.err)
+        weRanATest = true
     }
 
-    output = new BuildHelper().compareFiles(approvalExpectedOutput, approvalActualOutput, true)
-    println "exit from compare: ${output}"
-
-    if (output != 0) {
-        println "*** FAIL ***"
-        throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+    if (!weRanATest){
+        println "No prepared test for the OS detected: ${runningOs} - skipping"
     } else {
-        println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+        output = new BuildHelper().compareFiles(approvalExpectedOutput, approvalActualOutput, true)
+        println "exit from compare: ${output}"
+
+        if (output != 0) {
+            println "*** FAIL ***"
+            throw new StopExecutionException("${approvalExpectedOutput} and ${approvalActualOutput} are different")
+        } else {
+            println "${approvalExpectedOutput} matches ${approvalActualOutput} - PASS"
+        }
     }
 }
 
@@ -241,7 +261,7 @@ task osInfo {
 }
 
 class BuildHelper{
-    int compareFiles(String file1, String file2, boolean trimLines){
+    static int compareFiles(String file1, String file2, boolean trimLines){
         BufferedReader reader1
         BufferedReader reader2
         try{
