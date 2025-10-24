@@ -30,6 +30,15 @@ public class NumericFields {
         return fieldTypes.getOrDefault(fieldName, DataType.ALPHANUMERIC);
     }
 
+    /**
+     * Returns the count of all fields known
+     * @return integer count of known fields
+     */
+    public int getNumberOfFields() {
+        if (fieldTypes != null)  return fieldTypes.size();
+        return 0;
+    }
+
     public void setDataTypeOf(String fieldName, DataType dataType) {
         argumentCheck(fieldName, "ERR028");
         argumentCheck(dataType, "ERR029");

@@ -36,7 +36,6 @@ public class Interpreter {
         return sequenceNumberAreaEnd;
     }
 
-    //TODO: Speed up method by adding 'else if's and putting 'if's inside 'if's
     /**
      * Sets flags based on a line, to be able to know which kinds of source
      * statements to look for when reading and interpreting lines.
@@ -50,92 +49,88 @@ public class Interpreter {
         if (line.containsToken(Constants.IDENTIFICATION_DIVISION)) {
             state.setFlagFor(Constants.IDENTIFICATION_DIVISION);
             partOfProgram = Constants.IDENTIFICATION_DIVISION;
-        }
-        if (line.containsToken(Constants.ENVIRONMENT_DIVISION)) {
+
+        } else if (line.containsToken(Constants.ENVIRONMENT_DIVISION)) {
             state.setFlagFor(Constants.ENVIRONMENT_DIVISION);
             partOfProgram = Constants.ENVIRONMENT_DIVISION;
-        }
-        if (line.containsToken(Constants.CONFIGURATION_SECTION)) {
+
+        } else if (line.containsToken(Constants.CONFIGURATION_SECTION)) {
             state.setFlagFor(Constants.CONFIGURATION_SECTION);
             partOfProgram = Constants.CONFIGURATION_SECTION;
-        }
-        if (line.containsToken(Constants.SPECIAL_NAMES_PARAGRAPH)) {
+
+        } else if (line.containsToken(Constants.SPECIAL_NAMES_PARAGRAPH)) {
             state.setFlagFor(Constants.SPECIAL_NAMES_PARAGRAPH);
             partOfProgram = Constants.SPECIAL_NAMES_PARAGRAPH;
-        }
-        if (line.containsToken(Constants.INPUT_OUTPUT_SECTION)) {
+
+        } else if (line.containsToken(Constants.INPUT_OUTPUT_SECTION)) {
             state.setFlagFor(Constants.INPUT_OUTPUT_SECTION);
             partOfProgram = Constants.INPUT_OUTPUT_SECTION;
-        }
-        if (line.containsToken(Constants.FILE_CONTROL)) {
+
+        } else if (line.containsToken(Constants.FILE_CONTROL)) {
             state.setFlagFor(Constants.FILE_CONTROL);
             partOfProgram = Constants.FILE_CONTROL;
-        }
-        if (line.containsToken(Constants.DATA_DIVISION)) {
+
+        } else if (line.containsToken(Constants.DATA_DIVISION)) {
             state.setFlagFor(Constants.DATA_DIVISION);
             partOfProgram = Constants.DATA_DIVISION;
-        }
-        if (line.containsToken(Constants.PROCEDURE_DIVISION)) {
+
+        } else if (line.containsToken(Constants.PROCEDURE_DIVISION)) {
             state.setFlagFor(Constants.PROCEDURE_DIVISION);
             partOfProgram = Constants.PROCEDURE_DIVISION;
-        }
-        if (line.containsToken(Constants.FILE_SECTION)) {
+
+        } else if (line.containsToken(Constants.FILE_SECTION)) {
             state.setFlagFor(Constants.FILE_SECTION);
             partOfProgram = Constants.FILE_SECTION;
-        }
-        if (line.containsToken(Constants.LOCAL_STORAGE_SECTION)) {
+
+        } else if (line.containsToken(Constants.LOCAL_STORAGE_SECTION)) {
             state.setFlagFor(Constants.LOCAL_STORAGE_SECTION);
             partOfProgram = Constants.LOCAL_STORAGE_SECTION;
-        }
-        if (line.containsToken(Constants.LINKAGE_SECTION)) {
+
+        } else if (line.containsToken(Constants.LINKAGE_SECTION)) {
             state.setFlagFor(Constants.LINKAGE_SECTION);
             partOfProgram = Constants.LINKAGE_SECTION;
-        }
-        if (line.containsToken(Constants.WORKING_STORAGE_SECTION)) {
+
+        } else if (line.containsToken(Constants.WORKING_STORAGE_SECTION)) {
             state.setFlagFor(Constants.WORKING_STORAGE_SECTION);
             partOfProgram = Constants.WORKING_STORAGE_SECTION;
-        }
-        if (line.containsToken(Constants.SELECT_TOKEN)) {
+
+        } else if (line.containsToken(Constants.FILE_STATUS_TOKEN)) {
+            state.setFlagFor(Constants.FILE_STATUS_TOKEN);
+            partOfProgram = Constants.FILE_STATUS_TOKEN;
+
+        } else if (line.containsToken(Constants.IS_TOKEN)) {
+            state.setFlagFor(Constants.IS_TOKEN);
+            partOfProgram = Constants.IS_TOKEN;
+
+        } else if (line.containsToken(Constants.LEVEL_01_TOKEN)) {
+            state.setFlagFor(Constants.LEVEL_01_TOKEN);
+            partOfProgram = Constants.LEVEL_01_TOKEN;
+
+        } else if (line.containsToken(Constants.COPY_TOKEN)) {
+            state.setFlagFor(Constants.COPY_TOKEN);
+            partOfProgram = Constants.COPY_TOKEN;
+//      tokens with unset flags, as they can appear multiple times
+        } else if (line.containsToken(Constants.SELECT_TOKEN)) {
             state.unsetFlagFor(Constants.SELECT_TOKEN);
             state.setFlagFor(Constants.SELECT_TOKEN);
             partOfProgram = Constants.SELECT_TOKEN;
-        }
-        if (line.containsToken(Constants.FILE_STATUS_TOKEN)) {
-            state.setFlagFor(Constants.FILE_STATUS_TOKEN);
-            partOfProgram = Constants.FILE_STATUS_TOKEN;
-        }
-        if (line.containsToken(Constants.IS_TOKEN)) {
-            state.setFlagFor(Constants.IS_TOKEN);
-            partOfProgram = Constants.IS_TOKEN;
-        }
-        if (line.containsToken(Constants.IS_TOKEN)) {
-            state.setFlagFor(Constants.IS_TOKEN);
-            partOfProgram = Constants.IS_TOKEN;
-        }
-        if (line.containsToken(Constants.FD_TOKEN)) {
-            state.unsetFlagFor(Constants.FD_TOKEN);
-            state.setFlagFor(Constants.FD_TOKEN);
-            partOfProgram = Constants.FD_TOKEN;
-        }
-        if (line.containsToken(Constants.LEVEL_01_TOKEN)) {
-            state.setFlagFor(Constants.LEVEL_01_TOKEN);
-            partOfProgram = Constants.LEVEL_01_TOKEN;
-        }
-        if (line.containsToken(Constants.COPY_TOKEN)) {
-            state.setFlagFor(Constants.COPY_TOKEN);
-            partOfProgram = Constants.COPY_TOKEN;
-        }
-        if (line.containsToken(Constants.SECTION_TOKEN)) {
+
+        } else if (line.containsToken(Constants.SECTION_TOKEN)) {
             state.unsetFlagFor(Constants.SECTION_TOKEN);
             state.setFlagFor(Constants.SECTION_TOKEN);
             partOfProgram = Constants.SECTION_TOKEN;
-        }
-        if (isParagraphHeader(line, nextLine, state)) {
+
+        } else if (isParagraphHeader(line, nextLine, state)) {
             state.unsetFlagFor(Constants.PARAGRAPH_TOKEN);
             state.setFlagFor(Constants.PARAGRAPH_TOKEN);
             partOfProgram = Constants.PARAGRAPH_TOKEN;
-        }
-        if (line.containsToken(Constants.CALL_TOKEN)) {
+
+        } else if (line.containsToken(Constants.FD_TOKEN)) {
+            state.unsetFlagFor(Constants.FD_TOKEN);
+            state.setFlagFor(Constants.FD_TOKEN);
+            partOfProgram = Constants.FD_TOKEN;
+
+        } else if (line.containsToken(Constants.CALL_TOKEN)) {
             state.unsetFlagFor(Constants.CALL_TOKEN);
             state.setFlagFor(Constants.CALL_TOKEN);
             partOfProgram = Constants.CALL_TOKEN;

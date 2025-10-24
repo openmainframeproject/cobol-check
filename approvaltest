@@ -1,6 +1,6 @@
-./cobolcheck -p NUMBERS > approval-test-actual.txt
-./cobolcheck -p ALPHA >> approval-test-actual.txt
-./cobolcheck -p GREETING >> approval-test-actual.txt
-./cobolcheck -p FILECOPY >> approval-test-actual.txt
-./cobolcheck -p MOCKTEST >> approval-test-actual.txt
-./cobolcheck -p DPICNUMBERS >> approval-test-actual.txt
+./temp/approvalTest/cobolcheck -p NUMBERS > ./actual-output.txt
+./temp/approvalTest/cobolcheck -p ALPHA >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p GREETING >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p FILECOPY >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p MOCKTEST >> ./actual-output.txt
+./temp/approvalTest/cobolcheck -p DPICNUMBERS >> ./actual-output.txt

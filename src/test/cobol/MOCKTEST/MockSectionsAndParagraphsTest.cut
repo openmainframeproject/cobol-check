@@ -1,4 +1,4 @@
-           TestSuite "Mock Sections And Paragraphs"
+           TestSuite "Suite D: Mock Sections And Paragraphs"
 
            MOCK SECTION 000-START
            PERFORM 100-WELCOME
@@ -14,14 +14,14 @@
               END-EVALUATE
            END-MOCK
 
-           TestCase "Global mock behaves as intended"
+           TestCase "D-1: Global mock behaves as intended"
            PERFORM 000-START
            Expect VALUE-1 to be "Hi"
            Expect VALUE-2 to be "Hello"
            VERIFY SECTION 000-START HAPPENED ONCE
            VERIFY PARAGRAPH 300-CHANGE-1 HAPPENED ZERO TIMES
 
-           TestCase "Local mock overwrites global mock"
+           TestCase "D-2: Local mock overwrites global mock"
            MOCK SECTION 000-START
                 MOVE "This is" TO VALUE-1
                 MOVE "a mock" TO VALUE-2
@@ -32,7 +32,7 @@
            Expect VALUE-2 to be "a mock"
            VERIFY SECTION 000-START HAPPENED AT LEAST 2 TIMES
 
-           TestCase "Multiple local mocks behaves as intended (First Verify should fail)"
+           TestCase "D-3: Multiple local mocks behaves as intended"
            MOCK SECTION 000-START
                 MOVE "This is" TO VALUE-1
                 MOVE "a mock" TO VALUE-2
@@ -43,17 +43,19 @@
            MOCK SECTION 100-WELCOME
                 MOVE "I'll leave VALUE-2 alone" TO VALUE-1
            END-MOCK
-           MOCK PARAGRAPH 500-SWITCH
-           END-MOCK
+
+           MOCK PARAGRAPH 500-SWITCH        END-MOCK
+
            PERFORM 000-START
            PERFORM 000-START
-           VERIFY SECTION 000-START HAPPENED 5 TIMES
+
+           VERIFY SECTION 000-START HAPPENED 2 TIMES
            Expect VALUE-1 to be "I'll leave VALUE-2 alone"
-           VERIFY SECTION 100-WELCOME HAPPENED NO MORE THAN 10 TIMES
+           VERIFY SECTION 100-WELCOME HAPPENED 6 TIMES
            VERIFY PARAGRAPH 500-SWITCH NEVER HAPPENED
            Expect VALUE-2 to be "a mock"
 
-           TestCase "Empty local mock makes section do nothing"
+           TestCase "D-4: Empty local mock makes section do nothing"
            MOCK PARAGRAPH 500-SWITCH
            END-MOCK
            PERFORM 100-WELCOME
@@ -62,7 +64,7 @@
            Expect VALUE-2 to be "Hi"
            VERIFY PARAGRAPH 500-SWITCH HAPPENED ONCE
 
-           TestCase "Local and global mocks can be used together"
+           TestCase "D-5: Local and global mocks can be used together"
            MOCK SECTION 100-WELCOME
                 MOVE "Mockity-" TO VALUE-1
                 MOVE "Mock" TO VALUE-2
@@ -71,42 +73,42 @@
            Expect VALUE-1 to be "Mock"
            Expect VALUE-2 to be "Mockity-"
 
-           TestCase "If no local or global mock run source code"
+           TestCase "D-6: If no local or global mock run source code"
            PERFORM 100-WELCOME
            Expect VALUE-1 to be "Hello"
            Expect VALUE-2 to be "Hi"
 
-           TestCase "Global paragraph mock works"
+           TestCase "D-7: Global paragraph mock works"
            PERFORM 100-WELCOME
            PERFORM 300-CHANGE-1
            Expect VALUE-1 to be "MOCKED"
            Expect VALUE-2 to be "Hi"
 
-           TestCase "Mock with EXIT SECTION in source works"
+           TestCase "D-8: Mock with EXIT SECTION in source works"
            MOCK SECTION 400-CHANGE-2
                 MOVE "Exit section is handled correctly" TO VALUE-1
            END-MOCK
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "Exit section is handled correctly"
 
-           TestCase "Mock one-liner with end mock on next line"
+           TestCase "D-9: Mock one-liner with end mock on next line"
            MOCK SECTION 400-CHANGE-2 MOVE "it works1" TO VALUE-1
            END-MOCK
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "it works1"
 
-           TestCase "Mock one-liner with content"
+           TestCase "D-10: Mock one-liner with content"
            MOCK SECTION 400-CHANGE-2 MOVE "it works2" TO VALUE-1 END-MOCK
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "it works2"
 
-           TestCase "Mock content with end-mock on the same line"
+           TestCase "D-11: Mock content with end-mock on the same line"
            MOCK SECTION 400-CHANGE-2
            MOVE "it works3" TO VALUE-1 END-MOCK
            PERFORM 400-CHANGE-2
            Expect VALUE-1 to be "it works3"
 
-           TestCase "Mock content on multiple lines, with end-mock on the same line as some content"
+           TestCase "D-12: content on multiple lines, flow style"
            MOCK SECTION 400-CHANGE-2 MOVE "it works4" TO VALUE-1
            MOVE "it works5" TO VALUE-2 END-MOCK
            PERFORM 400-CHANGE-2

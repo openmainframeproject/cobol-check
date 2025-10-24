@@ -1,13 +1,22 @@
 package org.openmainframeproject.cobolcheck.services.cobolLogic.replace;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.openmainframeproject.cobolcheck.services.Config;
 
 import java.io.File;
+import java.nio.file.FileSystems;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReplaceTest {
+
+    @BeforeAll
+    public static void setup(){
+        Config.load();
+    }
+
 
     @Test
     public void test_General_setup() {
@@ -81,6 +90,56 @@ public class ReplaceTest {
         assertEquals("        MOVE 'Y' TO UT-OMEGA",Replace.replace("        MOVE 'Y' TO :WS:-OMEGA", 0));
         assertEquals("        MOVE 'Y' TO WS-EXPECTED",Replace.replace("        MOVE 'Y' TO WS-ACTUAL", 0));
     }
+
+    @Test
+    public void test_what_happends_when_we_have_a_big_replace() {
+        Replace.inspectProgram(new File("./testfiles/REPLACE3.CBL"));
+        assertEquals("        MOVE 'B' TO REPDEMO3-PARAM",Replace.replace("        MOVE 'B' TO :PROGRAM:-PARAM", 0));
+        assertEquals("123456     MOVE MY-DATA in ADVANCED-REQUEST-DATA TO UPDATE-MY-ADVANCED-REQUEST-DATA",
+                Replace.replace("123456     MOVE MY-DATA in ADVANCED-REQUEST-DATA TO :REQUEST:-DATA", 0));
+
+    }
+
+    @Test
+    public void test_output_file_name_is_set_to_path_for_test_elements() {
+        //Config.getGeneratedTestCodePath() is where the modified files are written to
+        //regardless of where the input file is located
+
+        // this test must work on all OS - Windows, Linux, Mac therefore we get the OS path Separator
+        String osPathSeparator = FileSystems.getDefault().getSeparator();
+
+        String inputFileName = "." + osPathSeparator + "testfiles" + osPathSeparator + "REPLACE.CBL";
+        String expectedOutputFileName = Config.getGeneratedTestCodePath() + osPathSeparator + "REPLACE.replaced.CBL";
+        assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
+
+        inputFileName = "." + osPathSeparator + "test" + osPathSeparator + "files" + osPathSeparator + "REPLACE.CBL";
+        expectedOutputFileName = Config.getGeneratedTestCodePath() + osPathSeparator + "REPLACE.replaced.CBL";
+        assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
+
+        inputFileName = "." + osPathSeparator + "test" + osPathSeparator + "files" + osPathSeparator + "REPLACE.xxx";
+        expectedOutputFileName = Config.getGeneratedTestCodePath() + osPathSeparator + "REPLACE.replaced.xxx";
+        assertEquals(expectedOutputFileName, Replace.getOutputFileName(inputFileName));
+    }
+
+    // test internal functions for filename manipulation
+    @Test
+    public void test_internal_functions_for_filename_manipulation() {
+        String inputName = "REPLACE.CBL";
+        assertEquals("REPLACE.CBL", Replace.getFilenameWithoutPath(inputName));
+        assertEquals("CBL", Replace.getFileExtension(inputName));
+        assertEquals("REPLACE", Replace.getFileNameWithoutExtension(inputName));
+
+        // Default extension if none found
+        inputName = "REPLACE";
+        assertEquals("CBL", Replace.getFileExtension(inputName));
+    }
+
+    @Test
+    public void test_internal_functions_for_filename_manipulation_path() {
+        String input = "./test/files/REPLACE.CBL";
+        assertEquals("REPLACE.CBL", Replace.getFilenameWithoutPath(input));
+    }
+
 
 
 

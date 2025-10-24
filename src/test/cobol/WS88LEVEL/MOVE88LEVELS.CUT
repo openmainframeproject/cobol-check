@@ -1,0 +1,49 @@
+TestSuite "Suite 88 levels in program"
+  TestCase "t-01: WS 88 level variable on one line"
+
+    MOVE 'A' TO WS-88-LEVELS
+    perform 001-INITIALIZE
+    expect level-88-value-1 to be true
+    expect level-88-value-2 to be false
+
+  Testcase "t-02: WS 88 level variable on multiple lines"
+    MOVE 'B' TO WS-88-LEVELS
+    perform 001-INITIALIZE
+    expect level-88-all to be true
+
+  TestCase "t-03: WS 88 level variable"
+    MOVE 4 TO WS-88-LEVELS-NUMERIC
+    perform 001-INITIALIZE
+    expect SW-88-NUMERIC-LOW to be true
+    expect SW-88-NUMERIC-MED-ODD to be false
+    expect SW-88-NUMERIC-MED-EVEN to be false
+
+  TestCase "t-04: WS 88 level variable bigger value"
+    MOVE 32 TO WS-88-LEVELS-NUMERIC
+    perform 001-INITIALIZE
+    expect SW-88-NUMERIC-LOW to be false
+    expect SW-88-NUMERIC-MEDIUM to be true
+    expect SW-88-NUMERIC-MED-ODD to be false
+    expect SW-88-NUMERIC-MED-EVEN to be true
+
+  TestCase "t-05: FD 88 level variable are present"
+    MOVE 'Z' TO FD-88-LEVELS
+    perform 001-INITIALIZE
+    expect FD-88-VALUE-3 to be false
+    expect FD-88-VALUE-4 to be true
+    expect FD-88-ALL to be true
+
+  TestCase "t-06: FD 88 level variable numeric"
+    MOVE 15 TO FD-88-LEVELS-NUMERIC
+    perform 001-INITIALIZE
+    expect FD-88-NUMERIC-LOW to be false
+    expect FD-88-NUMERIC-MEDIUM to be true
+    expect FD-88-NUMERIC-HIGH to be false
+
+
+
+
+
+    .
+
+

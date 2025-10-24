@@ -72,8 +72,11 @@ public class Generator {
         Replace.inspectProgram(originalSource);
 
         matchingTestDirectories = PrepareMergeController.getMatchingTestDirectoriesForProgram(programName);
-        //replace in the program, return the program name with the corrected source code.
-        programName = Replace.replaceInProgram(originalSource);
+        // Handle REPLACE statements in the original source code
+        if (Replace.isReplaceOn()) {
+            //replace in the program, return the file name where the corrected source code was placed.
+            programName = Replace.replaceInProgram(originalSource);
+        }
         for (String matchingDirectory : matchingTestDirectories) {
 
             Reader sourceReader = PrepareMergeController.getSourceReader(programName);
@@ -186,8 +189,12 @@ public class Generator {
                 if (interpreter.shouldCurrentLineBeStubbed()) {
                     if(interpreter.isReading(Constants.WORKING_STORAGE_SECTION)) {
                         writerController.writeStubbedLine(interpreter.getCurrentLineAsStatement().getUnNumberedString());
-                        if (!interpreter.getFileSectionStatements().isEmpty())
+                        if (!interpreter.getFileSectionStatements().isEmpty()) {
                             writerController.writeLines(interpreter.getFileSectionStatements());
+                            if (!(interpreter.getFileSectionStatements() == null)) {
+                                interpreter.getFileSectionStatements().clear();
+                            }
+                        }
                     }
                     else 
                         writerController.writeStubbedLine(sourceLine);

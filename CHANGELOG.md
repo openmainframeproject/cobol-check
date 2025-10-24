@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.19\] 2025-10-24
+- FD area variables are written til FD area. This removed the problem with programs having the same variable in WORKING-STORAGE twice. 
+
 ## \[0.2.18\] 2025-06-02
 - Sequence numbers are handled correct in long lines
 
