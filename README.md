@@ -15,20 +15,9 @@ A big thank you to [Vicom Infinity](https://www.vicominfinity.com/) for kindly p
 Another thank you, goes towards Bankdata, for major contributions to the project.
 
 ## Immediate needs 
-
-As of March 2022 we could use help with: 
-
-- 1 or 2 additional team members - interns OK. 
-- review of localized messages by native speakers and creation of additional localized message files.
+- tbd
 
 ## Downloads 
-
-Version 0.2.16 pre-release is available!
-
-[//]: # (- Find the download on the project home page on the [Neo Pragma site]&#40;https://neopragma.com/projects/cobol-check/&#41;.)
-- Find distributions here: [Cobol Check Ditributions](https://github.com/openmainframeproject/cobol-check/tree/Developer/build/distributions).
-- Find general release information in the [changelog](https://github.com/openmainframeproject/cobol-check/blob/Developer/CHANGELOG.md).
-- Find more information about supported functionality on [the wiki](https://github.com/openmainframeproject/cobol-check/wiki/Common-Test-Case-Patterns).
 
 If you want source code, you can clone the repository or download a compressed archive(currently outdated) [from here](https://github.com/openmainframeproject/cobol-check/releases/tag/0.1.0).
 
