@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock SQL tables
 - Mock batch file I/O
 
+## \[0.2.19\] 2025-11-26
+- Redistributed because the jar for the vscode extension had to be updated to the currently build version 0.2.19
+
 ## \[0.2.19\] 2025-10-24
 - FD area variables are written til FD area. This removed the problem with programs having the same variable in WORKING-STORAGE twice. 
 
