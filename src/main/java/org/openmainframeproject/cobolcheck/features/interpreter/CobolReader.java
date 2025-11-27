@@ -1,6 +1,7 @@
 package org.openmainframeproject.cobolcheck.features.interpreter;
 
 import org.openmainframeproject.cobolcheck.exceptions.PossibleInternalLogicErrorException;
+import org.openmainframeproject.cobolcheck.services.StringHelper;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.CobolLine;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.Interpreter;
 import org.openmainframeproject.cobolcheck.services.cobolLogic.TokenExtractor;
@@ -64,6 +65,15 @@ public class CobolReader {
         if (line == null){
             return null;
         }
+        
+        // Comment out SKIP and EJECT pagination directives that are incompatible with GnuCOBOL
+        if (StringHelper.shouldFilterLine(line)) {
+            line = StringHelper.commentOutLine(StringHelper.removeRightSideSequenceNumbers(line));
+        } else {
+            // Always remove right-side sequence numbers from all lines to avoid processing issues
+            line = StringHelper.removeRightSideSequenceNumbers(line);
+        }
+        
         previousLine = currentLine;
         setPreviousMeaningfulLine();
         currentLine = new CobolLine(line, tokenExtractor);
@@ -214,6 +224,15 @@ public class CobolReader {
             if (line == null){
                 return null;
             }
+            
+            // Comment out SKIP and EJECT pagination directives that are incompatible with GnuCOBOL
+            if (StringHelper.shouldFilterLine(line)) {
+                line = StringHelper.commentOutLine(StringHelper.removeRightSideSequenceNumbers(line));
+            } else {
+                // Always remove right-side sequence numbers from all lines to avoid processing issues
+                line = StringHelper.removeRightSideSequenceNumbers(line);
+            }
+            
             CobolLine cobolLine = new CobolLine(line, tokenExtractor);
             nextLines.add(cobolLine);
             if (Interpreter.isMeaningful(cobolLine)){

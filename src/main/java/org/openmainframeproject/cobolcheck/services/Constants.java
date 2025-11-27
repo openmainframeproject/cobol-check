@@ -158,6 +158,9 @@ public final class Constants {
     public static final String PICTURE_VALUE = "PICTURE";
     public static final String NUMERIC_PICTURE_CLAUSE_PATTERN = "^[\\d\\(\\)SsVv]+$";
 
+    // COBOL line column definitions
+    public static final int COBOL_LINE_NUMBER_COLUMN_END = 6;
+    public static final int COBOL_CODE_AREA_END = 72;
 
     //Keywords not in COBOL-Code
     public static final String PARAGRAPH_TOKEN = "PARAGRAPH";

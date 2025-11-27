@@ -1,0 +1,17 @@
+TESTSUITE:
+Test EJECT and SKIP handling
+Result is greater than 15: 020
+Program completed successfully
+     PASS:   1. Test basic functionality with EJECT/SKIP                                        
+     PASS:   2. Test basic functionality with EJECT/SKIP                                        
+     PASS:   3. Test basic functionality with EJECT/SKIP                                        
+Result is 15 or less: 010
+     PASS:   4. Test calculation result                                                         
+Result is greater than 15: 030
+     PASS:   5. Test calculation with larger number                                             
+ 
+  5 TEST CASES WERE EXECUTED
+  5 PASSED
+  0 FAILED
+  0 CALLS NOT MOCKED
+=================================================

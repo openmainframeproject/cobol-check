@@ -1,0 +1,17 @@
+TestSuite "Test EJECT and SKIP handling"
+
+TestCase "Test basic functionality with EJECT/SKIP"
+    Perform MAIN-PROCESS
+    Expect WS-TEST-VAR = "HELLO     "
+    Expect WS-COUNTER = 10
+    Expect WS-RESULT = 20
+
+TestCase "Test calculation result"
+    Move 5 to WS-COUNTER
+    Perform CALCULATE-RESULT
+    Expect WS-RESULT = 10
+
+TestCase "Test calculation with larger number"
+    Move 15 to WS-COUNTER  
+    Perform CALCULATE-RESULT
+    Expect WS-RESULT = 30
