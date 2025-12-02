@@ -153,4 +153,32 @@ public class StringHelperTest{
         String original = "CALL 'PROG1'.";
         assertEquals(expected, StringHelper.stubLine(original, "STUBBEDVALUE"));
     }
+
+    // Tests for COBOL line filtering functionality
+    @Test
+    public void shouldFilterLine_identifies_EJECT_statements() {
+        assertTrue(StringHelper.shouldFilterLine("       EJECT"));
+        assertTrue(StringHelper.shouldFilterLine("000010 EJECT"));
+        assertFalse(StringHelper.shouldFilterLine("       CALL 'EJECT-PROG'"));
+    }
+
+    @Test
+    public void shouldFilterLine_identifies_SKIP_statements() {
+        assertTrue(StringHelper.shouldFilterLine("       SKIP1"));
+        assertTrue(StringHelper.shouldFilterLine("       SKIP"));
+        assertFalse(StringHelper.shouldFilterLine("       DISPLAY 'SKIP THIS'"));
+    }
+
+    @Test
+    public void removeRightSideSequenceNumbers_removes_sequence_numbers() {
+        String withSeqNum = "       MOVE 1 TO A.                                                     000010";
+        String expected = "       MOVE 1 TO A.                                                     ";
+        assertEquals(expected, StringHelper.removeRightSideSequenceNumbers(withSeqNum));
+    }
+
+    @Test
+    public void removeRightSideSequenceNumbers_preserves_normal_lines() {
+        String normal = "       MOVE 1 TO A.                                                    ";
+        assertEquals(normal, StringHelper.removeRightSideSequenceNumbers(normal));
+    }
 }
