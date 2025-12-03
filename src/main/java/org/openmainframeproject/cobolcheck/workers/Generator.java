@@ -35,6 +35,8 @@ public class Generator {
     private WriterController writerController;
     private TestSuiteParserController testSuiteParserController;
     private boolean workingStorageHasEnded;
+    private boolean skipUsingClauseLines = false;
+    private boolean skipEntryStatementLines = false;
 
     List<String> matchingTestDirectories;
     
@@ -200,7 +202,11 @@ public class Generator {
                         writerController.writeStubbedLine(sourceLine);
                 }
                 else {
-                    writerController.writeLine(sourceLine);
+                    // Fix for LINKAGE SECTION and PROCEDURE DIVISION USING issues
+                    String modifiedLine = processLinkageSectionFix(sourceLine);
+                    if(modifiedLine != null){
+                        writerController.writeLine(modifiedLine);
+                    }
                 }
             }
         }
@@ -255,6 +261,88 @@ public class Generator {
         interpreter.closeReader();
         testSuiteParserController.closeTestSuiteReader();
         writerController.closeWriter(programName);
+    }
+
+    /**
+     * Processes source lines to fix LINKAGE SECTION and PROCEDURE DIVISION
+     USING issues.
+     * Also handles ENTRY statements that reference LINKAGE SECTION variables.
+     *
+     * @param sourceLine - The original source line
+     * @return The modified source line, or null if the line should be skipped
+     */
+    private String processLinkageSectionFix(String sourceLine) {
+        // Skip LINKAGE SECTION line entirely
+        if (interpreter.currentLineContains(Constants.LINKAGE_SECTION)) {
+            return null; // Skip this line
+        }
+
+        // Skip lines that are part of a multi-line USING clause
+        if (skipUsingClauseLines) {
+            // Check if this line ends the USING clause (contains a period)
+            String trimmedLine = sourceLine.trim();
+            if (trimmedLine.endsWith(".")) {
+                skipUsingClauseLines = false; // Stop skipping after this line
+            }
+            return null; // Skip this line
+        }
+
+        // Skip lines that are part of a multi-line ENTRY statement
+        if (skipEntryStatementLines) {
+            // Check if this line ends the ENTRY statement (contains a period)
+            String trimmedLine = sourceLine.trim();
+            if (trimmedLine.endsWith(".")) {
+                skipEntryStatementLines = false; // Stop skipping after this line
+            }
+            return null; // Skip this line - comment it out
+        }
+
+        // Handle PROCEDURE DIVISION with USING clause
+        if (interpreter.currentLineContains(Constants.PROCEDURE_DIVISION)) {
+            // Find the position of "USING" in the line (case insensitive)
+            String upperLine = sourceLine.toUpperCase();
+            int usingIndex = upperLine.indexOf("USING");
+            if (usingIndex != -1) {
+                // Check if the USING clause ends on the same line
+                if (!sourceLine.trim().endsWith(".")) {
+                    // Multi-line USING clause - set flag to skip subsequent lines
+                    skipUsingClauseLines = true;
+                }
+                // Extract the sequence number area (first 6 characters) and indentation
+                String sequenceArea = sourceLine.length() > 6 ? sourceLine.substring(0, 6) : " ";
+                String lineContent = sourceLine.length() > 6 ? sourceLine.substring(6) : "";
+                
+                // Find the start of "PROCEDURE DIVISION" in the content area
+                String upperContent = lineContent.toUpperCase();
+                int procIndex = upperContent.indexOf("PROCEDURE DIVISION");
+                if (procIndex != -1) {
+                    // Preserve the indentation before "PROCEDURE DIVISION"
+                    String indentation = lineContent.substring(0, procIndex);
+                    String formattedLine = sequenceArea + indentation + "PROCEDURE DIVISION.";
+                    return formattedLine;
+                } else {
+                    // Fallback: just remove USING and add period
+                    String beforeUsing = sourceLine.substring(0, usingIndex).trim();
+                    return beforeUsing + ".";
+                }
+            }
+        }
+
+        // Handle ENTRY statements - comment them out entirely since they reference LINKAGE SECTION variables
+        String upperLine = sourceLine.toUpperCase();
+        if (upperLine.contains("ENTRY")) {
+            // Check if this is actually an ENTRY statement (not just the word "ENTRY" in a comment)
+            String contentArea = sourceLine.length() > 6 ? sourceLine.substring(6).trim() : sourceLine.trim();
+            if (contentArea.toUpperCase().startsWith("ENTRY ")) {
+                // Check if the ENTRY statement ends on the same line
+                if (!sourceLine.trim().endsWith(".")) {
+                    // Multi-line ENTRY statement - set flag to skip subsequent lines
+                    skipEntryStatementLines = true;
+                }
+                return null; // Skip this line entirely (effectively commenting it out)
+            }
+        }
+        return sourceLine; // Return original line if no modification needed
     }
 
     private void writeWhenOtherSectionOrParagraph(String sourceLine)  throws IOException{
