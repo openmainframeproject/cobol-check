@@ -1,0 +1,8 @@
+TESTSUITE 'Working Storage Copybook Expansion'
+
+TESTCASE 'Classify seven as odd'
+    MOVE 7 TO WS-NUMBER
+    PERFORM CLASSIFY
+    EXPECT WS-NUMBER TO BE 3
+    EXPECT WS-REMAIN TO BE 1
+    EXPECT WS-RESULT TO BE 'Odd '

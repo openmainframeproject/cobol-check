@@ -30,6 +30,9 @@ public class LineRepository {
     // Tokens collected from COPY statements that may span multiple lines
     private List<String> copyTokens;
 
+    // Expanded copybook lines encountered in WORKING-STORAGE SECTION
+    private List<String> workingStorageCopyStatements;
+
     LineRepository() {
         fileSectionStatements = new ArrayList<>();
         this.fileIdentifiersAndStatuses = new HashMap<>();
@@ -49,6 +52,10 @@ public class LineRepository {
 
     List<String> getCopyTokens() {
         return copyTokens;
+    }
+
+    List<String> getWorkingStorageCopyStatements() {
+        return workingStorageCopyStatements;
     }
 
     void addFileControlStatement(String statement){
@@ -87,6 +94,13 @@ public class LineRepository {
         }
     }
 
+    void clearCopyTokens() {
+        if (copyTokens != null) {
+            // COPY tokens are a transient parse buffer and must not bleed into the next COPY statement.
+            copyTokens.clear();
+        }
+    }
+
     List<String> addExpandedCopyStatementsToFileSectionStatements() {
         // warn on the number og tokens collected
         Log.warn("addExpandedCopyStatementsToFileSectionStatements: " + copyTokens.size() + " tokens collected");
@@ -122,7 +136,70 @@ public class LineRepository {
             throw new PossibleInternalLogicErrorException("addExpandedCopyStatementsToFileSectionStatements",ioException);
         }
         fileSectionStatements.addAll(copyLines);
+        clearCopyTokens();
         return copyLines;
+    }
+
+    /**
+     * Expands a COPY statement found in WORKING-STORAGE SECTION into multiple lines
+     * by locating and reading the referenced copybook.
+     * The expanded lines are staged so Generator can replace the original COPY statement.
+     * @return expanded lines from the referenced copybook
+     * @throws PossibleInternalLogicErrorException if the COPY tokens are invalid or the copybook cannot be expanded
+     */
+    List<String> addExpandedCopyStatementsToWorkingStorageSectionStatements() {
+        if (copyTokens == null) {
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR024"));
+        }
+
+        for (int i = 0 ; i < copyTokens.size() ; i++) {
+            if (copyTokens.get(i).equals(Constants.EMPTY_STRING)) {
+                copyTokens.remove(i);
+            }
+        }
+        if (copyTokens.isEmpty()
+                || !copyTokens.get(0).equalsIgnoreCase(Constants.COPY_TOKEN)
+                || copyTokens.size() < 2) {
+            throw new PossibleInternalLogicErrorException(Messages.get("ERR024"));
+        }
+
+        String copybookName = copyTokens.get(1).replace(Constants.PERIOD, Constants.EMPTY_STRING);
+
+        // REPLACING clauses are handled the same way as for FILE SECTION COPY statements.
+        StringTuple replacingValues = new StringTuple(null, null);
+        if (copyTokens.size() > 5) {
+            if (copyTokens.get(2).equalsIgnoreCase(Constants.REPLACING_KEYWORD)
+                    && copyTokens.get(4).equalsIgnoreCase(Constants.BY_KEYWORD)) {
+                replacingValues = new StringTuple(copyTokens.get(3), copyTokens.get(5));
+            }
+        }
+
+        List<String> copyLines = new ArrayList<>();
+        CopybookExpander copybookExpander = new CopybookExpander();
+        try {
+            copyLines = copybookExpander.expand(copyLines, copybookName, replacingValues);
+        } catch (IOException ioException) {
+            throw new PossibleInternalLogicErrorException(
+                    "addExpandedCopyStatementsToWorkingStorageSectionStatements", ioException);
+        }
+        // Stage the expanded lines so Generator can replace the original COPY in place.
+        setWorkingStorageCopyStatements(copyLines);
+        clearCopyTokens();
+        return copyLines;
+    }
+
+    void setWorkingStorageCopyStatements(List<String> copyLines) {
+        if (workingStorageCopyStatements == null) {
+            workingStorageCopyStatements = new ArrayList<>();
+        }
+        workingStorageCopyStatements.clear();
+        workingStorageCopyStatements.addAll(copyLines);
+    }
+
+    void clearWorkingStorageCopyStatements() {
+        if (workingStorageCopyStatements != null) {
+            workingStorageCopyStatements.clear();
+        }
     }
 
     /**

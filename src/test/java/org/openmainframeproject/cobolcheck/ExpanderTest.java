@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExpanderTest {
 
@@ -294,6 +295,38 @@ public class ExpanderTest {
         String[] actualArray = actual.toArray(new String[0]);
 
         assertEquals("           MOVE WS-FIELD-1 TO UT-ACTUAL", actualArray[49]);
+    }
+
+    @Test
+    public void working_storage_copybook_is_expanded_and_numeric_expect_uses_numeric_compare() throws IOException {
+        String s1 = "       DATA DIVISION.";
+        String s2 = "       WORKING-STORAGE SECTION.";
+        String s3 = "           COPY COPY001-padded.";
+        String s4 = "       PROCEDURE DIVISION.";
+        String s5 = "       000-START SECTION.";
+        String s6 = "           MOVE 42 TO TEST-DATA-ELEMENT-001-B2";
+        String s7 = "           EXIT SECTION";
+        String s8 = "           .";
+
+        String t1 = "           TestSuite \"Numeric copybook test\"";
+        String t2 = "           TestCase \"Packed decimal expect\"";
+        String t3 = "           PERFORM 000-START";
+        String t4 = "           EXPECT TEST-DATA-ELEMENT-001-B2 TO BE 42";
+
+        Mockito.when(mockedInterpreterReader.readLine()).thenReturn(s1, s2, s3, s4, s5, s6, s7, s8, null);
+        Mockito.when(mockedParserReader.readLine()).thenReturn(t1, t2, t3, t4, null);
+
+        generator = new Generator(interpreterController, writerController, testSuiteParserController);
+
+        String generated = writer.toString();
+
+        // Working-storage COPY is expanded and numeric EXPECT stays numeric.
+        assertTrue(generated.contains("COPY COPY001-padded."));
+        assertTrue(generated.contains("01  TEST-DATA-LAYOUT-001-A."));
+        assertTrue(generated.contains("05  TEST-DATA-ELEMENT-001-B2 PIC S9(05) COMP-3."));
+        assertTrue(generated.contains("SET UT-NUMERIC-COMPARE TO TRUE"));
+        assertTrue(generated.contains("MOVE TEST-DATA-ELEMENT-001-B2 TO UT-ACTUAL-NUMERIC"));
+        assertTrue(generated.contains("MOVE 42 TO UT-EXPECTED-NUMERIC"));
     }
 
     private String expected1 =

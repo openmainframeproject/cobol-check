@@ -512,8 +512,11 @@ public class InterpreterControllerTest {
             interpreterController.interpretNextLine();
         }
 
-        assertTrue(interpreterController.getCopyTokens().contains("COPY"));
-        assertTrue(interpreterController.getCopyTokens().contains("OUTREC."));
+        // Expanded lines are persisted in the repository.
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-1         PIC X(5)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("      *    COPY OUTREC2."));
+        // COPY tokens are transient and should be cleared after expansion.
+        assertTrue(interpreterController.getCopyTokens() == null || interpreterController.getCopyTokens().isEmpty());
     }
 
     @Test
@@ -532,12 +535,11 @@ public class InterpreterControllerTest {
             interpreterController.interpretNextLine();
         }
 
-        assertTrue(interpreterController.getCopyTokens().contains("COPY"));
-        assertTrue(interpreterController.getCopyTokens().contains("OUTREC"));
-        assertTrue(interpreterController.getCopyTokens().contains("REPLACE"));
-        assertTrue(interpreterController.getCopyTokens().contains("FILLER"));
-        assertTrue(interpreterController.getCopyTokens().contains("BY"));
-        assertTrue(interpreterController.getCopyTokens().contains("TEMP."));
+        // Expanded lines are persisted in the repository.
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-1         PIC X(5)."));
+        assertTrue(interpreterController.getFileSectionStatements().contains("      *    COPY OUTREC2."));
+        // COPY tokens are transient and should be cleared after expansion.
+        assertTrue(interpreterController.getCopyTokens() == null || interpreterController.getCopyTokens().isEmpty());
     }
 
     @Test
@@ -556,9 +558,10 @@ public class InterpreterControllerTest {
             interpreterController.interpretNextLine();
         }
 
-        assertEquals(2,interpreterController.getCopyTokens().size());
-        assertTrue(interpreterController.getCopyTokens().contains("COPY"));
-        assertTrue(interpreterController.getCopyTokens().contains("OUTREC."));
+        // Ignored lines do not prevent copybook expansion.
+        assertTrue(interpreterController.getFileSectionStatements().contains("           05  OUT-FIELD-1         PIC X(5)."));
+        // COPY tokens are transient and should be cleared after expansion.
+        assertTrue(interpreterController.getCopyTokens() == null || interpreterController.getCopyTokens().isEmpty());
     }
 
     @Test
@@ -957,6 +960,27 @@ public class InterpreterControllerTest {
 
         assertEquals("PACKED_DECIMAL",
                 interpreterController.getNumericFieldDataTypeFor("TEST-DATA-ELEMENT-001-B2").name());
+    }
+
+    @Test
+    public void it_updates_numeric_fields_from_working_storage_copybook() throws IOException {
+        String str1 = "       DATA DIVISION.";
+        String str2 = "       WORKING-STORAGE SECTION.";
+        String str3 = "           COPY COPY001-padded.";
+        String str4 = "       PROCEDURE DIVISION.";
+
+        Mockito.when(mockedReader.readLine()).thenReturn(str1, str2, str3, str4, null);
+
+        while (interpreterController.interpretNextLine() != null) {
+            interpreterController.interpretNextLine();
+        }
+
+        // Fields from the expanded working-storage copybook are available for numeric type lookup.
+        assertEquals("PACKED_DECIMAL",
+                interpreterController.getNumericFieldDataTypeFor("TEST-DATA-ELEMENT-001-B2").name());
+        assertTrue(interpreterController.hasExpandedWorkingStorageCopyStatements());
+        assertTrue(interpreterController.getWorkingStorageCopyStatements()
+                .contains("           05  TEST-DATA-ELEMENT-001-B2 PIC S9(05) COMP-3.              "));
     }
 
     @Test
