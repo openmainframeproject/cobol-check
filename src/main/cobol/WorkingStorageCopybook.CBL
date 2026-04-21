@@ -3,7 +3,8 @@
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       COPY  WS_Copybook.
+       COPY  WS_Copybook1.
+       COPY  WS_Copybook2. 
 
        PROCEDURE DIVISION.
            DISPLAY "Checking if the number is Even or Odd: " WS-NUMBER.
