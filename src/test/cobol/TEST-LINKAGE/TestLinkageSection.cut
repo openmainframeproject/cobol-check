@@ -1,0 +1,11 @@
+TestSuite "Test Entry Statement Fix"
+    TestCase "Main entry point test"
+        MOVE 0 TO WS-COUNTER
+        PERFORM 0000-MAIN
+        EXPECT WS-COUNTER TO BE 1
+        EXPECT WS-WORK-AREA TO BE 'MAIN ENTRY'
+    TestCase "Entry point after main test"
+        MOVE 0 TO WS-COUNTER
+        PERFORM 0100-ENTRY-POINT
+        EXPECT WS-COUNTER TO BE 10
+        EXPECT WS-WORK-AREA TO BE 'ENTRY POINT'
