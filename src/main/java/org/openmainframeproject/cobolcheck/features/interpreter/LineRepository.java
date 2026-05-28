@@ -79,6 +79,11 @@ public class LineRepository {
         if (copyTokens == null) {
             copyTokens = new ArrayList<>();
         }
+        // If this is the start of a new COPY statement (line contains "COPY"), clear previous tokens
+        String trimmedLine = line.trim();
+        if (trimmedLine.toUpperCase().startsWith("COPY") || trimmedLine.toUpperCase().startsWith("INCLUDE")) {
+            copyTokens.clear();
+        }
         String[] lineTokens = line.trim().split(Constants.SPACE);
         for (String lineToken : lineTokens) {
             if (lineToken != null && !lineToken.equals(Constants.EMPTY_STRING)) {

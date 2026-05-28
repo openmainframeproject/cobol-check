@@ -29,7 +29,8 @@
        01  INPUT-RECORD.
            05  IN-FIELD-1         PIC X(10).
            05  FILLER             PIC X(20).
-           05  IN-FIELD-2         PIC X(10).
+           05  IN-FIELD-2.
+               COPY FSTEST.
       * This defines our output file
        FD  OUTPUT-FILE
            BLOCK CONTAINS 0 RECORDS
