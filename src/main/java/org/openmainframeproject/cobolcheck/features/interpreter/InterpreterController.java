@@ -62,6 +62,19 @@ public class InterpreterController {
         return lineRepository.getCopyTokens();
     }
 
+    public List<String> getWorkingStorageCopyStatements() {
+        return lineRepository.getWorkingStorageCopyStatements();
+    }
+
+    public boolean hasExpandedWorkingStorageCopyStatements() {
+        List<String> statements = lineRepository.getWorkingStorageCopyStatements();
+        return statements != null && !statements.isEmpty();
+    }
+
+    public void clearWorkingStorageCopyStatements() {
+        lineRepository.clearWorkingStorageCopyStatements();
+    }
+
     // Getters for numeric field info
     public DataType getNumericFieldDataTypeFor(String fieldName) {
         return numericFields.dataTypeOf(fieldName);
@@ -435,7 +448,7 @@ public class InterpreterController {
      * - It contains a copy token
      * - It is a file section statement (file section statements from referenced copybooks are also included)
      * - It has an SQL statement and within le WORKING SECTION
-     *
+     * - It has an Copy statement in WORKING-STORAGE SECTION (copybooks expanded). 
      * @param line - current source line
      */
     private void updateLineRepository(CobolLine line) throws IOException {
@@ -480,6 +493,21 @@ public class InterpreterController {
                         }
                         break;
                 }
+            }
+        }
+        // COPY statements in WORKING-STORAGE SECTION can define data items that Cobol Check
+        // must understand before generating test code. We expand the copybook now, stage the
+        // expanded lines for Generator, and update structure and numeric metadata from them.
+        if (reader.isFlagSet(Constants.WORKING_STORAGE_SECTION) && line.containsToken(Constants.COPY_TOKEN)) {
+            updateLineRepoByCopyStatement();
+            extractedCopyBook = lineRepository.addExpandedCopyStatementsToWorkingStorageSectionStatements();
+            for (String copyLine : extractedCopyBook) {
+                CobolLine cobolLine = new CobolLine(copyLine, tokenExtractor);
+                List<CobolLine> currentStatement = new ArrayList<>();
+                currentStatement.add(cobolLine);
+                // Working-storage copies define regular data items, so keeping both structure and numeric metadata in sync.
+                this.currentDataStructure = updateCurrentDataStructure(currentStatement, currentDataStructure);
+                updateNumericFields(cobolLine);
             }
         }
     }

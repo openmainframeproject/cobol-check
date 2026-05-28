@@ -177,7 +177,21 @@ public class Generator {
      */
     private void writeToSource(String sourceLine) throws IOException {
         if (interpreter.shouldCurrentLineBeParsed()) {
-            if (interpreter.hasStatementBeenRead()){
+            if (interpreter.isReading(Constants.WORKING_STORAGE_SECTION)
+                    && interpreter.currentLineContains(Constants.COPY_TOKEN)
+                    && interpreter.hasExpandedWorkingStorageCopyStatements()) {
+                // Plain COPY statements in WORKING-STORAGE must be replaced here so the generated test program
+                // contains the resolved data definitions. Comment out the original source statement for traceability,
+                // then emit the expanded copybook lines in its place.
+                if (interpreter.hasStatementBeenRead()) {
+                    writerController.writeCommentedLines(interpreter.getCurrentStatement());
+                } else {
+                    writerController.writeCommentedLine(interpreter.getCurrentLineAsStatement().getUnNumberedString());
+                }
+                writerController.writeLines(interpreter.getWorkingStorageCopyStatements());
+                interpreter.clearWorkingStorageCopyStatements();
+            }
+            else if (interpreter.hasStatementBeenRead()){
                 if (interpreter.shouldCurrentStatementBeStubbed()){
                     writerController.writeStubbedLines(interpreter.getCurrentStatement());
                 }
