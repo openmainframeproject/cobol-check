@@ -283,4 +283,57 @@ public class StringHelper {
         }
         return false;
     }
+
+    /**
+     * Check if a line contains SKIP or EJECT pagination directives that should be filtered out
+     * for GnuCOBOL compatibility
+     *
+     * @param sourceLine the COBOL source line to check
+     * @return true if the line should be filtered (commented out)
+     */
+    public static boolean shouldFilterLine(String sourceLine) {
+        if (sourceLine == null || sourceLine.trim().isEmpty()) {
+            return false;
+        }
+
+        String lineContent = sourceLine.trim().toUpperCase();
+
+        // If line has line numbers, extract the content part
+        if (sourceLine.length() > Constants.COBOL_LINE_NUMBER_COLUMN_END && Character.isDigit(sourceLine.charAt(0))) {
+            lineContent = sourceLine.substring(Constants.COBOL_LINE_NUMBER_COLUMN_END).trim().toUpperCase();
+        }
+
+        // Check if this line is EJECT or SKIP variant
+        return lineContent.equals("EJECT") || lineContent.startsWith("SKIP");
+    }
+
+    /**
+     * Remove right-side sequence numbers (columns 73-80) from COBOL source lines
+     * COBOL standard: columns 73-80 are identification area (right-side sequence numbers)
+     * Only removes content if there are actual sequence numbers beyond column 72
+     * 
+     * @param line the original COBOL line
+     * @return the line with right-side sequence numbers removed if they exist
+     */
+    public static String removeRightSideSequenceNumbers(String line) {
+        if (line == null || line.length() <= Constants.COBOL_CODE_AREA_END) {
+            return line;
+        }
+
+        // Extract the potential sequence number area (columns 73-80)
+        String sequenceArea = line.substring(Constants.COBOL_CODE_AREA_END);
+        
+        // Only remove if the sequence area contains actual sequence numbers (not just spaces)
+        // Sequence numbers are typically digits, or alphanumeric identifiers
+        String trimmedSequenceArea = sequenceArea.trim();
+        if (!trimmedSequenceArea.isEmpty()) {
+            // Check if it looks like sequence numbers (digits, or mixed alphanumeric like "000010" or "A123")
+            if (trimmedSequenceArea.matches("^[A-Z0-9]+$") && trimmedSequenceArea.length() <= 8) {
+                return line.substring(0, Constants.COBOL_CODE_AREA_END);
+            }
+        }
+
+        // If it's just spaces or doesn't look like sequence numbers, keep the line as-is
+        return line;
+    }
 }
